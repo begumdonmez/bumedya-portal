@@ -135,7 +135,7 @@ export default async function PublicProfilePage(
                             {/* Kazanılmış rozetler */}
                             {profile.badges.length > 0 && (
                                 <div className="flex flex-wrap gap-1.5 mt-2">
-                                    {profile.badges.map((b) => {
+                                    {profile.badges.map((b: string) => {
                                         const conf = BADGE_CONFIG[b];
                                         if (!conf) return null;
                                         return (

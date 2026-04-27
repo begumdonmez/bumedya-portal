@@ -158,18 +158,18 @@ export default function AdminClient({ profiles: initialProfiles }: { profiles: P
             prev.map((p) => p.id === userId ? { ...p, badges: newBadges } : p)
         );
 
-        const supabase = createClient();
-        const { error } = await supabase
-            .from("profiles")
-            .update({ badges: newBadges })
-            .eq("id", userId);
+        const res = await fetch("/api/admin/badges", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId, badges: newBadges }),
+        });
 
-        if (error) {
-            // Geri al
+        if (!res.ok) {
+            const { error } = await res.json();
             setProfiles((prev) =>
                 prev.map((p) => p.id === userId ? { ...p, badges: currentBadges } : p)
             );
-            toast.error("Rozet güncellenemedi: " + error.message);
+            toast.error("Rozet güncellenemedi: " + (error ?? res.statusText));
             return;
         }
 
@@ -177,6 +177,7 @@ export default function AdminClient({ profiles: initialProfiles }: { profiles: P
         if (!hasBadge) {
             const profile = profiles.find((p) => p.id === userId);
             if (profile) {
+                const supabase = createClient();
                 await supabase.from("activities").insert({
                     user_id: userId,
                     username: profile.username,
@@ -186,11 +187,7 @@ export default function AdminClient({ profiles: initialProfiles }: { profiles: P
             }
         }
 
-        toast.success(hasBadge
-            ? `Rozet kaldırıldı`
-            : `Rozet verildi ✦`
-        );
-
+        toast.success(hasBadge ? "Rozet kaldırıldı" : "Rozet verildi ✦");
         router.refresh();
     };
 
