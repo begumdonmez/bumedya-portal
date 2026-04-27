@@ -297,17 +297,19 @@ export default function ChatClient({ userId, username, initialMessages }: {
                                             </div>
                                         )}
 
-                                        <div className={`flex items-end gap-2.5 ${isOwn ? "flex-row-reverse" : "flex-row"}`}>
-                                            {/* Avatar */}
-                                            <div className="w-8 shrink-0 flex items-end justify-center" style={{ alignSelf: "flex-end" }}>
-                                                {showHeader && !isOwn ? (
-                                                    <Link href={`/profil/${msg.username}`}
-                                                          className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold transition-opacity hover:opacity-80"
-                                                          style={{ background: avatarBg, border: `1px solid ${avatarBorder}`, color: "#E0F2FE" }}>
-                                                        {msg.username[0].toUpperCase()}
-                                                    </Link>
-                                                ) : <div className="w-8" />}
-                                            </div>
+                                        <div className={`flex items-end gap-2.5 ${isOwn ? "justify-end" : "justify-start"}`}>
+                                            {/* Avatar — sadece başkalarının mesajları */}
+                                            {!isOwn && (
+                                                <div className="w-8 shrink-0 self-end">
+                                                    {showHeader ? (
+                                                        <Link href={`/profil/${msg.username}`}
+                                                              className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold hover:opacity-80 transition-opacity"
+                                                              style={{ background: avatarBg, border: `1px solid ${avatarBorder}`, color: "#E0F2FE" }}>
+                                                            {msg.username[0].toUpperCase()}
+                                                        </Link>
+                                                    ) : <div className="w-8" />}
+                                                </div>
+                                            )}
 
                                             <div className={`flex flex-col gap-0.5 max-w-[60%] ${isOwn ? "items-end" : "items-start"}`}>
                                                 {showHeader && !isOwn && (
@@ -316,7 +318,12 @@ export default function ChatClient({ userId, username, initialMessages }: {
                                                         @{msg.username}
                                                     </span>
                                                 )}
-                                                <div className={`flex items-end gap-2 ${isOwn ? "flex-row-reverse" : "flex-row"}`}>
+                                                <div className="flex items-end gap-2">
+                                                    {isOwn && (
+                                                        <span className="text-[10px] shrink-0 mb-1" style={{ color: "rgba(224,242,254,0.18)" }}>
+                                                            {timeLabel(msg.created_at)}
+                                                        </span>
+                                                    )}
                                                     <div className="px-4 py-2.5 text-sm leading-relaxed"
                                                          style={isOwn ? {
                                                              background: "linear-gradient(135deg, rgba(124,58,237,0.35), rgba(109,40,217,0.25))",
@@ -331,9 +338,11 @@ export default function ChatClient({ userId, username, initialMessages }: {
                                                          }}>
                                                         {msg.content}
                                                     </div>
-                                                    <span className="text-[10px] shrink-0 mb-1" style={{ color: "rgba(224,242,254,0.18)" }}>
-                                                        {timeLabel(msg.created_at)}
-                                                    </span>
+                                                    {!isOwn && (
+                                                        <span className="text-[10px] shrink-0 mb-1" style={{ color: "rgba(224,242,254,0.18)" }}>
+                                                            {timeLabel(msg.created_at)}
+                                                        </span>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
