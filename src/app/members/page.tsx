@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import UyelerClient from "./UyelerClient";
+import MembersClient from "./MembersClient";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 
 export const metadata = { title: "Üyeler | bumedya." };
 
-export default async function UyelerPage() {
+export default async function MembersPage() {
     const supabase = await createClient();
 
     const { data: { user } } = await supabase.auth.getUser();
@@ -56,7 +56,7 @@ export default async function UyelerPage() {
             </nav>
 
             <div className="pt-20">
-                <UyelerClient profiles={profiles ?? []} />
+                <MembersClient profiles={profiles ?? []} />
             </div>
         </div>
     );

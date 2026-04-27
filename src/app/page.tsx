@@ -100,7 +100,7 @@ export default async function HomePage() {
                 <div className="hidden md:flex items-center gap-8">
                     <NavLink href="/galeri">Galeri</NavLink>
                     <NavLink href="/etkinlikler">Etkinlikler</NavLink>
-                    <NavLink href="/uyeler">Üyeler</NavLink>
+                    <NavLink href="/members">Üyeler</NavLink>
                 </div>
                 <div className="flex items-center gap-3">
                     {user ? (
