@@ -1,9 +1,27 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
+import LiveFeed from "@/components/LiveFeed";
 
-export const metadata = { title: "Ana Sayfa | bumedya." };
+export const metadata: Metadata = { title: "Ana Sayfa | bumedya." };
+
+function BentoCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
+    return (
+        <div className={`glass rounded-3xl p-6 relative overflow-hidden group transition-all duration-500 hover:border-white/15 ${className}`} style={style}>
+            {children}
+        </div>
+    );
+}
+
+const MANIFESTO_LINES = [
+    "Bumedya bir platform değil, bir duruş.",
+    "Üretmek tüketmekten daha değerlidir.",
+    "Her çizgi, her kelime, her nota — bir varlık kanıtı.",
+    "Sınırlar bulanıklaşır. Fikirler form bulur.",
+    "Yaratıcılar birbirini burada bulur.",
+];
 
 export default async function HomePage() {
     const supabase = await createClient();
@@ -18,28 +36,58 @@ export default async function HomePage() {
 
     const username = profile?.username ?? user.email?.split("@")[0] ?? "";
 
-    return (
-        <div className="relative min-h-screen flex flex-col" style={{ background: "#0A0F1E" }}>
-            <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full pointer-events-none"
-                 style={{ background: "rgba(124,58,237,0.06)", filter: "blur(120px)" }} />
+    /* ── İstatistikler ── */
+    const [
+        { count: totalCount },
+        { count: creatorCount },
+        { count: memberCount },
+        { data: activities },
+        { data: allProfiles },
+    ] = await Promise.all([
+        supabase.from("profiles").select("*", { count: "exact", head: true }),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "creator"),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "member"),
+        supabase.from("activities").select("id, username, type, payload, created_at").order("created_at", { ascending: false }).limit(8),
+        supabase.from("profiles").select("badges"),
+    ]);
 
+    const editorCount = allProfiles?.filter((p) => (p.badges as string[])?.includes("editor")).length ?? 0;
+    const writerCount = allProfiles?.filter((p) => (p.badges as string[])?.includes("writer")).length ?? 0;
+    const artistCount = allProfiles?.filter((p) => (p.badges as string[])?.includes("artist")).length ?? 0;
+
+    const hours = new Date().getHours();
+    const greeting = hours < 6 ? "gece geç saatte ne arıyorsun?" : hours < 12 ? "günaydın!" : hours < 17 ? "iyi günler!" : hours < 21 ? "iyi akşamlar!" : "iyi geceler!";
+
+    return (
+        <div className="relative min-h-screen w-full bg-ana-lacivert overflow-hidden">
+            {/* Arka plan */}
+            <div className="dot-grid absolute inset-0 -z-30 opacity-100" aria-hidden />
+            <div aria-hidden className="absolute rounded-full pointer-events-none"
+                 style={{ width: 900, height: 900, top: "30%", left: "50%", transform: "translate(-50%, -50%)", background: "rgba(124,58,237,0.08)", filter: "blur(140px)", zIndex: -20 }} />
+            <div aria-hidden className="absolute inset-0 -z-10 opacity-[0.025]"
+                 style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`, backgroundRepeat: "repeat", backgroundSize: "200px 200px" }} />
+
+            {/* Navbar */}
             <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5">
                 <NavbarBackdrop />
                 <Link href="/" className="flex items-baseline gap-0.5">
-                    <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
-                    <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
+                    <span className="text-sm font-bold text-buz-mavisi/50">bumedya</span>
+                    <span className="text-sm font-bold text-canli-mor/70">.</span>
                 </Link>
                 <div className="hidden md:flex items-center gap-8">
-                    <Link href="/home" className="text-sm tracking-widest uppercase font-light transition-colors duration-300"
-                          style={{ color: "rgba(224,242,254,0.9)" }}>Ana Sayfa</Link>
-                    <Link href="/galeri" className="text-sm tracking-widest uppercase font-light transition-colors duration-300"
-                          style={{ color: "rgba(224,242,254,0.4)" }}>Galeri</Link>
-                    <Link href="/etkinlikler" className="text-sm tracking-widest uppercase font-light transition-colors duration-300"
-                          style={{ color: "rgba(224,242,254,0.4)" }}>Etkinlikler</Link>
-                    <Link href="/members" className="text-sm tracking-widest uppercase font-light transition-colors duration-300"
-                          style={{ color: "rgba(224,242,254,0.4)" }}>Üyeler</Link>
-                    <Link href="/chat" className="text-sm tracking-widest uppercase font-light transition-colors duration-300"
-                          style={{ color: "rgba(224,242,254,0.4)" }}>Lounge</Link>
+                    {[
+                        { href: "/home",        label: "Ana Sayfa",   active: true  },
+                        { href: "/galeri",      label: "Galeri",      active: false },
+                        { href: "/etkinlikler", label: "Etkinlikler", active: false },
+                        { href: "/members",     label: "Üyeler",      active: false },
+                        { href: "/chat",        label: "Lounge",      active: false },
+                    ].map(({ href, label, active }) => (
+                        <Link key={href} href={href}
+                              className="text-sm tracking-widest uppercase font-light transition-colors duration-300"
+                              style={{ color: active ? "rgba(224,242,254,0.9)" : "rgba(224,242,254,0.4)" }}>
+                            {label}
+                        </Link>
+                    ))}
                 </div>
                 <Link href="/profil"
                       className="text-xs px-4 py-2 rounded-xl transition-all duration-300"
@@ -48,25 +96,154 @@ export default async function HomePage() {
                 </Link>
             </nav>
 
-            <div className="relative z-10 max-w-4xl mx-auto w-full px-6 pt-32 pb-16 flex flex-col gap-8">
-                <div>
-                    <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "rgba(224,242,254,0.25)" }}>
-                        Hoş geldin
-                    </p>
-                    <h1 className="text-3xl font-extrabold tracking-tight" style={{ color: "#E0F2FE" }}>
-                        @{username}
-                    </h1>
+            {/* İçerik */}
+            <div className="relative z-10 max-w-6xl mx-auto w-full px-6 pt-28 pb-16 flex flex-col gap-8">
+
+                {/* Karşılama */}
+                <div className="flex flex-col items-center text-center pt-10 pb-4 gap-5">
+                    {/* Pill badge — landing ile aynı stil */}
+                    <div className="glass px-4 py-2 rounded-full flex items-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                        <span className="text-xs text-buz-mavisi/60 tracking-widest uppercase font-light">
+                            Topluluk aktif · {totalCount ?? 0} üye
+                        </span>
+                    </div>
+
+                    <div>
+                        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-buz-mavisi/90">
+                            @{username},{" "}
+                            <span className="font-light text-buz-mavisi/50">{greeting}</span>
+                        </h1>
+                    </div>
                 </div>
 
-                {/* İçerik buraya gelecek */}
-                <div className="rounded-3xl p-10 flex flex-col items-center justify-center gap-3"
-                     style={{
-                         background: "rgba(255,255,255,0.03)",
-                         border: "1px solid rgba(255,255,255,0.07)",
-                         minHeight: "300px",
-                     }}>
-                    <span className="text-3xl opacity-20">✦</span>
-                    <p className="text-sm" style={{ color: "rgba(224,242,254,0.25)" }}>İçerik yakında eklenecek.</p>
+                {/* Bento Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 auto-rows-auto">
+
+                    {/* ── Topluluk Durumu ── */}
+                    <BentoCard className="md:col-span-7 min-h-[240px]">
+                        <div aria-hidden className="absolute -top-10 -left-10 w-48 h-48 bg-canli-mor/10 rounded-full blur-[60px] pointer-events-none" />
+                        <div className="relative z-10">
+                            <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35 mb-6">Topluluk Durumu</p>
+                            <div className="grid grid-cols-2 gap-6 mb-6">
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-3xl font-extrabold tracking-tight text-buz-mavisi/60">{memberCount ?? 0}</span>
+                                    <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">İzleyici</span>
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-3xl font-extrabold tracking-tight text-mor-400">{creatorCount ?? 0}</span>
+                                    <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">Üretici</span>
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-3 gap-4">
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-2xl font-extrabold tracking-tight text-amber-400">{editorCount}</span>
+                                    <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">Editör</span>
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-2xl font-extrabold tracking-tight text-emerald-400">{writerCount}</span>
+                                    <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">Yazar</span>
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-2xl font-extrabold tracking-tight text-pink-400">{artistCount}</span>
+                                    <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">Çizer</span>
+                                </div>
+                            </div>
+                        </div>
+                    </BentoCard>
+
+                    {/* ── Spotify Widget ── */}
+                    <BentoCard className="md:col-span-5 min-h-[240px] flex flex-col justify-between">
+                        <div className="flex items-center justify-between mb-4">
+                            <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35">Şu An Çalıyor</p>
+                            <span className="text-[10px] text-emerald-400 tracking-wider flex items-center gap-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />Canlı
+                            </span>
+                        </div>
+                        <div className="flex items-end gap-[3px] h-12 mb-4">
+                            {[5, 8, 13, 7, 11, 9, 14, 6, 10, 8, 12, 5, 9, 7, 11].map((h, i) => (
+                                <div key={i} className="flex-1 bg-canli-mor/70 rounded-sm"
+                                     style={{ height: `${h * 5}%`, animation: `typing-dot ${0.6 + i * 0.05}s ease-in-out infinite`, animationDelay: `${i * 40}ms` }} />
+                            ))}
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-buz-mavisi/80 tracking-wider">Spotify Widget</p>
+                            <p className="text-xs text-buz-mavisi/35 mt-1">Yakında entegre edilecek</p>
+                        </div>
+                        <div className="mt-4 glass-strong rounded-xl px-4 py-3 flex items-center gap-3">
+                            <div className="w-8 h-8 rounded-lg bg-canli-mor/20 flex items-center justify-center text-sm">♪</div>
+                            <div>
+                                <p className="text-xs font-medium text-buz-mavisi/70">Spotify'ı Bağla</p>
+                                <p className="text-[10px] text-buz-mavisi/30">Dinlediklerini paylaş</p>
+                            </div>
+                        </div>
+                    </BentoCard>
+
+                    {/* ── Canlı Akış ── */}
+                    <BentoCard className="md:col-span-4 min-h-[320px]">
+                        <div className="flex items-center justify-between mb-5">
+                            <div className="flex items-center gap-2">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35">Canlı Akış</p>
+                            </div>
+                            <Link href="/chat" className="text-[10px] tracking-widest uppercase text-canli-mor/60 hover:text-canli-mor transition-colors duration-200">
+                                Lounge →
+                            </Link>
+                        </div>
+                        <LiveFeed initial={activities ?? []} />
+                    </BentoCard>
+
+                    {/* ── Etkinlik Haritası ── */}
+                    <BentoCard className="md:col-span-5 min-h-[320px] flex flex-col">
+                        <div className="flex items-center justify-between mb-4">
+                            <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35">Etkinlik Haritası</p>
+                            <span className="text-[10px] text-canli-mor tracking-wider">İstanbul</span>
+                        </div>
+                        <div className="flex-1 relative rounded-2xl overflow-hidden min-h-[200px]">
+                            <div className="absolute inset-0"
+                                 style={{ backgroundImage: `linear-gradient(rgba(124,58,237,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(124,58,237,0.06) 1px, transparent 1px)`, backgroundSize: "32px 32px" }} />
+                            <div className="absolute inset-0" style={{ maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%)" }}>
+                                <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 300 200">
+                                    <path d="M0 100 Q75 80 150 100 Q225 120 300 100" stroke="#7C3AED" strokeWidth="1.5" fill="none" />
+                                    <path d="M150 0 Q130 60 150 100 Q170 140 150 200" stroke="#3B82F6" strokeWidth="1" fill="none" />
+                                    <path d="M0 50 Q100 60 200 40 L300 50" stroke="#7C3AED" strokeWidth="0.5" fill="none" />
+                                    <path d="M0 150 Q80 140 160 160 Q240 170 300 155" stroke="#3B82F6" strokeWidth="0.5" fill="none" />
+                                </svg>
+                            </div>
+                            {([{ x: "40%", y: "45%" }, { x: "65%", y: "35%" }, { x: "25%", y: "65%" }] as const).map((pos, i) => (
+                                <div key={i} className="absolute" style={{ left: pos.x, top: pos.y, transform: "translate(-50%, -50%)" }}>
+                                    <div className="absolute rounded-full bg-canli-mor/30"
+                                         style={{ width: 24, height: 24, margin: -8, animation: `pulse-glow ${2 + i * 0.4}s ease-in-out infinite` }} />
+                                    <div className="w-2 h-2 rounded-full bg-canli-mor relative z-10" />
+                                </div>
+                            ))}
+                        </div>
+                        <p className="text-xs text-buz-mavisi/30 mt-3">3 aktif etkinlik · Leaflet entegrasyonu yakında</p>
+                    </BentoCard>
+
+                    {/* ── Manifesto ── */}
+                    <BentoCard className="md:col-span-3 min-h-[320px] flex flex-col gap-5">
+                        <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35">Manifesto</p>
+                        <div className="flex flex-col gap-3 flex-1">
+                            {MANIFESTO_LINES.map((line, i) => (
+                                <p key={i} className="text-sm font-light leading-relaxed"
+                                   style={{ color: `rgba(224,242,254,${0.65 - i * 0.08})` }}>
+                                    {line}
+                                </p>
+                            ))}
+                        </div>
+                    </BentoCard>
+
+                    {/* ── Alt bölüm ── */}
+                    <div className="md:col-span-12 rounded-3xl p-10 flex flex-col items-center justify-center gap-3"
+                         style={{
+                             background: "rgba(255,255,255,0.02)",
+                             border: "1px solid rgba(255,255,255,0.05)",
+                             minHeight: "160px",
+                         }}>
+                        <span className="text-3xl opacity-10">✦</span>
+                        <p className="text-sm text-buz-mavisi/20">Daha fazlası yakında.</p>
+                    </div>
                 </div>
             </div>
         </div>

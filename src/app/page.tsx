@@ -2,28 +2,15 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
-import LiveFeed from "@/components/LiveFeed";
+import SetWelcomeCookie from "@/components/SetWelcomeCookie";
 
 export const metadata: Metadata = {
     title: "bumedya. | Yaratıcı Dijital Evren",
     description: "Fikirlerin forma dönüştüğü, sınırların bulanıklaştığı yeni nesil dijital fanzin ve topluluk portalı.",
-    openGraph: {
-        title: "bumedya. | Yaratıcı Dijital Evren",
-        description: "Fikirlerin forma dönüştüğü dijital fanzin ekosistemi.",
-        type: "website",
-    },
 };
 
 function GlowOrb({ className, style }: { className?: string; style?: React.CSSProperties }) {
     return <div aria-hidden className={`absolute rounded-full pointer-events-none ${className}`} style={style} />;
-}
-
-function BentoCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
-    return (
-        <div className={`glass rounded-3xl p-6 relative overflow-hidden group transition-all duration-500 hover:border-white/15 ${className}`} style={style}>
-            {children}
-        </div>
-    );
 }
 
 function NavLink({ href, children }: { href: string; children: React.ReactNode }) {
@@ -34,50 +21,39 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
     );
 }
 
-export default async function HomePage() {
+const RULES = [
+    { icon: "✦", title: "Saygı zorunludur", desc: "Her fikre, her insana saygıyla yaklaş. Farklılıklar zenginliktir." },
+    { icon: "✦", title: "İçerik özgün olmalı", desc: "Başkasının emeğini sahiplenmek yasaktır. Kaynak göster, ilham al." },
+    { icon: "✦", title: "Üret ve paylaş", desc: "Bu platform tüketmek için değil, üretmek için var. Her katkı değerlidir." },
+    { icon: "✦", title: "Yapıcı ol", desc: "Eleştiri yıkmak için değil, büyütmek için yapılır. Katkısı olmayan yorum olmaz." },
+    { icon: "✦", title: "Topluluk kuralları geçerlidir", desc: "Nefret söylemi, taciz ve spam'e sıfır tolerans." },
+];
+
+const PILLARS = [
+    { label: "Çiz", desc: "Kağıt sınır koymaz, ekran da koymaz." },
+    { label: "Yaz", desc: "Kelimeler en keskin araçtır." },
+    { label: "Bağlan", desc: "Yaratıcılar birbirini bulur burada." },
+    { label: "Büyü", desc: "Her paylaşım seni biraz daha ileriye taşır." },
+];
+
+export default async function LandingPage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
-    // Giriş yapmışsa profiles'tan username çek
+    const { count: totalCount } = await supabase
+        .from("profiles")
+        .select("*", { count: "exact", head: true });
+
     let username: string | null = null;
     if (user) {
         const { data: profile } = await supabase
-            .from("profiles")
-            .select("username")
-            .eq("id", user.id)
-            .single();
+            .from("profiles").select("username").eq("id", user.id).single();
         username = profile?.username ?? user.email?.split("@")[0] ?? null;
     }
 
-    const [
-        { count: memberCount },
-        { count: creatorCount },
-        { data: activities },
-        { data: badgeProfiles },
-    ] = await Promise.all([
-        supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "member"),
-        supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "creator"),
-        supabase.from("activities").select("id, username, type, payload, created_at").order("created_at", { ascending: false }).limit(8),
-        supabase.from("profiles").select("badges"),
-    ]);
-
-    const totalCount = (memberCount ?? 0) + (creatorCount ?? 0);
-
-    const editorCount = badgeProfiles?.filter((p) => (p.badges as string[])?.includes("editor")).length ?? 0;
-    const writerCount = badgeProfiles?.filter((p) => (p.badges as string[])?.includes("writer")).length ?? 0;
-    const artistCount = badgeProfiles?.filter((p) => (p.badges as string[])?.includes("artist")).length ?? 0;
-
-    const roles = [
-        { label: "İzleyici", count: String(memberCount ?? 0),  color: "text-sky-400"      },
-        { label: "Üretici",  count: String(creatorCount ?? 0), color: "text-violet-400"   },
-        { label: "Editör",   count: String(editorCount),       color: "text-amber-400"    },
-        { label: "Yazar",    count: String(writerCount),        color: "text-emerald-400"  },
-        { label: "Çizer",    count: String(artistCount),        color: "text-pink-400"     },
-    ];
-
-
     return (
-        <main className="relative min-h-screen w-full bg-ana-lacivert overflow-hidden">
+        <main className="relative w-full bg-ana-lacivert overflow-hidden">
+            <SetWelcomeCookie />
 
             {/* ARKA PLAN */}
             <div className="dot-grid absolute inset-0 -z-30 opacity-100" aria-hidden />
@@ -106,7 +82,7 @@ export default async function HomePage() {
                 </div>
                 <div className="flex items-center gap-3">
                     {user ? (
-                        <Link href="/profil"
+                        <Link href="/home"
                               className="glass px-5 py-2 rounded-xl text-sm font-medium text-buz-mavisi hover:bg-white/10 hover:border-canli-mor/40 transition-all duration-300 flex items-center gap-2">
                             <span className="w-1.5 h-1.5 rounded-full bg-canli-mor/70" />
                             @{username}
@@ -125,7 +101,7 @@ export default async function HomePage() {
                 <div className="glass px-4 py-2 rounded-full mb-8 flex items-center gap-2 animate-float-up" style={{ animationFillMode: "backwards" }}>
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     <span className="text-xs text-buz-mavisi/60 tracking-widest uppercase font-light">
-                        Topluluk aktif · {totalCount} üye
+                        Topluluk aktif · {totalCount ?? 0} üye
                     </span>
                 </div>
 
@@ -143,12 +119,12 @@ export default async function HomePage() {
 
                 <div className="flex flex-col sm:flex-row gap-4 mt-12 animate-float-up delay-300" style={{ animationFillMode: "backwards" }}>
                     {user ? (
-                        <Link href="/profil"
+                        <Link href="/home"
                               className="group relative px-10 py-4 bg-canli-mor text-white font-bold rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden"
                               style={{ boxShadow: "0 8px 32px rgba(124,58,237,0.45), 0 0 0 1px rgba(124,58,237,0.3)" }}>
                             <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                             <span className="relative z-10 flex items-center gap-2">
-                                Profilime Git
+                                Ana Sayfaya Git
                                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="group-hover:translate-x-1 transition-transform duration-300">
                                     <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                 </svg>
@@ -167,125 +143,73 @@ export default async function HomePage() {
                             </span>
                         </Link>
                     )}
-                    <button className="glass px-10 py-4 text-buz-mavisi font-medium rounded-2xl hover:bg-white/8 hover:border-white/20 transition-all duration-300">Keşfet</button>
+                    <a href="#kesfet" className="glass px-10 py-4 text-buz-mavisi font-medium rounded-2xl hover:bg-white/8 hover:border-white/20 transition-all duration-300">
+                        Keşfet
+                    </a>
                 </div>
 
                 <div className="absolute bottom-10 flex flex-col items-center gap-2 opacity-30 animate-float-up delay-500" style={{ animationFillMode: "backwards" }}>
-                    <span className="text-[10px] tracking-widest uppercase text-buz-mavisi/50">Keşfet</span>
+                    <span className="text-[10px] tracking-widest uppercase text-buz-mavisi/50">Aşağı kaydır</span>
                     <div className="w-[1px] h-8 bg-gradient-to-b from-buz-mavisi/40 to-transparent" />
                 </div>
             </section>
 
-            {/* BENTO GRID */}
-            <section className="relative z-10 px-6 pb-24 max-w-6xl mx-auto">
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 auto-rows-auto">
+            {/* TOPLULUK AMACI */}
+            <section id="kesfet" className="relative z-10 px-6 py-24 max-w-5xl mx-auto">
+                <div className="text-center mb-16">
+                    <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/30 mb-4">Neden bumedya.</p>
+                    <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-gradient-white mb-6">
+                        Yaratıcıların dijital evi.
+                    </h2>
+                    <p className="text-buz-mavisi/45 text-lg font-light leading-relaxed max-w-2xl mx-auto">
+                        Çizen, yazan, üreten herkese açık. Burada fikirler form bulur,
+                        sanatçılar birbirini keşfeder ve dijital kültür şekillenir.
+                    </p>
+                </div>
 
-                    <BentoCard className="md:col-span-7 min-h-[240px]">
-                        <div aria-hidden className="absolute -top-10 -left-10 w-48 h-48 bg-canli-mor/10 rounded-full blur-[60px] pointer-events-none" />
-                        <div className="relative z-10">
-                            <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35 mb-6">Topluluk Durumu</p>
-                            <div className="grid grid-cols-2 gap-6">
-                                {roles.slice(0, 2).map((r) => (
-                                    <div key={r.label} className="flex flex-col gap-1">
-                                        <span className={`text-3xl font-extrabold tracking-tight ${r.color}`}>{r.count}</span>
-                                        <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">{r.label}</span>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="flex gap-6 mt-6 pt-5 border-t border-white/5">
-                                {roles.slice(2).map((r) => (
-                                    <div key={r.label} className="flex flex-col gap-1 flex-1">
-                                        <span className={`text-xl font-bold tracking-tight ${r.color}`}>{r.count}</span>
-                                        <span className="text-[10px] text-buz-mavisi/35 tracking-wider uppercase">{r.label}</span>
-                                    </div>
-                                ))}
-                            </div>
-                            <p className="text-xs text-buz-mavisi/20 mt-4">Toplam {totalCount} üye</p>
-                        </div>
-                    </BentoCard>
-
-                    <BentoCard className="md:col-span-5 min-h-[240px] flex flex-col justify-between">
-                        <div className="flex items-center justify-between mb-4">
-                            <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35">Şu An Çalıyor</p>
-                            <span className="text-[10px] text-emerald-400 tracking-wider flex items-center gap-1">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />Canlı
-                            </span>
-                        </div>
-                        <div className="flex items-end gap-[3px] h-12 mb-4">
-                            {[5, 8, 13, 7, 11, 9, 14, 6, 10, 8, 12, 5, 9, 7, 11].map((h, i) => (
-                                <div key={i} className="flex-1 bg-canli-mor/70 rounded-sm"
-                                     style={{ height: `${h * 5}%`, animation: `typing-dot ${0.6 + i * 0.05}s ease-in-out infinite`, animationDelay: `${i * 40}ms` }} />
-                            ))}
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium text-buz-mavisi/80 tracking-wider">Spotify Widget</p>
-                            <p className="text-xs text-buz-mavisi/35 mt-1">Yakında entegre edilecek</p>
-                        </div>
-                        <div className="mt-4 glass-strong rounded-xl px-4 py-3 flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-canli-mor/20 flex items-center justify-center text-sm">♪</div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-16">
+                    {PILLARS.map((p) => (
+                        <div key={p.label} className="glass rounded-2xl p-6 flex items-start gap-4 group hover:border-canli-mor/20 transition-all duration-300">
+                            <span className="text-canli-mor text-xl font-extrabold tracking-tighter shrink-0">{p.label}</span>
                             <div>
-                                <p className="text-xs font-medium text-buz-mavisi/70">Spotify'ı Bağla</p>
-                                <p className="text-[10px] text-buz-mavisi/30">Dinlediklerini paylaş</p>
+                                <p className="text-sm text-buz-mavisi/60 leading-relaxed">{p.desc}</p>
                             </div>
                         </div>
-                    </BentoCard>
+                    ))}
+                </div>
+            </section>
 
-                    <BentoCard className="md:col-span-4 min-h-[320px]">
-                        <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35 mb-5">
-                            Canlı Akış
-                            <span className="ml-2 inline-flex items-center gap-1">
-                                <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
-                            </span>
+            {/* KURALLAR */}
+            <section className="relative z-10 px-6 pb-24 max-w-5xl mx-auto">
+                <div className="text-center mb-12">
+                    <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/30 mb-4">Topluluk Sözleşmesi</p>
+                    <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-gradient-white">
+                        Birlikte güzel kalır.
+                    </h2>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {RULES.map((rule, i) => (
+                        <div key={i} className="glass rounded-2xl p-6 hover:border-canli-mor/20 transition-all duration-300">
+                            <span className="text-canli-mor/60 text-xs mb-3 block">{rule.icon}</span>
+                            <h3 className="text-sm font-semibold text-buz-mavisi/80 mb-2">{rule.title}</h3>
+                            <p className="text-xs text-buz-mavisi/40 leading-relaxed">{rule.desc}</p>
+                        </div>
+                    ))}
+
+                    {/* CTA kartı */}
+                    <div className="glass rounded-2xl p-6 flex flex-col justify-between"
+                         style={{ background: "rgba(124,58,237,0.08)", borderColor: "rgba(124,58,237,0.2)" }}>
+                        <p className="text-sm font-semibold text-buz-mavisi/80 mb-2">Hazır mısın?</p>
+                        <p className="text-xs text-buz-mavisi/40 leading-relaxed mb-6">
+                            Topluluğa katıl, üretmeye başla.
                         </p>
-                        <LiveFeed initial={activities ?? []} />
-                    </BentoCard>
-
-                    <BentoCard className="md:col-span-5 min-h-[320px] flex flex-col">
-                        <div className="flex items-center justify-between mb-4">
-                            <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35">Etkinlik Haritası</p>
-                            <span className="text-[10px] text-canli-mor tracking-wider">İstanbul</span>
-                        </div>
-                        <div className="flex-1 relative rounded-2xl overflow-hidden min-h-[200px]">
-                            <div className="absolute inset-0" style={{ backgroundImage: `linear-gradient(rgba(124,58,237,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(124,58,237,0.06) 1px, transparent 1px)`, backgroundSize: "32px 32px" }} />
-                            <div className="absolute inset-0" style={{ maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%)" }}>
-                                <svg className="absolute inset-0 w-full h-full opacity-20" viewBox="0 0 300 200">
-                                    <path d="M0 100 Q75 80 150 100 Q225 120 300 100" stroke="#7C3AED" strokeWidth="1.5" fill="none" />
-                                    <path d="M150 0 Q130 60 150 100 Q170 140 150 200" stroke="#3B82F6" strokeWidth="1" fill="none" />
-                                    <path d="M0 50 Q100 60 200 40 L300 50" stroke="#7C3AED" strokeWidth="0.5" fill="none" />
-                                    <path d="M0 150 Q80 140 160 160 Q240 170 300 155" stroke="#3B82F6" strokeWidth="0.5" fill="none" />
-                                </svg>
-                            </div>
-                            {[{ x: "40%", y: "45%" }, { x: "65%", y: "35%" }, { x: "25%", y: "65%" }].map((pos, i) => (
-                                <div key={i} className="absolute" style={{ left: pos.x, top: pos.y, transform: "translate(-50%, -50%)" }}>
-                                    <div className="absolute inset-0 rounded-full bg-canli-mor/30" style={{ width: "24px", height: "24px", margin: "-8px", animation: `pulse-glow ${2 + i * 0.4}s ease-in-out infinite` }} />
-                                    <div className="w-2 h-2 rounded-full bg-canli-mor relative z-10" />
-                                </div>
-                            ))}
-                        </div>
-                        <p className="text-xs text-buz-mavisi/30 mt-3">Leaflet entegrasyonu yakında</p>
-                    </BentoCard>
-
-                    <BentoCard className="md:col-span-3 min-h-[320px] flex flex-col justify-between">
-                        <div>
-                            <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35 mb-6">Manifesto</p>
-                            <p className="text-sm text-buz-mavisi/55 leading-relaxed font-light">
-                                Üret. Paylaş. Dönüştür. Sanatın sınırı dijital de olsa gerçektir.
-                            </p>
-                            <div className="mt-6 space-y-2">
-                                {["Çiz", "Yaz", "Bağlan", "Büyü"].map((word) => (
-                                    <div key={word} className="flex items-center gap-2">
-                                        <span className="w-1 h-1 rounded-full bg-canli-mor/60" />
-                                        <span className="text-xs text-buz-mavisi/40 tracking-wider">{word}</span>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                        <Link href="/hakkimizda" className="text-xs text-canli-mor/70 hover:text-canli-mor tracking-wider transition-colors duration-300 flex items-center gap-1 group mt-4">
-                            Daha Fazla
-                            <span className="group-hover:translate-x-1 transition-transform duration-300">→</span>
+                        <Link href="/register"
+                              className="text-xs font-bold text-white px-4 py-2.5 rounded-xl text-center transition-all duration-300 hover:opacity-90"
+                              style={{ background: "rgba(124,58,237,0.8)" }}>
+                            Katıl →
                         </Link>
-                    </BentoCard>
-
+                    </div>
                 </div>
             </section>
 
