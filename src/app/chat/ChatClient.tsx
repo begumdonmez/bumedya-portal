@@ -17,6 +17,8 @@ const ROOMS = [
     { id: "genel",            label: "Genel",           icon: "💬", desc: "Genel sohbet" },
     { id: "cizim-atolyesi",   label: "Çizim Atölyesi",  icon: "🎨", desc: "Çizerler burada" },
     { id: "yazarlar-kahvesi", label: "Yazarlar Kahvesi", icon: "📝", desc: "Yazarlar burada" },
+    { id: "kulturel-paylasim", label: "Kültürel Paylaşım", icon: "📝", desc: "Film, dizi, kitap önerileri" },
+    { id: "etkinlik-gruplasma", label: "Etkinlik Grupları", icon: "📝", desc: "Etkinlik Gruplasma" }
 ];
 
 function timeLabel(dateStr: string) {
