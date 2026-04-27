@@ -98,6 +98,7 @@ export default async function HomePage() {
                     <span className="text-xl font-extrabold text-canli-mor group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.8)] transition-all duration-300">.</span>
                 </Link>
                 <div className="hidden md:flex items-center gap-8">
+                    <NavLink href="/home">Ana Sayfa</NavLink>
                     <NavLink href="/galeri">Galeri</NavLink>
                     <NavLink href="/etkinlikler">Etkinlikler</NavLink>
                     <NavLink href="/members">Üyeler</NavLink>
