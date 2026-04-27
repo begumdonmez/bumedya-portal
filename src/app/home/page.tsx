@@ -130,17 +130,20 @@ export default async function HomePage() {
                                 </div>
                             </div>
                             <div className="grid grid-cols-3 gap-2 sm:gap-4">
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-amber-400">{editorCount}</span>
-                                    <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">Editör</span>
+                                <div className="rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 flex flex-col gap-1"
+                                     style={{ background: "rgba(251,191,36,0.05)", border: "1px solid rgba(251,191,36,0.12)" }}>
+                                    <span className="text-[10px] tracking-widest uppercase" style={{ color: "rgba(251,191,36,0.45)" }}>Editör</span>
+                                    <span className="text-xl sm:text-2xl font-extrabold tracking-tight" style={{ color: "rgba(251,191,36,0.85)" }}>{editorCount}</span>
                                 </div>
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-emerald-400">{writerCount}</span>
-                                    <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">Yazar</span>
+                                <div className="rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 flex flex-col gap-1"
+                                     style={{ background: "rgba(52,211,153,0.05)", border: "1px solid rgba(52,211,153,0.12)" }}>
+                                    <span className="text-[10px] tracking-widest uppercase" style={{ color: "rgba(52,211,153,0.45)" }}>Yazar</span>
+                                    <span className="text-xl sm:text-2xl font-extrabold tracking-tight" style={{ color: "rgba(52,211,153,0.85)" }}>{writerCount}</span>
                                 </div>
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-pink-400">{artistCount}</span>
-                                    <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">Çizer</span>
+                                <div className="rounded-2xl px-3 sm:px-4 py-2.5 sm:py-3 flex flex-col gap-1"
+                                     style={{ background: "rgba(244,114,182,0.05)", border: "1px solid rgba(244,114,182,0.12)" }}>
+                                    <span className="text-[10px] tracking-widest uppercase" style={{ color: "rgba(244,114,182,0.45)" }}>Çizer</span>
+                                    <span className="text-xl sm:text-2xl font-extrabold tracking-tight" style={{ color: "rgba(244,114,182,0.85)" }}>{artistCount}</span>
                                 </div>
                             </div>
                         </div>
