@@ -32,7 +32,7 @@ export default async function MembersPage() {
             <div aria-hidden className="absolute inset-0 pointer-events-none opacity-[0.02]"
                  style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
 
-            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5">
+            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-5">
                 <NavbarBackdrop />
                 <Link href="/" className="flex items-baseline gap-0.5">
                     <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>

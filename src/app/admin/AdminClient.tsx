@@ -211,7 +211,7 @@ export default function AdminClient({ profiles: initialProfiles }: { profiles: P
                     </span>
                 </div>
 
-                <div className="flex items-center gap-3 text-xs" style={{ color: "rgba(224,242,254,0.3)" }}>
+                <div className="hidden sm:flex items-center gap-3 text-xs flex-wrap" style={{ color: "rgba(224,242,254,0.3)" }}>
                     <span>{profiles.length} üye</span>
                     <span style={{ color: "rgba(255,255,255,0.1)" }}>·</span>
                     <span>{viewerCount} izleyici</span>
@@ -224,6 +224,7 @@ export default function AdminClient({ profiles: initialProfiles }: { profiles: P
                     <span style={{ color: "rgba(255,255,255,0.1)" }}>·</span>
                     <span style={{ color: "rgba(244,114,182,0.6)" }}>{artistCount} sanatçı</span>
                 </div>
+                <span className="sm:hidden text-xs" style={{ color: "rgba(224,242,254,0.3)" }}>{profiles.length} üye</span>
             </nav>
 
             {/* İçerik */}

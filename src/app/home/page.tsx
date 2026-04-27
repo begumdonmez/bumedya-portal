@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Ana Sayfa | bumedya." };
 
 function BentoCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
     return (
-        <div className={`glass rounded-3xl p-6 relative overflow-hidden group transition-all duration-500 hover:border-white/15 ${className}`} style={style}>
+        <div className={`glass rounded-3xl p-4 sm:p-6 relative overflow-hidden group transition-all duration-500 hover:border-white/15 ${className}`} style={style}>
             {children}
         </div>
     );
@@ -36,7 +36,6 @@ export default async function HomePage() {
 
     const username = profile?.username ?? user.email?.split("@")[0] ?? "";
 
-    /* ── İstatistikler ── */
     const [
         { count: totalCount },
         { count: creatorCount },
@@ -68,13 +67,13 @@ export default async function HomePage() {
                  style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")`, backgroundRepeat: "repeat", backgroundSize: "200px 200px" }} />
 
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5">
+            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-5">
                 <NavbarBackdrop />
-                <Link href="/" className="flex items-baseline gap-0.5">
+                <Link href="/" className="flex items-baseline gap-0.5 shrink-0">
                     <span className="text-sm font-bold text-buz-mavisi/50">bumedya</span>
                     <span className="text-sm font-bold text-canli-mor/70">.</span>
                 </Link>
-                <div className="hidden md:flex items-center gap-8">
+                <div className="hidden md:flex items-center gap-6 lg:gap-8">
                     {[
                         { href: "/home",        label: "Ana Sayfa",   active: true  },
                         { href: "/galeri",      label: "Galeri",      active: false },
@@ -89,63 +88,58 @@ export default async function HomePage() {
                         </Link>
                     ))}
                 </div>
-                <Link href="/profil"
-                      className="text-xs px-4 py-2 rounded-xl transition-all duration-300"
+                <Link href="/profil" className="shrink-0 text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-300 max-w-[120px] sm:max-w-none truncate"
                       style={{ color: "rgba(167,139,250,0.8)", border: "1px solid rgba(124,58,237,0.25)", background: "rgba(124,58,237,0.08)" }}>
                     @{username}
                 </Link>
             </nav>
 
             {/* İçerik */}
-            <div className="relative z-10 max-w-6xl mx-auto w-full px-6 pt-28 pb-16 flex flex-col gap-8">
+            <div className="relative z-10 max-w-6xl mx-auto w-full px-4 sm:px-6 pt-20 sm:pt-28 pb-12 sm:pb-16 flex flex-col gap-6 sm:gap-8">
 
                 {/* Karşılama */}
-                <div className="flex flex-col items-center text-center pt-10 pb-4 gap-5">
-                    {/* Pill badge — landing ile aynı stil */}
+                <div className="flex flex-col items-center text-center pt-6 sm:pt-10 pb-2 sm:pb-4 gap-4 sm:gap-5">
                     <div className="glass px-4 py-2 rounded-full flex items-center gap-2">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                        <span className="text-xs text-buz-mavisi/60 tracking-widest uppercase font-light">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                        <span className="text-xs text-buz-mavisi/60 tracking-widest uppercase font-light whitespace-nowrap">
                             Topluluk aktif · {totalCount ?? 0} üye
                         </span>
                     </div>
-
-                    <div>
-                        <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight text-buz-mavisi/90">
-                            @{username},{" "}
-                            <span className="font-light text-buz-mavisi/50">{greeting}</span>
-                        </h1>
-                    </div>
+                    <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-buz-mavisi/90 break-words max-w-lg">
+                        @{username},{" "}
+                        <span className="font-light text-buz-mavisi/50">{greeting}</span>
+                    </h1>
                 </div>
 
-                {/* Bento Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-12 gap-4 auto-rows-auto">
+                {/* Bento Grid — 1 col mobile, 2 col tablet, 12 col desktop */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4">
 
                     {/* ── Topluluk Durumu ── */}
-                    <BentoCard className="md:col-span-7 min-h-[240px]">
+                    <BentoCard className="sm:col-span-1 lg:col-span-7">
                         <div aria-hidden className="absolute -top-10 -left-10 w-48 h-48 bg-canli-mor/10 rounded-full blur-[60px] pointer-events-none" />
                         <div className="relative z-10">
-                            <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35 mb-6">Topluluk Durumu</p>
-                            <div className="grid grid-cols-2 gap-6 mb-6">
+                            <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35 mb-4 sm:mb-6">Topluluk Durumu</p>
+                            <div className="grid grid-cols-2 gap-3 sm:gap-6 mb-4 sm:mb-6">
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-3xl font-extrabold tracking-tight text-buz-mavisi/60">{memberCount ?? 0}</span>
+                                    <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-buz-mavisi/60">{memberCount ?? 0}</span>
                                     <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">İzleyici</span>
                                 </div>
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-3xl font-extrabold tracking-tight text-mor-400">{creatorCount ?? 0}</span>
+                                    <span className="text-2xl sm:text-3xl font-extrabold tracking-tight text-mor-400">{creatorCount ?? 0}</span>
                                     <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">Üretici</span>
                                 </div>
                             </div>
-                            <div className="grid grid-cols-3 gap-4">
+                            <div className="grid grid-cols-3 gap-2 sm:gap-4">
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-2xl font-extrabold tracking-tight text-amber-400">{editorCount}</span>
+                                    <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-amber-400">{editorCount}</span>
                                     <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">Editör</span>
                                 </div>
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-2xl font-extrabold tracking-tight text-emerald-400">{writerCount}</span>
+                                    <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-emerald-400">{writerCount}</span>
                                     <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">Yazar</span>
                                 </div>
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-2xl font-extrabold tracking-tight text-pink-400">{artistCount}</span>
+                                    <span className="text-xl sm:text-2xl font-extrabold tracking-tight text-pink-400">{artistCount}</span>
                                     <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">Çizer</span>
                                 </div>
                             </div>
@@ -153,14 +147,14 @@ export default async function HomePage() {
                     </BentoCard>
 
                     {/* ── Spotify Widget ── */}
-                    <BentoCard className="md:col-span-5 min-h-[240px] flex flex-col justify-between">
+                    <BentoCard className="sm:col-span-1 lg:col-span-5 flex flex-col justify-between min-h-[200px] sm:min-h-[240px]">
                         <div className="flex items-center justify-between mb-4">
                             <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35">Şu An Çalıyor</p>
                             <span className="text-[10px] text-emerald-400 tracking-wider flex items-center gap-1">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />Canlı
                             </span>
                         </div>
-                        <div className="flex items-end gap-[3px] h-12 mb-4">
+                        <div className="flex items-end gap-[3px] h-10 sm:h-12 mb-4">
                             {[5, 8, 13, 7, 11, 9, 14, 6, 10, 8, 12, 5, 9, 7, 11].map((h, i) => (
                                 <div key={i} className="flex-1 bg-canli-mor/70 rounded-sm"
                                      style={{ height: `${h * 5}%`, animation: `typing-dot ${0.6 + i * 0.05}s ease-in-out infinite`, animationDelay: `${i * 40}ms` }} />
@@ -171,22 +165,22 @@ export default async function HomePage() {
                             <p className="text-xs text-buz-mavisi/35 mt-1">Yakında entegre edilecek</p>
                         </div>
                         <div className="mt-4 glass-strong rounded-xl px-4 py-3 flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg bg-canli-mor/20 flex items-center justify-center text-sm">♪</div>
-                            <div>
-                                <p className="text-xs font-medium text-buz-mavisi/70">Spotify'ı Bağla</p>
+                            <div className="w-8 h-8 rounded-lg bg-canli-mor/20 flex items-center justify-center text-sm shrink-0">♪</div>
+                            <div className="min-w-0">
+                                <p className="text-xs font-medium text-buz-mavisi/70 truncate">Spotify'ı Bağla</p>
                                 <p className="text-[10px] text-buz-mavisi/30">Dinlediklerini paylaş</p>
                             </div>
                         </div>
                     </BentoCard>
 
                     {/* ── Canlı Akış ── */}
-                    <BentoCard className="md:col-span-4 min-h-[320px]">
-                        <div className="flex items-center justify-between mb-5">
+                    <BentoCard className="sm:col-span-1 lg:col-span-4 min-h-[280px] sm:min-h-[320px]">
+                        <div className="flex items-center justify-between mb-4 sm:mb-5">
                             <div className="flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                                 <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35">Canlı Akış</p>
                             </div>
-                            <Link href="/chat" className="text-[10px] tracking-widest uppercase text-canli-mor/60 hover:text-canli-mor transition-colors duration-200">
+                            <Link href="/chat" className="text-[10px] tracking-widest uppercase text-canli-mor/60 hover:text-canli-mor transition-colors duration-200 whitespace-nowrap">
                                 Lounge →
                             </Link>
                         </div>
@@ -194,12 +188,12 @@ export default async function HomePage() {
                     </BentoCard>
 
                     {/* ── Etkinlik Haritası ── */}
-                    <BentoCard className="md:col-span-5 min-h-[320px] flex flex-col">
+                    <BentoCard className="sm:col-span-1 lg:col-span-5 min-h-[280px] sm:min-h-[320px] flex flex-col">
                         <div className="flex items-center justify-between mb-4">
                             <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35">Etkinlik Haritası</p>
                             <span className="text-[10px] text-canli-mor tracking-wider">İstanbul</span>
                         </div>
-                        <div className="flex-1 relative rounded-2xl overflow-hidden min-h-[200px]">
+                        <div className="flex-1 relative rounded-2xl overflow-hidden min-h-[160px] sm:min-h-[200px]">
                             <div className="absolute inset-0"
                                  style={{ backgroundImage: `linear-gradient(rgba(124,58,237,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(124,58,237,0.06) 1px, transparent 1px)`, backgroundSize: "32px 32px" }} />
                             <div className="absolute inset-0" style={{ maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%)" }}>
@@ -222,11 +216,11 @@ export default async function HomePage() {
                     </BentoCard>
 
                     {/* ── Manifesto ── */}
-                    <BentoCard className="md:col-span-3 min-h-[320px] flex flex-col gap-5">
+                    <BentoCard className="sm:col-span-2 lg:col-span-3 flex flex-col gap-4 sm:gap-5">
                         <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35">Manifesto</p>
-                        <div className="flex flex-col gap-3 flex-1">
+                        <div className="flex flex-col gap-2.5 sm:gap-3 flex-1">
                             {MANIFESTO_LINES.map((line, i) => (
-                                <p key={i} className="text-sm font-light leading-relaxed"
+                                <p key={i} className="text-xs sm:text-sm font-light leading-relaxed"
                                    style={{ color: `rgba(224,242,254,${0.65 - i * 0.08})` }}>
                                     {line}
                                 </p>
@@ -235,11 +229,11 @@ export default async function HomePage() {
                     </BentoCard>
 
                     {/* ── Alt bölüm ── */}
-                    <div className="md:col-span-12 rounded-3xl p-10 flex flex-col items-center justify-center gap-3"
+                    <div className="sm:col-span-2 lg:col-span-12 rounded-3xl p-8 sm:p-10 flex flex-col items-center justify-center gap-3"
                          style={{
                              background: "rgba(255,255,255,0.02)",
                              border: "1px solid rgba(255,255,255,0.05)",
-                             minHeight: "160px",
+                             minHeight: "140px",
                          }}>
                         <span className="text-3xl opacity-10">✦</span>
                         <p className="text-sm text-buz-mavisi/20">Daha fazlası yakında.</p>

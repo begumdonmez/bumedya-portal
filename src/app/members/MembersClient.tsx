@@ -48,7 +48,7 @@ export default function UyelerClient({ profiles }: { profiles: Profile[] }) {
             </div>
 
             {/* Arama + Filtre */}
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1 relative">
                     <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
                          style={{ color: "rgba(224,242,254,0.25)" }} viewBox="0 0 16 16" fill="none">
@@ -67,7 +67,7 @@ export default function UyelerClient({ profiles }: { profiles: Profile[] }) {
                         }}
                     />
                 </div>
-                <div className="flex gap-1.5">
+                <div className="flex gap-1.5 flex-wrap">
                     {([
                         { id: "all",     label: "Tümü"     },
                         { id: "member",  label: "İzleyici" },

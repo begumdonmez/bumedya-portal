@@ -83,26 +83,26 @@ export default async function PublicProfilePage(
                  style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
 
             {/* Navbar */}
-            <nav className="relative z-10 flex items-center justify-between px-6 py-5 border-b"
+            <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b gap-3"
                  style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-                <Link href="/" className="flex items-baseline gap-0.5">
+                <Link href="/" className="flex items-baseline gap-0.5 shrink-0">
                     <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
                     <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
                 </Link>
 
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap justify-end">
                     {isAdmin && (
                         <Link href="/admin"
-                              className="text-xs px-3 py-2 rounded-xl transition-all duration-300"
+                              className="text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition-all duration-300 whitespace-nowrap"
                               style={{ color: "rgba(239,68,68,0.75)", border: "1px solid rgba(239,68,68,0.15)", background: "rgba(239,68,68,0.06)" }}>
                             ⚡ Admin
                         </Link>
                     )}
                     {isOwnProfile && (
                         <Link href="/profil"
-                              className="text-xs px-4 py-2 rounded-xl transition-all duration-300"
+                              className="text-xs px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all duration-300 whitespace-nowrap"
                               style={{ color: "rgba(167,139,250,0.8)", border: "1px solid rgba(124,58,237,0.25)", background: "rgba(124,58,237,0.08)" }}>
-                            Profilimi Düzenle
+                            <span className="hidden sm:inline">Profilimi </span>Düzenle
                         </Link>
                     )}
                 </div>
