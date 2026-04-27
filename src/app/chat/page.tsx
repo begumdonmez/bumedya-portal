@@ -25,10 +25,12 @@ export default async function ChatPage() {
         .limit(200);
 
     return (
-        <ChatClient
-            userId={user.id}
-            username={username}
-            initialMessages={messages ?? []}
-        />
+        <div className="flex flex-col flex-1 min-h-0" style={{ height: "100dvh" }}>
+            <ChatClient
+                userId={user.id}
+                username={username}
+                initialMessages={messages ?? []}
+            />
+        </div>
     );
 }
