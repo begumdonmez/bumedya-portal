@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import LiveFeed from "@/components/LiveFeed";
 
 export const metadata: Metadata = {
     title: "bumedya. | Yaratıcı Dijital Evren",
@@ -32,24 +33,38 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
     );
 }
 
-const feedItems = [
-    { user: "kara_çizgi", action: "yeni bir çizim paylaştı", time: "2 dk", dot: "bg-canli-mor" },
-    { user: "yazar_01", action: "Lounge'a katıldı", time: "8 dk", dot: "bg-blue-500" },
-    { user: "studio_x", action: "etkinlik oluşturdu", time: "15 dk", dot: "bg-emerald-500" },
-    { user: "ink.ghost", action: "bir yazı onaylandı", time: "23 dk", dot: "bg-canli-mor" },
-    { user: "drift__", action: "yeni içerik gönderdi", time: "1 sa", dot: "bg-pink-500" },
-];
-
-const roles = [
-    { label: "Member", count: "1.2k", color: "text-buz-mavisi/60" },
-    { label: "Creator", count: "340", color: "text-mor-400" },
-    { label: "Editor", count: "28", color: "text-amber-400" },
-    { label: "Admin", count: "5", color: "text-rose-400" },
-];
-
 export default async function HomePage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
+
+    // Giriş yapmışsa profiles'tan username çek
+    let username: string | null = null;
+    if (user) {
+        const { data: profile } = await supabase
+            .from("profiles")
+            .select("username")
+            .eq("id", user.id)
+            .single();
+        username = profile?.username ?? user.email?.split("@")[0] ?? null;
+    }
+
+    const [
+        { count: memberCount },
+        { count: creatorCount },
+        { data: activities },
+    ] = await Promise.all([
+        supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "member"),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "creator"),
+        supabase.from("activities").select("id, username, type, payload, created_at").order("created_at", { ascending: false }).limit(8),
+    ]);
+
+    const totalCount = (memberCount ?? 0) + (creatorCount ?? 0);
+    const creatorRatio = totalCount > 0 ? Math.round(((creatorCount ?? 0) / totalCount) * 100) : 0;
+
+    const roles = [
+        { label: "Member",  count: String(memberCount ?? 0),  color: "text-buz-mavisi/60" },
+        { label: "Creator", count: String(creatorCount ?? 0), color: "text-mor-400" },
+    ];
 
     return (
         <main className="relative min-h-screen w-full bg-ana-lacivert overflow-hidden">
@@ -68,38 +83,25 @@ export default async function HomePage() {
             {/* NAVBAR */}
             <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5">
                 <Link href="/" className="group flex items-center gap-1 select-none">
-                    <span className="text-xl font-extrabold tracking-tighter text-gradient-white" style={{ fontVariantLigatures: "none" }}>
-                        bumedya
-                    </span>
-                    <span className="text-xl font-extrabold text-canli-mor group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.8)] transition-all duration-300">
-                        .
-                    </span>
+                    <span className="text-xl font-extrabold tracking-tighter text-gradient-white" style={{ fontVariantLigatures: "none" }}>bumedya</span>
+                    <span className="text-xl font-extrabold text-canli-mor group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.8)] transition-all duration-300">.</span>
                 </Link>
-
                 <div className="hidden md:flex items-center gap-8">
                     <NavLink href="/galeri">Galeri</NavLink>
                     <NavLink href="/etkinlikler">Etkinlikler</NavLink>
                     <NavLink href="/uyeler">Üyeler</NavLink>
                 </div>
-
-                {/* Sağ butonlar — auth durumuna göre */}
                 <div className="flex items-center gap-3">
                     {user ? (
-                        <Link
-                            href="/profil"
-                            className="glass px-5 py-2 rounded-xl text-sm font-medium text-buz-mavisi hover:bg-white/10 hover:border-canli-mor/40 transition-all duration-300 flex items-center gap-2"
-                        >
+                        <Link href="/profil"
+                              className="glass px-5 py-2 rounded-xl text-sm font-medium text-buz-mavisi hover:bg-white/10 hover:border-canli-mor/40 transition-all duration-300 flex items-center gap-2">
                             <span className="w-1.5 h-1.5 rounded-full bg-canli-mor/70" />
-                            @{user.email?.split("@")[0]}
+                            @{username}
                         </Link>
                     ) : (
                         <>
-                            <Link href="/login" className="hidden sm:block text-buz-mavisi/50 hover:text-buz-mavisi text-sm transition-colors duration-300">
-                                Giriş
-                            </Link>
-                            <Link href="/register" className="glass px-5 py-2 rounded-xl text-sm font-medium text-buz-mavisi hover:bg-white/10 hover:border-canli-mor/40 transition-all duration-300">
-                                Katıl
-                            </Link>
+                            <Link href="/login" className="hidden sm:block text-buz-mavisi/50 hover:text-buz-mavisi text-sm transition-colors duration-300">Giriş</Link>
+                            <Link href="/register" className="glass px-5 py-2 rounded-xl text-sm font-medium text-buz-mavisi hover:bg-white/10 hover:border-canli-mor/40 transition-all duration-300">Katıl</Link>
                         </>
                     )}
                 </div>
@@ -110,7 +112,7 @@ export default async function HomePage() {
                 <div className="glass px-4 py-2 rounded-full mb-8 flex items-center gap-2 animate-float-up" style={{ animationFillMode: "backwards" }}>
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                     <span className="text-xs text-buz-mavisi/60 tracking-widest uppercase font-light">
-                        Topluluk aktif · 1.568 üye
+                        Topluluk aktif · {totalCount} üye
                     </span>
                 </div>
 
@@ -119,9 +121,7 @@ export default async function HomePage() {
                         <span className="text-gradient-white">bumedya</span>
                         <span className="text-canli-mor" style={{ textShadow: "0 0 40px rgba(124,58,237,0.6), 0 0 80px rgba(124,58,237,0.3)" }}>.</span>
                     </h1>
-                    <p className="text-buz-mavisi/30 text-xs md:text-sm tracking-[0.5em] uppercase font-light mt-3">
-                        Creative Digital Universe
-                    </p>
+                    <p className="text-buz-mavisi/30 text-xs md:text-sm tracking-[0.5em] uppercase font-light mt-3">Creative Digital Universe</p>
                 </div>
 
                 <p className="text-buz-mavisi/55 text-lg md:text-xl font-light leading-relaxed max-w-xl mt-8 animate-float-up delay-200" style={{ animationFillMode: "backwards" }}>
@@ -132,8 +132,7 @@ export default async function HomePage() {
                     {user ? (
                         <Link href="/profil"
                               className="group relative px-10 py-4 bg-canli-mor text-white font-bold rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden"
-                              style={{ boxShadow: "0 8px 32px rgba(124,58,237,0.45), 0 0 0 1px rgba(124,58,237,0.3)" }}
-                        >
+                              style={{ boxShadow: "0 8px 32px rgba(124,58,237,0.45), 0 0 0 1px rgba(124,58,237,0.3)" }}>
                             <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                             <span className="relative z-10 flex items-center gap-2">
                                 Profilime Git
@@ -145,8 +144,7 @@ export default async function HomePage() {
                     ) : (
                         <Link href="/register"
                               className="group relative px-10 py-4 bg-canli-mor text-white font-bold rounded-2xl transition-all duration-300 hover:scale-105 active:scale-95 overflow-hidden"
-                              style={{ boxShadow: "0 8px 32px rgba(124,58,237,0.45), 0 0 0 1px rgba(124,58,237,0.3)" }}
-                        >
+                              style={{ boxShadow: "0 8px 32px rgba(124,58,237,0.45), 0 0 0 1px rgba(124,58,237,0.3)" }}>
                             <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
                             <span className="relative z-10 flex items-center gap-2">
                                 Topluluğa Katıl
@@ -156,9 +154,7 @@ export default async function HomePage() {
                             </span>
                         </Link>
                     )}
-                    <button className="glass px-10 py-4 text-buz-mavisi font-medium rounded-2xl hover:bg-white/8 hover:border-white/20 transition-all duration-300">
-                        Keşfet
-                    </button>
+                    <button className="glass px-10 py-4 text-buz-mavisi font-medium rounded-2xl hover:bg-white/8 hover:border-white/20 transition-all duration-300">Keşfet</button>
                 </div>
 
                 <div className="absolute bottom-10 flex flex-col items-center gap-2 opacity-30 animate-float-up delay-500" style={{ animationFillMode: "backwards" }}>
@@ -185,10 +181,12 @@ export default async function HomePage() {
                             </div>
                             <div className="mt-8 flex items-center gap-2">
                                 <div className="flex-1 h-[2px] bg-white/5 rounded-full overflow-hidden">
-                                    <div className="h-full bg-gradient-to-r from-canli-mor to-mor-300 rounded-full" style={{ width: "68%" }} />
+                                    <div className="h-full bg-gradient-to-r from-canli-mor to-mor-300 rounded-full transition-all duration-700"
+                                         style={{ width: `${creatorRatio}%` }} />
                                 </div>
-                                <span className="text-xs text-buz-mavisi/30">68% kapasite</span>
+                                <span className="text-xs text-buz-mavisi/30 whitespace-nowrap">{creatorRatio}% üretici</span>
                             </div>
+                            <p className="text-xs text-buz-mavisi/20 mt-3">Toplam {totalCount} üye</p>
                         </div>
                     </BentoCard>
 
@@ -219,25 +217,13 @@ export default async function HomePage() {
                     </BentoCard>
 
                     <BentoCard className="md:col-span-4 min-h-[320px]">
-                        <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35 mb-5">Canlı Akış</p>
-                        <div className="flex flex-col gap-0">
-                            {feedItems.map((item, i) => (
-                                <div key={i} className="flex items-start gap-3 py-3 border-b border-white/[0.04] last:border-0 cursor-pointer">
-                                    <div className="relative mt-0.5 shrink-0">
-                                        <div className="w-7 h-7 rounded-full glass-strong flex items-center justify-center text-[10px] text-buz-mavisi/60 font-medium">
-                                            {item.user[0].toUpperCase()}
-                                        </div>
-                                        <span className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full ${item.dot} ring-1 ring-ana-lacivert`} />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs text-buz-mavisi/70 leading-relaxed">
-                                            <span className="text-buz-mavisi/90 font-medium">{item.user}</span>{" "}{item.action}
-                                        </p>
-                                    </div>
-                                    <span className="text-[10px] text-buz-mavisi/25 shrink-0 mt-0.5">{item.time}</span>
-                                </div>
-                            ))}
-                        </div>
+                        <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35 mb-5">
+                            Canlı Akış
+                            <span className="ml-2 inline-flex items-center gap-1">
+                                <span className="w-1 h-1 rounded-full bg-emerald-400 animate-pulse" />
+                            </span>
+                        </p>
+                        <LiveFeed initial={activities ?? []} />
                     </BentoCard>
 
                     <BentoCard className="md:col-span-5 min-h-[320px] flex flex-col">
@@ -262,7 +248,7 @@ export default async function HomePage() {
                                 </div>
                             ))}
                         </div>
-                        <p className="text-xs text-buz-mavisi/30 mt-3">3 aktif etkinlik · Leaflet entegrasyonu yakında</p>
+                        <p className="text-xs text-buz-mavisi/30 mt-3">Leaflet entegrasyonu yakında</p>
                     </BentoCard>
 
                     <BentoCard className="md:col-span-3 min-h-[320px] flex flex-col justify-between">
@@ -298,9 +284,7 @@ export default async function HomePage() {
                 </div>
                 <div className="flex items-center gap-6">
                     {["Gizlilik", "Kurallar", "İletişim"].map((item) => (
-                        <Link key={item} href="#" className="text-buz-mavisi/25 hover:text-buz-mavisi/60 text-xs transition-colors duration-300">
-                            {item}
-                        </Link>
+                        <Link key={item} href="#" className="text-buz-mavisi/25 hover:text-buz-mavisi/60 text-xs transition-colors duration-300">{item}</Link>
                     ))}
                 </div>
             </footer>

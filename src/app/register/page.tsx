@@ -190,6 +190,7 @@ export default function RegisterPage() {
                     emailRedirectTo: `${window.location.origin}/auth/callback`,
                     data: {
                         username: parsed.data.username,
+                    },
                 },
             });
 
