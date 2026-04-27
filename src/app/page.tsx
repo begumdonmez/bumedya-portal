@@ -101,6 +101,7 @@ export default async function HomePage() {
                     <NavLink href="/galeri">Galeri</NavLink>
                     <NavLink href="/etkinlikler">Etkinlikler</NavLink>
                     <NavLink href="/members">Üyeler</NavLink>
+                    <NavLink href="/chat">Lounge</NavLink>
                 </div>
                 <div className="flex items-center gap-3">
                     {user ? (
