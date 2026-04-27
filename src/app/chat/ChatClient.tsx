@@ -68,6 +68,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
     const [typingUsers, setTypingUsers] = useState(false);
     const [newMsgIds, setNewMsgIds] = useState<Set<string>>(new Set());
     const [unread, setUnread] = useState<Record<string, number>>({});
+    const [onlineUsers, setOnlineUsers] = useState<{ username: string; room: string }[]>([]);
     const bottomRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -110,6 +111,30 @@ export default function ChatClient({ userId, username, initialMessages }: {
         );
         return () => { channels.forEach((ch) => supabase.removeChannel(ch)); };
     }, [activeRoom]);
+
+    /* Presence — kim çevrimiçi */
+    useEffect(() => {
+        const supabase = createClient();
+        const presence = supabase.channel("lounge-presence");
+
+        const syncUsers = () => {
+            const state = presence.presenceState<{ username: string; room: string }>();
+            const users = Object.values(state).flat();
+            setOnlineUsers(users.filter((u) => u.username !== username));
+        };
+
+        presence
+            .on("presence", { event: "sync" }, syncUsers)
+            .on("presence", { event: "join" }, syncUsers)
+            .on("presence", { event: "leave" }, syncUsers)
+            .subscribe(async (status) => {
+                if (status === "SUBSCRIBED") {
+                    await presence.track({ username, room: activeRoom });
+                }
+            });
+
+        return () => { supabase.removeChannel(presence); };
+    }, [username, activeRoom]);
 
     const switchRoom = (id: string) => {
         setActiveRoom(id);
@@ -165,7 +190,12 @@ export default function ChatClient({ userId, username, initialMessages }: {
                     </p>
                     {ROOMS.map((room) => {
                         const isActive = room.id === activeRoom;
-                        const count = unread[room.id] ?? 0;
+                        const unreadCount = unread[room.id] ?? 0;
+                        // kendimiz dahil kaç kişi bu odada
+                        const peopleInRoom = [
+                            ...(activeRoom === room.id ? [{ username }] : []),
+                            ...onlineUsers.filter((u) => u.room === room.id),
+                        ].length;
                         return (
                             <button key={room.id} onClick={() => switchRoom(room.id)}
                                     className="flex items-center gap-3 px-3 py-3 rounded-xl text-left transition-all duration-200 w-full"
@@ -181,20 +211,59 @@ export default function ChatClient({ userId, username, initialMessages }: {
                                     </p>
                                     <p className="text-[10px] truncate" style={{ color: "rgba(224,242,254,0.2)" }}>{room.desc}</p>
                                 </div>
-                                {count > 0 && (
-                                    <span className="shrink-0 min-w-[18px] h-[18px] rounded-full text-[10px] font-bold flex items-center justify-center px-1"
-                                          style={{ background: "rgba(124,58,237,0.8)", color: "#fff" }}>
-                                        {count > 9 ? "9+" : count}
-                                    </span>
-                                )}
-                                {isActive && count === 0 && (
-                                    <span className="shrink-0 w-1.5 h-1.5 rounded-full animate-pulse"
-                                          style={{ background: "rgba(124,58,237,0.8)" }} />
-                                )}
+                                <div className="shrink-0 flex items-center gap-1.5">
+                                    {peopleInRoom > 0 && (
+                                        <span className="flex items-center gap-1 text-[10px]"
+                                              style={{ color: isActive ? "rgba(167,139,250,0.6)" : "rgba(224,242,254,0.2)" }}>
+                                            <span className="w-1.5 h-1.5 rounded-full"
+                                                  style={{ background: isActive ? "rgba(52,211,153,0.8)" : "rgba(255,255,255,0.2)" }} />
+                                            {peopleInRoom}
+                                        </span>
+                                    )}
+                                    {unreadCount > 0 && (
+                                        <span className="min-w-[18px] h-[18px] rounded-full text-[10px] font-bold flex items-center justify-center px-1"
+                                              style={{ background: "rgba(124,58,237,0.8)", color: "#fff" }}>
+                                            {unreadCount > 9 ? "9+" : unreadCount}
+                                        </span>
+                                    )}
+                                </div>
                             </button>
                         );
                     })}
                 </div>
+
+                {/* Çevrimiçi */}
+                {onlineUsers.length > 0 && (
+                    <div className="px-3 pb-3 flex flex-col gap-0.5">
+                        <p className="text-[9px] tracking-widest uppercase px-3 mb-2 mt-1" style={{ color: "rgba(224,242,254,0.18)" }}>
+                            ÇEVRİMİÇİ · {onlineUsers.length}
+                        </p>
+                        {onlineUsers.map((u) => {
+                            const [bg, border] = userColor(u.username);
+                            const roomLabel = ROOMS.find((r) => r.id === u.room)?.label ?? u.room;
+                            return (
+                                <Link key={u.username} href={`/profil/${u.username}`}
+                                      className="flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200"
+                                      style={{ color: "rgba(224,242,254,0.5)" }}
+                                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.04)")}
+                                      onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                                    <div className="relative shrink-0">
+                                        <div className="w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-bold"
+                                             style={{ background: bg, border: `1px solid ${border}`, color: "#E0F2FE" }}>
+                                            {u.username[0].toUpperCase()}
+                                        </div>
+                                        <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full"
+                                              style={{ background: "rgba(52,211,153,0.9)", border: "1.5px solid #0A0F1E" }} />
+                                    </div>
+                                    <div className="min-w-0">
+                                        <p className="text-xs truncate" style={{ color: "rgba(224,242,254,0.7)" }}>@{u.username}</p>
+                                        <p className="text-[9px] truncate" style={{ color: "rgba(224,242,254,0.25)" }}>{roomLabel}</p>
+                                    </div>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                )}
 
                 {/* Profil */}
                 <div className="px-5 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
