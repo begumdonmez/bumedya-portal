@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import NavbarBackdrop from "@/components/NavbarBackdrop";
 import LiveFeed from "@/components/LiveFeed";
 
 export const metadata: Metadata = {
@@ -52,19 +53,28 @@ export default async function HomePage() {
         { count: memberCount },
         { count: creatorCount },
         { data: activities },
+        { data: badgeProfiles },
     ] = await Promise.all([
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "member"),
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "creator"),
         supabase.from("activities").select("id, username, type, payload, created_at").order("created_at", { ascending: false }).limit(8),
+        supabase.from("profiles").select("badges"),
     ]);
 
     const totalCount = (memberCount ?? 0) + (creatorCount ?? 0);
-    const creatorRatio = totalCount > 0 ? Math.round(((creatorCount ?? 0) / totalCount) * 100) : 0;
+
+    const editorCount = badgeProfiles?.filter((p) => (p.badges as string[])?.includes("editor")).length ?? 0;
+    const writerCount = badgeProfiles?.filter((p) => (p.badges as string[])?.includes("writer")).length ?? 0;
+    const artistCount = badgeProfiles?.filter((p) => (p.badges as string[])?.includes("artist")).length ?? 0;
 
     const roles = [
-        { label: "Member",  count: String(memberCount ?? 0),  color: "text-buz-mavisi/60" },
-        { label: "Creator", count: String(creatorCount ?? 0), color: "text-mor-400" },
+        { label: "İzleyici", count: String(memberCount ?? 0),  color: "text-sky-400"      },
+        { label: "Üretici",  count: String(creatorCount ?? 0), color: "text-violet-400"   },
+        { label: "Editör",   count: String(editorCount),       color: "text-amber-400"    },
+        { label: "Yazar",    count: String(writerCount),        color: "text-emerald-400"  },
+        { label: "Çizer",    count: String(artistCount),        color: "text-pink-400"     },
     ];
+
 
     return (
         <main className="relative min-h-screen w-full bg-ana-lacivert overflow-hidden">
@@ -82,6 +92,7 @@ export default async function HomePage() {
 
             {/* NAVBAR */}
             <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5">
+                <NavbarBackdrop />
                 <Link href="/" className="group flex items-center gap-1 select-none">
                     <span className="text-xl font-extrabold tracking-tighter text-gradient-white" style={{ fontVariantLigatures: "none" }}>bumedya</span>
                     <span className="text-xl font-extrabold text-canli-mor group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.8)] transition-all duration-300">.</span>
@@ -172,21 +183,22 @@ export default async function HomePage() {
                         <div className="relative z-10">
                             <p className="text-[10px] tracking-widest uppercase text-buz-mavisi/35 mb-6">Topluluk Durumu</p>
                             <div className="grid grid-cols-2 gap-6">
-                                {roles.map((r) => (
+                                {roles.slice(0, 2).map((r) => (
                                     <div key={r.label} className="flex flex-col gap-1">
                                         <span className={`text-3xl font-extrabold tracking-tight ${r.color}`}>{r.count}</span>
                                         <span className="text-xs text-buz-mavisi/40 tracking-wider uppercase">{r.label}</span>
                                     </div>
                                 ))}
                             </div>
-                            <div className="mt-8 flex items-center gap-2">
-                                <div className="flex-1 h-[2px] bg-white/5 rounded-full overflow-hidden">
-                                    <div className="h-full bg-gradient-to-r from-canli-mor to-mor-300 rounded-full transition-all duration-700"
-                                         style={{ width: `${creatorRatio}%` }} />
-                                </div>
-                                <span className="text-xs text-buz-mavisi/30 whitespace-nowrap">{creatorRatio}% üretici</span>
+                            <div className="flex gap-6 mt-6 pt-5 border-t border-white/5">
+                                {roles.slice(2).map((r) => (
+                                    <div key={r.label} className="flex flex-col gap-1 flex-1">
+                                        <span className={`text-xl font-bold tracking-tight ${r.color}`}>{r.count}</span>
+                                        <span className="text-[10px] text-buz-mavisi/35 tracking-wider uppercase">{r.label}</span>
+                                    </div>
+                                ))}
                             </div>
-                            <p className="text-xs text-buz-mavisi/20 mt-3">Toplam {totalCount} üye</p>
+                            <p className="text-xs text-buz-mavisi/20 mt-4">Toplam {totalCount} üye</p>
                         </div>
                     </BentoCard>
 

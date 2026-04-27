@@ -55,9 +55,19 @@ export default async function PublicProfilePage(
 
     if (!profile) notFound();
 
-    // Mevcut kullanıcıyı çek — kendi profili mi?
+    // Mevcut kullanıcıyı çek — kendi profili mi, admin mi?
     const { data: { user } } = await supabase.auth.getUser();
     const isOwnProfile = user?.id === profile.id;
+
+    let isAdmin = false;
+    if (user) {
+        const { data: me } = await supabase
+            .from("profiles")
+            .select("badges")
+            .eq("id", user.id)
+            .single();
+        isAdmin = me?.badges?.includes("admin") ?? false;
+    }
 
     const roleConf = ROLE_CONFIG[profile.role as keyof typeof ROLE_CONFIG] ?? ROLE_CONFIG.member;
     const joinDate = new Date(profile.created_at).toLocaleDateString("tr-TR", {
@@ -80,13 +90,22 @@ export default async function PublicProfilePage(
                     <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
                 </Link>
 
-                {isOwnProfile && (
-                    <Link href="/profil"
-                          className="text-xs px-4 py-2 rounded-xl transition-all duration-300"
-                          style={{ color: "rgba(167,139,250,0.8)", border: "1px solid rgba(124,58,237,0.25)", background: "rgba(124,58,237,0.08)" }}>
-                        Profilimi Düzenle
-                    </Link>
-                )}
+                <div className="flex items-center gap-2">
+                    {isAdmin && (
+                        <Link href="/admin"
+                              className="text-xs px-3 py-2 rounded-xl transition-all duration-300"
+                              style={{ color: "rgba(239,68,68,0.75)", border: "1px solid rgba(239,68,68,0.15)", background: "rgba(239,68,68,0.06)" }}>
+                            ⚡ Admin
+                        </Link>
+                    )}
+                    {isOwnProfile && (
+                        <Link href="/profil"
+                              className="text-xs px-4 py-2 rounded-xl transition-all duration-300"
+                              style={{ color: "rgba(167,139,250,0.8)", border: "1px solid rgba(124,58,237,0.25)", background: "rgba(124,58,237,0.08)" }}>
+                            Profilimi Düzenle
+                        </Link>
+                    )}
+                </div>
             </nav>
 
             {/* İçerik */}

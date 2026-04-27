@@ -3,7 +3,6 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { createClient } from "@/lib/supabase/client";
 
 /* ─── Tipler ────────────────────────────────────────────────── */
 interface Profile {
@@ -158,10 +157,16 @@ export default function AdminClient({ profiles: initialProfiles }: { profiles: P
             prev.map((p) => p.id === userId ? { ...p, badges: newBadges } : p)
         );
 
+        const profile = profiles.find((p) => p.id === userId);
         const res = await fetch("/api/admin/badges", {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId, badges: newBadges }),
+            body: JSON.stringify({
+                userId,
+                badges: newBadges,
+                addedBadge: !hasBadge ? badge : undefined,
+                username: profile?.username,
+            }),
         });
 
         if (!res.ok) {
@@ -173,26 +178,15 @@ export default function AdminClient({ profiles: initialProfiles }: { profiles: P
             return;
         }
 
-        // Aktivite kaydı — rozet eklendiyse
-        if (!hasBadge) {
-            const profile = profiles.find((p) => p.id === userId);
-            if (profile) {
-                const supabase = createClient();
-                await supabase.from("activities").insert({
-                    user_id: userId,
-                    username: profile.username,
-                    type: "badge_earned",
-                    payload: { badge },
-                });
-            }
-        }
-
         toast.success(hasBadge ? "Rozet kaldırıldı" : "Rozet verildi ✦");
         router.refresh();
     };
 
-    const memberCount  = profiles.filter((p) => p.role === "member").length;
+    const viewerCount  = profiles.filter((p) => p.role === "member").length;
     const creatorCount = profiles.filter((p) => p.role === "creator").length;
+    const editorCount  = profiles.filter((p) => p.badges.includes("editor")).length;
+    const writerCount  = profiles.filter((p) => p.badges.includes("writer")).length;
+    const artistCount  = profiles.filter((p) => p.badges.includes("artist")).length;
 
     return (
         <div className="relative min-h-screen flex flex-col" style={{ background: "#0A0F1E" }}>
@@ -217,12 +211,18 @@ export default function AdminClient({ profiles: initialProfiles }: { profiles: P
                     </span>
                 </div>
 
-                <div className="flex items-center gap-4 text-xs" style={{ color: "rgba(224,242,254,0.3)" }}>
+                <div className="flex items-center gap-3 text-xs" style={{ color: "rgba(224,242,254,0.3)" }}>
                     <span>{profiles.length} üye</span>
                     <span style={{ color: "rgba(255,255,255,0.1)" }}>·</span>
-                    <span>{memberCount} izleyici</span>
+                    <span>{viewerCount} izleyici</span>
                     <span style={{ color: "rgba(255,255,255,0.1)" }}>·</span>
                     <span>{creatorCount} üretici</span>
+                    <span style={{ color: "rgba(255,255,255,0.1)" }}>·</span>
+                    <span style={{ color: "rgba(251,191,36,0.6)" }}>{editorCount} editör</span>
+                    <span style={{ color: "rgba(255,255,255,0.1)" }}>·</span>
+                    <span style={{ color: "rgba(52,211,153,0.6)" }}>{writerCount} yazar</span>
+                    <span style={{ color: "rgba(255,255,255,0.1)" }}>·</span>
+                    <span style={{ color: "rgba(244,114,182,0.6)" }}>{artistCount} sanatçı</span>
                 </div>
             </nav>
 

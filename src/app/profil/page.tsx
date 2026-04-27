@@ -164,6 +164,13 @@ export default function ProfilPage() {
                     <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
                     <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
                 </button>
+                {profile?.badges?.includes("admin") && (
+                    <button onClick={() => router.push("/admin")}
+                            className="flex items-center gap-1.5 text-xs px-3 py-2 rounded-xl transition-all duration-300"
+                            style={{ color: "rgba(239,68,68,0.75)", border: "1px solid rgba(239,68,68,0.15)", background: "rgba(239,68,68,0.06)" }}>
+                        ⚡ Admin
+                    </button>
+                )}
                 <button onClick={handleSignOut} disabled={signingOut}
                         className="flex items-center gap-2 text-xs px-4 py-2 rounded-xl transition-all duration-300 disabled:opacity-50"
                         style={{ color: "rgba(239,68,68,0.75)", border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.06)" }}>

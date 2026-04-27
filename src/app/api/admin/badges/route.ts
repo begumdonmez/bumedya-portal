@@ -30,7 +30,12 @@ export async function PATCH(request: Request) {
     }
 
     // Admin doğrulandı — service role ile güncelle
-    const { userId, badges } = await request.json() as { userId: string; badges: string[] };
+    const { userId, badges, addedBadge, username } = await request.json() as {
+        userId: string;
+        badges: string[];
+        addedBadge?: string;
+        username?: string;
+    };
 
     if (!userId || !Array.isArray(badges)) {
         return Response.json({ error: "Bad Request" }, { status: 400 });
@@ -50,6 +55,16 @@ export async function PATCH(request: Request) {
         .eq("id", userId);
 
     if (error) return Response.json({ error: error.message }, { status: 500 });
+
+    // Rozet eklendiyse aktivite kaydı (service role — RLS'i bypass eder)
+    if (addedBadge && username) {
+        await adminClient.from("activities").insert({
+            user_id: userId,
+            username,
+            type: "badge_earned",
+            payload: { badge: addedBadge },
+        });
+    }
 
     return Response.json({ ok: true });
 }
