@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
-import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 /* ─── Fontlar ───────────────────────────────────────────────── */
@@ -68,8 +67,9 @@ export default function RootLayout({
             lang="tr"
             className={`h-full ${spaceGrotesk.variable} ${geistMono.variable}`}
             suppressHydrationWarning
+            style={{ backgroundColor: "#1A2744" }}
         >
-        <body className="min-h-full flex flex-col antialiased" style={{ color: "#F1F5F9", fontFamily: "var(--font-space), var(--font-body, system-ui)" }}>
+        <body className="min-h-full flex flex-col antialiased">
         {children}
 
         <Toaster

@@ -22,15 +22,6 @@
     --color-text-muted:      rgba(241,245,249,0.4);
     --color-text-faint:      rgba(241,245,249,0.2);
 
-    /* legacy compat */
-    --color-ana-lacivert:    #1A2744;
-    --color-canli-mor:       #A78BFA;
-    --color-buz-mavisi:      #E0F2FE;
-    --color-mor-500:         #A78BFA;
-    --color-mor-600:         #8B5CF6;
-
-    --font-display:  "Space Grotesk", "Inter", system-ui, sans-serif;
-    --font-body:     "Space Grotesk", "Inter", system-ui, sans-serif;
     --font-mono:     "Geist Mono", "Fira Code", monospace;
 
     --radius-card:   18px;
@@ -58,9 +49,9 @@ html {
 }
 
 body {
-    background-color: #1A2744;
+    background-color: transparent !important;
     color: #F1F5F9;
-    font-family: var(--font-body);
+    font-family: var(--font-space, "Space Grotesk", system-ui, sans-serif);
     margin: 0;
     min-height: 100dvh;
     overflow-x: hidden;
@@ -255,16 +246,14 @@ body {
         0 16px 40px rgba(124,58,237,0.1);
 }
 
-/* Gradient top-border stripe */
+/* Gradient top-border stripe — sits inside card padding, no overflow */
 .card-stripe::before {
     content: '';
     display: block;
     height: 1px;
-    margin: 0 -1.5rem;
-    width: calc(100% + 3rem);
+    width: 100%;
     background: linear-gradient(90deg, transparent 0%, rgba(124,58,237,0.55) 35%, rgba(167,139,250,0.35) 65%, transparent 100%);
     margin-bottom: 1.5rem;
-    margin-top: -1.5rem;
 }
 
 /* ── Typography ────────────────────────────────────────────── */
@@ -403,7 +392,7 @@ input:-webkit-autofill:focus {
     background-repeat: repeat;
     background-size: 180px 180px;
     pointer-events: none;
-    z-index: 1;
+    z-index: 0;
 }
 
 /* ── Navbar backdrop ───────────────────────────────────────── */
@@ -427,3 +416,8 @@ input:-webkit-autofill:focus {
     font-weight: 500;
     letter-spacing: 0.06em;
 }
+
+/* ── Nav link ──────────────────────────────────────────────── */
+
+.nav-link-dim { color: rgba(240,249,255,0.35); }
+.nav-link-dim:hover { color: rgba(240,249,255,0.85); }

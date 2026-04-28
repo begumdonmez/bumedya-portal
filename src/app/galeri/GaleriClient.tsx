@@ -36,12 +36,11 @@ export default function GaleriClient({
 }) {
     const [items, setItems] = useState(initialItems);
     const [uploading, setUploading] = useState(false);
-    const [loadedIds, setLoadedIds] = useState<Set<string>>(new Set());
+    const [errorIds, setErrorIds] = useState<Set<string>>(new Set());
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const isAuthorized = badges.includes("authorized");
     const isAdmin = badges.includes("admin");
-    const canUpload = isAuthorized || isAdmin;
+    const canUpload = isAdmin;
 
     const handleUpload = useCallback(async (files: FileList | null) => {
         if (!files || files.length === 0) return;
@@ -198,48 +197,63 @@ export default function GaleriClient({
                     <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">
                         {items.map((item) => {
                             const url = getPublicUrl(supabaseUrl, item.storage_path);
-                            const loaded = loadedIds.has(item.id);
+                            const hasError = errorIds.has(item.id);
                             return (
                                 <div key={item.id} className="card break-inside-avoid relative group rounded-2xl overflow-hidden">
-                                    <div className="relative">
-                                        {!loaded && (
-                                            <div className="absolute inset-0 w-full h-full min-h-[120px] animate-pulse"
-                                                 style={{ background: "rgba(124,58,237,0.08)" }} />
-                                        )}
-                                        <Image
-                                            src={url}
-                                            alt={item.title ?? "Galeri görseli"}
-                                            width={600}
-                                            height={400}
-                                            className="w-full h-auto object-cover transition-opacity duration-500"
-                                            style={{ opacity: loaded ? 1 : 0 }}
-                                            onLoad={() => setLoadedIds((prev) => new Set(prev).add(item.id))}
-                                            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                                        />
-                                    </div>
-                                    {/* Hover overlay */}
-                                    <div className="absolute inset-0 flex flex-col justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                                         style={{ background: "linear-gradient(to top, rgba(15,25,50,0.88) 0%, transparent 60%)" }}>
-                                        <div className="flex items-center justify-between">
-                                            <Link href={`/profil/${item.username}`}
-                                                  className="text-[11px] font-medium"
-                                                  style={{ color: "rgba(224,242,254,0.7)" }}>
-                                                @{item.username}
-                                            </Link>
+                                    {hasError ? (
+                                        <div className="flex flex-col items-center justify-center min-h-[140px] gap-2 py-8"
+                                             style={{ background: "rgba(239,68,68,0.04)" }}>
+                                            <span className="text-xl opacity-20">✕</span>
+                                            <span className="text-[10px]" style={{ color: "rgba(240,249,255,0.2)" }}>Yüklenemedi</span>
                                             {(item.user_id === userId || isAuthorized) && (
                                                 <button
                                                     onClick={() => handleDelete(item)}
-                                                    className="text-[10px] px-2 py-1 rounded-lg transition-all duration-200"
+                                                    className="mt-1 text-[10px] px-2 py-1 rounded-lg"
                                                     style={{
-                                                        background: "rgba(239,68,68,0.15)",
+                                                        background: "rgba(239,68,68,0.12)",
                                                         border: "1px solid rgba(239,68,68,0.2)",
-                                                        color: "rgba(239,68,68,0.8)",
+                                                        color: "rgba(239,68,68,0.7)",
                                                     }}>
                                                     Sil
                                                 </button>
                                             )}
                                         </div>
-                                    </div>
+                                    ) : (
+                                        <>
+                                            <Image
+                                                src={url}
+                                                alt={item.title ?? "Galeri görseli"}
+                                                width={600}
+                                                height={400}
+                                                className="w-full h-auto object-cover"
+                                                onError={() => setErrorIds((prev) => new Set(prev).add(item.id))}
+                                                sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                                unoptimized
+                                            />
+                                            <div className="absolute inset-0 flex flex-col justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                                                 style={{ background: "linear-gradient(to top, rgba(15,25,50,0.88) 0%, transparent 60%)" }}>
+                                                <div className="flex items-center justify-between">
+                                                    <Link href={`/profil/${item.username}`}
+                                                          className="text-[11px] font-medium"
+                                                          style={{ color: "rgba(224,242,254,0.7)" }}>
+                                                        @{item.username}
+                                                    </Link>
+                                                    {(item.user_id === userId || isAuthorized) && (
+                                                        <button
+                                                            onClick={() => handleDelete(item)}
+                                                            className="text-[10px] px-2 py-1 rounded-lg transition-all duration-200"
+                                                            style={{
+                                                                background: "rgba(239,68,68,0.15)",
+                                                                border: "1px solid rgba(239,68,68,0.2)",
+                                                                color: "rgba(239,68,68,0.8)",
+                                                            }}>
+                                                            Sil
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             );
                         })}

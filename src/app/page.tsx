@@ -40,18 +40,13 @@ export default async function LandingPage() {
     }
 
     return (
-        <main className="relative w-full aurora-bg overflow-hidden">
+        <main className="relative w-full aurora-bg">
             <SetWelcomeCookie />
 
-            {/* Aurora layers */}
+            {/* Aurora layers — animated orbs + texture */}
             <div aria-hidden className="aurora-layer" />
             <div aria-hidden className="aurora-orb-pink" />
             <div aria-hidden className="fixed inset-0 dot-grid opacity-[0.35] pointer-events-none" style={{ zIndex: 0 }} />
-            <div aria-hidden className="fixed inset-0 pointer-events-none" style={{
-                zIndex: 0,
-                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.018'/%3E%3C/svg%3E")`,
-                backgroundRepeat: "repeat", backgroundSize: "180px 180px"
-            }} />
 
             {/* NAVBAR */}
             <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
@@ -68,10 +63,7 @@ export default async function LandingPage() {
                         { href: "/chat", label: "Lounge" },
                     ].map(({ href, label }) => (
                         <Link key={href} href={href}
-                              className="text-xs tracking-widest uppercase font-medium transition-colors duration-200"
-                              style={{ color: "rgba(240,249,255,0.35)" }}
-                              onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.8)")}
-                              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.35)")}>
+                              className="nav-link-dim text-xs tracking-widest uppercase font-medium transition-colors duration-200">
                             {label}
                         </Link>
                     ))}
