@@ -113,6 +113,12 @@ export default function GaleriClient({
             <nav className="relative z-10 flex items-center justify-between px-6 py-5 border-b"
                  style={{ borderColor: "rgba(255,255,255,0.05)" }}>
                 <div className="flex items-center gap-3">
+                    <Link href="/home" className="text-xs px-2 py-1 rounded-lg transition-all duration-200"
+                          style={{ color: "rgba(224,242,254,0.3)" }}
+                          onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.7)")}
+                          onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.3)")}>
+                        ←
+                    </Link>
                     <Link href="/home" className="flex items-baseline gap-0.5">
                         <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
                         <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>

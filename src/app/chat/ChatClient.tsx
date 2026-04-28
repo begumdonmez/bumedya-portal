@@ -175,10 +175,18 @@ export default function ChatClient({ userId, username, initialMessages }: {
 
                 {/* Logo — only on sm+ */}
                 <div className="hidden sm:block px-5 pt-6 pb-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-                    <Link href="/" className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.45)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
-                    </Link>
+                    <div className="flex items-center gap-2">
+                        <Link href="/home" className="text-xs px-1.5 py-1 rounded-lg transition-colors duration-200"
+                              style={{ color: "rgba(224,242,254,0.25)" }}
+                              onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.6)")}
+                              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.25)")}>
+                            ←
+                        </Link>
+                        <Link href="/home" className="flex items-baseline gap-0.5">
+                            <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.45)" }}>bumedya</span>
+                            <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
+                        </Link>
+                    </div>
                     <div className="flex items-center gap-2 mt-2">
                         <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "rgba(52,211,153,0.8)" }} />
                         <span className="text-[10px] tracking-widest uppercase" style={{ color: "rgba(224,242,254,0.2)" }}>Lounge</span>

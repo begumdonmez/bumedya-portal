@@ -69,7 +69,7 @@ export default async function HomePage() {
             {/* Navbar */}
             <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-5">
                 <NavbarBackdrop />
-                <Link href="/" className="flex items-baseline gap-0.5 shrink-0">
+                <Link href="/login" className="flex items-baseline gap-0.5 shrink-0">
                     <span className="text-sm font-bold text-buz-mavisi/50">bumedya</span>
                     <span className="text-sm font-bold text-canli-mor/70">.</span>
                 </Link>

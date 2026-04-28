@@ -34,10 +34,16 @@ export default async function MembersPage() {
 
             <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-5">
                 <NavbarBackdrop />
-                <Link href="/" className="flex items-baseline gap-0.5">
-                    <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
-                    <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
-                </Link>
+                <div className="flex items-center gap-2">
+                    <Link href="/home" className="text-xs px-1.5 py-1 rounded-lg transition-colors duration-200"
+                          style={{ color: "rgba(224,242,254,0.3)" }}>
+                        ←
+                    </Link>
+                    <Link href="/home" className="flex items-baseline gap-0.5">
+                        <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
+                        <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
+                    </Link>
+                </div>
                 <div className="flex items-center gap-3">
                     {user ? (
                         <Link href="/profil"
