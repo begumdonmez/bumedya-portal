@@ -148,7 +148,7 @@ export default function ProfilPage() {
     };
 
     if (loading) return (
-        <div className="min-h-screen flex items-center justify-center" style={{ background: "#0A0F1E" }}>
+        <div className="min-h-screen flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
                 <span className="w-8 h-8 rounded-full border-2 border-white/10 border-t-purple-500 animate-spin" />
                 <span className="text-xs tracking-widest uppercase" style={{ color: "rgba(224,242,254,0.3)" }}>Yükleniyor</span>
@@ -162,12 +162,9 @@ export default function ProfilPage() {
     const joinDate = new Date(profile.created_at).toLocaleDateString("tr-TR", { year: "numeric", month: "long", day: "numeric" });
 
     return (
-        <div className="relative min-h-screen flex flex-col" style={{ background: "#0A0F1E" }}>
-            {/* Atmosfer */}
-            <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full pointer-events-none"
-                 style={{ background: "rgba(124,58,237,0.07)", filter: "blur(120px)" }} />
-            <div aria-hidden className="absolute inset-0 pointer-events-none opacity-[0.02]"
-                 style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
+        <div className="aurora-bg relative min-h-screen flex flex-col">
+            <div aria-hidden className="aurora-layer" />
+            <div aria-hidden className="aurora-orb-pink" />
 
             {/* Navbar */}
             <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b gap-3"
@@ -206,8 +203,7 @@ export default function ProfilPage() {
             <div className="relative z-10 flex-1 max-w-2xl mx-auto w-full px-6 py-10 flex flex-col gap-4">
 
                 {/* ── ANA PROFİL KARTI ── */}
-                <div className="rounded-3xl p-8"
-                     style={{ background: "rgba(255,255,255,0.04)", backdropFilter: "blur(40px)", border: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 24px 60px rgba(0,0,0,0.4)" }}>
+                <div className="card rounded-3xl p-8" style={{ backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)" }}>
                     <div className="h-[1px] -mt-8 mb-8"
                          style={{ marginLeft: "-2rem", width: "calc(100% + 4rem)", background: "linear-gradient(90deg, transparent, rgba(124,58,237,0.5) 40%, rgba(167,139,250,0.3) 60%, transparent)" }} />
 
@@ -218,7 +214,7 @@ export default function ProfilPage() {
                             {editing ? (
                                 <input value={editUsername} onChange={(e) => setEditUsername(e.target.value)}
                                        placeholder="kullaniciadi" className="rounded-xl px-3 py-2 text-sm outline-none w-full"
-                                       style={{ background: "rgba(10,15,30,0.6)", border: "1px solid rgba(124,58,237,0.5)", color: "#E0F2FE" }} />
+                                       style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(124,58,237,0.5)", color: "#E0F2FE" }} />
                             ) : (
                                 <h1 className="text-xl font-bold tracking-tight mb-2" style={{ color: "#E0F2FE" }}>
                                     @{profile.username}
@@ -249,7 +245,7 @@ export default function ProfilPage() {
                                 <textarea value={editBio} onChange={(e) => setEditBio(e.target.value)}
                                           placeholder="Kendinden bahset..." rows={3} maxLength={160}
                                           className="w-full rounded-xl px-3 py-2 text-sm outline-none resize-none"
-                                          style={{ background: "rgba(10,15,30,0.6)", border: "1px solid rgba(124,58,237,0.5)", color: "#E0F2FE" }} />
+                                          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(124,58,237,0.5)", color: "#E0F2FE" }} />
                                 <p className="text-[10px] mt-1 text-right" style={{ color: "rgba(224,242,254,0.2)" }}>{editBio.length}/160</p>
                             </>
                         ) : (

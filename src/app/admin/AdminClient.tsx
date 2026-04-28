@@ -192,12 +192,9 @@ export default function AdminClient({ profiles: initialProfiles, myBadges }: { p
     const artistCount  = profiles.filter((p) => p.badges.includes("artist")).length;
 
     return (
-        <div className="relative min-h-screen flex flex-col" style={{ background: "#0A0F1E" }}>
-            {/* Atmosfer */}
-            <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] rounded-full pointer-events-none"
-                 style={{ background: "rgba(124,58,237,0.06)", filter: "blur(100px)" }} />
-            <div aria-hidden className="absolute inset-0 pointer-events-none opacity-[0.02]"
-                 style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
+        <div className="aurora-bg relative min-h-screen flex flex-col">
+            <div aria-hidden className="aurora-layer" />
+            <div aria-hidden className="aurora-orb-pink" />
 
             {/* Navbar */}
             <nav className="relative z-10 flex items-center justify-between px-6 py-5 border-b"

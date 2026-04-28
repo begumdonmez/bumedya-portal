@@ -74,7 +74,7 @@ function Field({
                     autoComplete={autoComplete}
                     className="w-full rounded-xl px-4 py-3 text-sm placeholder:text-white/20 transition-all duration-300 outline-none"
                     style={{
-                        background: "rgba(10,15,30,0.6)",
+                        background: "rgba(255,255,255,0.05)",
                         color: "#E0F2FE",
                         border: `1px solid ${
                             error
@@ -238,15 +238,10 @@ export default function RegisterPage() {
 
     return (
         <div
-            className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden"
-            style={{ background: "#0A0F1E" }}
+            className="aurora-bg relative min-h-screen flex items-center justify-center p-4 overflow-hidden"
         >
-            {/* Atmosfer */}
-            <div aria-hidden className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-        w-[600px] h-[600px] rounded-full pointer-events-none"
-                 style={{ background: "rgba(124,58,237,0.09)", filter: "blur(130px)" }} />
-            <div aria-hidden className="absolute top-0 right-0 w-64 h-64 rounded-full pointer-events-none"
-                 style={{ background: "rgba(59,130,246,0.05)", filter: "blur(100px)" }} />
+            <div aria-hidden className="aurora-layer" />
+            <div aria-hidden className="aurora-orb-pink" />
             <div aria-hidden className="absolute inset-0 pointer-events-none opacity-[0.025]"
                  style={{
                      backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
@@ -254,7 +249,7 @@ export default function RegisterPage() {
                  }} />
 
             {/* Kart */}
-            <div className="relative w-full max-w-md" style={{ animation: "float-up 0.6s ease-out both" }}>
+            <div className="relative z-10 w-full max-w-md" style={{ animation: "float-up 0.6s ease-out both" }}>
                 {/* Dış glow */}
                 <div aria-hidden className="absolute -inset-[1px] rounded-3xl pointer-events-none opacity-40"
                      style={{

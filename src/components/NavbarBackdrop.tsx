@@ -16,7 +16,7 @@ export default function NavbarBackdrop() {
             className="absolute inset-0 -z-10 transition-all duration-300"
             style={{
                 backdropFilter: scrolled ? "blur(16px)" : "none",
-                background: scrolled ? "rgba(10,15,30,0.7)" : "transparent",
+                background: scrolled ? "rgba(15,23,41,0.82)" : "transparent",
                 borderBottom: scrolled ? "1px solid rgba(255,255,255,0.06)" : "1px solid transparent",
             }}
         />

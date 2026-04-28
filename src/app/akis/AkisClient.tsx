@@ -70,8 +70,7 @@ function PostCard({ post, supabaseUrl, userId, onDelete }: {
     };
 
     return (
-        <div className="rounded-2xl overflow-hidden transition-all duration-300"
-             style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="card rounded-2xl overflow-hidden transition-all duration-300">
 
             {/* Header */}
             <div className="flex items-center justify-between px-4 pt-4 pb-3">
@@ -224,7 +223,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
              style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }}
              onClick={(e) => e.target === e.currentTarget && onClose()}>
             <div className="w-full max-w-lg rounded-3xl overflow-hidden"
-                 style={{ background: "#0D1220", border: "1px solid rgba(255,255,255,0.08)" }}>
+                 style={{ background: "rgba(20,30,58,0.92)", backdropFilter: "blur(32px)", WebkitBackdropFilter: "blur(32px)", border: "1px solid rgba(255,255,255,0.1)" }}>
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-5 border-b"
@@ -352,30 +351,30 @@ export default function AkisClient({ userId, username, badges, initialPosts, sup
     }, []);
 
     return (
-        <div className="relative min-h-screen flex flex-col" style={{ background: "#0A0F1E" }}>
-            <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[300px] rounded-full pointer-events-none"
-                 style={{ background: "rgba(124,58,237,0.05)", filter: "blur(120px)" }} />
+        <div className="aurora-bg relative min-h-screen flex flex-col">
+            <div aria-hidden className="aurora-layer" />
+            <div aria-hidden className="aurora-orb-pink" />
 
             {/* Navbar */}
-            <nav className="sticky top-0 z-40 flex items-center justify-between px-6 py-4 border-b"
-                 style={{ borderColor: "rgba(255,255,255,0.05)", background: "rgba(10,15,30,0.85)", backdropFilter: "blur(20px)" }}>
+            <nav className="sticky top-0 z-40 flex items-center justify-between px-6 py-4 border-b nav-backdrop"
+                 style={{ borderColor: "rgba(255,255,255,0.06)" }}>
                 <div className="flex items-center gap-3">
                     <Link href="/home" className="text-xs px-2 py-1 rounded-lg transition-colors duration-200"
-                          style={{ color: "rgba(224,242,254,0.3)" }}
-                          onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.7)")}
-                          onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.3)")}>
+                          style={{ color: "rgba(240,249,255,0.28)" }}
+                          onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.7)")}
+                          onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.28)")}>
                         ←
                     </Link>
-                    <Link href="/home" className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
+                    <Link href="/home" className="flex items-baseline gap-0.5 group">
+                        <span className="text-sm font-bold" style={{ color: "rgba(240,249,255,0.5)" }}>bumedya</span>
+                        <span className="text-sm font-bold" style={{ color: "#7C3AED" }}>.</span>
                     </Link>
-                    <span style={{ color: "rgba(255,255,255,0.15)" }}>/</span>
-                    <span className="text-sm font-medium" style={{ color: "rgba(224,242,254,0.6)" }}>Akış</span>
+                    <span style={{ color: "rgba(255,255,255,0.12)" }}>/</span>
+                    <span className="text-sm font-medium" style={{ color: "rgba(240,249,255,0.55)" }}>Akış</span>
                 </div>
                 <button onClick={() => setShowModal(true)}
                         className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200"
-                        style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", color: "rgba(167,139,250,0.9)" }}>
+                        style={{ background: "rgba(124,58,237,0.14)", border: "1px solid rgba(124,58,237,0.3)", color: "rgba(167,139,250,0.95)" }}>
                     <span className="text-base leading-none">+</span> Paylaş
                 </button>
             </nav>

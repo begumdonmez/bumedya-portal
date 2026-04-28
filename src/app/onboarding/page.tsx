@@ -100,17 +100,12 @@ export default function OnboardingPage() {
 
     return (
         <div
-            className="relative min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden"
-            style={{ background: "#0A0F1E" }}
+            className="aurora-bg relative min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden"
         >
-            <div aria-hidden className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full pointer-events-none"
-                 style={{ background: "rgba(124,58,237,0.07)", filter: "blur(140px)" }} />
-            <div aria-hidden className="absolute top-0 right-0 w-96 h-96 rounded-full pointer-events-none"
-                 style={{ background: "rgba(59,130,246,0.05)", filter: "blur(120px)" }} />
-            <div aria-hidden className="absolute inset-0 pointer-events-none opacity-[0.025]"
-                 style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
+            <div aria-hidden className="aurora-layer" />
+            <div aria-hidden className="aurora-orb-pink" />
 
-            <div className="relative w-full max-w-2xl flex flex-col items-center" style={{ animation: "float-up 0.6s ease-out both" }}>
+            <div className="relative z-10 w-full max-w-2xl flex flex-col items-center" style={{ animation: "float-up 0.6s ease-out both" }}>
 
                 {/* Adım göstergesi */}
                 <div className="flex items-center gap-2 mb-10">

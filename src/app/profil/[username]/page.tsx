@@ -83,12 +83,9 @@ export default async function PublicProfilePage(
     });
 
     return (
-        <div className="relative min-h-screen flex flex-col" style={{ background: "#0A0F1E" }}>
-            {/* Atmosfer */}
-            <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full pointer-events-none"
-                 style={{ background: "rgba(124,58,237,0.07)", filter: "blur(120px)" }} />
-            <div aria-hidden className="absolute inset-0 pointer-events-none opacity-[0.02]"
-                 style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
+        <div className="aurora-bg relative min-h-screen flex flex-col">
+            <div aria-hidden className="aurora-layer" />
+            <div aria-hidden className="aurora-orb-pink" />
 
             {/* Navbar */}
             <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b gap-3"
@@ -126,13 +123,7 @@ export default async function PublicProfilePage(
             <div className="relative z-10 max-w-2xl mx-auto w-full px-6 py-12 flex flex-col gap-4">
 
                 {/* Ana kart */}
-                <div className="rounded-3xl p-8"
-                     style={{
-                         background: "rgba(255,255,255,0.04)",
-                         backdropFilter: "blur(40px)",
-                         border: "1px solid rgba(255,255,255,0.08)",
-                         boxShadow: "0 24px 60px rgba(0,0,0,0.4)",
-                     }}>
+                <div className="card rounded-3xl p-8" style={{ backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)" }}>
                     <div className="h-[1px] -mt-8 mb-8"
                          style={{ marginLeft: "-2rem", width: "calc(100% + 4rem)", background: "linear-gradient(90deg, transparent, rgba(124,58,237,0.5) 40%, rgba(167,139,250,0.3) 60%, transparent)" }} />
 

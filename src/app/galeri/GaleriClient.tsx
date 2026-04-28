@@ -119,26 +119,26 @@ export default function GaleriClient({
     };
 
     return (
-        <div className="relative min-h-screen flex flex-col" style={{ background: "#0A0F1E" }}>
-            <div aria-hidden className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full pointer-events-none"
-                 style={{ background: "rgba(124,58,237,0.05)", filter: "blur(120px)" }} />
+        <div className="aurora-bg relative min-h-screen flex flex-col">
+            <div aria-hidden className="aurora-layer" />
+            <div aria-hidden className="aurora-orb-pink" />
 
             {/* Navbar */}
-            <nav className="relative z-10 flex items-center justify-between px-6 py-5 border-b"
-                 style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+            <nav className="relative z-10 flex items-center justify-between px-6 py-4 border-b nav-backdrop"
+                 style={{ borderColor: "rgba(255,255,255,0.06)" }}>
                 <div className="flex items-center gap-3">
-                    <Link href="/home" className="text-xs px-2 py-1 rounded-lg transition-all duration-200"
-                          style={{ color: "rgba(224,242,254,0.3)" }}
-                          onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.7)")}
-                          onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.3)")}>
+                    <Link href="/home" className="text-xs px-2 py-1 rounded-lg transition-colors duration-200"
+                          style={{ color: "rgba(240,249,255,0.28)" }}
+                          onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.7)")}
+                          onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.28)")}>
                         ←
                     </Link>
-                    <Link href="/home" className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
+                    <Link href="/home" className="flex items-baseline gap-0.5 group">
+                        <span className="text-sm font-bold" style={{ color: "rgba(240,249,255,0.5)" }}>bumedya</span>
+                        <span className="text-sm font-bold" style={{ color: "#7C3AED" }}>.</span>
                     </Link>
-                    <span style={{ color: "rgba(255,255,255,0.15)" }}>/</span>
-                    <span className="text-sm font-medium" style={{ color: "rgba(224,242,254,0.6)" }}>Galeri</span>
+                    <span style={{ color: "rgba(255,255,255,0.12)" }}>/</span>
+                    <span className="text-sm font-medium" style={{ color: "rgba(240,249,255,0.55)" }}>Galeri</span>
                 </div>
                 <div className="flex items-center gap-3">
                     <span className="text-xs" style={{ color: "rgba(224,242,254,0.25)" }}>{items.length} eser</span>
@@ -220,7 +220,7 @@ export default function GaleriClient({
                                     </div>
                                     {/* Hover overlay */}
                                     <div className="absolute inset-0 flex flex-col justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                                         style={{ background: "linear-gradient(to top, rgba(10,15,30,0.85) 0%, transparent 60%)" }}>
+                                         style={{ background: "linear-gradient(to top, rgba(15,25,50,0.88) 0%, transparent 60%)" }}>
                                         <div className="flex items-center justify-between">
                                             <Link href={`/profil/${item.username}`}
                                                   className="text-[11px] font-medium"

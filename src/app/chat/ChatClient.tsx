@@ -167,7 +167,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
     };
 
     return (
-        <div className="flex flex-1 min-h-0 overflow-hidden" style={{ background: "#0A0F1E" }}>
+        <div className="relative z-10 flex flex-1 min-h-0 overflow-hidden">
 
             {/* ── SIDEBAR ── */}
             <aside className="w-14 sm:w-60 shrink-0 flex flex-col"
@@ -270,7 +270,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
                                             {u.username[0].toUpperCase()}
                                         </div>
                                         <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full"
-                                              style={{ background: "rgba(52,211,153,0.9)", border: "1.5px solid #0A0F1E" }} />
+                                              style={{ background: "rgba(52,211,153,0.9)", border: "1.5px solid #1A2744" }} />
                                     </div>
                                     <div className="min-w-0">
                                         <p className="text-xs truncate" style={{ color: "rgba(224,242,254,0.7)" }}>@{u.username}</p>

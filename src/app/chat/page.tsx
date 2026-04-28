@@ -25,7 +25,9 @@ export default async function ChatPage() {
         .limit(200);
 
     return (
-        <div className="flex flex-col flex-1 min-h-0" style={{ height: "100dvh" }}>
+        <div className="aurora-bg flex flex-col flex-1 min-h-0" style={{ height: "100dvh" }}>
+            <div aria-hidden className="aurora-layer" />
+            <div aria-hidden className="aurora-orb-pink" />
             <ChatClient
                 userId={user.id}
                 username={username}

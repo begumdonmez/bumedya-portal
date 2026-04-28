@@ -1,13 +1,15 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Space_Grotesk, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
 /* ─── Fontlar ───────────────────────────────────────────────── */
-const geist = Geist({
+const spaceGrotesk = Space_Grotesk({
     subsets: ["latin"],
-    variable: "--font-geist",
+    variable: "--font-space",
     display: "swap",
+    weight: ["300", "400", "500", "600", "700"],
 });
 
 const geistMono = Geist_Mono({
@@ -49,7 +51,7 @@ export const metadata: Metadata = {
 
 /* ─── Viewport ──────────────────────────────────────────────── */
 export const viewport: Viewport = {
-    themeColor: "#0A0F1E",
+    themeColor: "#1A2744",
     colorScheme: "dark",
     width: "device-width",
     initialScale: 1,
@@ -64,10 +66,10 @@ export default function RootLayout({
     return (
         <html
             lang="tr"
-            className={`h-full ${geist.variable} ${geistMono.variable}`}
+            className={`h-full ${spaceGrotesk.variable} ${geistMono.variable}`}
             suppressHydrationWarning
         >
-        <body className="bg-ana-lacivert text-buz-mavisi min-h-full flex flex-col antialiased">
+        <body className="min-h-full flex flex-col antialiased" style={{ color: "#F1F5F9", fontFamily: "var(--font-space), var(--font-body, system-ui)" }}>
         {children}
 
         <Toaster
