@@ -70,6 +70,7 @@ export default function RootLayout({
             suppressHydrationWarning
         >
         <body className="min-h-full flex flex-col antialiased" style={{ color: "#F1F5F9", fontFamily: "var(--font-space), var(--font-body, system-ui)" }}>
+
         {children}
 
         <Toaster

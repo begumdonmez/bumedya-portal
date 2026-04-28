@@ -59,6 +59,11 @@ html {
 
 body {
     background-color: #1A2744;
+    background-image:
+        radial-gradient(ellipse 70% 60% at 10% 15%, rgba(167,139,250,0.65) 0%, transparent 55%),
+        radial-gradient(ellipse 65% 55% at 90% 85%, rgba(96,165,250,0.60) 0%, transparent 55%),
+        radial-gradient(ellipse 55% 50% at 52% 48%, rgba(249,168,212,0.45) 0%, transparent 55%);
+    background-attachment: fixed;
     color: #F1F5F9;
     font-family: var(--font-body);
     margin: 0;
@@ -413,6 +418,15 @@ input:-webkit-autofill:focus {
     backdrop-filter: blur(24px) saturate(160%);
     -webkit-backdrop-filter: blur(24px) saturate(160%);
     border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+/* ── Nav link ──────────────────────────────────────────────── */
+
+.nav-link-dim {
+    color: rgba(240,249,255,0.35);
+}
+.nav-link-dim:hover {
+    color: rgba(240,249,255,0.85);
 }
 
 /* ── Badge chips ───────────────────────────────────────────── */

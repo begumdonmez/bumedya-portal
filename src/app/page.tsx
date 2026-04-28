@@ -68,10 +68,7 @@ export default async function LandingPage() {
                         { href: "/chat", label: "Lounge" },
                     ].map(({ href, label }) => (
                         <Link key={href} href={href}
-                              className="text-xs tracking-widest uppercase font-medium transition-colors duration-200"
-                              style={{ color: "rgba(240,249,255,0.35)" }}
-                              onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.8)")}
-                              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.35)")}>
+                              className="text-xs tracking-widest uppercase font-medium transition-colors duration-200 nav-link-dim">
                             {label}
                         </Link>
                     ))}
