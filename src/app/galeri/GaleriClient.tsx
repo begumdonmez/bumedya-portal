@@ -40,56 +40,70 @@ export default function GaleriClient({
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const isAuthorized = badges.includes("authorized");
+    const isAdmin = badges.includes("admin");
+    const canUpload = isAuthorized || isAdmin;
 
     const handleUpload = useCallback(async (files: FileList | null) => {
         if (!files || files.length === 0) return;
-        const file = files[0];
-
-        if (!file.type.startsWith("image/")) {
-            toast.error("Sadece resim dosyası yükleyebilirsin.");
+        if (!canUpload) {
+            toast.error("Yükleme yetkisine sahip değilsin.");
             return;
         }
-        if (file.size > 5 * 1024 * 1024) {
-            toast.error("Dosya 5 MB'dan küçük olmalı.");
-            return;
+
+        const fileArray = Array.from(files);
+        for (const file of fileArray) {
+            if (!file.type.startsWith("image/")) {
+                toast.error(`${file.name}: Sadece resim dosyası yükleyebilirsin.`);
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                toast.error(`${file.name}: Dosya 5 MB'dan küçük olmalı.`);
+                return;
+            }
         }
 
         setUploading(true);
         const supabase = createClient();
-        const ext = file.name.split(".").pop();
-        const path = `${userId}/${Date.now()}.${ext}`;
+        const newItems: GalleryItem[] = [];
 
-        const { error: uploadError } = await supabase.storage
-            .from("gallery")
-            .upload(path, file, { cacheControl: "3600", upsert: false });
+        for (const file of fileArray) {
+            const ext = file.name.split(".").pop();
+            const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
-        if (uploadError) {
-            toast.error("Yükleme başarısız: " + uploadError.message);
-            setUploading(false);
-            return;
+            const { error: uploadError } = await supabase.storage
+                .from("gallery")
+                .upload(path, file, { cacheControl: "3600", upsert: false });
+
+            if (uploadError) {
+                toast.error(`${file.name}: ${uploadError.message}`);
+                continue;
+            }
+
+            const { data: inserted, error: dbError } = await supabase
+                .from("gallery_items")
+                .insert({ user_id: userId, username, storage_path: path, title: null })
+                .select()
+                .single();
+
+            if (dbError) {
+                toast.error(`Kayıt hatası: ${dbError.message}`);
+                continue;
+            }
+
+            await supabase.from("activities").insert({
+                user_id: userId,
+                username,
+                type: "gallery_upload",
+                payload: { storage_path: path },
+            });
+
+            newItems.push(inserted);
         }
 
-        const { data: inserted, error: dbError } = await supabase
-            .from("gallery_items")
-            .insert({ user_id: userId, username, storage_path: path, title: null })
-            .select()
-            .single();
-
-        if (dbError) {
-            toast.error("Kayıt hatası: " + dbError.message);
-            setUploading(false);
-            return;
+        if (newItems.length > 0) {
+            setItems((prev) => [...newItems.reverse(), ...prev]);
+            toast.success(`${newItems.length} resim yüklendi ✦`);
         }
-
-        await supabase.from("activities").insert({
-            user_id: userId,
-            username,
-            type: "gallery_upload",
-            payload: { storage_path: path },
-        });
-
-        setItems((prev) => [inserted, ...prev]);
-        toast.success("Yüklendi ✦");
         setUploading(false);
     }, [userId, username]);
 
@@ -128,26 +142,31 @@ export default function GaleriClient({
                 </div>
                 <div className="flex items-center gap-3">
                     <span className="text-xs" style={{ color: "rgba(224,242,254,0.25)" }}>{items.length} eser</span>
-                    <button
-                        onClick={() => fileInputRef.current?.click()}
-                        disabled={uploading}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200 disabled:opacity-40"
-                        style={{
-                            background: "rgba(124,58,237,0.15)",
-                            border: "1px solid rgba(124,58,237,0.3)",
-                            color: "rgba(167,139,250,0.9)",
-                        }}>
-                        {uploading ? (
-                            <span className="w-3 h-3 rounded-full border border-current border-t-transparent animate-spin" />
-                        ) : (
-                            <span>+</span>
-                        )}
-                        Yükle
-                    </button>
+                    {canUpload && (
+                        <>
+                        <button
+                            onClick={() => fileInputRef.current?.click()}
+                            disabled={uploading}
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200 disabled:opacity-40"
+                            style={{
+                                background: "rgba(124,58,237,0.15)",
+                                border: "1px solid rgba(124,58,237,0.3)",
+                                color: "rgba(167,139,250,0.9)",
+                            }}>
+                            {uploading ? (
+                                <span className="w-3 h-3 rounded-full border border-current border-t-transparent animate-spin" />
+                            ) : (
+                                <span>+</span>
+                            )}
+                            Yükle
+                        </button>
+                        </>
+                    )}
                     <input
                         ref={fileInputRef}
                         type="file"
                         accept="image/jpeg,image/png,image/webp"
+                        multiple
                         className="hidden"
                         onChange={(e) => handleUpload(e.target.files)}
                     />
@@ -160,18 +179,20 @@ export default function GaleriClient({
                     <div className="flex flex-col items-center justify-center py-32 gap-4">
                         <span className="text-4xl opacity-10">🖼</span>
                         <p className="text-sm" style={{ color: "rgba(224,242,254,0.25)" }}>
-                            Henüz eser yok. İlk yükleyen sen ol.
+                            {canUpload ? "Henüz eser yok. İlk yükleyen sen ol." : "Henüz eser yok."}
                         </p>
-                        <button
-                            onClick={() => fileInputRef.current?.click()}
-                            className="mt-2 px-5 py-2.5 rounded-xl text-xs font-medium transition-all duration-200"
-                            style={{
-                                background: "rgba(124,58,237,0.12)",
-                                border: "1px solid rgba(124,58,237,0.25)",
-                                color: "rgba(167,139,250,0.8)",
-                            }}>
-                            Resim Yükle
-                        </button>
+                        {canUpload && (
+                            <button
+                                onClick={() => fileInputRef.current?.click()}
+                                className="mt-2 px-5 py-2.5 rounded-xl text-xs font-medium transition-all duration-200"
+                                style={{
+                                    background: "rgba(124,58,237,0.12)",
+                                    border: "1px solid rgba(124,58,237,0.25)",
+                                    color: "rgba(167,139,250,0.8)",
+                                }}>
+                                Resim Yükle
+                            </button>
+                        )}
                     </div>
                 ) : (
                     <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3">

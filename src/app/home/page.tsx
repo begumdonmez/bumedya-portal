@@ -76,6 +76,7 @@ export default async function HomePage() {
                 <div className="hidden md:flex items-center gap-6 lg:gap-8">
                     {[
                         { href: "/home",        label: "Ana Sayfa",   active: true  },
+                        { href: "/akis",        label: "Akış",        active: false },
                         { href: "/galeri",      label: "Galeri",      active: false },
                         { href: "/etkinlikler", label: "Etkinlikler", active: false },
                         { href: "/members",     label: "Üyeler",      active: false },

@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
+import ProfilPosts from "@/components/ProfilPosts";
+import type { Post } from "@/app/akis/AkisClient";
 
 /* ─── Tip ───────────────────────────────────────────────────── */
 interface Profile {
@@ -69,6 +71,12 @@ export default async function PublicProfilePage(
         isAdmin = me?.badges?.includes("admin") ?? false;
     }
 
+    const { data: posts } = await supabase
+        .from("posts")
+        .select("id, user_id, username, category, content, storage_path, description, created_at")
+        .eq("username", username)
+        .order("created_at", { ascending: false });
+
     const roleConf = ROLE_CONFIG[profile.role as keyof typeof ROLE_CONFIG] ?? ROLE_CONFIG.member;
     const joinDate = new Date(profile.created_at).toLocaleDateString("tr-TR", {
         year: "numeric", month: "long", day: "numeric",
@@ -85,10 +93,16 @@ export default async function PublicProfilePage(
             {/* Navbar */}
             <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b gap-3"
                  style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-                <Link href="/" className="flex items-baseline gap-0.5 shrink-0">
-                    <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
-                    <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
-                </Link>
+                <div className="flex items-center gap-3 shrink-0">
+                    <Link href="/home" className="text-xs px-2 py-1 rounded-lg transition-all duration-200"
+                          style={{ color: "rgba(224,242,254,0.3)" }}>
+                        ←
+                    </Link>
+                    <Link href="/home" className="flex items-baseline gap-0.5">
+                        <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
+                        <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
+                    </Link>
+                </div>
 
                 <div className="flex items-center gap-2 flex-wrap justify-end">
                     {isAdmin && (
@@ -193,6 +207,12 @@ export default async function PublicProfilePage(
                         Profilimi Düzenle →
                     </Link>
                 )}
+
+                {/* Paylaşımlar */}
+                <ProfilPosts
+                    posts={(posts ?? []) as Post[]}
+                    supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
+                />
             </div>
         </div>
     );
