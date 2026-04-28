@@ -2,8 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import ProfilPosts from "@/components/ProfilPosts";
+import type { Post } from "@/app/akis/AkisClient";
 
 /* ─── Tipler ────────────────────────────────────────────────── */
 interface Profile {
@@ -89,6 +92,7 @@ export default function ProfilPage() {
     const [signingOut, setSigningOut] = useState(false);
     const [editUsername, setEditUsername] = useState("");
     const [editBio,      setEditBio]      = useState("");
+    const [posts, setPosts] = useState<Post[]>([]);
 
     useEffect(() => {
         const load = async () => {
@@ -101,6 +105,14 @@ export default function ProfilPage() {
             setProfile(data as Profile);
             setEditUsername(data.username);
             setEditBio(data.bio ?? "");
+
+            const { data: userPosts } = await supabase
+                .from("posts")
+                .select("id, user_id, username, category, content, storage_path, description, created_at")
+                .eq("username", data.username)
+                .order("created_at", { ascending: false });
+            setPosts((userPosts ?? []) as Post[]);
+
             setLoading(false);
         };
         load();
@@ -160,10 +172,16 @@ export default function ProfilPage() {
             {/* Navbar */}
             <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b gap-3"
                  style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-                <button onClick={() => router.push("/")} className="flex items-baseline gap-0.5 shrink-0">
-                    <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
-                    <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
-                </button>
+                <div className="flex items-center gap-3 shrink-0">
+                    <Link href="/home" className="text-xs px-2 py-1 rounded-lg transition-all duration-200"
+                          style={{ color: "rgba(224,242,254,0.3)" }}>
+                        ←
+                    </Link>
+                    <Link href="/home" className="flex items-baseline gap-0.5">
+                        <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
+                        <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
+                    </Link>
+                </div>
                 <div className="flex items-center gap-2 flex-wrap justify-end">
                     {profile?.badges?.includes("admin") && (
                         <button onClick={() => router.push("/admin")}
@@ -331,6 +349,12 @@ export default function ProfilPage() {
                         </div>
                     )}
                 </div>
+
+                {/* Postlar */}
+                <ProfilPosts
+                    posts={posts}
+                    supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
+                />
 
             </div>
         </div>
