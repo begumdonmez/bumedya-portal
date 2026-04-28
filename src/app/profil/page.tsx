@@ -281,8 +281,8 @@ export default function ProfilPage() {
                 </div>
 
                 {/* ── TOPLULUK TÜRÜ — member / creator ── */}
-                <div className="rounded-3xl p-6"
-                     style={{ background: roleConf.bg, border: `1px solid ${roleConf.border}` }}>
+                <div className="card rounded-3xl p-6"
+                     style={{ borderColor: roleConf.border }}>
                     <p className="text-[10px] tracking-widest uppercase mb-4" style={{ color: "rgba(224,242,254,0.3)" }}>
                         Topluluk Türü
                     </p>
@@ -311,8 +311,7 @@ export default function ProfilPage() {
                 </div>
 
                 {/* ── KAZANILAN ROZETLER ── */}
-                <div className="rounded-3xl p-6"
-                     style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                <div className="card rounded-3xl p-6">
                     <p className="text-[10px] tracking-widest uppercase mb-4" style={{ color: "rgba(224,242,254,0.3)" }}>
                         Rozetler
                     </p>

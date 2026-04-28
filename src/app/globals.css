@@ -59,11 +59,6 @@ html {
 
 body {
     background-color: #1A2744;
-    background-image:
-        radial-gradient(ellipse 80% 60% at 10% 15%, rgba(167,139,250,0.55) 0%, transparent 60%),
-        radial-gradient(ellipse 70% 55% at 90% 85%, rgba(96,165,250,0.50) 0%, transparent 60%),
-        radial-gradient(ellipse 55% 50% at 55% 48%, rgba(249,168,212,0.38) 0%, transparent 60%);
-    background-attachment: fixed;
     color: #F1F5F9;
     font-family: var(--font-body);
     margin: 0;
@@ -169,47 +164,44 @@ body {
 .aurora-layer::before {
     content: '';
     position: absolute;
-    width: 70vw;
-    height: 70vw;
-    max-width: 800px;
-    max-height: 800px;
+    width: 75vw;
+    height: 75vw;
+    max-width: 850px;
+    max-height: 850px;
     border-radius: 50%;
-    top: 5%;
-    left: 5%;
-    transform: translate(-30%, -30%);
-    background: radial-gradient(circle, rgba(167,139,250,0.65) 0%, rgba(139,92,246,0.35) 40%, transparent 70%);
-    filter: blur(45px);
+    top: -20%;
+    left: -15%;
+    background: radial-gradient(circle, rgba(167,139,250,0.75) 0%, rgba(139,92,246,0.40) 35%, transparent 70%);
+    filter: blur(40px);
     animation: orb-a 16s ease-in-out infinite;
 }
 
 .aurora-layer::after {
     content: '';
     position: absolute;
-    width: 65vw;
-    height: 65vw;
-    max-width: 750px;
-    max-height: 750px;
+    width: 70vw;
+    height: 70vw;
+    max-width: 800px;
+    max-height: 800px;
     border-radius: 50%;
-    bottom: 5%;
-    right: 5%;
-    transform: translate(30%, 30%);
-    background: radial-gradient(circle, rgba(147,197,253,0.6) 0%, rgba(96,165,250,0.30) 40%, transparent 70%);
-    filter: blur(48px);
+    bottom: -20%;
+    right: -15%;
+    background: radial-gradient(circle, rgba(147,197,253,0.70) 0%, rgba(96,165,250,0.38) 35%, transparent 70%);
+    filter: blur(42px);
     animation: orb-b 20s ease-in-out infinite;
 }
 
 .aurora-orb-pink {
     position: fixed;
-    width: 55vw;
-    height: 55vw;
-    max-width: 650px;
-    max-height: 650px;
+    width: 60vw;
+    height: 60vw;
+    max-width: 700px;
+    max-height: 700px;
     border-radius: 50%;
-    top: 40%;
-    left: 45%;
-    transform: translate(-50%, -50%);
-    background: radial-gradient(circle, rgba(249,168,212,0.50) 0%, rgba(236,72,153,0.22) 40%, transparent 70%);
-    filter: blur(55px);
+    top: 20%;
+    left: 30%;
+    background: radial-gradient(circle, rgba(249,168,212,0.55) 0%, rgba(236,72,153,0.25) 38%, transparent 70%);
+    filter: blur(50px);
     pointer-events: none;
     z-index: 0;
     animation: orb-c 24s ease-in-out infinite;
@@ -232,15 +224,15 @@ body {
 }
 
 .card {
-    background: rgba(255,255,255,0.06);
-    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(20,30,65,0.38);
+    border: 1px solid rgba(255,255,255,0.10);
     border-radius: var(--radius-card);
     backdrop-filter: blur(28px) saturate(160%);
     -webkit-backdrop-filter: blur(28px) saturate(160%);
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.08),
-        0 16px 36px rgba(0,0,0,0.20),
-        0 4px 10px rgba(0,0,0,0.12);
+        inset 0 1px 0 rgba(255,255,255,0.07),
+        0 16px 36px rgba(0,0,0,0.30),
+        0 4px 10px rgba(0,0,0,0.18);
     transition: box-shadow var(--duration-mid) ease, border-color var(--duration-mid) ease, transform var(--duration-mid) ease;
 }
 

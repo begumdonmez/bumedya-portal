@@ -47,8 +47,7 @@ function UserRow({ profile, onBadgeToggle, isAuthorized }: {
     const [expanded, setExpanded] = useState(false);
 
     return (
-        <div className="rounded-2xl overflow-hidden transition-all duration-300"
-             style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="card rounded-2xl overflow-hidden transition-all duration-300">
 
             {/* Satır başlığı */}
             <div className="flex items-center gap-4 px-5 py-4 cursor-pointer"

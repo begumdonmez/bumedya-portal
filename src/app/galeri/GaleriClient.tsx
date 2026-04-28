@@ -200,8 +200,7 @@ export default function GaleriClient({
                             const url = getPublicUrl(supabaseUrl, item.storage_path);
                             const loaded = loadedIds.has(item.id);
                             return (
-                                <div key={item.id} className="break-inside-avoid relative group rounded-2xl overflow-hidden"
-                                     style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                                <div key={item.id} className="card break-inside-avoid relative group rounded-2xl overflow-hidden">
                                     <div className="relative">
                                         {!loaded && (
                                             <div className="absolute inset-0 w-full h-full min-h-[120px] animate-pulse"

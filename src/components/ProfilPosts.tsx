@@ -80,8 +80,7 @@ export default function ProfilPosts({ posts, supabaseUrl }: { posts: Post[]; sup
                         const loaded = loadedIds.has(post.id);
 
                         return (
-                            <div key={post.id} className="rounded-2xl overflow-hidden"
-                                 style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                            <div key={post.id} className="card rounded-2xl overflow-hidden">
 
                                 {/* Kategori + tarih */}
                                 <div className="flex items-center justify-between px-4 pt-3 pb-2">
