@@ -19,9 +19,10 @@ function activityText(type: string, payload: Record<string, string>): { text: st
         case "post_text":    return { text: `bir yazı paylaştı${payload.title ? ` · ${payload.title}` : ""}`, dot: "bg-blue-500" };
         case "badge_earned": return { text: `${payload.badge ?? "yeni"} rozeti kazandı ✦`, dot: "bg-amber-500" };
         case "event_created":return { text: `yeni etkinlik oluşturdu${payload.title ? ` · ${payload.title}` : ""}`, dot: "bg-pink-500" };
-        case "lounge_join":  return { text: "Lounge'a katıldı", dot: "bg-blue-400" };
-        case "role_change":  return { text: "üretici oldu ✏️", dot: "bg-canli-mor" };
-        default:             return { text: "bir şeyler yaptı", dot: "bg-white/30" };
+        case "lounge_join":    return { text: "Lounge'a katıldı", dot: "bg-blue-400" };
+        case "role_change":    return { text: "üretici oldu ✏️", dot: "bg-canli-mor" };
+        case "gallery_upload": return { text: "galeriye resim ekledi 🖼", dot: "bg-pink-400" };
+        default:               return { text: "bir şeyler yaptı", dot: "bg-white/30" };
     }
 }
 

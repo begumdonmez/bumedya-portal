@@ -3,7 +3,6 @@
 import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 
@@ -33,7 +32,6 @@ export default function GaleriClient({
     items: GalleryItem[];
     supabaseUrl: string;
 }) {
-    const router = useRouter();
     const [items, setItems] = useState(initialItems);
     const [uploading, setUploading] = useState(false);
     const [loadedIds, setLoadedIds] = useState<Set<string>>(new Set());
@@ -69,9 +67,11 @@ export default function GaleriClient({
             return;
         }
 
-        const { error: dbError } = await supabase
+        const { data: inserted, error: dbError } = await supabase
             .from("gallery_items")
-            .insert({ user_id: userId, username, storage_path: path, title: null });
+            .insert({ user_id: userId, username, storage_path: path, title: null })
+            .select()
+            .single();
 
         if (dbError) {
             toast.error("Kayıt hatası: " + dbError.message);
@@ -79,10 +79,17 @@ export default function GaleriClient({
             return;
         }
 
+        await supabase.from("activities").insert({
+            user_id: userId,
+            username,
+            type: "gallery_upload",
+            payload: { storage_path: path },
+        });
+
+        setItems((prev) => [inserted, ...prev]);
         toast.success("Yüklendi ✦");
         setUploading(false);
-        router.refresh();
-    }, [userId, username, router]);
+    }, [userId, username]);
 
     const handleDelete = async (item: GalleryItem) => {
         if (item.user_id !== userId) return;
