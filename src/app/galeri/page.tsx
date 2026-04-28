@@ -16,6 +16,8 @@ export default async function GaleriPage() {
         .eq("id", user.id)
         .single();
 
+    const badges: string[] = (profile?.badges as string[]) ?? [];
+
     const { data: items } = await supabase
         .from("gallery_items")
         .select("id, user_id, username, title, storage_path, created_at")
@@ -28,6 +30,7 @@ export default async function GaleriPage() {
             userId={user.id}
             username={profile?.username ?? ""}
             role={profile?.role ?? "member"}
+            badges={badges}
             items={items ?? []}
             supabaseUrl={supabaseUrl}
         />

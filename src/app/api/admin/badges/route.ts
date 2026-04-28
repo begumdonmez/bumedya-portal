@@ -56,8 +56,8 @@ export async function PATCH(request: Request) {
 
     if (error) return Response.json({ error: error.message }, { status: 500 });
 
-    // Rozet eklendiyse aktivite kaydı (service role — RLS'i bypass eder)
-    if (addedBadge && username) {
+    // authorized rozeti gizli kalır — aktivite oluşturma
+    if (addedBadge && addedBadge !== "authorized" && username) {
         await adminClient.from("activities").insert({
             user_id: userId,
             username,

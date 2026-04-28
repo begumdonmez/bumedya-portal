@@ -23,12 +23,14 @@ export default function GaleriClient({
     userId,
     username,
     role,
+    badges,
     items: initialItems,
     supabaseUrl,
 }: {
     userId: string;
     username: string;
     role: string;
+    badges: string[];
     items: GalleryItem[];
     supabaseUrl: string;
 }) {
@@ -37,7 +39,7 @@ export default function GaleriClient({
     const [loadedIds, setLoadedIds] = useState<Set<string>>(new Set());
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const canUpload = role === "creator" || (role === "member");
+    const isAuthorized = badges.includes("authorized");
 
     const handleUpload = useCallback(async (files: FileList | null) => {
         if (!files || files.length === 0) return;
@@ -92,7 +94,7 @@ export default function GaleriClient({
     }, [userId, username]);
 
     const handleDelete = async (item: GalleryItem) => {
-        if (item.user_id !== userId) return;
+        if (item.user_id !== userId && !isAuthorized) return;
         const supabase = createClient();
 
         await supabase.storage.from("gallery").remove([item.storage_path]);
@@ -173,21 +175,22 @@ export default function GaleriClient({
                             return (
                                 <div key={item.id} className="break-inside-avoid relative group rounded-2xl overflow-hidden"
                                      style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                                    {/* Skeleton */}
-                                    {!loaded && (
-                                        <div className="w-full h-48 animate-pulse"
-                                             style={{ background: "rgba(124,58,237,0.08)" }} />
-                                    )}
-                                    <Image
-                                        src={url}
-                                        alt={item.title ?? "Galeri görseli"}
-                                        width={600}
-                                        height={400}
-                                        className="w-full h-auto object-cover transition-all duration-500"
-                                        style={{ opacity: loaded ? 1 : 0, display: loaded ? "block" : "none" }}
-                                        onLoad={() => setLoadedIds((prev) => new Set(prev).add(item.id))}
-                                        sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                                    />
+                                    <div className="relative">
+                                        {!loaded && (
+                                            <div className="absolute inset-0 w-full h-full min-h-[120px] animate-pulse"
+                                                 style={{ background: "rgba(124,58,237,0.08)" }} />
+                                        )}
+                                        <Image
+                                            src={url}
+                                            alt={item.title ?? "Galeri görseli"}
+                                            width={600}
+                                            height={400}
+                                            className="w-full h-auto object-cover transition-opacity duration-500"
+                                            style={{ opacity: loaded ? 1 : 0 }}
+                                            onLoad={() => setLoadedIds((prev) => new Set(prev).add(item.id))}
+                                            sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                        />
+                                    </div>
                                     {/* Hover overlay */}
                                     <div className="absolute inset-0 flex flex-col justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                                          style={{ background: "linear-gradient(to top, rgba(10,15,30,0.85) 0%, transparent 60%)" }}>
@@ -197,7 +200,7 @@ export default function GaleriClient({
                                                   style={{ color: "rgba(224,242,254,0.7)" }}>
                                                 @{item.username}
                                             </Link>
-                                            {item.user_id === userId && (
+                                            {(item.user_id === userId || isAuthorized) && (
                                                 <button
                                                     onClick={() => handleDelete(item)}
                                                     className="text-[10px] px-2 py-1 rounded-lg transition-all duration-200"

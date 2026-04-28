@@ -155,6 +155,7 @@ export default async function PublicProfilePage(
                             {profile.badges.length > 0 && (
                                 <div className="flex flex-wrap gap-1.5 mt-2">
                                     {profile.badges.map((b: string) => {
+                                        if (b === "authorized") return null;
                                         const conf = BADGE_CONFIG[b];
                                         if (!conf) return null;
                                         return (

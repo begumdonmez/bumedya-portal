@@ -25,5 +25,5 @@ export default async function AdminPage() {
         .select("id, username, role, badges, created_at")
         .order("created_at", { ascending: false });
 
-    return <AdminClient profiles={profiles ?? []} />;
+    return <AdminClient profiles={profiles ?? []} myBadges={me?.badges ?? []} />;
 }

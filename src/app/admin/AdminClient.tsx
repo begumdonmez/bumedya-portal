@@ -15,12 +15,13 @@ interface Profile {
 
 /* ─── Rozet konfigürasyonu ──────────────────────────────────── */
 const BADGES = [
-    { id: "admin",    label: "Admin",    icon: "⚡", color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.1)",   border: "rgba(239,68,68,0.3)"   },
-    { id: "editor",   label: "Editör",   icon: "🛡", color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.1)",  border: "rgba(251,191,36,0.3)"  },
-    { id: "artist",   label: "Sanatçı",  icon: "🎨", color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.1)", border: "rgba(244,114,182,0.3)" },
-    { id: "writer",   label: "Yazar",    icon: "📝", color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.1)",  border: "rgba(52,211,153,0.3)"  },
-    { id: "verified", label: "Onaylı",   icon: "✓",  color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.1)",  border: "rgba(59,130,246,0.3)"  },
-    { id: "founder",  label: "Kurucu",   icon: "✦",  color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)", border: "rgba(251,191,36,0.2)"  },
+    { id: "authorized", label: "Authorized", icon: "◈",  color: "rgba(255,255,255,0.9)", bg: "rgba(255,255,255,0.06)", border: "rgba(255,255,255,0.2)",  authorizedOnly: true  },
+    { id: "admin",      label: "Admin",       icon: "⚡", color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.1)",   border: "rgba(239,68,68,0.3)",   authorizedOnly: false },
+    { id: "editor",     label: "Editör",      icon: "🛡", color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.1)",  border: "rgba(251,191,36,0.3)",  authorizedOnly: false },
+    { id: "artist",     label: "Sanatçı",     icon: "🎨", color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.1)", border: "rgba(244,114,182,0.3)", authorizedOnly: false },
+    { id: "writer",     label: "Yazar",       icon: "📝", color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.1)",  border: "rgba(52,211,153,0.3)",  authorizedOnly: false },
+    { id: "verified",   label: "Onaylı",      icon: "✓",  color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.1)",  border: "rgba(59,130,246,0.3)",  authorizedOnly: false },
+    { id: "founder",    label: "Kurucu",      icon: "✦",  color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)", border: "rgba(251,191,36,0.2)",  authorizedOnly: false },
 ] as const;
 
 type BadgeId = typeof BADGES[number]["id"];
@@ -38,9 +39,10 @@ function BadgePill({ id }: { id: string }) {
 }
 
 /* ─── Kullanıcı satırı ──────────────────────────────────────── */
-function UserRow({ profile, onBadgeToggle }: {
+function UserRow({ profile, onBadgeToggle, isAuthorized }: {
     profile: Profile;
     onBadgeToggle: (userId: string, badge: BadgeId, current: string[]) => void;
+    isAuthorized: boolean;
 }) {
     const [expanded, setExpanded] = useState(false);
 
@@ -101,7 +103,7 @@ function UserRow({ profile, onBadgeToggle }: {
                         Rozet Yönetimi
                     </p>
                     <div className="flex flex-wrap gap-2">
-                        {BADGES.map((badge) => {
+                        {BADGES.filter((b) => !b.authorizedOnly || isAuthorized).map((badge) => {
                             const hasIt = profile.badges.includes(badge.id);
                             return (
                                 <button
@@ -130,8 +132,9 @@ function UserRow({ profile, onBadgeToggle }: {
 }
 
 /* ─── Ana admin client bileşeni ─────────────────────────────── */
-export default function AdminClient({ profiles: initialProfiles }: { profiles: Profile[] }) {
+export default function AdminClient({ profiles: initialProfiles, myBadges }: { profiles: Profile[]; myBadges: string[] }) {
     const router = useRouter();
+    const isAuthorized = myBadges.includes("authorized");
     const [profiles, setProfiles] = useState<Profile[]>(initialProfiles);
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState<"all" | "member" | "creator">("all");
@@ -289,6 +292,7 @@ export default function AdminClient({ profiles: initialProfiles }: { profiles: P
                                 key={profile.id}
                                 profile={profile}
                                 onBadgeToggle={handleBadgeToggle}
+                                isAuthorized={isAuthorized}
                             />
                         ))
                     ) : (
