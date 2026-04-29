@@ -5,6 +5,7 @@ import { ChevronRight, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import LiveFeed from "@/components/LiveFeed";
+import EventMapClient from "@/components/EventMapClient";
 
 export const metadata: Metadata = { title: "Ana Sayfa | bumedya." };
 
@@ -39,12 +40,14 @@ export default async function HomePage() {
         { count: memberCount },
         { data: activities },
         { data: allProfiles },
+        { data: events },
     ] = await Promise.all([
         supabase.from("profiles").select("*", { count: "exact", head: true }),
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "creator"),
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "member"),
         supabase.from("activities").select("id, username, type, payload, created_at").order("created_at", { ascending: false }).limit(8),
         supabase.from("profiles").select("badges"),
+        supabase.from("events").select("id, username, title, address, lat, lng, event_date, ref_url").order("event_date", { ascending: true }),
     ]);
 
     const editorCount = allProfiles?.filter((p) => (p.badges as string[])?.includes("editor")).length ?? 0;
@@ -55,11 +58,12 @@ export default async function HomePage() {
     const greeting = hours < 6 ? "gece geç saatte ne arıyorsun?" : hours < 12 ? "günaydın!" : hours < 17 ? "iyi günler!" : hours < 21 ? "iyi akşamlar!" : "iyi geceler!";
 
     const NAV_LINKS = [
-        { href: "/home",    label: "Ana Sayfa",   active: true  },
-        { href: "/akis",    label: "Akış",         active: false },
-        { href: "/galeri",  label: "Galeri",       active: false },
-        { href: "/members", label: "Üyeler",       active: false },
-        { href: "/chat",    label: "Lounge",       active: false },
+        { href: "/home",        label: "Ana Sayfa",   active: true  },
+        { href: "/akis",        label: "Akış",         active: false },
+        { href: "/galeri",      label: "Galeri",       active: false },
+        { href: "/members",     label: "Üyeler",       active: false },
+        { href: "/etkinlikler", label: "Etkinlikler",  active: false },
+        { href: "/chat",        label: "Lounge",       active: false },
     ];
 
     return (
@@ -199,24 +203,12 @@ export default async function HomePage() {
                             <p className="label-caps">Etkinlik Haritası</p>
                             <span className="text-[10px] font-medium" style={{ color: "rgba(124,58,237,0.7)" }}>İstanbul</span>
                         </div>
-                        <div className="flex-1 relative rounded-2xl overflow-hidden min-h-[180px]"
-                             style={{ background: "rgba(124,58,237,0.04)", border: "1px solid rgba(124,58,237,0.1)" }}>
-                            <div className="absolute inset-0"
-                                 style={{ backgroundImage: `linear-gradient(rgba(124,58,237,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(124,58,237,0.05) 1px, transparent 1px)`, backgroundSize: "28px 28px" }} />
-                            <div className="absolute inset-0" style={{ maskImage: "radial-gradient(ellipse 80% 80% at 50% 50%, black 40%, transparent 100%)" }}>
-                                <svg className="absolute inset-0 w-full h-full opacity-15" viewBox="0 0 300 200">
-                                    <path d="M0 100 Q75 80 150 100 Q225 120 300 100" stroke="#8B5CF6" strokeWidth="1.5" fill="none" />
-                                    <path d="M150 0 Q130 60 150 100 Q170 140 150 200" stroke="#60A5FA" strokeWidth="1" fill="none" />
-                                </svg>
-                            </div>
-                            {([{ x: "40%", y: "45%" }, { x: "65%", y: "35%" }, { x: "25%", y: "65%" }] as const).map((pos, i) => (
-                                <div key={i} className="absolute" style={{ left: pos.x, top: pos.y, transform: "translate(-50%,-50%)" }}>
-                                    <div className="absolute rounded-full" style={{ width: 24, height: 24, margin: -8, background: "rgba(124,58,237,0.25)", animation: `pulse-glow ${2 + i * 0.4}s ease-in-out infinite` }} />
-                                    <div className="w-2 h-2 rounded-full relative z-10" style={{ background: "#8B5CF6" }} />
-                                </div>
-                            ))}
+                        <div className="flex-1 relative rounded-2xl overflow-hidden" style={{ minHeight: 180 }}>
+                            <EventMapClient events={events ?? []} height={180} zoom={10} />
                         </div>
-                        <p className="text-xs mt-3" style={{ color: "rgba(240,249,255,0.25)" }}>3 aktif etkinlik · Leaflet entegrasyonu yakında</p>
+                        <p className="text-xs mt-3" style={{ color: "rgba(240,249,255,0.25)" }}>
+                            {(events ?? []).length} aktif etkinlik
+                        </p>
                     </BentoCard>
 
                     {/* Manifesto */}
