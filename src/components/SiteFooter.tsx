@@ -3,7 +3,7 @@ import Link from "next/link";
 const LINKS = [
     { label: "Gizlilik",  href: "/gizlilik"     },
     { label: "Kurallar",  href: "/#kurallar"    },
-    { label: "İletişim",  href: "/iletisim"     },
+    { label: "İletişim",  href: "#iletisim"     },
 ];
 
 export default function SiteFooter() {
