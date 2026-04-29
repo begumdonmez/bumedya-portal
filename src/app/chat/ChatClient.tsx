@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
+import { MessageSquare, Palette, PenLine, BookOpen, CalendarDays, ChevronLeft } from "lucide-react";
+import type { ElementType } from "react";
 
 interface Message {
     id: string;
@@ -13,12 +15,12 @@ interface Message {
     created_at: string;
 }
 
-const ROOMS = [
-    { id: "genel",            label: "Genel",           icon: "💬", desc: "Genel sohbet" },
-    { id: "cizim-atolyesi",   label: "Çizim Atölyesi",  icon: "🎨", desc: "Çizerler burada" },
-    { id: "yazarlar-kahvesi", label: "Yazarlar Kahvesi", icon: "📝", desc: "Yazarlar burada" },
-    { id: "kulturel-paylasim", label: "Kültürel Paylaşım", icon: "📝", desc: "Film, dizi, kitap önerileri" },
-    { id: "etkinlik-gruplasma", label: "Etkinlik Grupları", icon: "📝", desc: "Etkinlik Gruplasma" }
+const ROOMS: { id: string; label: string; icon: ElementType; desc: string }[] = [
+    { id: "genel",              label: "Genel",             icon: MessageSquare, desc: "Genel sohbet" },
+    { id: "cizim-atolyesi",     label: "Çizim Atölyesi",    icon: Palette,       desc: "Çizerler burada" },
+    { id: "yazarlar-kahvesi",   label: "Yazarlar Kahvesi",  icon: PenLine,       desc: "Yazarlar burada" },
+    { id: "kulturel-paylasim",  label: "Kültürel Paylaşım", icon: BookOpen,      desc: "Film, dizi, kitap önerileri" },
+    { id: "etkinlik-gruplasma", label: "Etkinlik Grupları", icon: CalendarDays,  desc: "Etkinlik Gruplasma" },
 ];
 
 function timeLabel(dateStr: string) {
@@ -180,7 +182,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
                               style={{ color: "rgba(224,242,254,0.25)" }}
                               onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.6)")}
                               onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.25)")}>
-                            ←
+                            <ChevronLeft size={15} />
                         </Link>
                         <Link href="/home" className="flex items-baseline gap-0.5">
                             <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.45)" }}>bumedya</span>
@@ -215,7 +217,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
                                         border: `1px solid ${isActive ? "rgba(124,58,237,0.25)" : "transparent"}`,
                                         justifyContent: "center",
                                     }}>
-                                <span className="text-lg sm:text-base shrink-0">{room.icon}</span>
+                                <room.icon size={16} strokeWidth={1.8} className="shrink-0" />
                                 <div className="hidden sm:block flex-1 min-w-0">
                                     <p className="text-sm font-medium truncate"
                                        style={{ color: isActive ? "rgba(167,139,250,0.95)" : "rgba(224,242,254,0.5)" }}>
@@ -311,7 +313,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
                 <div className="shrink-0 px-3 sm:px-6 h-[60px] flex items-center gap-3 sm:gap-4 border-b"
                      style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.015)" }}>
                     <div className="flex items-center gap-3 flex-1 min-w-0">
-                        <span className="text-lg">{activeRoomData.icon}</span>
+                        <activeRoomData.icon size={16} strokeWidth={1.8} />
                         <div>
                             <h2 className="text-sm font-semibold leading-tight" style={{ color: "#E0F2FE" }}>
                                 {activeRoomData.label}
@@ -349,10 +351,10 @@ export default function ChatClient({ userId, username, initialMessages }: {
                         <div className="flex-1 flex flex-col items-center justify-center gap-3">
                             <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
                                  style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.15)" }}>
-                                {activeRoomData.icon}
+                                <activeRoomData.icon size={28} strokeWidth={1.5} />
                             </div>
                             <p className="text-sm font-medium" style={{ color: "rgba(224,242,254,0.35)" }}>{activeRoomData.label}</p>
-                            <p className="text-xs" style={{ color: "rgba(224,242,254,0.2)" }}>İlk mesajı gönder, sohbeti başlat ✦</p>
+                            <p className="text-xs" style={{ color: "rgba(224,242,254,0.2)" }}>İlk mesajı gönder, sohbeti başlat</p>
                         </div>
                     ) : (
                         <div className="flex flex-col">

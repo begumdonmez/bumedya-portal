@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { ChevronRight, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import LiveFeed from "@/components/LiveFeed";
@@ -186,7 +187,7 @@ export default async function HomePage() {
                             </div>
                             <Link href="/chat" className="text-[10px] tracking-widest uppercase transition-colors duration-200"
                                   style={{ color: "rgba(124,58,237,0.6)" }}>
-                                Lounge →
+                                Lounge <ChevronRight size={11} className="inline" />
                             </Link>
                         </div>
                         <LiveFeed initial={activities ?? []} />
@@ -234,7 +235,7 @@ export default async function HomePage() {
                     {/* Bottom CTA */}
                     <div className="sm:col-span-2 lg:col-span-12 rounded-2xl p-8 flex flex-col items-center justify-center gap-3"
                          style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", minHeight: "120px" }}>
-                        <span className="text-2xl" style={{ opacity: 0.08 }}>✦</span>
+                        <Sparkles size={22} style={{ opacity: 0.08 }} />
                         <p className="text-xs" style={{ color: "rgba(240,249,255,0.18)" }}>Daha fazlası yakında.</p>
                     </div>
                 </div>

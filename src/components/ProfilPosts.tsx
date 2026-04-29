@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Image from "next/image";
 import type { Post } from "@/app/akis/AkisClient";
+import { Image as ImageIcon, PenLine, Clapperboard, Sparkles } from "lucide-react";
+import type { ElementType } from "react";
 
 const TABS = [
     { id: "tumu",    label: "Tümü"    },
@@ -14,11 +16,11 @@ const TABS = [
 
 type TabId = typeof TABS[number]["id"];
 
-const CATEGORY_COLORS: Record<string, { color: string; bg: string; border: string; icon: string }> = {
-    resimler: { icon: "🖼",  color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.2)" },
-    yazilar:  { icon: "📝",  color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)"  },
-    editler:  { icon: "🎬",  color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.2)"  },
-    diger:    { icon: "✦",   color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"  },
+const CATEGORY_COLORS: Record<string, { color: string; bg: string; border: string; icon: ElementType }> = {
+    resimler: { icon: ImageIcon,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.2)" },
+    yazilar:  { icon: PenLine,      color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)"  },
+    editler:  { icon: Clapperboard, color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.2)"  },
+    diger:    { icon: Sparkles,     color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"  },
 };
 
 function timeAgo(dateStr: string) {
@@ -67,7 +69,7 @@ export default function ProfilPosts({ posts, supabaseUrl }: { posts: Post[]; sup
             {/* Posts */}
             {filtered.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-2">
-                    <span className="text-2xl opacity-10">✦</span>
+                    <Sparkles size={24} className="opacity-10" />
                     <p className="text-xs" style={{ color: "rgba(224,242,254,0.2)" }}>Henüz paylaşım yok.</p>
                 </div>
             ) : (
@@ -86,7 +88,7 @@ export default function ProfilPosts({ posts, supabaseUrl }: { posts: Post[]; sup
                                 <div className="flex items-center justify-between px-4 pt-3 pb-2">
                                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium"
                                           style={{ background: conf.bg, border: `1px solid ${conf.border}`, color: conf.color }}>
-                                        {conf.icon} {post.category.charAt(0).toUpperCase() + post.category.slice(1)}
+                                        <conf.icon size={10} strokeWidth={2} /> {post.category.charAt(0).toUpperCase() + post.category.slice(1)}
                                     </span>
                                     <span className="text-[10px]" style={{ color: "rgba(224,242,254,0.2)" }}>
                                         {timeAgo(post.created_at)}

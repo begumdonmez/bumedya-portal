@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Award, ChevronLeft, ChevronRight } from "lucide-react";
+import type { ElementType } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
@@ -44,13 +46,13 @@ const ROLE_CONFIG = {
 };
 
 /* ─── Rozet tanımları (admin atar) ─────────────────────────── */
-const BADGE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; icon: string }> = {
-    admin:    { label: "Admin",    icon: "⚡", color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.08)",   border: "rgba(239,68,68,0.25)"   },
-    editor:   { label: "Editör",   icon: "🛡", color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.25)"  },
-    artist:   { label: "Sanatçı",  icon: "🎨", color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.25)" },
-    writer:   { label: "Yazar",    icon: "📝", color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)"   },
-    verified: { label: "Onaylı",   icon: "✓",  color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"   },
-    founder:  { label: "Kurucu",   icon: "✦",  color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)"   },
+const BADGE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; icon: ElementType }> = {
+    admin:    { label: "Admin",    icon: Zap,         color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.08)",   border: "rgba(239,68,68,0.25)"   },
+    editor:   { label: "Editör",   icon: Shield,      color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.25)"  },
+    artist:   { label: "Sanatçı",  icon: Palette,     color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.25)" },
+    writer:   { label: "Yazar",    icon: PenLine,     color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)"   },
+    verified: { label: "Onaylı",   icon: BadgeCheck,  color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"   },
+    founder:  { label: "Kurucu",   icon: Sparkles,    color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)"   },
 };
 
 /* ─── Avatar ────────────────────────────────────────────────── */
@@ -76,7 +78,7 @@ function Badge({ id }: { id: string }) {
     return (
         <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-medium tracking-wider"
              style={{ background: conf.bg, border: `1px solid ${conf.border}`, color: conf.color }}>
-            <span>{conf.icon}</span>
+            <conf.icon size={11} strokeWidth={2} />
             {conf.label}
         </div>
     );
@@ -170,9 +172,9 @@ export default function ProfilPage() {
             <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b gap-3"
                  style={{ borderColor: "rgba(255,255,255,0.05)" }}>
                 <div className="flex items-center gap-3 shrink-0">
-                    <Link href="/home" className="text-xs px-2 py-1 rounded-lg transition-all duration-200"
+                    <Link href="/home" className="flex items-center px-2 py-1 rounded-lg transition-all duration-200"
                           style={{ color: "rgba(224,242,254,0.3)" }}>
-                        ←
+                        <ChevronLeft size={15} />
                     </Link>
                     <Link href="/home" className="flex items-baseline gap-0.5">
                         <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
@@ -184,7 +186,7 @@ export default function ProfilPage() {
                         <button onClick={() => router.push("/admin")}
                                 className="flex items-center gap-1 text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition-all duration-300 whitespace-nowrap"
                                 style={{ color: "rgba(239,68,68,0.75)", border: "1px solid rgba(239,68,68,0.15)", background: "rgba(239,68,68,0.06)" }}>
-                            ⚡ Admin
+                            <Zap size={11} strokeWidth={2} /> Admin
                         </button>
                     )}
                     <button onClick={handleSignOut} disabled={signingOut}
@@ -304,7 +306,7 @@ export default function ProfilPage() {
                             <button onClick={() => router.push("/onboarding")}
                                     className="shrink-0 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-300 whitespace-nowrap"
                                     style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", color: "rgba(167,139,250,0.9)" }}>
-                                Üretici Ol →
+                                Üretici Ol <ChevronRight size={13} />
                             </button>
                         )}
                     </div>
@@ -324,7 +326,7 @@ export default function ProfilPage() {
                                 return (
                                     <div key={b} className="flex items-center gap-2 px-4 py-2.5 rounded-2xl"
                                          style={{ background: conf.bg, border: `1px solid ${conf.border}` }}>
-                                        <span style={{ fontSize: 16 }}>{conf.icon}</span>
+                                        <conf.icon size={16} strokeWidth={1.8} />
                                         <div>
                                             <p className="text-xs font-medium" style={{ color: conf.color }}>{conf.label}</p>
                                         </div>
@@ -334,7 +336,7 @@ export default function ProfilPage() {
                         </div>
                     ) : (
                         <div className="flex flex-col items-center gap-2 py-4 text-center">
-                            <span className="text-2xl opacity-30">🏅</span>
+                            <Award size={28} className="opacity-30" />
                             <p className="text-xs" style={{ color: "rgba(224,242,254,0.25)" }}>
                                 Henüz rozet kazanılmadı.
                             </p>

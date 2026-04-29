@@ -57,7 +57,7 @@ export default function EventMap({
                                 {ev.title}
                             </p>
                             <p style={{ fontSize: 11, color: "rgba(224,242,254,0.6)", marginBottom: 4 }}>
-                                📍 {ev.address}
+                                {ev.address}
                             </p>
                             <p style={{ fontSize: 11, color: "rgba(167,139,250,0.85)", marginBottom: ev.ref_url ? 6 : 0 }}>
                                 {new Date(ev.event_date + "T00:00:00").toLocaleDateString("tr-TR", {
@@ -67,7 +67,7 @@ export default function EventMap({
                             {ev.ref_url && (
                                 <a href={ev.ref_url} target="_blank" rel="noopener noreferrer"
                                    style={{ fontSize: 11, color: "rgba(124,58,237,0.9)", textDecoration: "none", display: "block" }}>
-                                    Detaylar →
+                                    Detaylar ›
                                 </a>
                             )}
                             <p style={{ fontSize: 10, color: "rgba(224,242,254,0.25)", marginTop: 6 }}>

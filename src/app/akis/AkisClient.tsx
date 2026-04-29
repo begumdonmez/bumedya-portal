@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { Image as ImageIcon, PenLine, Clapperboard, Sparkles, X, ChevronLeft } from "lucide-react";
+import type { ElementType } from "react";
 
 export interface Post {
     id: string;
@@ -17,14 +19,14 @@ export interface Post {
     created_at: string;
 }
 
-const CATEGORIES = [
-    { id: "resimler", label: "Resimler", icon: "🖼",  color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.2)" },
-    { id: "yazilar",  label: "Yazılar",  icon: "📝",  color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)"  },
-    { id: "editler",  label: "Editler",  icon: "🎬",  color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.2)"  },
-    { id: "diger",    label: "Diğer",    icon: "✦",   color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"  },
-] as const;
+type CategoryId = "resimler" | "yazilar" | "editler" | "diger";
 
-type CategoryId = typeof CATEGORIES[number]["id"];
+const CATEGORIES: { id: CategoryId; label: string; icon: ElementType; color: string; bg: string; border: string }[] = [
+    { id: "resimler", label: "Resimler", icon: ImageIcon,   color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.2)" },
+    { id: "yazilar",  label: "Yazılar",  icon: PenLine,     color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)"  },
+    { id: "editler",  label: "Editler",  icon: Clapperboard,color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.2)"  },
+    { id: "diger",    label: "Diğer",    icon: Sparkles,    color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"  },
+];
 
 function timeAgo(dateStr: string) {
     const diff = Date.now() - new Date(dateStr).getTime();
@@ -42,7 +44,7 @@ function CategoryBadge({ id }: { id: string }) {
     return (
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium"
               style={{ background: conf.bg, border: `1px solid ${conf.border}`, color: conf.color }}>
-            {conf.icon} {conf.label}
+            <conf.icon size={10} strokeWidth={2} /> {conf.label}
         </span>
     );
 }
@@ -214,7 +216,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
         });
 
         onPost(data as Post);
-        toast.success("Yayınlandı ✦");
+        toast.success("Yayınlandı");
         onClose();
     };
 
@@ -229,8 +231,8 @@ function UploadModal({ onClose, onPost, userId, username }: {
                 <div className="flex items-center justify-between px-6 py-5 border-b"
                      style={{ borderColor: "rgba(255,255,255,0.06)" }}>
                     <h2 className="text-sm font-semibold" style={{ color: "#E0F2FE" }}>Yeni Post</h2>
-                    <button onClick={onClose} className="text-lg leading-none transition-opacity hover:opacity-60"
-                            style={{ color: "rgba(224,242,254,0.4)" }}>✕</button>
+                    <button onClick={onClose} className="flex items-center justify-center transition-opacity hover:opacity-60"
+                            style={{ color: "rgba(224,242,254,0.4)" }}><X size={16} /></button>
                 </div>
 
                 <div className="p-6 flex flex-col gap-5">
@@ -249,7 +251,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                                             border: `1px solid ${category === c.id ? c.border : "rgba(255,255,255,0.06)"}`,
                                             color: category === c.id ? c.color : "rgba(224,242,254,0.3)",
                                         }}>
-                                    <span className="text-base">{c.icon}</span>
+                                    <c.icon size={16} strokeWidth={1.8} />
                                     {c.label}
                                 </button>
                             ))}
@@ -267,7 +269,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                                     <img src={preview} alt="preview" className="w-full h-48 object-cover rounded-xl" />
                                     <button onClick={() => { setFile(null); setPreview(null); }}
                                             className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs"
-                                            style={{ background: "rgba(0,0,0,0.6)", color: "#fff" }}>✕</button>
+                                            style={{ background: "rgba(0,0,0,0.6)", color: "#fff" }}><X size={12} /></button>
                                 </div>
                             ) : (
                                 <button onClick={() => fileRef.current?.click()}
@@ -324,7 +326,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                             style={{ background: "rgba(124,58,237,0.8)", color: "#fff", border: "1px solid rgba(124,58,237,0.5)" }}>
                         {loading ? (
                             <span className="inline-block w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                        ) : "Yayınla ✦"}
+                        ) : "Yayınla"}
                     </button>
                 </div>
             </div>
@@ -363,7 +365,7 @@ export default function AkisClient({ userId, username, badges, initialPosts, sup
                           style={{ color: "rgba(240,249,255,0.28)" }}
                           onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.7)")}
                           onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.28)")}>
-                        ←
+                        <ChevronLeft size={15} />
                     </Link>
                     <Link href="/home" className="flex items-baseline gap-0.5 group">
                         <span className="text-sm font-bold" style={{ color: "rgba(240,249,255,0.5)" }}>bumedya</span>
@@ -383,7 +385,7 @@ export default function AkisClient({ userId, username, badges, initialPosts, sup
             <div className="relative z-10 max-w-xl mx-auto w-full px-4 py-8 flex flex-col gap-4">
                 {posts.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-32 gap-4">
-                        <span className="text-4xl opacity-10">✦</span>
+                        <Sparkles size={36} className="opacity-10" />
                         <p className="text-sm" style={{ color: "rgba(224,242,254,0.25)" }}>Henüz paylaşım yok.</p>
                         <button onClick={() => setShowModal(true)}
                                 className="mt-2 px-5 py-2.5 rounded-xl text-xs font-medium transition-all duration-200"

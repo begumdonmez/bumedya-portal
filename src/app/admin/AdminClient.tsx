@@ -3,6 +3,8 @@
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft } from "lucide-react";
+import type { ElementType } from "react";
 
 /* ─── Tipler ────────────────────────────────────────────────── */
 interface Profile {
@@ -14,17 +16,17 @@ interface Profile {
 }
 
 /* ─── Rozet konfigürasyonu ──────────────────────────────────── */
-const BADGES = [
-    { id: "authorized", label: "Authorized", icon: "◈",  color: "rgba(255,255,255,0.9)", bg: "rgba(255,255,255,0.06)", border: "rgba(255,255,255,0.2)",  authorizedOnly: true  },
-    { id: "admin",      label: "Admin",       icon: "⚡", color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.1)",   border: "rgba(239,68,68,0.3)",   authorizedOnly: false },
-    { id: "editor",     label: "Editör",      icon: "🛡", color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.1)",  border: "rgba(251,191,36,0.3)",  authorizedOnly: false },
-    { id: "artist",     label: "Sanatçı",     icon: "🎨", color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.1)", border: "rgba(244,114,182,0.3)", authorizedOnly: false },
-    { id: "writer",     label: "Yazar",       icon: "📝", color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.1)",  border: "rgba(52,211,153,0.3)",  authorizedOnly: false },
-    { id: "verified",   label: "Onaylı",      icon: "✓",  color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.1)",  border: "rgba(59,130,246,0.3)",  authorizedOnly: false },
-    { id: "founder",    label: "Kurucu",      icon: "✦",  color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)", border: "rgba(251,191,36,0.2)",  authorizedOnly: false },
-] as const;
+type BadgeId = "authorized" | "admin" | "editor" | "artist" | "writer" | "verified" | "founder";
 
-type BadgeId = typeof BADGES[number]["id"];
+const BADGES: { id: BadgeId; label: string; icon: ElementType; color: string; bg: string; border: string; authorizedOnly: boolean }[] = [
+    { id: "authorized", label: "Authorized", icon: Layers,     color: "rgba(255,255,255,0.9)", bg: "rgba(255,255,255,0.06)", border: "rgba(255,255,255,0.2)",  authorizedOnly: true  },
+    { id: "admin",      label: "Admin",       icon: Zap,        color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.1)",   border: "rgba(239,68,68,0.3)",   authorizedOnly: false },
+    { id: "editor",     label: "Editör",      icon: Shield,     color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.1)",  border: "rgba(251,191,36,0.3)",  authorizedOnly: false },
+    { id: "artist",     label: "Sanatçı",     icon: Palette,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.1)", border: "rgba(244,114,182,0.3)", authorizedOnly: false },
+    { id: "writer",     label: "Yazar",       icon: PenLine,    color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.1)",  border: "rgba(52,211,153,0.3)",  authorizedOnly: false },
+    { id: "verified",   label: "Onaylı",      icon: BadgeCheck, color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.1)",  border: "rgba(59,130,246,0.3)",  authorizedOnly: false },
+    { id: "founder",    label: "Kurucu",      icon: Sparkles,   color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)", border: "rgba(251,191,36,0.2)",  authorizedOnly: false },
+];
 
 /* ─── Rozet pill bileşeni ───────────────────────────────────── */
 function BadgePill({ id }: { id: string }) {
@@ -33,7 +35,7 @@ function BadgePill({ id }: { id: string }) {
     return (
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium"
               style={{ background: conf.bg, border: `1px solid ${conf.border}`, color: conf.color }}>
-            {conf.icon} {conf.label}
+            <conf.icon size={10} strokeWidth={2} /> {conf.label}
         </span>
     );
 }
@@ -115,10 +117,10 @@ function UserRow({ profile, onBadgeToggle, isAuthorized }: {
                                         color: hasIt ? badge.color : "rgba(224,242,254,0.35)",
                                     }}
                                 >
-                                    <span>{badge.icon}</span>
+                                    <badge.icon size={11} strokeWidth={2} />
                                     {badge.label}
                                     {hasIt && (
-                                        <span className="ml-1 text-[10px] opacity-60">✕</span>
+                                        <X size={10} className="ml-1 opacity-60" />
                                     )}
                                 </button>
                             );
@@ -203,7 +205,7 @@ export default function AdminClient({ profiles: initialProfiles, myBadges }: { p
                             style={{ color: "rgba(224,242,254,0.3)" }}
                             onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.7)")}
                             onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.3)")}>
-                        ←
+                        <ChevronLeft size={15} />
                     </button>
                     <button onClick={() => router.push("/home")} className="flex items-baseline gap-0.5">
                         <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
@@ -212,7 +214,7 @@ export default function AdminClient({ profiles: initialProfiles, myBadges }: { p
                     <span style={{ color: "rgba(255,255,255,0.15)" }}>/</span>
                     <span className="text-sm font-medium flex items-center gap-1.5"
                           style={{ color: "rgba(239,68,68,0.8)" }}>
-                        <span>⚡</span> Admin
+                        <Zap size={14} strokeWidth={2} /> Admin
                     </span>
                 </div>
 

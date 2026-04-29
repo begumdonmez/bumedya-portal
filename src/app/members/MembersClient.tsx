@@ -2,6 +2,8 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles } from "lucide-react";
+import type { ElementType } from "react";
 
 interface Profile {
     id: string;
@@ -12,13 +14,13 @@ interface Profile {
     created_at: string;
 }
 
-const BADGE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; icon: string }> = {
-    admin:    { label: "Admin",   icon: "⚡", color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.08)",   border: "rgba(239,68,68,0.22)"   },
-    editor:   { label: "Editör",  icon: "🛡", color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.22)"  },
-    artist:   { label: "Çizer",   icon: "🎨", color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.22)" },
-    writer:   { label: "Yazar",   icon: "📝", color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.18)"  },
-    verified: { label: "Onaylı",  icon: "✓",  color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.18)"  },
-    founder:  { label: "Kurucu",  icon: "✦",  color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.18)"  },
+const BADGE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; icon: ElementType }> = {
+    admin:    { label: "Admin",   icon: Zap,        color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.08)",   border: "rgba(239,68,68,0.22)"   },
+    editor:   { label: "Editör",  icon: Shield,     color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.22)"  },
+    artist:   { label: "Çizer",   icon: Palette,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.22)" },
+    writer:   { label: "Yazar",   icon: PenLine,    color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.18)"  },
+    verified: { label: "Onaylı",  icon: BadgeCheck, color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.18)"  },
+    founder:  { label: "Kurucu",  icon: Sparkles,   color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.18)"  },
 };
 
 export default function UyelerClient({ profiles }: { profiles: Profile[] }) {
@@ -122,7 +124,7 @@ export default function UyelerClient({ profiles }: { profiles: Profile[] }) {
                                                 return (
                                                     <span key={b} className="chip"
                                                           style={{ background: conf.bg, border: `1px solid ${conf.border}`, color: conf.color }}>
-                                                        {conf.icon} {conf.label}
+                                                        <conf.icon size={10} strokeWidth={2} /> {conf.label}
                                                     </span>
                                                 );
                                             })}

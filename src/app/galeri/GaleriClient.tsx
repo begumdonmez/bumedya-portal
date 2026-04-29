@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { ChevronLeft, Image as ImageIcon, X } from "lucide-react";
 
 interface GalleryItem {
     id: string;
@@ -101,13 +102,13 @@ export default function GaleriClient({
 
         if (newItems.length > 0) {
             setItems((prev) => [...newItems.reverse(), ...prev]);
-            toast.success(`${newItems.length} resim yüklendi ✦`);
+            toast.success(`${newItems.length} resim yüklendi`);
         }
         setUploading(false);
     }, [userId, username]);
 
     const handleDelete = async (item: GalleryItem) => {
-        if (item.user_id !== userId && !isAuthorized) return;
+        if (item.user_id !== userId && !isAdmin) return;
         const supabase = createClient();
 
         await supabase.storage.from("gallery").remove([item.storage_path]);
@@ -130,7 +131,7 @@ export default function GaleriClient({
                           style={{ color: "rgba(240,249,255,0.28)" }}
                           onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.7)")}
                           onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.28)")}>
-                        ←
+                        <ChevronLeft size={15} />
                     </Link>
                     <Link href="/home" className="flex items-baseline gap-0.5 group">
                         <span className="text-sm font-bold" style={{ color: "rgba(240,249,255,0.5)" }}>bumedya</span>
@@ -176,7 +177,7 @@ export default function GaleriClient({
             <div className="relative z-10 max-w-6xl mx-auto w-full px-6 py-10">
                 {items.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-32 gap-4">
-                        <span className="text-4xl opacity-10">🖼</span>
+                        <ImageIcon size={36} className="opacity-10" />
                         <p className="text-sm" style={{ color: "rgba(224,242,254,0.25)" }}>
                             {canUpload ? "Henüz eser yok. İlk yükleyen sen ol." : "Henüz eser yok."}
                         </p>
@@ -203,9 +204,9 @@ export default function GaleriClient({
                                     {hasError ? (
                                         <div className="flex flex-col items-center justify-center min-h-[140px] gap-2 py-8"
                                              style={{ background: "rgba(239,68,68,0.04)" }}>
-                                            <span className="text-xl opacity-20">✕</span>
+                                            <X size={18} className="opacity-20" />
                                             <span className="text-[10px]" style={{ color: "rgba(240,249,255,0.2)" }}>Yüklenemedi</span>
-                                            {(item.user_id === userId || isAuthorized) && (
+                                            {(item.user_id === userId || isAdmin) && (
                                                 <button
                                                     onClick={() => handleDelete(item)}
                                                     className="mt-1 text-[10px] px-2 py-1 rounded-lg"
@@ -238,7 +239,7 @@ export default function GaleriClient({
                                                           style={{ color: "rgba(224,242,254,0.7)" }}>
                                                         @{item.username}
                                                     </Link>
-                                                    {(item.user_id === userId || isAuthorized) && (
+                                                    {(item.user_id === userId || isAdmin) && (
                                                         <button
                                                             onClick={() => handleDelete(item)}
                                                             className="text-[10px] px-2 py-1 rounded-lg transition-all duration-200"

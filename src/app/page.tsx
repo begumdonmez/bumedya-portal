@@ -201,8 +201,8 @@ export default async function LandingPage() {
                                 Topluluğa katıl, üretmeye başla.
                             </p>
                         </div>
-                        <Link href="/register" className="btn-primary !py-2.5 text-xs text-center block">
-                            Katıl →
+                        <Link href="/register" className="btn-primary !py-2.5 text-xs text-center flex items-center justify-center gap-1.5">
+                            Katıl
                         </Link>
                     </div>
                 </div>
