@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { ChevronRight, Sparkles } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
+import HomeNavLinks from "@/components/HomeNavLinks";
 import LiveFeed from "@/components/LiveFeed";
 import EventMapClient from "@/components/EventMapClient";
 import AnnouncementsWidget from "@/components/AnnouncementsWidget";
@@ -64,14 +65,6 @@ export default async function HomePage() {
     const hours = new Date().getHours();
     const greeting = hours < 6 ? "gece geç saatte ne arıyorsun?" : hours < 12 ? "günaydın!" : hours < 17 ? "iyi günler!" : hours < 21 ? "iyi akşamlar!" : "iyi geceler!";
 
-    const NAV_LINKS = [
-        { href: "/home",        label: "Ana Sayfa",   active: true  },
-        { href: "/akis",        label: "Akış",         active: false },
-        { href: "/galeri",      label: "Galeri",       active: false },
-        { href: "/members",     label: "Üyeler",       active: false },
-        { href: "/etkinlikler", label: "Etkinlikler",  active: false },
-        { href: "/chat",        label: "Lounge",       active: false },
-    ];
 
     return (
         <div className="aurora-bg relative min-h-screen w-full overflow-hidden">
@@ -87,15 +80,7 @@ export default async function HomePage() {
                     <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
                           style={{ color: "#7C3AED" }}>.</span>
                 </Link>
-                <div className="hidden md:flex items-center gap-6 lg:gap-8 relative z-10">
-                    {NAV_LINKS.map(({ href, label, active }) => (
-                        <Link key={href} href={href}
-                              className="text-xs tracking-widest uppercase font-medium transition-colors duration-200"
-                              style={{ color: active ? "rgba(240,249,255,0.9)" : "rgba(240,249,255,0.38)" }}>
-                            {label}
-                        </Link>
-                    ))}
-                </div>
+                <HomeNavLinks />
                 <Link href="/profil" className="relative z-10 text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[120px] sm:max-w-none truncate"
                       style={{ color: "rgba(167,139,250,0.85)", border: "1px solid rgba(124,58,237,0.25)", background: "rgba(124,58,237,0.08)" }}>
                     @{username}

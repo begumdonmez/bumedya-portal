@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
+import ScrollToTop from "@/components/ScrollToTop";
 import "./globals.css";
 
 /* ─── Fontlar ───────────────────────────────────────────────── */
@@ -70,6 +71,7 @@ export default function RootLayout({
             style={{ backgroundColor: "#1A2744" }}
         >
         <body className="min-h-full flex flex-col antialiased">
+        <ScrollToTop />
         {children}
 
         <Toaster
