@@ -3,6 +3,30 @@
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { useEffect } from "react";
+
+function LeafletThemePatch() {
+    useEffect(() => {
+        const style = document.createElement("style");
+        style.textContent = `
+            .leaflet-container { border-radius: inherit !important; }
+            .leaflet-container img { max-width: none !important; max-height: none !important; }
+            .leaflet-tile { max-width: none !important; }
+            .leaflet-control-zoom { border: 1px solid rgba(124,58,237,0.3) !important; border-radius: 10px !important; overflow: hidden !important; box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important; }
+            .leaflet-control-zoom-in, .leaflet-control-zoom-out { background-color: rgba(15,20,50,0.92) !important; color: rgba(167,139,250,0.85) !important; width: 30px !important; height: 30px !important; line-height: 30px !important; }
+            .leaflet-control-zoom-in:hover, .leaflet-control-zoom-out:hover { background-color: rgba(124,58,237,0.25) !important; color: #fff !important; }
+            .leaflet-control-zoom-in { border-bottom: 1px solid rgba(124,58,237,0.2) !important; }
+            .leaflet-control-attribution { background: rgba(10,15,35,0.8) !important; color: rgba(224,242,254,0.3) !important; font-size: 10px !important; }
+            .leaflet-control-attribution a { color: rgba(167,139,250,0.55) !important; }
+            .leaflet-popup-content-wrapper { background: rgba(15,25,50,0.96) !important; border: 1px solid rgba(124,58,237,0.25) !important; border-radius: 14px !important; box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important; color: #E0F2FE !important; }
+            .leaflet-popup-tip { background: rgba(15,25,50,0.96) !important; }
+            .leaflet-popup-close-button { color: rgba(224,242,254,0.35) !important; }
+        `;
+        document.head.appendChild(style);
+        return () => { document.head.removeChild(style); };
+    }, []);
+    return null;
+}
 
 export interface EventItem {
     id: string;
@@ -38,6 +62,8 @@ export default function EventMap({
     const h = typeof height === "number" ? `${height}px` : height;
 
     return (
+        <>
+        <LeafletThemePatch />
         <MapContainer
             center={center}
             zoom={zoom}
@@ -45,7 +71,7 @@ export default function EventMap({
             zoomControl={true}
         >
             <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
                 attribution='&copy; <a href="https://carto.com/">CARTO</a>'
                 maxZoom={19}
             />
@@ -78,5 +104,6 @@ export default function EventMap({
                 </Marker>
             ))}
         </MapContainer>
+        </>
     );
 }
