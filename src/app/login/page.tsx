@@ -5,10 +5,9 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
-import { loginSchema } from "@/lib/schemas";
 import type { ZodError } from "zod";
 
-interface FieldErrors { email?: string; password?: string }
+interface FieldErrors { identifier?: string; password?: string }
 function parseZodErrors(err: ZodError): FieldErrors {
     const out: FieldErrors = {};
     for (const issue of err.issues) {
@@ -16,6 +15,10 @@ function parseZodErrors(err: ZodError): FieldErrors {
         if (!out[field]) out[field] = issue.message;
     }
     return out;
+}
+
+function isEmail(val: string) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
 }
 
 function Field({ id, label, type = "text", value, onChange, placeholder, error, autoComplete, suffix }: {
@@ -61,26 +64,53 @@ function LoginForm() {
     const redirectTo = searchParams.get("redirectTo") ?? "/";
     const formId = useId();
 
-    const [email, setEmail]       = useState("");
-    const [password, setPassword] = useState("");
-    const [loading, setLoading]   = useState(false);
+    const [identifier, setIdentifier] = useState("");
+    const [password, setPassword]     = useState("");
+    const [loading, setLoading]       = useState(false);
     const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-    const [showPw, setShowPw]     = useState(false);
+    const [showPw, setShowPw]         = useState(false);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setFieldErrors({});
-        const parsed = loginSchema.safeParse({ email, password });
-        if (!parsed.success) { setFieldErrors(parseZodErrors(parsed.error)); return; }
+
+        const raw = identifier.trim();
+        if (!raw) { setFieldErrors({ identifier: "E-posta veya kullanıcı adı gerekli." }); return; }
+        if (!password) { setFieldErrors({ password: "Şifre gerekli." }); return; }
+
         setLoading(true);
         const toastId = toast.loading("Giriş yapılıyor...");
         const supabase = createClient();
+
         try {
-            const { error } = await supabase.auth.signInWithPassword({
-                email: parsed.data.email, password: parsed.data.password,
-            });
+            let email = raw;
+
+            if (!isEmail(raw)) {
+                const { data, error: lookupError } = await supabase
+                    .from("profiles")
+                    .select("id")
+                    .eq("username", raw)
+                    .maybeSingle();
+
+                if (lookupError || !data) {
+                    toast.error("Kullanıcı bulunamadı.", { id: toastId });
+                    setLoading(false); return;
+                }
+
+                const { data: userData, error: userError } = await supabase
+                    .rpc("get_email_by_user_id", { uid: data.id });
+
+                if (userError || !userData) {
+                    toast.error("Hesap bilgisi alınamadı.", { id: toastId });
+                    setLoading(false); return;
+                }
+
+                email = userData;
+            }
+
+            const { error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) {
-                const msg = error.message.includes("Invalid login") ? "E-posta veya şifre hatalı."
+                const msg = error.message.includes("Invalid login") ? "Kullanıcı adı/e-posta veya şifre hatalı."
                     : error.message.includes("Email not confirmed") ? "E-postanı henüz doğrulamadın."
                     : "Bir hata oluştu.";
                 toast.error(msg, { id: toastId });
@@ -97,13 +127,14 @@ function LoginForm() {
 
     return (
         <form id={formId} onSubmit={handleLogin} className="flex flex-col gap-1" noValidate>
-            <Field id={`${formId}-email`} label="E-Posta" type="email"
-                   value={email} onChange={setEmail} placeholder="fanzinci@mail.com"
-                   error={fieldErrors.email} autoComplete="email" />
+            <Field id={`${formId}-identifier`} label="E-Posta veya Kullanıcı Adı"
+                   value={identifier} onChange={setIdentifier} placeholder="fanzinci@mail.com veya kullaniciadi"
+                   error={fieldErrors.identifier} autoComplete="username" />
             <Field id={`${formId}-password`} label="Şifre"
                    type={showPw ? "text" : "password"}
                    value={password} onChange={setPassword} placeholder="••••••••"
                    error={fieldErrors.password} autoComplete="current-password"
+
                    suffix={
                        <button type="button" onClick={() => setShowPw(!showPw)}
                                className="p-1 transition-colors duration-200"
