@@ -17,11 +17,11 @@ function BentoCard({ children, className = "", style }: { children: React.ReactN
 }
 
 const MANIFESTO_LINES = [
-    "Bumedya bir platform değil, bir duruş.",
-    "Üretmek tüketmekten daha değerlidir.",
-    "Her çizgi, her kelime, her nota — bir varlık kanıtı.",
-    "Sınırlar bulanıklaşır. Fikirler form bulur.",
-    "Yaratıcılar birbirini burada bulur.",
+    "Bumedya sadece bir topluluk değil hayal gücünüzü ateşleyen bir fitil.",
+    "Üretmek kadar düşünmek ve çabalamak da değerlidir.",
+    "Her çizgi, her kelime, her nota mükemmel olmak zorunda olmadan muhteşem",
+    "Burada sınır yok hayal gücü var.",
+    "Kusursuzu aramayın, kusurlarımız bizi biz yapan şeylerdir.",
 ];
 
 export default async function HomePage() {

@@ -143,13 +143,13 @@ export default async function LandingPage() {
             {/* PILLARS */}
             <section id="kesfet" className="relative z-10 px-4 sm:px-6 py-20 sm:py-28 max-w-5xl mx-auto">
                 <div className="text-center mb-14">
-                    <p className="label-caps mb-4">Neden bumedya.</p>
+                    <p className="label-caps mb-4">Neden mi bumedya?</p>
                     <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gradient-white mb-5">
-                        Yaratıcıların dijital evi.
+                        Çünkü burası Yaratıcıların dijital evi.
                     </h2>
                     <p className="text-base font-light leading-relaxed max-w-lg mx-auto"
                        style={{ color: "rgba(240,249,255,0.45)" }}>
-                        Çizen, yazan, üreten herkese açık. Burada fikirler form bulur, sanatçılar birbirini keşfeder.
+                        Çizen, yazan, üreten herkese açık. Burada önemli olan mükemel olmak değil, hayal etmek.
                     </p>
                 </div>
 
@@ -173,7 +173,7 @@ export default async function LandingPage() {
                 <div className="text-center mb-12">
                     <p className="label-caps mb-4">Topluluk Sözleşmesi</p>
                     <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gradient-white">
-                        Birlikte güzel kalır.
+                        Huzurlu ve Saygılı Bir Topluluk İçin
                     </h2>
                 </div>
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Award, ChevronLeft, ChevronRight } from "lucide-react";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Award, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import type { ElementType } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -22,12 +22,12 @@ interface Profile {
 }
 
 /* ─── Topluluk rolü (member / creator) ─────────────────────── */
-const ROLE_CONFIG = {
+const ROLE_CONFIG: Record<string, { label: string; sublabel: string; desc: string; icon: ElementType; color: string; bg: string; border: string; dot: string }> = {
     member: {
         label: "İzleyici",
         sublabel: "Member",
         desc: "Topluluğu keşfeder, beğenir ve yorum yapar.",
-        icon: "👁",
+        icon: Eye,
         color: "rgba(147,197,253,0.9)",
         bg: "rgba(59,130,246,0.08)",
         border: "rgba(59,130,246,0.2)",
@@ -37,7 +37,7 @@ const ROLE_CONFIG = {
         label: "Üretici",
         sublabel: "Creator",
         desc: "Çizim ve yazı paylaşır, stüdyoya erişir.",
-        icon: "✏️",
+        icon: PenLine,
         color: "rgba(167,139,250,0.9)",
         bg: "rgba(124,58,237,0.08)",
         border: "rgba(124,58,237,0.25)",
@@ -289,9 +289,9 @@ export default function ProfilPage() {
                         Topluluk Türü
                     </p>
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shrink-0"
-                             style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${roleConf.border}` }}>
-                            {roleConf.icon}
+                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
+                             style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${roleConf.border}`, color: roleConf.color }}>
+                            <roleConf.icon size={20} strokeWidth={1.8} />
                         </div>
                         <div className="flex-1">
                             <div className="flex items-baseline gap-2 mb-0.5">
