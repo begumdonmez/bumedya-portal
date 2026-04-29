@@ -7,6 +7,7 @@ import NavbarBackdrop from "@/components/NavbarBackdrop";
 import LiveFeed from "@/components/LiveFeed";
 import EventMapClient from "@/components/EventMapClient";
 import AnnouncementsWidget from "@/components/AnnouncementsWidget";
+import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = { title: "Ana Sayfa | bumedya." };
 
@@ -239,6 +240,7 @@ export default async function HomePage() {
                     </BentoCard>
                 </div>
             </div>
+            <SiteFooter />
         </div>
     );
 }

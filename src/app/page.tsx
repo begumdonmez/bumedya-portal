@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import SetWelcomeCookie from "@/components/SetWelcomeCookie";
+import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
     title: "bumedya. | Yaratıcı Dijital Evren",
@@ -55,19 +56,22 @@ export default async function LandingPage() {
                     <span className="text-lg font-bold tracking-tight" style={{ color: "rgba(240,249,255,0.75)" }}>bumedya</span>
                     <span className="text-lg font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_10px_rgba(124,58,237,0.9)]" style={{ color: "#7C3AED" }}>.</span>
                 </Link>
-                <div className="hidden md:flex items-center gap-7 relative z-10">
-                    {[
-                        { href: "/home", label: "Ana Sayfa" },
-                        { href: "/galeri", label: "Galeri" },
-                        { href: "/members", label: "Üyeler" },
-                        { href: "/chat", label: "Lounge" },
-                    ].map(({ href, label }) => (
-                        <Link key={href} href={href}
-                              className="nav-link-dim text-xs tracking-widest uppercase font-medium transition-colors duration-200">
-                            {label}
-                        </Link>
-                    ))}
-                </div>
+                {user && (
+                    <div className="hidden md:flex items-center gap-7 relative z-10">
+                        {[
+                            { href: "/home",        label: "Ana Sayfa"   },
+                            { href: "/galeri",      label: "Galeri"      },
+                            { href: "/members",     label: "Üyeler"      },
+                            { href: "/etkinlikler", label: "Etkinlikler" },
+                            { href: "/chat",        label: "Lounge"      },
+                        ].map(({ href, label }) => (
+                            <Link key={href} href={href}
+                                  className="nav-link-dim text-xs tracking-widest uppercase font-medium transition-colors duration-200">
+                                {label}
+                            </Link>
+                        ))}
+                    </div>
+                )}
                 <div className="flex items-center gap-2 shrink-0 relative z-10">
                     {user ? (
                         <Link href="/home" className="glass flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200 hover:border-white/20"
@@ -169,7 +173,7 @@ export default async function LandingPage() {
             </section>
 
             {/* RULES */}
-            <section className="relative z-10 px-4 sm:px-6 pb-24 max-w-5xl mx-auto">
+            <section id="kurallar" className="relative z-10 px-4 sm:px-6 pb-24 max-w-5xl mx-auto">
                 <div className="text-center mb-12">
                     <p className="label-caps mb-4">Topluluk Sözleşmesi</p>
                     <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gradient-white">
@@ -209,21 +213,7 @@ export default async function LandingPage() {
             </section>
 
             {/* FOOTER */}
-            <footer className="relative z-10 px-4 sm:px-8 py-8 flex flex-col sm:flex-row items-center justify-between gap-4"
-                    style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                <div className="flex items-center gap-3">
-                    <span className="font-mono text-xs" style={{ color: "rgba(240,249,255,0.2)" }}>bumedya. v0.1</span>
-                </div>
-                <div className="flex items-center gap-6">
-                    {["Gizlilik", "Kurallar", "İletişim"].map((item) => (
-                        <Link key={item} href="#"
-                              className="text-xs transition-colors duration-200"
-                              style={{ color: "rgba(240,249,255,0.2)" }}>
-                            {item}
-                        </Link>
-                    ))}
-                </div>
-            </footer>
+            <SiteFooter />
         </main>
     );
 }
