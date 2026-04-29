@@ -193,14 +193,56 @@ export default async function HomePage() {
                     <BentoCard className="sm:col-span-1 lg:col-span-5 min-h-[300px] flex flex-col">
                         <div className="flex items-center justify-between mb-4">
                             <p className="label-caps">Etkinlik Haritası</p>
-                            <span className="text-[10px] font-medium" style={{ color: "rgba(124,58,237,0.7)" }}>İstanbul</span>
+                            <Link href="/etkinlikler" className="text-[10px] font-medium transition-opacity hover:opacity-60"
+                                  style={{ color: "rgba(124,58,237,0.7)" }}>
+                                Tümü <ChevronRight size={10} className="inline" />
+                            </Link>
                         </div>
-                        <div className="flex-1 relative rounded-2xl overflow-hidden" style={{ minHeight: 180 }}>
-                            <EventMapClient events={events ?? []} height={180} zoom={10} />
+                        <div className="relative rounded-2xl overflow-hidden" style={{ height: 160 }}>
+                            <EventMapClient events={events ?? []} height={160} zoom={10} />
                         </div>
-                        <p className="text-xs mt-3" style={{ color: "rgba(240,249,255,0.25)" }}>
-                            {(events ?? []).length} aktif etkinlik
-                        </p>
+                        {/* Etkinlik listesi — tarihe göre yakından uzağa */}
+                        <div className="flex flex-col gap-2 mt-3">
+                            {(events ?? [])
+                                .filter(e => e.event_date >= new Date().toISOString().split("T")[0])
+                                .sort((a, b) => a.event_date.localeCompare(b.event_date))
+                                .slice(0, 4)
+                                .map(ev => {
+                                    const today = new Date().toISOString().split("T")[0];
+                                    const isToday = ev.event_date === today;
+                                    const thisMonth = today.slice(0, 7);
+                                    const isUpcoming = !isToday && ev.event_date.slice(0, 7) === thisMonth;
+                                    const accentColor = isToday
+                                        ? "rgba(52,211,153,0.9)"
+                                        : isUpcoming
+                                            ? "rgba(252,211,77,0.85)"
+                                            : "rgba(167,139,250,0.7)";
+                                    const d = new Date(ev.event_date + "T00:00:00");
+                                    return (
+                                        <div key={ev.id} className="flex items-center gap-3 rounded-xl px-3 py-2"
+                                             style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                                            <span className="text-xs font-bold shrink-0 w-6 text-center" style={{ color: accentColor }}>
+                                                {d.getDate()}
+                                            </span>
+                                            <span className="text-[10px] uppercase tracking-wider shrink-0 w-7" style={{ color: accentColor, opacity: 0.7 }}>
+                                                {d.toLocaleDateString("tr-TR", { month: "short" })}
+                                            </span>
+                                            <span className="text-xs truncate flex-1" style={{ color: "rgba(224,242,254,0.65)" }}>
+                                                {ev.title}
+                                            </span>
+                                            {isToday && (
+                                                <span className="text-[9px] px-1.5 py-0.5 rounded-full shrink-0"
+                                                      style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.25)", color: "rgba(52,211,153,0.9)" }}>
+                                                    bugün
+                                                </span>
+                                            )}
+                                        </div>
+                                    );
+                                })}
+                            {(events ?? []).filter(e => e.event_date >= new Date().toISOString().split("T")[0]).length === 0 && (
+                                <p className="text-xs text-center py-2" style={{ color: "rgba(224,242,254,0.2)" }}>Yaklaşan etkinlik yok</p>
+                            )}
+                        </div>
                     </BentoCard>
 
                     {/* Duyurular */}
