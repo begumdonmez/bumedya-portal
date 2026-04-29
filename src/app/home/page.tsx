@@ -7,6 +7,8 @@ import NavbarBackdrop from "@/components/NavbarBackdrop";
 import LiveFeed from "@/components/LiveFeed";
 import EventMapClient from "@/components/EventMapClient";
 import AnnouncementsWidget from "@/components/AnnouncementsWidget";
+import LinksWidget from "@/components/LinksWidget";
+import ContactSection from "@/components/ContactSection";
 import SiteFooter from "@/components/SiteFooter";
 
 export const metadata: Metadata = { title: "Ana Sayfa | bumedya." };
@@ -226,8 +228,13 @@ export default async function HomePage() {
                         />
                     </BentoCard>
 
+                    {/* Bağlantılar */}
+                    <BentoCard className="sm:col-span-1 lg:col-span-3 flex flex-col">
+                        <LinksWidget />
+                    </BentoCard>
+
                     {/* Manifesto */}
-                    <BentoCard className="sm:col-span-2 lg:col-span-12 flex flex-col gap-4">
+                    <BentoCard className="sm:col-span-1 lg:col-span-9 flex flex-col gap-4">
                         <p className="label-caps">Manifesto</p>
                         <div className="flex flex-col gap-3">
                             {MANIFESTO_LINES.map((line, i) => (
@@ -240,6 +247,7 @@ export default async function HomePage() {
                     </BentoCard>
                 </div>
             </div>
+            <ContactSection />
             <SiteFooter />
         </div>
     );

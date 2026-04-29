@@ -19,11 +19,10 @@ export default async function AdminPage() {
     // Admin değilse ana sayfaya at
     if (!me?.badges?.includes("admin")) redirect("/");
 
-    // Tüm kullanıcıları çek
-    const { data: profiles } = await supabase
-        .from("profiles")
-        .select("id, username, role, badges, created_at")
-        .order("created_at", { ascending: false });
+    const [{ data: profiles }, { data: messages }] = await Promise.all([
+        supabase.from("profiles").select("id, username, role, badges, created_at").order("created_at", { ascending: false }),
+        supabase.from("messages").select("id, name, email, message, read, created_at").order("created_at", { ascending: false }),
+    ]);
 
-    return <AdminClient profiles={profiles ?? []} myBadges={me?.badges ?? []} />;
+    return <AdminClient profiles={profiles ?? []} myBadges={me?.badges ?? []} messages={messages ?? []} />;
 }

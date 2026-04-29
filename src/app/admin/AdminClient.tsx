@@ -2,8 +2,9 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft } from "lucide-react";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2 } from "lucide-react";
 import type { ElementType } from "react";
 
 /* ─── Tipler ────────────────────────────────────────────────── */
@@ -132,13 +133,92 @@ function UserRow({ profile, onBadgeToggle, isAuthorized }: {
     );
 }
 
+interface Message {
+    id: string;
+    name: string;
+    email: string;
+    message: string;
+    read: boolean;
+    created_at: string;
+}
+
+/* ─── Mesajlar sekmesi ──────────────────────────────────────── */
+function MessagesTab({ messages, setMessages }: { messages: Message[]; setMessages: React.Dispatch<React.SetStateAction<Message[]>> }) {
+    const markRead = async (id: string) => {
+        const { createClient } = await import("@/lib/supabase/client");
+        const supabase = createClient();
+        await supabase.from("messages").update({ read: true }).eq("id", id);
+        setMessages(prev => prev.map(m => m.id === id ? { ...m, read: true } : m));
+    };
+
+    const handleDelete = async (id: string) => {
+        const { createClient } = await import("@/lib/supabase/client");
+        const supabase = createClient();
+        await supabase.from("messages").delete().eq("id", id);
+        setMessages(prev => prev.filter(m => m.id !== id));
+    };
+
+    if (messages.length === 0) {
+        return (
+            <div className="flex flex-col items-center justify-center py-20 gap-3">
+                <Inbox size={32} className="opacity-10" />
+                <p className="text-sm" style={{ color: "rgba(224,242,254,0.25)" }}>Henüz mesaj yok.</p>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-col gap-3">
+            {messages.map(msg => (
+                <div key={msg.id}
+                     className="rounded-2xl p-4 flex flex-col gap-3 cursor-pointer transition-all duration-200"
+                     style={{
+                         background: msg.read ? "rgba(255,255,255,0.03)" : "rgba(124,58,237,0.07)",
+                         border: `1px solid ${msg.read ? "rgba(255,255,255,0.07)" : "rgba(124,58,237,0.25)"}`,
+                     }}
+                     onClick={() => !msg.read && markRead(msg.id)}>
+                    <div className="flex items-start justify-between gap-4">
+                        <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-0.5">
+                                <p className="text-sm font-semibold" style={{ color: "#E0F2FE" }}>{msg.name}</p>
+                                {!msg.read && (
+                                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "#7C3AED" }} />
+                                )}
+                            </div>
+                            <p className="text-xs" style={{ color: "rgba(224,242,254,0.4)" }}>{msg.email}</p>
+                        </div>
+                        <div className="flex items-center gap-2 shrink-0">
+                            <p className="text-[10px]" style={{ color: "rgba(224,242,254,0.2)" }}>
+                                {new Date(msg.created_at).toLocaleDateString("tr-TR")}
+                            </p>
+                            <button onClick={(e) => { e.stopPropagation(); handleDelete(msg.id); }}
+                                    className="p-1 rounded-lg hover:opacity-70 transition-opacity"
+                                    style={{ color: "rgba(239,68,68,0.5)" }}>
+                                <Trash2 size={13} />
+                            </button>
+                        </div>
+                    </div>
+                    <p className="text-sm leading-relaxed" style={{ color: "rgba(224,242,254,0.6)" }}>{msg.message}</p>
+                </div>
+            ))}
+        </div>
+    );
+}
+
 /* ─── Ana admin client bileşeni ─────────────────────────────── */
-export default function AdminClient({ profiles: initialProfiles, myBadges }: { profiles: Profile[]; myBadges: string[] }) {
+export default function AdminClient({ profiles: initialProfiles, myBadges, messages: initialMessages }: {
+    profiles: Profile[];
+    myBadges: string[];
+    messages: Message[];
+}) {
     const router = useRouter();
     const isAuthorized = myBadges.includes("authorized");
     const [profiles, setProfiles] = useState<Profile[]>(initialProfiles);
+    const [messages, setMessages] = useState<Message[]>(initialMessages);
+    const [tab, setTab] = useState<"users" | "messages">("users");
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState<"all" | "member" | "creator">("all");
+    const unreadCount = messages.filter(m => !m.read).length;
 
     /* Filtrelenmiş liste */
     const filtered = useMemo(() => {
@@ -237,18 +317,44 @@ export default function AdminClient({ profiles: initialProfiles, myBadges }: { p
             {/* İçerik */}
             <div className="relative z-10 max-w-3xl mx-auto w-full px-6 py-10 flex flex-col gap-6">
 
-                {/* Başlık */}
-                <div>
+                {/* Sekmeler */}
+                <div className="flex gap-2">
+                    {([
+                        { id: "users",    label: "Kullanıcılar" },
+                        { id: "messages", label: "Mesajlar",    badge: unreadCount },
+                    ] as const).map(({ id, label, badge }) => (
+                        <button key={id} onClick={() => setTab(id)}
+                                className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200"
+                                style={{
+                                    background: tab === id ? "rgba(124,58,237,0.2)" : "rgba(255,255,255,0.04)",
+                                    border: `1px solid ${tab === id ? "rgba(124,58,237,0.4)" : "rgba(255,255,255,0.08)"}`,
+                                    color: tab === id ? "rgba(167,139,250,0.9)" : "rgba(224,242,254,0.4)",
+                                }}>
+                            {label}
+                            {badge != null && badge > 0 && (
+                                <span className="w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold"
+                                      style={{ background: "rgba(239,68,68,0.8)", color: "#fff" }}>{badge}</span>
+                            )}
+                        </button>
+                    ))}
+                </div>
+
+                {/* Mesajlar sekmesi */}
+                {tab === "messages" && (
+                    <MessagesTab messages={messages} setMessages={setMessages} />
+                )}
+
+                {/* Kullanıcılar sekmesi başlık */}
+                {tab === "users" && <div>
                     <h1 className="text-2xl font-extrabold tracking-tight mb-1" style={{ color: "#E0F2FE" }}>
                         Kullanıcı Yönetimi
                     </h1>
                     <p className="text-sm" style={{ color: "rgba(224,242,254,0.35)" }}>
                         Rozet ekle veya kaldır. Değişiklikler anında kaydedilir.
                     </p>
-                </div>
+                </div>}
 
-                {/* Arama + Filtre */}
-                <div className="flex gap-3">
+                {tab === "users" && <div className="flex gap-3">
                     <div className="flex-1 relative">
                         <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
                              style={{ color: "rgba(224,242,254,0.25)" }} viewBox="0 0 16 16" fill="none">
@@ -289,7 +395,7 @@ export default function AdminClient({ profiles: initialProfiles, myBadges }: { p
                 </div>
 
                 {/* Kullanıcı listesi */}
-                <div className="flex flex-col gap-2">
+                {tab === "users" && <div className="flex flex-col gap-2">
                     {filtered.length > 0 ? (
                         filtered.map((profile) => (
                             <UserRow
@@ -301,11 +407,10 @@ export default function AdminClient({ profiles: initialProfiles, myBadges }: { p
                         ))
                     ) : (
                         <div className="flex flex-col items-center justify-center py-16 gap-2">
-                            <span className="text-2xl opacity-20">🔍</span>
                             <p className="text-sm" style={{ color: "rgba(224,242,254,0.25)" }}>Kullanıcı bulunamadı.</p>
                         </div>
                     )}
-                </div>
+                </div>}
 
             </div>
         </div>

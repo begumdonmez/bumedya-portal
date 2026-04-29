@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import SetWelcomeCookie from "@/components/SetWelcomeCookie";
 import SiteFooter from "@/components/SiteFooter";
+import ContactSection from "@/components/ContactSection";
 
 export const metadata: Metadata = {
     title: "bumedya. | Yaratıcı Dijital Evren",
@@ -213,6 +214,7 @@ export default async function LandingPage() {
             </section>
 
             {/* FOOTER */}
+            <ContactSection />
             <SiteFooter />
         </main>
     );
