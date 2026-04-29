@@ -47,12 +47,12 @@ const strengthColor = [
 /* ─── Field bileşeni ─────────────────────────────────────────── */
 function Field({
                    id, label, type = "text", value, onChange,
-                   placeholder, error, hint, autoComplete, suffix,
+                   placeholder, error, hint, autoComplete, suffix, onBlur,
                }: {
     id: string; label: string; type?: string;
     value: string; onChange: (v: string) => void;
     placeholder?: string; error?: string; hint?: string;
-    autoComplete?: string; suffix?: React.ReactNode;
+    autoComplete?: string; suffix?: React.ReactNode; onBlur?: () => void;
 }) {
     const [focused, setFocused] = useState(false);
     return (
@@ -69,7 +69,7 @@ function Field({
                     id={id} type={type} value={value}
                     onChange={(e) => onChange(e.target.value)}
                     onFocus={() => setFocused(true)}
-                    onBlur={() => setFocused(false)}
+                    onBlur={() => { setFocused(false); onBlur?.(); }}
                     placeholder={placeholder}
                     autoComplete={autoComplete}
                     className="w-full rounded-xl px-4 py-3 text-sm placeholder:text-white/20 transition-all duration-300 outline-none"
@@ -163,8 +163,24 @@ export default function RegisterPage() {
     const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
     const [showPw, setShowPw]           = useState(false);
     const [showConfirmPw, setShowConfirmPw] = useState(false);
+    const [checkingUsername, setCheckingUsername] = useState(false);
 
     const isLoading = formState === "loading";
+
+    const checkUsernameAvailable = async () => {
+        if (!username || username.length < 3) return;
+        setCheckingUsername(true);
+        const supabase = createClient();
+        const { data } = await supabase
+            .from("profiles")
+            .select("id")
+            .eq("username", username)
+            .maybeSingle();
+        setCheckingUsername(false);
+        if (data) {
+            setFieldErrors(prev => ({ ...prev, username: "Bu kullanıcı adı alınmış." }));
+        }
+    };
     const isSuccess = formState === "success";
     const pwStrength = password.length > 0 ? passwordStrength(password) : 0;
 
@@ -304,11 +320,12 @@ export default function RegisterPage() {
                             <form id={formId} onSubmit={handleRegister} className="flex flex-col gap-1" noValidate>
                                 <Field
                                     id={`${formId}-username`} label="Kullanıcı Adı"
-                                    value={username} onChange={setUsername}
+                                    value={username} onChange={(v) => { setUsername(v); setFieldErrors(prev => ({ ...prev, username: undefined })); }}
                                     placeholder="@kullaniciadi"
                                     error={fieldErrors.username}
-                                    hint="3-20 karakter · harf, rakam, alt çizgi"
+                                    hint={checkingUsername ? "Kontrol ediliyor..." : "3-20 karakter · harf, rakam, alt çizgi"}
                                     autoComplete="username"
+                                    onBlur={checkUsernameAvailable}
                                 />
 
                                 <Field
