@@ -10,7 +10,7 @@ import type { ZodError } from "zod";
 
 /* ─── Tip ──────────────────────────────────────────────────── */
 type FormState = "idle" | "loading" | "success";
-interface FieldErrors { username?: string; email?: string; password?: string }
+interface FieldErrors { username?: string; email?: string; password?: string; confirmPassword?: string }
 
 /* ─── Zod hatalarını field map'e çevir ──────────────────────── */
 function parseZodErrors(err: ZodError): FieldErrors {
@@ -155,12 +155,14 @@ export default function RegisterPage() {
     const router = useRouter();
     const formId = useId();
 
-    const [email, setEmail]       = useState("");
-    const [password, setPassword] = useState("");
-    const [username, setUsername] = useState("");
-    const [formState, setFormState] = useState<FormState>("idle");
+    const [email, setEmail]             = useState("");
+    const [password, setPassword]       = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
+    const [username, setUsername]       = useState("");
+    const [formState, setFormState]     = useState<FormState>("idle");
     const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-    const [showPw, setShowPw]     = useState(false);
+    const [showPw, setShowPw]           = useState(false);
+    const [showConfirmPw, setShowConfirmPw] = useState(false);
 
     const isLoading = formState === "loading";
     const isSuccess = formState === "success";
@@ -170,7 +172,13 @@ export default function RegisterPage() {
         e.preventDefault();
         setFieldErrors({});
 
-        // 1. Zod validasyon
+        // 1. Şifre eşleşme kontrolü
+        if (password !== confirmPassword) {
+            setFieldErrors({ confirmPassword: "Şifreler eşleşmiyor." });
+            return;
+        }
+
+        // 2. Zod validasyon
         const parsed = registerSchema.safeParse({ username, email, password });
         if (!parsed.success) {
             setFieldErrors(parseZodErrors(parsed.error));
@@ -361,6 +369,36 @@ export default function RegisterPage() {
                                         </p>
                                     </div>
                                 )}
+
+                                {/* Şifre tekrar */}
+                                <Field
+                                    id={`${formId}-confirm-password`} label="Şifre Tekrar"
+                                    type={showConfirmPw ? "text" : "password"}
+                                    value={confirmPassword} onChange={setConfirmPassword}
+                                    placeholder="••••••••"
+                                    error={fieldErrors.confirmPassword}
+                                    autoComplete="new-password"
+                                    suffix={
+                                        <button type="button" onClick={() => setShowConfirmPw(!showConfirmPw)}
+                                                className="p-1 transition-colors duration-200"
+                                                style={{ color: "rgba(224,242,254,0.3)" }}
+                                                aria-label={showConfirmPw ? "Şifreyi gizle" : "Şifreyi göster"}
+                                        >
+                                            {showConfirmPw ? (
+                                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                    <path d="M2 8s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4Z" stroke="currentColor" strokeWidth="1.2" />
+                                                    <circle cx="8" cy="8" r="1.5" stroke="currentColor" strokeWidth="1.2" />
+                                                    <path d="M2 2l12 12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+                                                </svg>
+                                            ) : (
+                                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                                                    <path d="M2 8s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4Z" stroke="currentColor" strokeWidth="1.2" />
+                                                    <circle cx="8" cy="8" r="1.5" stroke="currentColor" strokeWidth="1.2" />
+                                                </svg>
+                                            )}
+                                        </button>
+                                    }
+                                />
 
                                 {/* Submit */}
                                 <button
