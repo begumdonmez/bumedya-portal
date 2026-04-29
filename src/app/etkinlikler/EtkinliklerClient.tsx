@@ -47,10 +47,12 @@ export default function EtkinliklerClient({
     const [geocoding, setGeocoding] = useState(false);
     const [formError, setFormError] = useState("");
 
-    const today    = new Date().toISOString().split("T")[0];
-    const todayEvs = events.filter(e => e.event_date === today);
-    const upcoming = events.filter(e => e.event_date > today);
-    const past     = events.filter(e => e.event_date < today);
+    const today      = new Date().toISOString().split("T")[0];
+    const thisMonth  = today.slice(0, 7); // "YYYY-MM"
+    const todayEvs   = events.filter(e => e.event_date === today);
+    const upcoming   = events.filter(e => e.event_date > today && e.event_date.slice(0, 7) === thisMonth);
+    const future     = events.filter(e => e.event_date.slice(0, 7) > thisMonth);
+    const past       = events.filter(e => e.event_date < today);
 
     const handleMarkerClick = useCallback((ev: EventItem) => {
         setSelected(prev => prev?.id === ev.id ? null : ev);
@@ -161,7 +163,7 @@ export default function EtkinliklerClient({
                         </span>
                     )}
                     <span className="text-xs" style={{ color: "rgba(224,242,254,0.25)" }}>
-                        {upcoming.length} yaklaşan
+                        {upcoming.length + future.length} etkinlik
                     </span>
                     <button
                         onClick={() => setShowForm(true)}
@@ -268,24 +270,41 @@ export default function EtkinliklerClient({
                     </section>
                 )}
 
-                {/* Yaklaşan */}
-                <section className="flex flex-col gap-3">
-                    <p className="text-[10px] font-medium tracking-[0.15em] uppercase"
-                       style={{ color: "rgba(252,211,77,0.5)" }}>Yaklaşan Etkinlikler</p>
-                    {upcoming.length === 0 && todayEvs.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-16 gap-3">
-                            <CalendarDays size={32} className="opacity-10" />
-                            <p className="text-sm" style={{ color: "rgba(224,242,254,0.25)" }}>Yaklaşan etkinlik yok.</p>
-                        </div>
-                    ) : upcoming.length === 0 ? null : (
-                        upcoming.map(ev => (
+                {/* Yaklaşan — bu ay */}
+                {upcoming.length > 0 && (
+                    <section className="flex flex-col gap-3">
+                        <p className="text-[10px] font-medium tracking-[0.15em] uppercase"
+                           style={{ color: "rgba(252,211,77,0.5)" }}>Yaklaşan Etkinlikler</p>
+                        {upcoming.map(ev => (
                             <EventCard key={ev.id} ev={ev} status="upcoming" isAdmin={isAdmin} canDelete={canDelete(ev)}
                                        selected={selected?.id === ev.id}
                                        onSelect={() => setSelected(prev => prev?.id === ev.id ? null : ev)}
                                        onApprove={handleApprove} onDelete={handleDelete} />
-                        ))
-                    )}
-                </section>
+                        ))}
+                    </section>
+                )}
+
+                {/* Boş durum — bugün, yaklaşan ve ileride hepsi yoksa */}
+                {todayEvs.length === 0 && upcoming.length === 0 && future.length === 0 && (
+                    <div className="flex flex-col items-center justify-center py-16 gap-3">
+                        <CalendarDays size={32} className="opacity-10" />
+                        <p className="text-sm" style={{ color: "rgba(224,242,254,0.25)" }}>Yaklaşan etkinlik yok.</p>
+                    </div>
+                )}
+
+                {/* İleride — bu aydan sonra */}
+                {future.length > 0 && (
+                    <section className="flex flex-col gap-3">
+                        <p className="text-[10px] font-medium tracking-[0.15em] uppercase"
+                           style={{ color: "rgba(224,242,254,0.2)" }}>İleride</p>
+                        {future.map(ev => (
+                            <EventCard key={ev.id} ev={ev} status="future" isAdmin={isAdmin} canDelete={canDelete(ev)}
+                                       selected={selected?.id === ev.id}
+                                       onSelect={() => setSelected(prev => prev?.id === ev.id ? null : ev)}
+                                       onApprove={handleApprove} onDelete={handleDelete} />
+                        ))}
+                    </section>
+                )}
 
                 {/* Geçmiş */}
                 {past.length > 0 && (
@@ -425,6 +444,16 @@ const STATUS_THEME = {
         titleColor: "#E0F2FE",
         opacity:    1,
     },
+    future: {
+        cardBg:     "rgba(255,255,255,0.03)",
+        cardBorder: "rgba(255,255,255,0.07)",
+        badgeBg:    "rgba(124,58,237,0.08)",
+        badgeBorder:"rgba(124,58,237,0.18)",
+        dayColor:   "rgba(167,139,250,0.7)",
+        monthColor: "rgba(167,139,250,0.4)",
+        titleColor: "#E0F2FE",
+        opacity:    1,
+    },
     past: {
         cardBg:     "rgba(255,255,255,0.02)",
         cardBorder: "rgba(255,255,255,0.05)",
@@ -439,7 +468,7 @@ const STATUS_THEME = {
 
 function EventCard({ ev, status, isAdmin, canDelete, selected, onSelect, onApprove, onDelete }: {
     ev: EventItem;
-    status: "today" | "upcoming" | "past";
+    status: "today" | "upcoming" | "future" | "past";
     isAdmin: boolean;
     canDelete: boolean;
     selected: boolean;
