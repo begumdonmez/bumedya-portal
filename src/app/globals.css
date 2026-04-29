@@ -422,6 +422,25 @@ input:-webkit-autofill:focus {
 .nav-link-dim { color: rgba(240,249,255,0.35); }
 .nav-link-dim:hover { color: rgba(240,249,255,0.85); }
 
+/* ── Form input (modal/etkinlik formları) ──────────────────── */
+.form-input {
+    width: 100%;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 13px;
+    background: rgba(255,255,255,0.05);
+    color: #E0F2FE;
+    border: 1px solid rgba(255,255,255,0.08);
+    outline: none;
+    transition: border-color 200ms, box-shadow 200ms;
+    color-scheme: dark;
+}
+.form-input:focus {
+    border-color: rgba(124,58,237,0.6);
+    box-shadow: 0 0 0 1px rgba(124,58,237,0.2);
+}
+.form-input::placeholder { color: rgba(224,242,254,0.2); }
+
 /* ── Leaflet tema override ─────────────────────────────────── */
 .leaflet-container {
     background: #0f172a !important;

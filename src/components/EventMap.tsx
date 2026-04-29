@@ -30,31 +30,44 @@ function LeafletThemePatch() {
 
 export interface EventItem {
     id: string;
+    user_id?: string;
     username: string;
     title: string;
     address: string;
     lat: number;
     lng: number;
     event_date: string;
+    event_time?: string | null;
     ref_url: string | null;
+    approved?: boolean;
 }
 
-const markerIcon = L.divIcon({
-    html: `<span style="display:block;width:14px;height:14px;border-radius:50%;background:rgba(124,58,237,0.9);border:2px solid rgba(167,139,250,0.9);box-shadow:0 0 12px rgba(124,58,237,0.7)"></span>`,
-    className: "",
-    iconSize: [14, 14],
-    iconAnchor: [7, 7],
-    popupAnchor: [0, -12],
-});
+function makeIcon(bg: string, border: string, glow: string, size = 14) {
+    return L.divIcon({
+        html: `<span style="display:block;width:${size}px;height:${size}px;border-radius:50%;background:${bg};border:2px solid ${border};box-shadow:0 0 12px ${glow}"></span>`,
+        className: "",
+        iconSize: [size, size],
+        iconAnchor: [size / 2, size / 2],
+        popupAnchor: [0, -(size / 2 + 4)],
+    });
+}
+
+const regularIcon  = makeIcon("rgba(124,58,237,0.9)",  "rgba(167,139,250,0.9)", "rgba(124,58,237,0.7)");
+const approvedIcon = makeIcon("rgba(52,211,153,0.9)",  "rgba(52,211,153,0.9)",  "rgba(52,211,153,0.6)");
+const selectedIcon = makeIcon("rgba(251,191,36,0.95)", "rgba(251,191,36,0.9)",  "rgba(251,191,36,0.8)", 18);
 
 export default function EventMap({
     events,
     height = 300,
     zoom = 11,
+    onMarkerClick,
+    selectedId,
 }: {
     events: EventItem[];
     height?: number | string;
     zoom?: number;
+    onMarkerClick?: (ev: EventItem) => void;
+    selectedId?: string;
 }) {
     const center: [number, number] =
         events.length > 0 ? [events[0].lat, events[0].lng] : [41.0082, 28.9784];
@@ -75,34 +88,36 @@ export default function EventMap({
                 attribution='&copy; <a href="https://carto.com/">CARTO</a>'
                 maxZoom={19}
             />
-            {events.map((ev) => (
-                <Marker key={ev.id} position={[ev.lat, ev.lng]} icon={markerIcon}>
-                    <Popup>
-                        <div style={{ minWidth: 160 }}>
-                            <p style={{ fontWeight: 700, marginBottom: 4, color: "#E0F2FE", fontSize: 13 }}>
-                                {ev.title}
-                            </p>
-                            <p style={{ fontSize: 11, color: "rgba(224,242,254,0.6)", marginBottom: 4 }}>
-                                {ev.address}
-                            </p>
-                            <p style={{ fontSize: 11, color: "rgba(167,139,250,0.85)", marginBottom: ev.ref_url ? 6 : 0 }}>
-                                {new Date(ev.event_date + "T00:00:00").toLocaleDateString("tr-TR", {
-                                    day: "numeric", month: "long", year: "numeric",
-                                })}
-                            </p>
-                            {ev.ref_url && (
-                                <a href={ev.ref_url} target="_blank" rel="noopener noreferrer"
-                                   style={{ fontSize: 11, color: "rgba(124,58,237,0.9)", textDecoration: "none", display: "block" }}>
-                                    Detaylar ›
-                                </a>
-                            )}
-                            <p style={{ fontSize: 10, color: "rgba(224,242,254,0.25)", marginTop: 6 }}>
-                                @{ev.username}
-                            </p>
-                        </div>
-                    </Popup>
-                </Marker>
-            ))}
+            {events.map((ev) => {
+                const icon = ev.id === selectedId ? selectedIcon : ev.approved ? approvedIcon : regularIcon;
+                return (
+                    <Marker
+                        key={ev.id}
+                        position={[ev.lat, ev.lng]}
+                        icon={icon}
+                        eventHandlers={onMarkerClick ? { click: () => onMarkerClick(ev) } : undefined}
+                    >
+                        {!onMarkerClick && (
+                            <Popup>
+                                <div style={{ minWidth: 160 }}>
+                                    <p style={{ fontWeight: 700, marginBottom: 4, color: "#E0F2FE", fontSize: 13 }}>{ev.title}</p>
+                                    <p style={{ fontSize: 11, color: "rgba(224,242,254,0.6)", marginBottom: 4 }}>{ev.address}</p>
+                                    <p style={{ fontSize: 11, color: "rgba(167,139,250,0.85)" }}>
+                                        {new Date(ev.event_date + "T00:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })}
+                                        {ev.event_time ? ` · ${ev.event_time.slice(0, 5)}` : ""}
+                                    </p>
+                                    {ev.ref_url && (
+                                        <a href={ev.ref_url} target="_blank" rel="noopener noreferrer"
+                                           style={{ fontSize: 11, color: "rgba(124,58,237,0.9)", textDecoration: "none", display: "block", marginTop: 6 }}>
+                                            Detaylar ›
+                                        </a>
+                                    )}
+                                </div>
+                            </Popup>
+                        )}
+                    </Marker>
+                );
+            })}
         </MapContainer>
         </>
     );
