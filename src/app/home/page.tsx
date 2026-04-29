@@ -225,12 +225,18 @@ export default async function HomePage() {
                         />
                     </BentoCard>
 
-                    {/* Bottom CTA */}
-                    <div className="sm:col-span-2 lg:col-span-12 rounded-2xl p-8 flex flex-col items-center justify-center gap-3"
-                         style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)", minHeight: "120px" }}>
-                        <Sparkles size={22} style={{ opacity: 0.08 }} />
-                        <p className="text-xs" style={{ color: "rgba(240,249,255,0.18)" }}>Daha fazlası yakında.</p>
-                    </div>
+                    {/* Manifesto */}
+                    <BentoCard className="sm:col-span-2 lg:col-span-12 flex flex-col gap-4">
+                        <p className="label-caps">Manifesto</p>
+                        <div className="flex flex-col gap-3">
+                            {MANIFESTO_LINES.map((line, i) => (
+                                <p key={i} className="text-xs leading-relaxed"
+                                   style={{ color: `rgba(240,249,255,${0.62 - i * 0.08})` }}>
+                                    {line}
+                                </p>
+                            ))}
+                        </div>
+                    </BentoCard>
                 </div>
             </div>
         </div>
