@@ -108,7 +108,7 @@ export default function GaleriClient({
     }, [userId, username]);
 
     const handleDelete = async (item: GalleryItem) => {
-        if (item.user_id !== userId && !isAdmin) return;
+        if (!isAdmin) return;
         const supabase = createClient();
 
         await supabase.storage.from("gallery").remove([item.storage_path]);
@@ -206,7 +206,7 @@ export default function GaleriClient({
                                              style={{ background: "rgba(239,68,68,0.04)" }}>
                                             <X size={18} className="opacity-20" />
                                             <span className="text-[10px]" style={{ color: "rgba(240,249,255,0.2)" }}>Yüklenemedi</span>
-                                            {(item.user_id === userId || isAdmin) && (
+                                            {isAdmin && (
                                                 <button
                                                     onClick={() => handleDelete(item)}
                                                     className="mt-1 text-[10px] px-2 py-1 rounded-lg"
@@ -239,7 +239,7 @@ export default function GaleriClient({
                                                           style={{ color: "rgba(224,242,254,0.7)" }}>
                                                         @{item.username}
                                                     </Link>
-                                                    {(item.user_id === userId || isAdmin) && (
+                                                    {isAdmin && (
                                                         <button
                                                             onClick={() => handleDelete(item)}
                                                             className="text-[10px] px-2 py-1 rounded-lg transition-all duration-200"

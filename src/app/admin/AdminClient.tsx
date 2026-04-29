@@ -21,7 +21,7 @@ type BadgeId = "authorized" | "admin" | "editor" | "artist" | "writer" | "verifi
 
 const BADGES: { id: BadgeId; label: string; icon: ElementType; color: string; bg: string; border: string; authorizedOnly: boolean }[] = [
     { id: "authorized", label: "Authorized", icon: Layers,     color: "rgba(255,255,255,0.9)", bg: "rgba(255,255,255,0.06)", border: "rgba(255,255,255,0.2)",  authorizedOnly: true  },
-    { id: "admin",      label: "Admin",       icon: Zap,        color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.1)",   border: "rgba(239,68,68,0.3)",   authorizedOnly: false },
+    { id: "admin",      label: "Admin",       icon: Zap,        color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.1)",   border: "rgba(239,68,68,0.3)",   authorizedOnly: true  },
     { id: "editor",     label: "Editör",      icon: Shield,     color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.1)",  border: "rgba(251,191,36,0.3)",  authorizedOnly: false },
     { id: "artist",     label: "Sanatçı",     icon: Palette,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.1)", border: "rgba(244,114,182,0.3)", authorizedOnly: false },
     { id: "writer",     label: "Yazar",       icon: PenLine,    color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.1)",  border: "rgba(52,211,153,0.3)",  authorizedOnly: false },
@@ -320,8 +320,8 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                 {/* Sekmeler */}
                 <div className="flex gap-2">
                     {([
-                        { id: "users",    label: "Kullanıcılar" },
-                        { id: "messages", label: "Mesajlar",    badge: unreadCount },
+                        { id: "users",    label: "Kullanıcılar", badge: undefined as number | undefined },
+                        { id: "messages", label: "Mesajlar",     badge: unreadCount as number | undefined },
                     ] as const).map(({ id, label, badge }) => (
                         <button key={id} onClick={() => setTab(id)}
                                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200"
@@ -392,7 +392,7 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                             </button>
                         ))}
                     </div>
-                </div>
+                </div>}
 
                 {/* Kullanıcı listesi */}
                 {tab === "users" && <div className="flex flex-col gap-2">

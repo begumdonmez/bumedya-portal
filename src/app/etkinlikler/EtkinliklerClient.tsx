@@ -47,8 +47,9 @@ export default function EtkinliklerClient({
     const [geocoding, setGeocoding] = useState(false);
     const [formError, setFormError] = useState("");
 
-    const today = new Date().toISOString().split("T")[0];
-    const upcoming = events.filter(e => e.event_date >= today);
+    const today    = new Date().toISOString().split("T")[0];
+    const todayEvs = events.filter(e => e.event_date === today);
+    const upcoming = events.filter(e => e.event_date > today);
     const past     = events.filter(e => e.event_date < today);
 
     const handleMarkerClick = useCallback((ev: EventItem) => {
@@ -62,7 +63,12 @@ export default function EtkinliklerClient({
         if (!form.title.trim()) { setFormError("Başlık zorunlu."); return; }
         if (!form.address.trim()) { setFormError("Adres zorunlu."); return; }
         if (!form.date) { setFormError("Tarih zorunlu."); return; }
+        if (!/^\d{2}\.\d{2}\.\d{4}$/.test(form.date)) { setFormError("Tarih GG.AA.YYYY formatında olmalı, örn. 25.12.2025"); return; }
         if (!form.time) { setFormError("Saat zorunlu."); return; }
+        if (!/^\d{2}:\d{2}$/.test(form.time)) { setFormError("Saat SS:DD formatında olmalı, örn. 14:30"); return; }
+
+        const [dd, mm, yyyy] = form.date.split(".");
+        const isoDate = `${yyyy}-${mm}-${dd}`;
 
         setGeocoding(true);
         const coords = await geocodeAddress(form.address);
@@ -84,7 +90,7 @@ export default function EtkinliklerClient({
                 address: form.address.trim(),
                 lat: coords.lat,
                 lng: coords.lng,
-                event_date: form.date,
+                event_date: isoDate,
                 event_time: form.time,
                 ref_url: form.ref_url.trim() || null,
                 approved: false,
@@ -95,7 +101,7 @@ export default function EtkinliklerClient({
         setFormLoading(false);
 
         if (error) {
-            toast.error("Etkinlik eklenemedi.");
+            toast.error(`Etkinlik eklenemedi: ${error.message}`);
             return;
         }
 
@@ -148,6 +154,12 @@ export default function EtkinliklerClient({
                     <span className="text-sm font-medium" style={{ color: "rgba(240,249,255,0.55)" }}>Etkinlikler</span>
                 </div>
                 <div className="flex items-center gap-3">
+                    {todayEvs.length > 0 && (
+                        <span className="text-xs px-2 py-0.5 rounded-full"
+                              style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.25)", color: "rgba(52,211,153,0.85)" }}>
+                            {todayEvs.length} bugün
+                        </span>
+                    )}
                     <span className="text-xs" style={{ color: "rgba(224,242,254,0.25)" }}>
                         {upcoming.length} yaklaşan
                     </span>
@@ -239,18 +251,35 @@ export default function EtkinliklerClient({
                     </div>
                 )}
 
+                {/* Bugün */}
+                {todayEvs.length > 0 && (
+                    <section className="flex flex-col gap-3">
+                        <div className="flex items-center gap-2">
+                            <p className="text-[10px] font-medium tracking-[0.15em] uppercase"
+                               style={{ color: "rgba(52,211,153,0.7)" }}>Bugün</p>
+                            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "rgba(52,211,153,0.8)" }} />
+                        </div>
+                        {todayEvs.map(ev => (
+                            <EventCard key={ev.id} ev={ev} status="today" isAdmin={isAdmin} canDelete={canDelete(ev)}
+                                       selected={selected?.id === ev.id}
+                                       onSelect={() => setSelected(prev => prev?.id === ev.id ? null : ev)}
+                                       onApprove={handleApprove} onDelete={handleDelete} />
+                        ))}
+                    </section>
+                )}
+
                 {/* Yaklaşan */}
                 <section className="flex flex-col gap-3">
                     <p className="text-[10px] font-medium tracking-[0.15em] uppercase"
-                       style={{ color: "rgba(224,242,254,0.3)" }}>Yaklaşan Etkinlikler</p>
-                    {upcoming.length === 0 ? (
+                       style={{ color: "rgba(252,211,77,0.5)" }}>Yaklaşan Etkinlikler</p>
+                    {upcoming.length === 0 && todayEvs.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-16 gap-3">
                             <CalendarDays size={32} className="opacity-10" />
                             <p className="text-sm" style={{ color: "rgba(224,242,254,0.25)" }}>Yaklaşan etkinlik yok.</p>
                         </div>
-                    ) : (
+                    ) : upcoming.length === 0 ? null : (
                         upcoming.map(ev => (
-                            <EventCard key={ev.id} ev={ev} isAdmin={isAdmin} canDelete={canDelete(ev)}
+                            <EventCard key={ev.id} ev={ev} status="upcoming" isAdmin={isAdmin} canDelete={canDelete(ev)}
                                        selected={selected?.id === ev.id}
                                        onSelect={() => setSelected(prev => prev?.id === ev.id ? null : ev)}
                                        onApprove={handleApprove} onDelete={handleDelete} />
@@ -260,11 +289,11 @@ export default function EtkinliklerClient({
 
                 {/* Geçmiş */}
                 {past.length > 0 && (
-                    <section className="flex flex-col gap-3 opacity-50">
+                    <section className="flex flex-col gap-3">
                         <p className="text-[10px] font-medium tracking-[0.15em] uppercase"
-                           style={{ color: "rgba(224,242,254,0.2)" }}>Geçmiş Etkinlikler</p>
+                           style={{ color: "rgba(224,242,254,0.15)" }}>Geçmiş Etkinlikler</p>
                         {past.map(ev => (
-                            <EventCard key={ev.id} ev={ev} isAdmin={isAdmin} canDelete={canDelete(ev)}
+                            <EventCard key={ev.id} ev={ev} status="past" isAdmin={isAdmin} canDelete={canDelete(ev)}
                                        selected={false} onSelect={() => {}}
                                        onApprove={handleApprove} onDelete={handleDelete} />
                         ))}
@@ -302,13 +331,35 @@ export default function EtkinliklerClient({
                                 </FormField>
 
                                 <div className="grid grid-cols-2 gap-3">
-                                    <FormField label="Tarih" required>
-                                        <input type="date" value={form.date} onChange={e => setForm(f => ({ ...f, date: e.target.value }))}
-                                               className="form-input" />
+                                    <FormField label="Tarih" required hint="GG.AA.YYYY">
+                                        <input
+                                            type="text"
+                                            value={form.date}
+                                            onChange={e => {
+                                                let v = e.target.value.replace(/[^0-9.]/g, "");
+                                                if ((v.length === 2 || v.length === 5) && !v.endsWith(".") && form.date.length < v.length) v = v + ".";
+                                                if (v.length > 10) v = v.slice(0, 10);
+                                                setForm(f => ({ ...f, date: v }));
+                                            }}
+                                            placeholder="25.12.2025"
+                                            maxLength={10}
+                                            className="form-input"
+                                        />
                                     </FormField>
-                                    <FormField label="Saat" required>
-                                        <input type="time" value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))}
-                                               className="form-input" />
+                                    <FormField label="Saat" required hint="SS:DD formatında, örn. 14:30">
+                                        <input
+                                            type="text"
+                                            value={form.time}
+                                            onChange={e => {
+                                                let v = e.target.value.replace(/[^0-9:]/g, "");
+                                                if (v.length === 2 && !v.includes(":") && form.time.length < 2) v = v + ":";
+                                                if (v.length > 5) v = v.slice(0, 5);
+                                                setForm(f => ({ ...f, time: v }));
+                                            }}
+                                            placeholder="14:30"
+                                            maxLength={5}
+                                            className="form-input"
+                                        />
                                     </FormField>
                                 </div>
 
@@ -353,8 +404,42 @@ function FormField({ label, required, hint, children }: {
     );
 }
 
-function EventCard({ ev, isAdmin, canDelete, selected, onSelect, onApprove, onDelete }: {
+const STATUS_THEME = {
+    today: {
+        cardBg:     "rgba(52,211,153,0.05)",
+        cardBorder: "rgba(52,211,153,0.25)",
+        badgeBg:    "rgba(52,211,153,0.12)",
+        badgeBorder:"rgba(52,211,153,0.3)",
+        dayColor:   "rgba(52,211,153,0.95)",
+        monthColor: "rgba(52,211,153,0.55)",
+        titleColor: "#E0F2FE",
+        opacity:    1,
+    },
+    upcoming: {
+        cardBg:     "rgba(252,211,77,0.03)",
+        cardBorder: "rgba(252,211,77,0.15)",
+        badgeBg:    "rgba(252,211,77,0.08)",
+        badgeBorder:"rgba(252,211,77,0.2)",
+        dayColor:   "rgba(252,211,77,0.9)",
+        monthColor: "rgba(252,211,77,0.45)",
+        titleColor: "#E0F2FE",
+        opacity:    1,
+    },
+    past: {
+        cardBg:     "rgba(255,255,255,0.02)",
+        cardBorder: "rgba(255,255,255,0.05)",
+        badgeBg:    "rgba(255,255,255,0.04)",
+        badgeBorder:"rgba(255,255,255,0.08)",
+        dayColor:   "rgba(224,242,254,0.25)",
+        monthColor: "rgba(224,242,254,0.15)",
+        titleColor: "rgba(224,242,254,0.35)",
+        opacity:    0.55,
+    },
+} as const;
+
+function EventCard({ ev, status, isAdmin, canDelete, selected, onSelect, onApprove, onDelete }: {
     ev: EventItem;
+    status: "today" | "upcoming" | "past";
     isAdmin: boolean;
     canDelete: boolean;
     selected: boolean;
@@ -362,25 +447,33 @@ function EventCard({ ev, isAdmin, canDelete, selected, onSelect, onApprove, onDe
     onApprove: (ev: EventItem) => void;
     onDelete: (ev: EventItem) => void;
 }) {
+    const t = STATUS_THEME[status];
     return (
         <div className="flex items-start gap-4 rounded-2xl p-4 cursor-pointer transition-all duration-200"
              onClick={onSelect}
              style={{
-                 background: selected ? "rgba(124,58,237,0.08)" : "rgba(255,255,255,0.03)",
-                 border: `1px solid ${selected ? "rgba(124,58,237,0.3)" : "rgba(255,255,255,0.07)"}`,
+                 opacity: t.opacity,
+                 background: selected ? "rgba(124,58,237,0.08)" : t.cardBg,
+                 border: `1px solid ${selected ? "rgba(124,58,237,0.3)" : t.cardBorder}`,
              }}>
             <div className="flex flex-col items-center justify-center rounded-xl px-3 py-2 shrink-0 min-w-[52px]"
-                 style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.2)" }}>
-                <span className="text-lg font-bold leading-none" style={{ color: "rgba(167,139,250,0.9)" }}>
-                    {new Date(ev.event_date + "T00:00:00").getDate()}
-                </span>
-                <span className="text-[9px] uppercase tracking-wider mt-0.5" style={{ color: "rgba(167,139,250,0.5)" }}>
-                    {new Date(ev.event_date + "T00:00:00").toLocaleDateString("tr-TR", { month: "short" })}
-                </span>
+                 style={{ background: t.badgeBg, border: `1px solid ${t.badgeBorder}` }}>
+                {status === "today" ? (
+                    <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: t.dayColor }}>bugün</span>
+                ) : (
+                    <>
+                        <span className="text-lg font-bold leading-none" style={{ color: t.dayColor }}>
+                            {new Date(ev.event_date + "T00:00:00").getDate()}
+                        </span>
+                        <span className="text-[9px] uppercase tracking-wider mt-0.5" style={{ color: t.monthColor }}>
+                            {new Date(ev.event_date + "T00:00:00").toLocaleDateString("tr-TR", { month: "short" })}
+                        </span>
+                    </>
+                )}
             </div>
             <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-0.5 flex-wrap">
-                    <p className="text-sm font-semibold" style={{ color: "#E0F2FE" }}>{ev.title}</p>
+                    <p className="text-sm font-semibold" style={{ color: t.titleColor }}>{ev.title}</p>
                     {ev.approved && (
                         <span className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full"
                               style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.25)", color: "rgba(52,211,153,0.85)" }}>
