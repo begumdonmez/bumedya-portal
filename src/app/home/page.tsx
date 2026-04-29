@@ -6,6 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import LiveFeed from "@/components/LiveFeed";
 import EventMapClient from "@/components/EventMapClient";
+import AnnouncementsWidget from "@/components/AnnouncementsWidget";
 
 export const metadata: Metadata = { title: "Ana Sayfa | bumedya." };
 
@@ -31,8 +32,9 @@ export default async function HomePage() {
     if (!user) redirect("/login");
 
     const { data: profile } = await supabase
-        .from("profiles").select("username").eq("id", user.id).single();
+        .from("profiles").select("username, badges").eq("id", user.id).single();
     const username = profile?.username ?? user.email?.split("@")[0] ?? "";
+    const isAdmin = (profile?.badges as string[] ?? []).includes("admin");
 
     const [
         { count: totalCount },
@@ -41,6 +43,7 @@ export default async function HomePage() {
         { data: activities },
         { data: allProfiles },
         { data: events },
+        { data: announcements },
     ] = await Promise.all([
         supabase.from("profiles").select("*", { count: "exact", head: true }),
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "creator"),
@@ -48,6 +51,7 @@ export default async function HomePage() {
         supabase.from("activities").select("id, username, type, payload, created_at").order("created_at", { ascending: false }).limit(8),
         supabase.from("profiles").select("badges"),
         supabase.from("events").select("id, username, title, address, lat, lng, event_date, ref_url").order("event_date", { ascending: true }),
+        supabase.from("announcements").select("id, user_id, username, content, created_at").order("created_at", { ascending: false }).limit(10),
     ]);
 
     const editorCount = allProfiles?.filter((p) => (p.badges as string[])?.includes("editor")).length ?? 0;
@@ -211,17 +215,14 @@ export default async function HomePage() {
                         </p>
                     </BentoCard>
 
-                    {/* Manifesto */}
-                    <BentoCard className="sm:col-span-2 lg:col-span-3 flex flex-col gap-4">
-                        <p className="label-caps">Manifesto</p>
-                        <div className="flex flex-col gap-3 flex-1">
-                            {MANIFESTO_LINES.map((line, i) => (
-                                <p key={i} className="text-xs leading-relaxed"
-                                   style={{ color: `rgba(240,249,255,${0.62 - i * 0.08})` }}>
-                                    {line}
-                                </p>
-                            ))}
-                        </div>
+                    {/* Duyurular */}
+                    <BentoCard className="sm:col-span-2 lg:col-span-3 flex flex-col min-h-[300px]">
+                        <AnnouncementsWidget
+                            initial={announcements ?? []}
+                            isAdmin={isAdmin}
+                            userId={user.id}
+                            username={username}
+                        />
                     </BentoCard>
 
                     {/* Bottom CTA */}
