@@ -60,8 +60,8 @@ function UserRow({ profile, onBadgeToggle, isAuthorized }: {
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0"
                      style={{
                          background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(59,130,246,0.2))",
-                         border: "1px solid rgba(124,58,237,0.2)",
-                         color: "#E0F2FE",
+                         border: "1px solid var(--violet-border)",
+                         color: "var(--text-1)",
                      }}>
                     {profile.username[0].toUpperCase()}
                 </div>
@@ -69,7 +69,7 @@ function UserRow({ profile, onBadgeToggle, isAuthorized }: {
                 {/* Bilgiler */}
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-medium" style={{ color: "#E0F2FE" }}>
+                        <span className="text-sm font-medium" style={{ color: "var(--text-1)" }}>
                             @{profile.username}
                         </span>
                         <span className="text-[10px] px-2 py-0.5 rounded-full"
@@ -93,15 +93,15 @@ function UserRow({ profile, onBadgeToggle, isAuthorized }: {
                 {/* Expand ikonu */}
                 <div className="shrink-0 transition-transform duration-300" style={{ transform: expanded ? "rotate(180deg)" : "rotate(0deg)" }}>
                     <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                        <path d="M3 5l4 4 4-4" stroke="rgba(224,242,254,0.3)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M3 5l4 4 4-4" stroke="var(--text-4)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                 </div>
             </div>
 
             {/* Rozet yönetimi — expand olunca açılır */}
             {expanded && (
-                <div className="px-5 pb-5 pt-1" style={{ borderTop: "1px solid rgba(255,255,255,0.04)" }}>
-                    <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "rgba(224,242,254,0.25)" }}>
+                <div className="px-5 pb-5 pt-1" style={{ borderTop: "1px solid var(--bg-2)" }}>
+                    <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
                         Rozet Yönetimi
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -113,9 +113,9 @@ function UserRow({ profile, onBadgeToggle, isAuthorized }: {
                                     onClick={() => onBadgeToggle(profile.id, badge.id, profile.badges)}
                                     className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
                                     style={{
-                                        background: hasIt ? badge.bg : "rgba(255,255,255,0.03)",
-                                        border: `1px solid ${hasIt ? badge.border : "rgba(255,255,255,0.07)"}`,
-                                        color: hasIt ? badge.color : "rgba(224,242,254,0.35)",
+                                        background: hasIt ? badge.bg : "var(--bg-3)",
+                                        border: `1px solid ${hasIt ? badge.border : "var(--border-2)"}`,
+                                        color: hasIt ? badge.color : "var(--text-3)",
                                     }}
                                 >
                                     <badge.icon size={11} strokeWidth={2} />
@@ -162,7 +162,7 @@ function MessagesTab({ messages, setMessages }: { messages: Message[]; setMessag
         return (
             <div className="flex flex-col items-center justify-center py-20 gap-3">
                 <Inbox size={32} className="opacity-10" />
-                <p className="text-sm" style={{ color: "rgba(224,242,254,0.25)" }}>Henüz mesaj yok.</p>
+                <p className="text-sm" style={{ color: "var(--text-4)" }}>Henüz mesaj yok.</p>
             </div>
         );
     }
@@ -173,22 +173,22 @@ function MessagesTab({ messages, setMessages }: { messages: Message[]; setMessag
                 <div key={msg.id}
                      className="rounded-2xl p-4 flex flex-col gap-3 cursor-pointer transition-all duration-200"
                      style={{
-                         background: msg.read ? "rgba(255,255,255,0.03)" : "rgba(124,58,237,0.07)",
-                         border: `1px solid ${msg.read ? "rgba(255,255,255,0.07)" : "rgba(124,58,237,0.25)"}`,
+                         background: msg.read ? "var(--bg-3)" : "var(--violet-bg)",
+                         border: `1px solid ${msg.read ? "var(--border-2)" : "var(--violet-border)"}`,
                      }}
                      onClick={() => !msg.read && markRead(msg.id)}>
                     <div className="flex items-start justify-between gap-4">
                         <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-0.5">
-                                <p className="text-sm font-semibold" style={{ color: "#E0F2FE" }}>{msg.name}</p>
+                                <p className="text-sm font-semibold" style={{ color: "var(--text-1)" }}>{msg.name}</p>
                                 {!msg.read && (
-                                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "#7C3AED" }} />
+                                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--violet)" }} />
                                 )}
                             </div>
-                            <p className="text-xs" style={{ color: "rgba(224,242,254,0.4)" }}>{msg.email}</p>
+                            <p className="text-xs" style={{ color: "var(--text-3)" }}>{msg.email}</p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                            <p className="text-[10px]" style={{ color: "rgba(224,242,254,0.2)" }}>
+                            <p className="text-[10px]" style={{ color: "var(--text-4)" }}>
                                 {new Date(msg.created_at).toLocaleDateString("tr-TR")}
                             </p>
                             <button onClick={(e) => { e.stopPropagation(); handleDelete(msg.id); }}
@@ -198,7 +198,7 @@ function MessagesTab({ messages, setMessages }: { messages: Message[]; setMessag
                             </button>
                         </div>
                     </div>
-                    <p className="text-sm leading-relaxed" style={{ color: "rgba(224,242,254,0.6)" }}>{msg.message}</p>
+                    <p className="text-sm leading-relaxed" style={{ color: "var(--text-2)" }}>{msg.message}</p>
                 </div>
             ))}
         </div>
@@ -279,39 +279,39 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
 
             {/* Navbar */}
             <nav className="relative z-10 flex items-center justify-between px-6 py-5 border-b"
-                 style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+                 style={{ borderColor: "var(--border-3)" }}>
                 <div className="flex items-center gap-3">
                     <button onClick={() => router.push("/home")} className="text-xs px-2 py-1 rounded-lg transition-all duration-200"
-                            style={{ color: "rgba(224,242,254,0.3)" }}
-                            onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.7)")}
-                            onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.3)")}>
+                            style={{ color: "var(--text-4)" }}
+                            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-2)")}
+                            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-4)")}>
                         <ChevronLeft size={15} />
                     </button>
                     <button onClick={() => router.push("/home")} className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
+                        <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
                         <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
                     </button>
-                    <span style={{ color: "rgba(255,255,255,0.15)" }}>/</span>
+                    <span style={{ color: "var(--border-1)" }}>/</span>
                     <span className="text-sm font-medium flex items-center gap-1.5"
                           style={{ color: "rgba(239,68,68,0.8)" }}>
                         <Zap size={14} strokeWidth={2} /> Admin
                     </span>
                 </div>
 
-                <div className="hidden sm:flex items-center gap-3 text-xs flex-wrap" style={{ color: "rgba(224,242,254,0.3)" }}>
+                <div className="hidden sm:flex items-center gap-3 text-xs flex-wrap" style={{ color: "var(--text-4)" }}>
                     <span>{profiles.length} üye</span>
-                    <span style={{ color: "rgba(255,255,255,0.1)" }}>·</span>
+                    <span style={{ color: "var(--border-1)" }}>·</span>
                     <span>{viewerCount} izleyici</span>
-                    <span style={{ color: "rgba(255,255,255,0.1)" }}>·</span>
+                    <span style={{ color: "var(--border-1)" }}>·</span>
                     <span>{creatorCount} üretici</span>
-                    <span style={{ color: "rgba(255,255,255,0.1)" }}>·</span>
+                    <span style={{ color: "var(--border-1)" }}>·</span>
                     <span style={{ color: "rgba(251,191,36,0.6)" }}>{editorCount} editör</span>
-                    <span style={{ color: "rgba(255,255,255,0.1)" }}>·</span>
+                    <span style={{ color: "var(--border-1)" }}>·</span>
                     <span style={{ color: "rgba(52,211,153,0.6)" }}>{writerCount} yazar</span>
-                    <span style={{ color: "rgba(255,255,255,0.1)" }}>·</span>
+                    <span style={{ color: "var(--border-1)" }}>·</span>
                     <span style={{ color: "rgba(244,114,182,0.6)" }}>{artistCount} sanatçı</span>
                 </div>
-                <span className="sm:hidden text-xs" style={{ color: "rgba(224,242,254,0.3)" }}>{profiles.length} üye</span>
+                <span className="sm:hidden text-xs" style={{ color: "var(--text-4)" }}>{profiles.length} üye</span>
             </nav>
 
             {/* İçerik */}
@@ -326,9 +326,9 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                         <button key={id} onClick={() => setTab(id)}
                                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200"
                                 style={{
-                                    background: tab === id ? "rgba(124,58,237,0.2)" : "rgba(255,255,255,0.04)",
-                                    border: `1px solid ${tab === id ? "rgba(124,58,237,0.4)" : "rgba(255,255,255,0.08)"}`,
-                                    color: tab === id ? "rgba(167,139,250,0.9)" : "rgba(224,242,254,0.4)",
+                                    background: tab === id ? "rgba(124,58,237,0.2)" : "var(--bg-2)",
+                                    border: `1px solid ${tab === id ? "rgba(124,58,237,0.4)" : "var(--border-2)"}`,
+                                    color: tab === id ? "var(--violet-text)" : "var(--text-3)",
                                 }}>
                             {label}
                             {badge != null && badge > 0 && (
@@ -346,10 +346,10 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
 
                 {/* Kullanıcılar sekmesi başlık */}
                 {tab === "users" && <div>
-                    <h1 className="text-2xl font-extrabold tracking-tight mb-1" style={{ color: "#E0F2FE" }}>
+                    <h1 className="text-2xl font-extrabold tracking-tight mb-1" style={{ color: "var(--text-1)" }}>
                         Kullanıcı Yönetimi
                     </h1>
-                    <p className="text-sm" style={{ color: "rgba(224,242,254,0.35)" }}>
+                    <p className="text-sm" style={{ color: "var(--text-3)" }}>
                         Rozet ekle veya kaldır. Değişiklikler anında kaydedilir.
                     </p>
                 </div>}
@@ -357,7 +357,7 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                 {tab === "users" && <div className="flex gap-3">
                     <div className="flex-1 relative">
                         <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4"
-                             style={{ color: "rgba(224,242,254,0.25)" }} viewBox="0 0 16 16" fill="none">
+                             style={{ color: "var(--text-4)" }} viewBox="0 0 16 16" fill="none">
                             <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.2" />
                             <path d="M10.5 10.5L13 13" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
                         </svg>
@@ -367,9 +367,9 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                             placeholder="Kullanıcı ara..."
                             className="w-full pl-9 pr-4 py-2.5 rounded-xl text-sm outline-none transition-all duration-300"
                             style={{
-                                background: "rgba(255,255,255,0.04)",
-                                border: "1px solid rgba(255,255,255,0.07)",
-                                color: "#E0F2FE",
+                                background: "var(--bg-2)",
+                                border: "1px solid var(--border-2)",
+                                color: "var(--text-1)",
                             }}
                         />
                     </div>
@@ -384,9 +384,9 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                             <button key={f.id} onClick={() => setFilter(f.id)}
                                     className="px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
                                     style={{
-                                        background: filter === f.id ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.03)",
-                                        border: `1px solid ${filter === f.id ? "rgba(124,58,237,0.35)" : "rgba(255,255,255,0.07)"}`,
-                                        color: filter === f.id ? "rgba(167,139,250,0.9)" : "rgba(224,242,254,0.35)",
+                                        background: filter === f.id ? "var(--violet-bg-md)" : "var(--bg-3)",
+                                        border: `1px solid ${filter === f.id ? "var(--violet-border)" : "var(--border-2)"}`,
+                                        color: filter === f.id ? "var(--violet-text)" : "var(--text-3)",
                                     }}>
                                 {f.label}
                             </button>
@@ -407,7 +407,7 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                         ))
                     ) : (
                         <div className="flex flex-col items-center justify-center py-16 gap-2">
-                            <p className="text-sm" style={{ color: "rgba(224,242,254,0.25)" }}>Kullanıcı bulunamadı.</p>
+                            <p className="text-sm" style={{ color: "var(--text-4)" }}>Kullanıcı bulunamadı.</p>
                         </div>
                     )}
                 </div>}

@@ -22,12 +22,23 @@ export default async function AkisPage() {
         .order("created_at", { ascending: false })
         .limit(40);
 
+    const postIds = (posts ?? []).map((p) => p.id);
+    let likesData: { post_id: string; user_id: string }[] = [];
+    if (postIds.length > 0) {
+        const { data: likes } = await supabase
+            .from("post_likes")
+            .select("post_id, user_id")
+            .in("post_id", postIds);
+        likesData = likes ?? [];
+    }
+
     return (
         <AkisClient
             userId={user.id}
             username={profile?.username ?? ""}
             badges={(profile?.badges as string[]) ?? []}
             initialPosts={posts ?? []}
+            initialLikesData={likesData}
             supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
         />
     );

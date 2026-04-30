@@ -35,9 +35,36 @@
 /* ── Base ──────────────────────────────────────────────────── */
 
 :root {
-    background-color: #0a0618;
-    color: #F1F5F9;
+    background-color: #06091a;
+    color: #E0F2FE;
     color-scheme: dark;
+
+    /* ── Text ───────────────────────── */
+    --text-1: #E0F2FE;                    /* headings, strong labels */
+    --text-2: rgba(224,242,254,0.7);      /* body text */
+    --text-3: rgba(224,242,254,0.45);     /* secondary / muted */
+    --text-4: rgba(224,242,254,0.25);     /* faint hints */
+    --text-5: rgba(224,242,254,0.12);     /* ghost / placeholders */
+
+    /* ── Borders ────────────────────── */
+    --border-1: rgba(255,255,255,0.12);   /* visible */
+    --border-2: rgba(255,255,255,0.08);   /* subtle */
+    --border-3: rgba(255,255,255,0.05);   /* barely visible */
+
+    /* ── Backgrounds ────────────────── */
+    --bg-1: rgba(255,255,255,0.06);       /* card surface */
+    --bg-2: rgba(255,255,255,0.04);       /* inner / input */
+    --bg-3: rgba(255,255,255,0.02);       /* hover state */
+
+    /* ── Violet brand ───────────────── */
+    --violet:         #7C3AED;
+    --violet-text:    rgba(167,139,250,0.85);
+    --violet-bg:      rgba(124,58,237,0.08);
+    --violet-bg-md:   rgba(124,58,237,0.14);
+    --violet-border:  rgba(124,58,237,0.25);
+
+    /* ── Overlay ────────────────────── */
+    --overlay: rgba(0,0,0,0.7);
 }
 
 *, *::before, *::after { box-sizing: border-box; }

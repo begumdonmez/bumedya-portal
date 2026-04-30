@@ -142,18 +142,18 @@ export default function EtkinliklerClient({
 
             {/* Navbar */}
             <nav className="relative z-10 flex items-center justify-between px-6 py-4 border-b nav-backdrop"
-                 style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+                 style={{ borderColor: "var(--border-3)" }}>
                 <div className="flex items-center gap-3">
                     <Link href="/home" className="text-xs px-2 py-1 rounded-lg hover:opacity-70 transition-opacity"
-                          style={{ color: "rgba(240,249,255,0.28)" }}>
+                          style={{ color: "var(--text-4)" }}>
                         <ChevronLeft size={15} />
                     </Link>
                     <Link href="/home" className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "rgba(240,249,255,0.5)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "#7C3AED" }}>.</span>
+                        <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
+                        <span className="text-sm font-bold" style={{ color: "var(--violet)" }}>.</span>
                     </Link>
-                    <span style={{ color: "rgba(255,255,255,0.12)" }}>/</span>
-                    <span className="text-sm font-medium" style={{ color: "rgba(240,249,255,0.55)" }}>Etkinlikler</span>
+                    <span style={{ color: "var(--border-1)" }}>/</span>
+                    <span className="text-sm font-medium" style={{ color: "var(--text-3)" }}>Etkinlikler</span>
                 </div>
                 <div className="flex items-center gap-3">
                     {todayEvs.length > 0 && (
@@ -162,13 +162,13 @@ export default function EtkinliklerClient({
                             {todayEvs.length} bugün
                         </span>
                     )}
-                    <span className="text-xs" style={{ color: "rgba(224,242,254,0.25)" }}>
+                    <span className="text-xs" style={{ color: "var(--text-4)" }}>
                         {upcoming.length + future.length} etkinlik
                     </span>
                     <button
                         onClick={() => setShowForm(true)}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200"
-                        style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", color: "rgba(167,139,250,0.9)" }}>
+                        style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
                         <Plus size={13} />
                         Etkinlik Ekle
                     </button>
@@ -177,7 +177,7 @@ export default function EtkinliklerClient({
 
             <div className="relative z-10 max-w-5xl mx-auto w-full px-6 py-10 flex flex-col gap-6">
                 {/* Harita */}
-                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(124,58,237,0.15)" }}>
+                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--violet-bg-md)" }}>
                     <EventMapClient
                         events={events}
                         height={340}
@@ -190,11 +190,11 @@ export default function EtkinliklerClient({
                 {/* Seçili etkinlik detayı */}
                 {selected && (
                     <div className="rounded-2xl p-5 flex flex-col gap-3 transition-all"
-                         style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.25)" }}>
+                         style={{ background: "var(--violet-bg)", border: "1px solid var(--violet-border)" }}>
                         <div className="flex items-start justify-between gap-4">
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1 flex-wrap">
-                                    <p className="text-base font-bold" style={{ color: "#E0F2FE" }}>{selected.title}</p>
+                                    <p className="text-base font-bold" style={{ color: "var(--text-1)" }}>{selected.title}</p>
                                     {selected.approved && (
                                         <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full"
                                               style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)", color: "rgba(52,211,153,0.9)" }}>
@@ -203,21 +203,21 @@ export default function EtkinliklerClient({
                                     )}
                                 </div>
                                 <div className="flex items-center gap-1.5 mb-1">
-                                    <MapPin size={12} style={{ color: "rgba(224,242,254,0.4)", flexShrink: 0 }} />
-                                    <p className="text-sm" style={{ color: "rgba(224,242,254,0.55)" }}>{selected.address}</p>
+                                    <MapPin size={12} style={{ color: "var(--text-3)", flexShrink: 0 }} />
+                                    <p className="text-sm" style={{ color: "var(--text-3)" }}>{selected.address}</p>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                    <CalendarDays size={12} style={{ color: "rgba(167,139,250,0.6)", flexShrink: 0 }} />
-                                    <p className="text-sm" style={{ color: "rgba(167,139,250,0.8)" }}>
+                                    <CalendarDays size={12} style={{ color: "var(--violet-text)", flexShrink: 0 }} />
+                                    <p className="text-sm" style={{ color: "var(--violet-text)" }}>
                                         {formatDate(selected.event_date)}
                                         {selected.event_time ? ` · ${selected.event_time.slice(0, 5)}` : ""}
                                     </p>
                                 </div>
-                                <p className="text-xs mt-2" style={{ color: "rgba(224,242,254,0.25)" }}>@{selected.username}</p>
+                                <p className="text-xs mt-2" style={{ color: "var(--text-4)" }}>@{selected.username}</p>
                             </div>
                             <button onClick={() => setSelected(null)}
                                     className="shrink-0 p-1 rounded-lg hover:opacity-70 transition-opacity"
-                                    style={{ color: "rgba(224,242,254,0.3)" }}>
+                                    style={{ color: "var(--text-4)" }}>
                                 <X size={16} />
                             </button>
                         </div>
@@ -226,7 +226,7 @@ export default function EtkinliklerClient({
                             {selected.ref_url && (
                                 <a href={selected.ref_url} target="_blank" rel="noopener noreferrer"
                                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl transition-all duration-200"
-                                   style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)", color: "rgba(167,139,250,0.8)" }}>
+                                   style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
                                     <ExternalLink size={11} /> Detaylar
                                 </a>
                             )}
@@ -288,7 +288,7 @@ export default function EtkinliklerClient({
                 {todayEvs.length === 0 && upcoming.length === 0 && future.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-16 gap-3">
                         <CalendarDays size={32} className="opacity-10" />
-                        <p className="text-sm" style={{ color: "rgba(224,242,254,0.25)" }}>Yaklaşan etkinlik yok.</p>
+                        <p className="text-sm" style={{ color: "var(--text-4)" }}>Yaklaşan etkinlik yok.</p>
                     </div>
                 )}
 
@@ -296,7 +296,7 @@ export default function EtkinliklerClient({
                 {future.length > 0 && (
                     <section className="flex flex-col gap-3">
                         <p className="text-[10px] font-medium tracking-[0.15em] uppercase"
-                           style={{ color: "rgba(224,242,254,0.2)" }}>İleride</p>
+                           style={{ color: "var(--text-4)" }}>İleride</p>
                         {future.map(ev => (
                             <EventCard key={ev.id} ev={ev} status="future" isAdmin={isAdmin} canDelete={canDelete(ev)}
                                        selected={selected?.id === ev.id}
@@ -310,7 +310,7 @@ export default function EtkinliklerClient({
                 {past.length > 0 && (
                     <section className="flex flex-col gap-3">
                         <p className="text-[10px] font-medium tracking-[0.15em] uppercase"
-                           style={{ color: "rgba(224,242,254,0.15)" }}>Geçmiş Etkinlikler</p>
+                           style={{ color: "var(--text-5)" }}>Geçmiş Etkinlikler</p>
                         {past.map(ev => (
                             <EventCard key={ev.id} ev={ev} status="past" isAdmin={isAdmin} canDelete={canDelete(ev)}
                                        selected={false} onSelect={() => {}}
@@ -323,17 +323,17 @@ export default function EtkinliklerClient({
             {/* Form Modal */}
             {showForm && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
-                     style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }}
+                     style={{ background: "var(--overlay)", backdropFilter: "blur(8px)" }}
                      onClick={(e) => e.target === e.currentTarget && setShowForm(false)}>
                     <div className="relative w-full max-w-md rounded-3xl overflow-hidden"
-                         style={{ background: "rgba(15,20,50,0.97)", border: "1px solid rgba(124,58,237,0.25)", boxShadow: "0 24px 64px rgba(0,0,0,0.6)" }}>
+                         style={{ background: "rgba(15,20,50,0.97)", border: "1px solid var(--violet-border)", boxShadow: "0 24px 64px rgba(0,0,0,0.6)" }}>
                         <div className="h-px w-full" style={{ background: "linear-gradient(90deg, transparent, rgba(124,58,237,0.6) 40%, rgba(167,139,250,0.4) 60%, transparent)" }} />
                         <div className="p-6">
                             <div className="flex items-center justify-between mb-6">
-                                <h2 className="text-base font-bold" style={{ color: "#E0F2FE" }}>Etkinlik Ekle</h2>
+                                <h2 className="text-base font-bold" style={{ color: "var(--text-1)" }}>Etkinlik Ekle</h2>
                                 <button onClick={() => setShowForm(false)}
                                         className="p-1 rounded-lg hover:opacity-70 transition-opacity"
-                                        style={{ color: "rgba(224,242,254,0.4)" }}>
+                                        style={{ color: "var(--text-3)" }}>
                                     <X size={16} />
                                 </button>
                             </div>
@@ -395,7 +395,7 @@ export default function EtkinliklerClient({
 
                                 <button type="submit" disabled={formLoading || geocoding}
                                         className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-1"
-                                        style={{ background: "#7C3AED", boxShadow: "0 8px 24px rgba(124,58,237,0.35)" }}>
+                                        style={{ background: "var(--violet)", boxShadow: "0 8px 24px rgba(124,58,237,0.35)" }}>
                                     {geocoding ? "Adres aranıyor..." : formLoading ? "Ekleniyor..." : "Etkinlik Ekle"}
                                 </button>
                             </form>
@@ -413,12 +413,12 @@ function FormField({ label, required, hint, children }: {
     return (
         <div className="flex flex-col gap-1.5">
             <label className="text-[10px] font-medium tracking-[0.15em] uppercase flex items-center gap-1"
-                   style={{ color: "rgba(224,242,254,0.4)" }}>
+                   style={{ color: "var(--text-3)" }}>
                 {label}
                 {required && <span style={{ color: "rgba(239,68,68,0.7)" }}>*</span>}
             </label>
             {children}
-            {hint && <p className="text-[10px]" style={{ color: "rgba(224,242,254,0.2)" }}>{hint}</p>}
+            {hint && <p className="text-[10px]" style={{ color: "var(--text-4)" }}>{hint}</p>}
         </div>
     );
 }
@@ -431,7 +431,7 @@ const STATUS_THEME = {
         badgeBorder:"rgba(52,211,153,0.3)",
         dayColor:   "rgba(52,211,153,0.95)",
         monthColor: "rgba(52,211,153,0.55)",
-        titleColor: "#E0F2FE",
+        titleColor: "var(--text-1)",
         opacity:    1,
     },
     upcoming: {
@@ -441,7 +441,7 @@ const STATUS_THEME = {
         badgeBorder:"rgba(252,211,77,0.2)",
         dayColor:   "rgba(252,211,77,0.9)",
         monthColor: "rgba(252,211,77,0.45)",
-        titleColor: "#E0F2FE",
+        titleColor: "var(--text-1)",
         opacity:    1,
     },
     future: {
@@ -451,7 +451,7 @@ const STATUS_THEME = {
         badgeBorder:"rgba(124,58,237,0.18)",
         dayColor:   "rgba(167,139,250,0.7)",
         monthColor: "rgba(167,139,250,0.4)",
-        titleColor: "#E0F2FE",
+        titleColor: "var(--text-1)",
         opacity:    1,
     },
     past: {
@@ -482,8 +482,8 @@ function EventCard({ ev, status, isAdmin, canDelete, selected, onSelect, onAppro
              onClick={onSelect}
              style={{
                  opacity: t.opacity,
-                 background: selected ? "rgba(124,58,237,0.08)" : t.cardBg,
-                 border: `1px solid ${selected ? "rgba(124,58,237,0.3)" : t.cardBorder}`,
+                 background: selected ? "var(--violet-bg)" : t.cardBg,
+                 border: `1px solid ${selected ? "var(--violet-border)" : t.cardBorder}`,
              }}>
             <div className="flex flex-col items-center justify-center rounded-xl px-3 py-2 shrink-0 min-w-[52px]"
                  style={{ background: t.badgeBg, border: `1px solid ${t.badgeBorder}` }}>
@@ -511,10 +511,10 @@ function EventCard({ ev, status, isAdmin, canDelete, selected, onSelect, onAppro
                     )}
                 </div>
                 <div className="flex items-center gap-1 mb-0.5">
-                    <MapPin size={10} style={{ color: "rgba(224,242,254,0.3)", flexShrink: 0 }} />
-                    <p className="text-xs truncate" style={{ color: "rgba(224,242,254,0.4)" }}>{ev.address}</p>
+                    <MapPin size={10} style={{ color: "var(--text-4)", flexShrink: 0 }} />
+                    <p className="text-xs truncate" style={{ color: "var(--text-3)" }}>{ev.address}</p>
                 </div>
-                <p className="text-[11px]" style={{ color: "rgba(224,242,254,0.25)" }}>
+                <p className="text-[11px]" style={{ color: "var(--text-4)" }}>
                     @{ev.username}
                     {ev.event_time ? ` · ${ev.event_time.slice(0, 5)}` : ""}
                 </p>
@@ -523,14 +523,14 @@ function EventCard({ ev, status, isAdmin, canDelete, selected, onSelect, onAppro
                 {ev.ref_url && (
                     <a href={ev.ref_url} target="_blank" rel="noopener noreferrer"
                        className="p-1.5 rounded-lg transition-opacity hover:opacity-70"
-                       style={{ color: "rgba(167,139,250,0.6)" }}>
+                       style={{ color: "var(--violet-text)" }}>
                         <ExternalLink size={13} />
                     </a>
                 )}
                 {isAdmin && (
                     <button onClick={() => onApprove(ev)}
                             className="p-1.5 rounded-lg transition-opacity hover:opacity-70"
-                            style={{ color: ev.approved ? "rgba(52,211,153,0.8)" : "rgba(224,242,254,0.2)" }}
+                            style={{ color: ev.approved ? "rgba(52,211,153,0.8)" : "var(--text-4)" }}
                             title={ev.approved ? "Onayı kaldır" : "Onayla"}>
                         <CheckCircle size={13} />
                     </button>

@@ -67,14 +67,14 @@ export default function LinksWidget() {
                         <div className="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 group"
                              style={{ background: bg, border: `1px solid ${border}` }}>
                             <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                                 style={{ background: "rgba(255,255,255,0.05)", color }}>
+                                 style={{ background: "var(--bg-2)", color }}>
                                 <Icon size={14} strokeWidth={1.8} />
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-xs font-medium" style={{ color }}>{label}</p>
-                                <p className="text-[10px] truncate" style={{ color: "rgba(224,242,254,0.3)" }}>{sub}</p>
+                                <p className="text-[10px] truncate" style={{ color: "var(--text-4)" }}>{sub}</p>
                             </div>
-                            {href && <ExternalLink size={11} style={{ color: "rgba(224,242,254,0.2)" }} />}
+                            {href && <ExternalLink size={11} style={{ color: "var(--text-4)" }} />}
                         </div>
                     );
 

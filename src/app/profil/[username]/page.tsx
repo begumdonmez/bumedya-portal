@@ -94,14 +94,14 @@ export default async function PublicProfilePage(
 
             {/* Navbar */}
             <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b gap-3"
-                 style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+                 style={{ borderColor: "var(--border-3)" }}>
                 <div className="flex items-center gap-3 shrink-0">
                     <Link href="/home" className="flex items-center px-2 py-1 rounded-lg transition-all duration-200"
-                          style={{ color: "rgba(224,242,254,0.3)" }}>
+                          style={{ color: "var(--text-4)" }}>
                         <ChevronLeft size={15} />
                     </Link>
                     <Link href="/home" className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
+                        <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
                         <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
                     </Link>
                 </div>
@@ -117,7 +117,7 @@ export default async function PublicProfilePage(
                     {isOwnProfile && (
                         <Link href="/profil"
                               className="text-xs px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all duration-300 whitespace-nowrap"
-                              style={{ color: "rgba(167,139,250,0.8)", border: "1px solid rgba(124,58,237,0.25)", background: "rgba(124,58,237,0.08)" }}>
+                              style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
                             <span className="hidden sm:inline">Profilimi </span>Düzenle
                         </Link>
                     )}
@@ -138,19 +138,19 @@ export default async function PublicProfilePage(
                         <div className="w-[72px] h-[72px] rounded-2xl flex items-center justify-center font-bold text-2xl select-none shrink-0"
                              style={{
                                  background: "linear-gradient(135deg, rgba(124,58,237,0.4), rgba(59,130,246,0.3))",
-                                 border: "1px solid rgba(124,58,237,0.3)",
+                                 border: "1px solid var(--violet-border)",
                                  boxShadow: "0 0 24px rgba(124,58,237,0.15)",
-                                 color: "#E0F2FE",
+                                 color: "var(--text-1)",
                              }}>
                             {profile.username[0].toUpperCase()}
                         </div>
 
                         <div className="flex-1 min-w-0">
-                            <h1 className="text-xl font-bold tracking-tight" style={{ color: "#E0F2FE" }}>
+                            <h1 className="text-xl font-bold tracking-tight" style={{ color: "var(--text-1)" }}>
                                 @{profile.username}
                             </h1>
                             {profile.display_name && (
-                                <p className="text-xs mt-0.5 mb-2" style={{ color: "rgba(224,242,254,0.35)" }}>
+                                <p className="text-xs mt-0.5 mb-2" style={{ color: "var(--text-3)" }}>
                                     {profile.display_name}
                                 </p>
                             )}
@@ -162,8 +162,8 @@ export default async function PublicProfilePage(
                                 <span className="text-[10px] font-medium tracking-widest uppercase" style={{ color: roleConf.color }}>
                                     {roleConf.label}
                                 </span>
-                                <span className="text-[10px]" style={{ color: "rgba(224,242,254,0.2)" }}>·</span>
-                                <span className="text-[10px]" style={{ color: "rgba(224,242,254,0.3)" }}>{roleConf.sublabel}</span>
+                                <span className="text-[10px]" style={{ color: "var(--text-4)" }}>·</span>
+                                <span className="text-[10px]" style={{ color: "var(--text-4)" }}>{roleConf.sublabel}</span>
                             </div>
 
                             {/* Kazanılmış rozetler */}
@@ -187,17 +187,17 @@ export default async function PublicProfilePage(
 
                     {/* Bio */}
                     <div className="mb-6">
-                        <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "rgba(224,242,254,0.3)" }}>Bio</p>
-                        <p className="text-sm leading-relaxed" style={{ color: profile.bio ? "rgba(224,242,254,0.6)" : "rgba(224,242,254,0.2)" }}>
+                        <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "var(--text-4)" }}>Bio</p>
+                        <p className="text-sm leading-relaxed" style={{ color: profile.bio ? "var(--text-2)" : "var(--text-4)" }}>
                             {profile.bio || "Henüz bir bio eklenmedi."}
                         </p>
                         <SocialLinksDisplay links={profile.social_links ?? {}} />
                     </div>
 
                     {/* Katılım */}
-                    <div className="pt-5" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                        <p className="text-[10px] tracking-widest uppercase mb-1" style={{ color: "rgba(224,242,254,0.3)" }}>Katılım</p>
-                        <p className="text-sm" style={{ color: "rgba(224,242,254,0.6)" }}>{joinDate}</p>
+                    <div className="pt-5" style={{ borderTop: "1px solid var(--border-3)" }}>
+                        <p className="text-[10px] tracking-widest uppercase mb-1" style={{ color: "var(--text-4)" }}>Katılım</p>
+                        <p className="text-sm" style={{ color: "var(--text-2)" }}>{joinDate}</p>
                     </div>
                 </div>
 
@@ -205,7 +205,7 @@ export default async function PublicProfilePage(
                 {isOwnProfile && (
                     <Link href="/profil"
                           className="flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-medium transition-all duration-300"
-                          style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.2)", color: "rgba(167,139,250,0.8)" }}>
+                          style={{ background: "var(--violet-bg)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
                         Profilimi Düzenle <ChevronRight size={13} />
                     </Link>
                 )}

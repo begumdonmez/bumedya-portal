@@ -167,7 +167,7 @@ export default function ProfilPage() {
         <div className="min-h-screen flex items-center justify-center">
             <div className="flex flex-col items-center gap-4">
                 <span className="w-8 h-8 rounded-full border-2 border-white/10 border-t-purple-500 animate-spin" />
-                <span className="text-xs tracking-widest uppercase" style={{ color: "rgba(224,242,254,0.3)" }}>Yükleniyor</span>
+                <span className="text-xs tracking-widest uppercase" style={{ color: "var(--text-4)" }}>Yükleniyor</span>
             </div>
         </div>
     );
@@ -184,14 +184,14 @@ export default function ProfilPage() {
 
             {/* Navbar */}
             <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b gap-3"
-                 style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+                 style={{ borderColor: "var(--border-3)" }}>
                 <div className="flex items-center gap-3 shrink-0">
                     <Link href="/home" className="flex items-center px-2 py-1 rounded-lg transition-all duration-200"
-                          style={{ color: "rgba(224,242,254,0.3)" }}>
+                          style={{ color: "var(--text-4)" }}>
                         <ChevronLeft size={15} />
                     </Link>
                     <Link href="/home" className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
+                        <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
                         <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
                     </Link>
                 </div>
@@ -231,19 +231,19 @@ export default function ProfilPage() {
                                 <div className="flex flex-col gap-2">
                                     <input value={editUsername} onChange={(e) => setEditUsername(e.target.value)}
                                            placeholder="kullaniciadi" className="rounded-xl px-3 py-2 text-sm outline-none w-full"
-                                           style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(124,58,237,0.5)", color: "#E0F2FE" }} />
+                                           style={{ background: "var(--bg-2)", border: "1px solid rgba(124,58,237,0.5)", color: "var(--text-1)" }} />
                                     <input value={editDisplayName} onChange={(e) => setEditDisplayName(e.target.value)}
                                            placeholder="Adın Soyadın (opsiyonel)" maxLength={60}
                                            className="rounded-xl px-3 py-2 text-sm outline-none w-full"
-                                           style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(124,58,237,0.3)", color: "#E0F2FE" }} />
+                                           style={{ background: "var(--bg-2)", border: "1px solid var(--violet-border)", color: "var(--text-1)" }} />
                                 </div>
                             ) : (
                                 <div className="mb-2">
-                                    <h1 className="text-xl font-bold tracking-tight" style={{ color: "#E0F2FE" }}>
+                                    <h1 className="text-xl font-bold tracking-tight" style={{ color: "var(--text-1)" }}>
                                         @{profile.username}
                                     </h1>
                                     {profile.display_name && (
-                                        <p className="text-xs mt-0.5" style={{ color: "rgba(224,242,254,0.35)" }}>
+                                        <p className="text-xs mt-0.5" style={{ color: "var(--text-3)" }}>
                                             {profile.display_name}
                                         </p>
                                     )}
@@ -260,7 +260,7 @@ export default function ProfilPage() {
                         {!editing && (
                             <button onClick={() => setEditing(true)}
                                     className="shrink-0 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-300"
-                                    style={{ color: "rgba(167,139,250,0.8)", border: "1px solid rgba(124,58,237,0.25)", background: "rgba(124,58,237,0.08)" }}>
+                                    style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
                                 Düzenle
                             </button>
                         )}
@@ -268,18 +268,18 @@ export default function ProfilPage() {
 
                     {/* Bio */}
                     <div className="mb-6">
-                        <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "rgba(224,242,254,0.3)" }}>Bio</p>
+                        <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "var(--text-4)" }}>Bio</p>
                         {editing ? (
                             <>
                                 <textarea value={editBio} onChange={(e) => setEditBio(e.target.value)}
                                           placeholder="Kendinden bahset..." rows={3} maxLength={160}
                                           className="w-full rounded-xl px-3 py-2 text-sm outline-none resize-none"
-                                          style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(124,58,237,0.5)", color: "#E0F2FE" }} />
-                                <p className="text-[10px] mt-1 text-right" style={{ color: "rgba(224,242,254,0.2)" }}>{editBio.length}/160</p>
+                                          style={{ background: "var(--bg-2)", border: "1px solid rgba(124,58,237,0.5)", color: "var(--text-1)" }} />
+                                <p className="text-[10px] mt-1 text-right" style={{ color: "var(--text-4)" }}>{editBio.length}/160</p>
                             </>
                         ) : (
                             <>
-                                <p className="text-sm leading-relaxed" style={{ color: profile.bio ? "rgba(224,242,254,0.6)" : "rgba(224,242,254,0.2)" }}>
+                                <p className="text-sm leading-relaxed" style={{ color: profile.bio ? "var(--text-2)" : "var(--text-4)" }}>
                                     {profile.bio || "Henüz bir bio eklenmedi."}
                                 </p>
                                 <SocialLinksDisplay links={profile.social_links ?? {}} />
@@ -290,12 +290,12 @@ export default function ProfilPage() {
                     {/* Sosyal Linkler — sadece düzenleme modunda */}
                     {editing && (
                         <div className="mb-6">
-                            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "rgba(224,242,254,0.3)" }}>Sosyal Linkler</p>
+                            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>Sosyal Linkler</p>
                             <div className="flex flex-col gap-2">
                                 {SOCIAL_PLATFORMS.map(platform => (
                                     <div key={platform.id} className="flex items-center gap-2">
                                         <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                                             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                                             style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)" }}>
                                             <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style={{ color: platform.color }}>
                                                 <path d={platform.path} />
                                             </svg>
@@ -306,7 +306,7 @@ export default function ProfilPage() {
                                             onChange={e => setEditSocialLinks(prev => ({ ...prev, [platform.id]: e.target.value }))}
                                             placeholder={platform.placeholder}
                                             className="flex-1 rounded-xl px-3 py-2 text-xs outline-none"
-                                            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(124,58,237,0.3)", color: "#E0F2FE" }}
+                                            style={{ background: "var(--bg-2)", border: "1px solid var(--violet-border)", color: "var(--text-1)" }}
                                         />
                                     </div>
                                 ))}
@@ -315,24 +315,24 @@ export default function ProfilPage() {
                     )}
 
                     {/* Katılım tarihi */}
-                    <div className="pt-5" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                        <p className="text-[10px] tracking-widest uppercase mb-1" style={{ color: "rgba(224,242,254,0.3)" }}>Katılım</p>
-                        <p className="text-sm" style={{ color: "rgba(224,242,254,0.6)" }}>{joinDate}</p>
+                    <div className="pt-5" style={{ borderTop: "1px solid var(--border-3)" }}>
+                        <p className="text-[10px] tracking-widest uppercase mb-1" style={{ color: "var(--text-4)" }}>Katılım</p>
+                        <p className="text-sm" style={{ color: "var(--text-2)" }}>{joinDate}</p>
                     </div>
 
                     {/* Düzenleme butonları */}
                     {editing && (
-                        <div className="flex gap-3 mt-6 pt-5" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+                        <div className="flex gap-3 mt-6 pt-5" style={{ borderTop: "1px solid var(--border-3)" }}>
                             <button onClick={handleSave} disabled={saving}
                                     className="flex-1 py-3 rounded-xl text-sm font-bold text-white transition-all duration-300"
-                                    style={{ background: saving ? "rgba(124,58,237,0.5)" : "#7C3AED", boxShadow: saving ? "none" : "0 4px 16px rgba(124,58,237,0.3)" }}>
+                                    style={{ background: saving ? "rgba(124,58,237,0.5)" : "var(--violet)", boxShadow: saving ? "none" : "0 4px 16px rgba(124,58,237,0.3)" }}>
                                 {saving
                                     ? <span className="flex items-center justify-center gap-2"><span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />Kaydediliyor...</span>
                                     : "Kaydet"}
                             </button>
                             <button onClick={() => { setEditing(false); setEditUsername(profile.username); setEditDisplayName(profile.display_name ?? ""); setEditBio(profile.bio ?? ""); setEditSocialLinks(profile.social_links ?? {}); }}
                                     className="px-6 py-3 rounded-xl text-sm transition-all duration-300"
-                                    style={{ color: "rgba(224,242,254,0.5)", border: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)" }}>
+                                    style={{ color: "var(--text-3)", border: "1px solid var(--border-2)", background: "var(--bg-3)" }}>
                                 İptal
                             </button>
                         </div>
@@ -342,27 +342,27 @@ export default function ProfilPage() {
                 {/* ── TOPLULUK TÜRÜ — member / creator ── */}
                 <div className="card rounded-3xl p-6"
                      style={{ borderColor: roleConf.border }}>
-                    <p className="text-[10px] tracking-widest uppercase mb-4" style={{ color: "rgba(224,242,254,0.3)" }}>
+                    <p className="text-[10px] tracking-widest uppercase mb-4" style={{ color: "var(--text-4)" }}>
                         Topluluk Türü
                     </p>
                     <div className="flex items-center gap-4">
                         <div className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0"
-                             style={{ background: "rgba(255,255,255,0.05)", border: `1px solid ${roleConf.border}`, color: roleConf.color }}>
+                             style={{ background: "var(--bg-2)", border: `1px solid ${roleConf.border}`, color: roleConf.color }}>
                             <roleConf.icon size={20} strokeWidth={1.8} />
                         </div>
                         <div className="flex-1">
                             <div className="flex items-baseline gap-2 mb-0.5">
                                 <p className="text-base font-bold" style={{ color: roleConf.color }}>{roleConf.label}</p>
-                                <span className="text-[10px] tracking-widest uppercase" style={{ color: "rgba(224,242,254,0.25)" }}>{roleConf.sublabel}</span>
+                                <span className="text-[10px] tracking-widest uppercase" style={{ color: "var(--text-4)" }}>{roleConf.sublabel}</span>
                             </div>
-                            <p className="text-xs leading-relaxed" style={{ color: "rgba(224,242,254,0.4)" }}>{roleConf.desc}</p>
+                            <p className="text-xs leading-relaxed" style={{ color: "var(--text-3)" }}>{roleConf.desc}</p>
                         </div>
 
                         {/* Sadece member ise geçiş butonu */}
                         {profile.role === "member" && (
                             <button onClick={() => router.push("/onboarding")}
                                     className="shrink-0 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-300 whitespace-nowrap"
-                                    style={{ background: "rgba(124,58,237,0.15)", border: "1px solid rgba(124,58,237,0.3)", color: "rgba(167,139,250,0.9)" }}>
+                                    style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
                                 Üretici Ol <ChevronRight size={13} />
                             </button>
                         )}
@@ -371,7 +371,7 @@ export default function ProfilPage() {
 
                 {/* ── KAZANILAN ROZETLER ── */}
                 <div className="card rounded-3xl p-6">
-                    <p className="text-[10px] tracking-widest uppercase mb-4" style={{ color: "rgba(224,242,254,0.3)" }}>
+                    <p className="text-[10px] tracking-widest uppercase mb-4" style={{ color: "var(--text-4)" }}>
                         Rozetler
                     </p>
 
@@ -394,10 +394,10 @@ export default function ProfilPage() {
                     ) : (
                         <div className="flex flex-col items-center gap-2 py-4 text-center">
                             <Award size={28} className="opacity-30" />
-                            <p className="text-xs" style={{ color: "rgba(224,242,254,0.25)" }}>
+                            <p className="text-xs" style={{ color: "var(--text-4)" }}>
                                 Henüz rozet kazanılmadı.
                             </p>
-                            <p className="text-[11px]" style={{ color: "rgba(224,242,254,0.15)" }}>
+                            <p className="text-[11px]" style={{ color: "var(--text-5)" }}>
                                 Rozetler toplulukta aktifleşerek kazanılır.
                             </p>
                         </div>

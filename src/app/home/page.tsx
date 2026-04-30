@@ -78,13 +78,13 @@ export default async function HomePage() {
             <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
                 <NavbarBackdrop />
                 <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
-                    <span className="text-sm font-bold" style={{ color: "rgba(240,249,255,0.5)" }}>bumedya</span>
+                    <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
                     <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
-                          style={{ color: "#7C3AED" }}>.</span>
+                          style={{ color: "var(--violet)" }}>.</span>
                 </Link>
                 <HomeNavLinks />
                 <Link href="/profil" className="relative z-10 text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[120px] sm:max-w-none truncate"
-                      style={{ color: "rgba(167,139,250,0.85)", border: "1px solid rgba(124,58,237,0.25)", background: "rgba(124,58,237,0.08)" }}>
+                      style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
                     @{username}
                 </Link>
             </nav>
@@ -97,13 +97,13 @@ export default async function HomePage() {
                     <div className="glass flex items-center gap-2.5 px-4 py-2 rounded-full">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
                         <span className="text-[11px] tracking-widest uppercase font-medium"
-                              style={{ color: "rgba(240,249,255,0.45)" }}>
+                              style={{ color: "var(--text-3)" }}>
                             Topluluk aktif · {totalCount ?? 0} üye
                         </span>
                     </div>
                     <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight break-words max-w-lg">
-                        <span style={{ color: "rgba(240,249,255,0.88)" }}>@{username},</span>{" "}
-                        <span className="font-light" style={{ color: "rgba(240,249,255,0.4)" }}>{greeting}</span>
+                        <span style={{ color: "var(--text-1)" }}>@{username},</span>{" "}
+                        <span className="font-light" style={{ color: "var(--text-3)" }}>{greeting}</span>
                     </h1>
                 </div>
 
@@ -113,12 +113,12 @@ export default async function HomePage() {
                     {/* Topluluk Durumu */}
                     <BentoCard className="sm:col-span-1 lg:col-span-7">
                         <div aria-hidden className="absolute -top-8 -left-8 w-48 h-48 rounded-full pointer-events-none"
-                             style={{ background: "rgba(124,58,237,0.12)", filter: "blur(50px)" }} />
+                             style={{ background: "var(--violet-bg-md)", filter: "blur(50px)" }} />
                         <div className="relative z-10">
                             <p className="label-caps mb-5">Topluluk Durumu</p>
                             <div className="grid grid-cols-2 gap-4 sm:gap-6 mb-5">
                                 <div className="flex flex-col gap-1">
-                                    <span className="text-3xl font-bold tracking-tight" style={{ color: "rgba(240,249,255,0.55)" }}>
+                                    <span className="text-3xl font-bold tracking-tight" style={{ color: "var(--text-3)" }}>
                                         {memberCount ?? 0}
                                     </span>
                                     <span className="label-caps">İzleyici</span>
@@ -163,15 +163,15 @@ export default async function HomePage() {
                             ))}
                         </div>
                         <div>
-                            <p className="text-sm font-medium" style={{ color: "rgba(240,249,255,0.75)" }}>Spotify Widget</p>
-                            <p className="text-xs mt-0.5" style={{ color: "rgba(240,249,255,0.3)" }}>Yakında entegre edilecek</p>
+                            <p className="text-sm font-medium" style={{ color: "var(--text-2)" }}>Spotify Widget</p>
+                            <p className="text-xs mt-0.5" style={{ color: "var(--text-4)" }}>Yakında entegre edilecek</p>
                         </div>
                         <div className="mt-4 glass rounded-xl px-4 py-3 flex items-center gap-3">
                             <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm shrink-0"
-                                 style={{ background: "rgba(124,58,237,0.2)", border: "1px solid rgba(124,58,237,0.25)" }}>♪</div>
+                                 style={{ background: "var(--violet-border)", border: "1px solid var(--violet-border)" }}>♪</div>
                             <div className="min-w-0">
-                                <p className="text-xs font-medium" style={{ color: "rgba(240,249,255,0.65)" }}>Spotify'ı Bağla</p>
-                                <p className="text-[10px]" style={{ color: "rgba(240,249,255,0.28)" }}>Dinlediklerini paylaş</p>
+                                <p className="text-xs font-medium" style={{ color: "var(--text-2)" }}>Spotify'ı Bağla</p>
+                                <p className="text-[10px]" style={{ color: "var(--text-4)" }}>Dinlediklerini paylaş</p>
                             </div>
                         </div>
                     </BentoCard>
@@ -184,7 +184,7 @@ export default async function HomePage() {
                                 <p className="label-caps">Canlı Akış</p>
                             </div>
                             <Link href="/chat" className="text-[10px] tracking-widest uppercase transition-colors duration-200"
-                                  style={{ color: "rgba(124,58,237,0.6)" }}>
+                                  style={{ color: "var(--violet-text)" }}>
                                 Lounge <ChevronRight size={11} className="inline" />
                             </Link>
                         </div>
@@ -196,7 +196,7 @@ export default async function HomePage() {
                         <div className="flex items-center justify-between mb-4">
                             <p className="label-caps">Etkinlik Haritası</p>
                             <Link href="/etkinlikler" className="text-[10px] font-medium transition-opacity hover:opacity-60"
-                                  style={{ color: "rgba(124,58,237,0.7)" }}>
+                                  style={{ color: "var(--violet-text)" }}>
                                 Tümü <ChevronRight size={10} className="inline" />
                             </Link>
                         </div>
@@ -222,14 +222,14 @@ export default async function HomePage() {
                                     const d = new Date(ev.event_date + "T00:00:00");
                                     return (
                                         <div key={ev.id} className="flex items-center gap-3 rounded-xl px-3 py-2"
-                                             style={{ background: "rgba(255,255,255,0.025)", border: "1px solid rgba(255,255,255,0.05)" }}>
+                                             style={{ background: "var(--bg-3)", border: "1px solid var(--border-3)" }}>
                                             <span className="text-xs font-bold shrink-0 w-6 text-center" style={{ color: accentColor }}>
                                                 {d.getDate()}
                                             </span>
                                             <span className="text-[10px] uppercase tracking-wider shrink-0 w-7" style={{ color: accentColor, opacity: 0.7 }}>
                                                 {d.toLocaleDateString("tr-TR", { month: "short" })}
                                             </span>
-                                            <span className="text-xs truncate flex-1" style={{ color: "rgba(224,242,254,0.65)" }}>
+                                            <span className="text-xs truncate flex-1" style={{ color: "var(--text-2)" }}>
                                                 {ev.title}
                                             </span>
                                             {isToday && (
@@ -242,7 +242,7 @@ export default async function HomePage() {
                                     );
                                 })}
                             {(events ?? []).filter(e => e.event_date >= new Date().toISOString().split("T")[0]).length === 0 && (
-                                <p className="text-xs text-center py-2" style={{ color: "rgba(224,242,254,0.2)" }}>Yaklaşan etkinlik yok</p>
+                                <p className="text-xs text-center py-2" style={{ color: "var(--text-4)" }}>Yaklaşan etkinlik yok</p>
                             )}
                         </div>
                     </BentoCard>

@@ -173,25 +173,25 @@ export default function ChatClient({ userId, username, initialMessages }: {
 
             {/* ── SIDEBAR ── */}
             <aside className="w-14 sm:w-60 shrink-0 flex flex-col"
-                   style={{ borderRight: "1px solid rgba(255,255,255,0.06)" }}>
+                   style={{ borderRight: "1px solid var(--border-3)" }}>
 
                 {/* Logo — only on sm+ */}
-                <div className="hidden sm:block px-5 pt-6 pb-5" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+                <div className="hidden sm:block px-5 pt-6 pb-5" style={{ borderBottom: "1px solid var(--border-3)" }}>
                     <div className="flex items-center gap-2">
                         <Link href="/home" className="text-xs px-1.5 py-1 rounded-lg transition-colors duration-200"
-                              style={{ color: "rgba(224,242,254,0.25)" }}
-                              onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.6)")}
-                              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.25)")}>
+                              style={{ color: "var(--text-4)" }}
+                              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-2)")}
+                              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-4)")}>
                             <ChevronLeft size={15} />
                         </Link>
                         <Link href="/home" className="flex items-baseline gap-0.5">
-                            <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.45)" }}>bumedya</span>
+                            <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
                             <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
                         </Link>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
                         <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "rgba(52,211,153,0.8)" }} />
-                        <span className="text-[10px] tracking-widest uppercase" style={{ color: "rgba(224,242,254,0.2)" }}>Lounge</span>
+                        <span className="text-[10px] tracking-widest uppercase" style={{ color: "var(--text-5)" }}>Lounge</span>
                     </div>
                 </div>
                 {/* Mobile logo placeholder spacing */}
@@ -199,7 +199,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
 
                 {/* Odalar */}
                 <div className="flex-1 px-1 sm:px-3 py-4 flex flex-col gap-0.5 overflow-y-auto">
-                    <p className="text-[9px] tracking-widest uppercase px-2 sm:px-3 mb-2 hidden sm:block" style={{ color: "rgba(224,242,254,0.18)" }}>
+                    <p className="text-[9px] tracking-widest uppercase px-2 sm:px-3 mb-2 hidden sm:block" style={{ color: "var(--text-3)" }}>
                         ODALAR
                     </p>
                     {ROOMS.map((room) => {
@@ -213,24 +213,24 @@ export default function ChatClient({ userId, username, initialMessages }: {
                             <button key={room.id} onClick={() => switchRoom(room.id)}
                                     className="flex items-center gap-3 px-2 sm:px-3 py-3 rounded-xl text-left transition-all duration-200 w-full relative"
                                     style={{
-                                        background: isActive ? "rgba(124,58,237,0.12)" : "transparent",
-                                        border: `1px solid ${isActive ? "rgba(124,58,237,0.25)" : "transparent"}`,
+                                        background: isActive ? "var(--violet-bg-md)" : "transparent",
+                                        border: `1px solid ${isActive ? "var(--violet-border)" : "transparent"}`,
                                         justifyContent: "center",
                                     }}>
                                 <room.icon size={16} strokeWidth={1.8} className="shrink-0" />
                                 <div className="hidden sm:block flex-1 min-w-0">
                                     <p className="text-sm font-medium truncate"
-                                       style={{ color: isActive ? "rgba(167,139,250,0.95)" : "rgba(224,242,254,0.5)" }}>
+                                       style={{ color: isActive ? "var(--violet-text)" : "var(--text-2)" }}>
                                         {room.label}
                                     </p>
-                                    <p className="text-[10px] truncate" style={{ color: "rgba(224,242,254,0.2)" }}>{room.desc}</p>
+                                    <p className="text-[10px] truncate" style={{ color: "var(--text-3)" }}>{room.desc}</p>
                                 </div>
                                 <div className="hidden sm:flex shrink-0 items-center gap-1.5">
                                     {peopleInRoom > 0 && (
                                         <span className="flex items-center gap-1 text-[10px]"
-                                              style={{ color: isActive ? "rgba(167,139,250,0.6)" : "rgba(224,242,254,0.2)" }}>
+                                              style={{ color: isActive ? "rgba(167,139,250,0.6)" : "var(--text-3)" }}>
                                             <span className="w-1.5 h-1.5 rounded-full"
-                                                  style={{ background: isActive ? "rgba(52,211,153,0.8)" : "rgba(255,255,255,0.2)" }} />
+                                                  style={{ background: isActive ? "rgba(52,211,153,0.8)" : "var(--border-1)" }} />
                                             {peopleInRoom}
                                         </span>
                                     )}
@@ -244,7 +244,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
                                 {/* Mobile unread dot */}
                                 {unreadCount > 0 && (
                                     <span className="sm:hidden absolute top-1 right-1 w-2 h-2 rounded-full"
-                                          style={{ background: "rgba(124,58,237,0.9)" }} />
+                                          style={{ background: "var(--violet)" }} />
                                 )}
                             </button>
                         );
@@ -254,7 +254,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
                 {/* Çevrimiçi — only on sm+ */}
                 {onlineUsers.length > 0 && (
                     <div className="hidden sm:flex px-3 pb-3 flex-col gap-0.5">
-                        <p className="text-[9px] tracking-widest uppercase px-3 mb-2 mt-1" style={{ color: "rgba(224,242,254,0.18)" }}>
+                        <p className="text-[9px] tracking-widest uppercase px-3 mb-2 mt-1" style={{ color: "var(--text-3)" }}>
                             ÇEVRİMİÇİ · {onlineUsers.length}
                         </p>
                         {onlineUsers.map((u) => {
@@ -263,20 +263,20 @@ export default function ChatClient({ userId, username, initialMessages }: {
                             return (
                                 <Link key={u.username} href={`/profil/${u.username}`}
                                       className="flex items-center gap-2.5 px-3 py-2 rounded-xl transition-all duration-200"
-                                      style={{ color: "rgba(224,242,254,0.5)" }}
-                                      onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.04)")}
+                                      style={{ color: "var(--text-3)" }}
+                                      onMouseEnter={(e) => (e.currentTarget.style.background = "var(--bg-2)")}
                                       onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
                                     <div className="relative shrink-0">
                                         <div className="w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-bold"
-                                             style={{ background: bg, border: `1px solid ${border}`, color: "#E0F2FE" }}>
+                                             style={{ background: bg, border: `1px solid ${border}`, color: "var(--text-1)" }}>
                                             {u.username[0].toUpperCase()}
                                         </div>
                                         <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full"
-                                              style={{ background: "rgba(52,211,153,0.9)", border: "1.5px solid #1A2744" }} />
+                                              style={{ background: "rgba(52,211,153,0.9)", border: "1.5px solid #06091a" }} />
                                     </div>
                                     <div className="min-w-0">
-                                        <p className="text-xs truncate" style={{ color: "rgba(224,242,254,0.7)" }}>@{u.username}</p>
-                                        <p className="text-[9px] truncate" style={{ color: "rgba(224,242,254,0.25)" }}>{roomLabel}</p>
+                                        <p className="text-xs truncate" style={{ color: "var(--text-2)" }}>@{u.username}</p>
+                                        <p className="text-[9px] truncate" style={{ color: "var(--text-4)" }}>{roomLabel}</p>
                                     </div>
                                 </Link>
                             );
@@ -285,21 +285,21 @@ export default function ChatClient({ userId, username, initialMessages }: {
                 )}
 
                 {/* Profil */}
-                <div className="px-2 sm:px-5 py-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                <div className="px-2 sm:px-5 py-4" style={{ borderTop: "1px solid var(--border-3)" }}>
                     <Link href="/profil" className="flex items-center justify-center sm:justify-start gap-3">
                         <div className="w-8 h-8 rounded-xl shrink-0 flex items-center justify-center text-xs font-bold"
                              style={{
                                  background: "linear-gradient(135deg, rgba(124,58,237,0.4), rgba(59,130,246,0.25))",
-                                 border: "1px solid rgba(124,58,237,0.3)",
-                                 color: "#E0F2FE",
+                                 border: "1px solid var(--violet-border)",
+                                 color: "var(--text-1)",
                              }}>
                             {username[0].toUpperCase()}
                         </div>
                         <div className="hidden sm:block min-w-0">
-                            <p className="text-xs font-semibold truncate" style={{ color: "rgba(224,242,254,0.8)" }}>@{username}</p>
+                            <p className="text-xs font-semibold truncate" style={{ color: "var(--text-2)" }}>@{username}</p>
                             <div className="flex items-center gap-1.5 mt-0.5">
                                 <span className="w-1.5 h-1.5 rounded-full" style={{ background: "rgba(52,211,153,0.8)" }} />
-                                <span className="text-[10px]" style={{ color: "rgba(224,242,254,0.3)" }}>Çevrimiçi</span>
+                                <span className="text-[10px]" style={{ color: "var(--text-4)" }}>Çevrimiçi</span>
                             </div>
                         </div>
                     </Link>
@@ -311,14 +311,14 @@ export default function ChatClient({ userId, username, initialMessages }: {
 
                 {/* Header */}
                 <div className="shrink-0 px-3 sm:px-6 h-[60px] flex items-center gap-3 sm:gap-4 border-b"
-                     style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(255,255,255,0.015)" }}>
+                     style={{ borderColor: "var(--border-3)", background: "var(--bg-3)" }}>
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                         <activeRoomData.icon size={16} strokeWidth={1.8} />
                         <div>
-                            <h2 className="text-sm font-semibold leading-tight" style={{ color: "#E0F2FE" }}>
+                            <h2 className="text-sm font-semibold leading-tight" style={{ color: "var(--text-1)" }}>
                                 {activeRoomData.label}
                             </h2>
-                            <p className="text-[10px]" style={{ color: "rgba(224,242,254,0.25)" }}>
+                            <p className="text-[10px]" style={{ color: "var(--text-4)" }}>
                                 {activeRoomData.desc}
                             </p>
                         </div>
@@ -339,22 +339,22 @@ export default function ChatClient({ userId, username, initialMessages }: {
                     </div>
 
                     <span className="text-[10px] px-2.5 py-1 rounded-full"
-                          style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "rgba(224,242,254,0.3)" }}>
+                          style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-4)" }}>
                         {messages.length} mesaj
                     </span>
                 </div>
 
                 {/* Mesajlar */}
                 <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-5 flex flex-col"
-                     style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(124,58,237,0.2) transparent" }}>
+                     style={{ scrollbarWidth: "thin", scrollbarColor: "var(--violet-border) transparent" }}>
                     {messages.length === 0 ? (
                         <div className="flex-1 flex flex-col items-center justify-center gap-3">
                             <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
-                                 style={{ background: "rgba(124,58,237,0.08)", border: "1px solid rgba(124,58,237,0.15)" }}>
+                                 style={{ background: "var(--violet-bg)", border: "1px solid var(--violet-bg-md)" }}>
                                 <activeRoomData.icon size={28} strokeWidth={1.5} />
                             </div>
-                            <p className="text-sm font-medium" style={{ color: "rgba(224,242,254,0.35)" }}>{activeRoomData.label}</p>
-                            <p className="text-xs" style={{ color: "rgba(224,242,254,0.2)" }}>İlk mesajı gönder, sohbeti başlat</p>
+                            <p className="text-sm font-medium" style={{ color: "var(--text-3)" }}>{activeRoomData.label}</p>
+                            <p className="text-xs" style={{ color: "var(--text-4)" }}>İlk mesajı gönder, sohbeti başlat</p>
                         </div>
                     ) : (
                         <div className="flex flex-col">
@@ -376,12 +376,12 @@ export default function ChatClient({ userId, username, initialMessages }: {
                                          }}>
                                         {showDay && (
                                             <div className="flex items-center gap-3 mb-5">
-                                                <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.05)" }} />
+                                                <div className="flex-1 h-px" style={{ background: "var(--border-3)" }} />
                                                 <span className="text-[10px] tracking-widest uppercase"
-                                                      style={{ color: "rgba(224,242,254,0.2)" }}>
+                                                      style={{ color: "var(--text-4)" }}>
                                                     {dayLabel(msg.created_at)}
                                                 </span>
-                                                <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.05)" }} />
+                                                <div className="flex-1 h-px" style={{ background: "var(--border-3)" }} />
                                             </div>
                                         )}
 
@@ -392,7 +392,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
                                                     {showHeader ? (
                                                         <Link href={`/profil/${msg.username}`}
                                                               className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold hover:opacity-80 transition-opacity"
-                                                              style={{ background: avatarBg, border: `1px solid ${avatarBorder}`, color: "#E0F2FE" }}>
+                                                              style={{ background: avatarBg, border: `1px solid ${avatarBorder}`, color: "var(--text-1)" }}>
                                                             {msg.username[0].toUpperCase()}
                                                         </Link>
                                                     ) : <div className="w-8" />}
@@ -408,26 +408,26 @@ export default function ChatClient({ userId, username, initialMessages }: {
                                                 )}
                                                 <div className="flex items-end gap-2">
                                                     {isOwn && (
-                                                        <span className="text-[10px] shrink-0 mb-1" style={{ color: "rgba(224,242,254,0.18)" }}>
+                                                        <span className="text-[10px] shrink-0 mb-1" style={{ color: "var(--text-5)" }}>
                                                             {timeLabel(msg.created_at)}
                                                         </span>
                                                     )}
                                                     <div className="px-4 py-2.5 text-sm leading-relaxed"
                                                          style={isOwn ? {
                                                              background: "linear-gradient(135deg, rgba(124,58,237,0.35), rgba(109,40,217,0.25))",
-                                                             border: "1px solid rgba(124,58,237,0.35)",
-                                                             color: "#E0F2FE",
+                                                             border: "1px solid var(--violet-border)",
+                                                             color: "var(--text-1)",
                                                              borderRadius: "18px 18px 4px 18px",
                                                          } : {
-                                                             background: "rgba(255,255,255,0.05)",
-                                                             border: "1px solid rgba(255,255,255,0.08)",
-                                                             color: "rgba(224,242,254,0.85)",
+                                                             background: "var(--bg-2)",
+                                                             border: "1px solid var(--border-2)",
+                                                             color: "var(--text-2)",
                                                              borderRadius: "18px 18px 18px 4px",
                                                          }}>
                                                         {msg.content}
                                                     </div>
                                                     {!isOwn && (
-                                                        <span className="text-[10px] shrink-0 mb-1" style={{ color: "rgba(224,242,254,0.18)" }}>
+                                                        <span className="text-[10px] shrink-0 mb-1" style={{ color: "var(--text-5)" }}>
                                                             {timeLabel(msg.created_at)}
                                                         </span>
                                                     )}
@@ -446,9 +446,9 @@ export default function ChatClient({ userId, username, initialMessages }: {
                 <div className="shrink-0 px-3 sm:px-6 pb-4 sm:pb-6 pt-3">
                     <div className="rounded-2xl overflow-hidden transition-all duration-200"
                          style={{
-                             background: "rgba(255,255,255,0.04)",
-                             border: `1px solid ${input ? "rgba(124,58,237,0.3)" : "rgba(255,255,255,0.08)"}`,
-                             boxShadow: input ? "0 0 0 3px rgba(124,58,237,0.06)" : "none",
+                             background: "var(--bg-2)",
+                             border: `1px solid ${input ? "var(--violet-border)" : "var(--border-2)"}`,
+                             boxShadow: input ? "0 0 0 3px var(--violet-bg)" : "none",
                          }}>
                         <textarea
                             ref={inputRef}
@@ -459,16 +459,16 @@ export default function ChatClient({ userId, username, initialMessages }: {
                             rows={1}
                             maxLength={500}
                             className="w-full resize-none bg-transparent text-sm outline-none leading-relaxed px-4 pt-3 pb-1"
-                            style={{ color: "#E0F2FE", maxHeight: "120px" }}
+                            style={{ color: "var(--text-1)", maxHeight: "120px" }}
                         />
                         <div className="flex items-center justify-between px-4 pb-3 pt-1">
-                            <span className="hidden sm:inline text-[10px]" style={{ color: "rgba(224,242,254,0.15)" }}>
+                            <span className="hidden sm:inline text-[10px]" style={{ color: "var(--text-5)" }}>
                                 Enter gönder · Shift+Enter yeni satır
                             </span>
                             <div className="flex items-center gap-3">
                                 {input.length > 0 && (
                                     <span className="text-[10px]"
-                                          style={{ color: input.length > 450 ? "rgba(239,68,68,0.7)" : "rgba(224,242,254,0.2)" }}>
+                                          style={{ color: input.length > 450 ? "rgba(239,68,68,0.7)" : "var(--text-4)" }}>
                                         {input.length}/500
                                     </span>
                                 )}
@@ -477,8 +477,8 @@ export default function ChatClient({ userId, username, initialMessages }: {
                                     disabled={!input.trim() || sending}
                                     className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 disabled:opacity-30"
                                     style={{
-                                        background: input.trim() ? "rgba(124,58,237,0.85)" : "rgba(255,255,255,0.05)",
-                                        border: `1px solid ${input.trim() ? "rgba(124,58,237,0.5)" : "rgba(255,255,255,0.08)"}`,
+                                        background: input.trim() ? "rgba(124,58,237,0.85)" : "var(--bg-2)",
+                                        border: `1px solid ${input.trim() ? "var(--violet-border)" : "var(--border-2)"}`,
                                     }}>
                                     {sending ? (
                                         <span className="w-3 h-3 rounded-full border border-white/30 border-t-white animate-spin" />

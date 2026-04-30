@@ -31,7 +31,7 @@ function Field({ id, label, type = "text", value, onChange, placeholder, error, 
     return (
         <div className="flex flex-col gap-1.5">
             <label htmlFor={id} className="label-caps transition-colors duration-200"
-                   style={{ color: focused ? "rgba(167,139,250,0.85)" : "rgba(240,249,255,0.38)" }}>
+                   style={{ color: focused ? "var(--violet-text)" : "var(--text-3)" }}>
                 {label}
             </label>
             <div className="relative">
@@ -138,7 +138,7 @@ function LoginForm() {
                    suffix={
                        <button type="button" onClick={() => setShowPw(!showPw)}
                                className="p-1 transition-colors duration-200"
-                               style={{ color: "rgba(240,249,255,0.3)" }}>
+                               style={{ color: "var(--text-4)" }}>
                            {showPw ? (
                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                    <path d="M2 8s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4Z" stroke="currentColor" strokeWidth="1.2"/>
@@ -157,7 +157,7 @@ function LoginForm() {
 
             <div className="flex justify-end -mt-1 mb-3">
                 <Link href="/reset-password" className="text-xs transition-colors duration-200"
-                      style={{ color: "rgba(167,139,250,0.45)" }}>
+                      style={{ color: "var(--violet-text)" }}>
                     Şifremi unuttum
                 </Link>
             </div>
@@ -168,11 +168,11 @@ function LoginForm() {
                 ) : "Giriş Yap"}
             </button>
 
-            <div className="mt-6 pt-5 text-center" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                <p className="text-xs" style={{ color: "rgba(240,249,255,0.3)" }}>
+            <div className="mt-6 pt-5 text-center" style={{ borderTop: "1px solid var(--border-3)" }}>
+                <p className="text-xs" style={{ color: "var(--text-4)" }}>
                     Hesabın yok mu?{" "}
                     <Link href="/register" className="transition-colors duration-200"
-                          style={{ color: "rgba(167,139,250,0.7)" }}>
+                          style={{ color: "var(--violet-text)" }}>
                         Kayıt ol
                     </Link>
                 </p>
@@ -204,14 +204,14 @@ export default function LoginPage() {
                     <div className="p-8">
                         <div className="mb-8">
                             <Link href="/" className="inline-flex items-baseline gap-0.5 mb-7 group">
-                                <span className="text-sm font-bold" style={{ color: "rgba(240,249,255,0.5)" }}>bumedya</span>
+                                <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
                                 <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
-                                      style={{ color: "#7C3AED" }}>.</span>
+                                      style={{ color: "var(--violet)" }}>.</span>
                             </Link>
-                            <h1 className="text-2xl font-bold tracking-tight mb-1.5" style={{ color: "#F0F9FF" }}>
+                            <h1 className="text-2xl font-bold tracking-tight mb-1.5" style={{ color: "var(--text-1)" }}>
                                 Tekrar Hoş Geldin
                             </h1>
-                            <p className="text-sm" style={{ color: "rgba(240,249,255,0.38)" }}>
+                            <p className="text-sm" style={{ color: "var(--text-3)" }}>
                                 Dijital evrenine giriş yap.
                             </p>
                         </div>

@@ -60,7 +60,7 @@ function Field({
             <label
                 htmlFor={id}
                 className="text-[10px] font-medium tracking-[0.15em] uppercase transition-colors duration-200"
-                style={{ color: focused ? "rgba(167,139,250,0.8)" : "rgba(224,242,254,0.4)" }}
+                style={{ color: focused ? "var(--violet-text)" : "var(--text-3)" }}
             >
                 {label}
             </label>
@@ -74,14 +74,14 @@ function Field({
                     autoComplete={autoComplete}
                     className="w-full rounded-xl px-4 py-3 text-sm placeholder:text-white/20 transition-all duration-300 outline-none"
                     style={{
-                        background: "rgba(255,255,255,0.05)",
-                        color: "#E0F2FE",
+                        background: "var(--bg-2)",
+                        color: "var(--text-1)",
                         border: `1px solid ${
                             error
                                 ? "rgba(239,68,68,0.5)"
                                 : focused
                                     ? "rgba(124,58,237,0.65)"
-                                    : "rgba(255,255,255,0.07)"
+                                    : "var(--border-2)"
                         }`,
                         boxShadow: focused && !error
                             ? "0 0 0 1px rgba(124,58,237,0.2), 0 0 20px rgba(124,58,237,0.1)"
@@ -128,21 +128,21 @@ function SuccessScreen({ email }: { email: string }) {
 
             <div>
                 <h3 className="text-xl font-bold text-white mb-2">E-postanı kontrol et!</h3>
-                <p className="text-sm leading-relaxed max-w-xs" style={{ color: "rgba(224,242,254,0.5)" }}>
-                    <span style={{ color: "rgba(167,139,250,0.8)" }}>{email}</span> adresine
+                <p className="text-sm leading-relaxed max-w-xs" style={{ color: "var(--text-3)" }}>
+                    <span style={{ color: "var(--violet-text)" }}>{email}</span> adresine
                     doğrulama linki gönderdik. Linke tıklayarak topluluğa katılabilirsin.
                 </p>
             </div>
 
-            <p className="text-xs" style={{ color: "rgba(224,242,254,0.25)" }}>
+            <p className="text-xs" style={{ color: "var(--text-4)" }}>
                 Gelmediyse spam klasörünü kontrol et.
             </p>
 
             <Link href="/"
                   className="text-sm transition-colors duration-300"
-                  style={{ color: "rgba(124,58,237,0.7)" }}
-                  onMouseEnter={e => (e.currentTarget.style.color = "#7C3AED")}
-                  onMouseLeave={e => (e.currentTarget.style.color = "rgba(124,58,237,0.7)")}
+                  style={{ color: "var(--violet-text)" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "var(--violet)")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "var(--violet-text)")}
             >
                 Ana sayfaya dön →
             </Link>
@@ -284,10 +284,10 @@ export default function RegisterPage() {
                 <div
                     className="relative rounded-3xl overflow-hidden"
                     style={{
-                        background: "rgba(255,255,255,0.04)",
+                        background: "var(--bg-2)",
                         backdropFilter: "blur(40px) saturate(180%)",
                         WebkitBackdropFilter: "blur(40px) saturate(180%)",
-                        border: "1px solid rgba(255,255,255,0.08)",
+                        border: "1px solid var(--border-2)",
                         boxShadow: "0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07)",
                     }}
                 >
@@ -301,14 +301,14 @@ export default function RegisterPage() {
                         <div className="mb-8">
                             <Link href="/" className="inline-flex items-baseline gap-0.5 mb-6 group">
                 <span className="text-sm font-bold tracking-tight transition-colors duration-300"
-                      style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
+                      style={{ color: "var(--text-3)" }}>bumedya</span>
                                 <span className="text-sm font-bold transition-colors duration-300"
                                       style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
                             </Link>
-                            <h1 className="text-2xl font-extrabold tracking-tight mb-1" style={{ color: "#E0F2FE" }}>
+                            <h1 className="text-2xl font-extrabold tracking-tight mb-1" style={{ color: "var(--text-1)" }}>
                                 Topluluğa Katıl
                             </h1>
-                            <p className="text-sm" style={{ color: "rgba(224,242,254,0.4)" }}>
+                            <p className="text-sm" style={{ color: "var(--text-3)" }}>
                                 Dijital fanzin dünyasında yerini al.
                             </p>
                         </div>
@@ -347,7 +347,7 @@ export default function RegisterPage() {
                                     suffix={
                                         <button type="button" onClick={() => setShowPw(!showPw)}
                                                 className="p-1 transition-colors duration-200"
-                                                style={{ color: "rgba(224,242,254,0.3)" }}
+                                                style={{ color: "var(--text-4)" }}
                                                 aria-label={showPw ? "Şifreyi gizle" : "Şifreyi göster"}
                                         >
                                             {showPw ? (
@@ -377,7 +377,7 @@ export default function RegisterPage() {
                                                      style={{
                                                          background: lvl <= pwStrength
                                                              ? strengthColor[pwStrength]
-                                                             : "rgba(255,255,255,0.07)",
+                                                             : "var(--border-2)",
                                                      }} />
                                             ))}
                                         </div>
@@ -398,7 +398,7 @@ export default function RegisterPage() {
                                     suffix={
                                         <button type="button" onClick={() => setShowConfirmPw(!showConfirmPw)}
                                                 className="p-1 transition-colors duration-200"
-                                                style={{ color: "rgba(224,242,254,0.3)" }}
+                                                style={{ color: "var(--text-4)" }}
                                                 aria-label={showConfirmPw ? "Şifreyi gizle" : "Şifreyi göster"}
                                         >
                                             {showConfirmPw ? (
@@ -423,7 +423,7 @@ export default function RegisterPage() {
                                     className="relative mt-2 w-full py-3.5 rounded-xl text-sm font-bold text-white
                     transition-all duration-300 overflow-hidden disabled:cursor-not-allowed"
                                     style={{
-                                        background: isLoading ? "rgba(124,58,237,0.5)" : "#7C3AED",
+                                        background: isLoading ? "rgba(124,58,237,0.5)" : "var(--violet)",
                                         boxShadow: isLoading
                                             ? "none"
                                             : "0 8px 24px rgba(124,58,237,0.4), 0 0 0 1px rgba(124,58,237,0.3)",
@@ -448,12 +448,12 @@ export default function RegisterPage() {
 
                                 {/* Alt link */}
                                 <div className="mt-6 pt-5 text-center"
-                                     style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-                                    <p className="text-xs" style={{ color: "rgba(224,242,254,0.3)" }}>
+                                     style={{ borderTop: "1px solid var(--border-3)" }}>
+                                    <p className="text-xs" style={{ color: "var(--text-4)" }}>
                                         Zaten hesabın var mı?{" "}
                                         <Link href="/login"
                                               className="transition-colors duration-300"
-                                              style={{ color: "rgba(167,139,250,0.7)" }}
+                                              style={{ color: "var(--violet-text)" }}
                                         >
                                             Giriş yap
                                         </Link>

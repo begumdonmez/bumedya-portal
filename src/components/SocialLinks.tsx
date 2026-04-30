@@ -71,7 +71,7 @@ export function SocialLinksDisplay({ links }: { links: SocialLinksData }) {
                 <a key={platform.id} href={links[platform.id]} target="_blank" rel="noopener noreferrer"
                    title={platform.label}
                    className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110"
-                   style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
+                   style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)" }}>
                     <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style={{ color: platform.color }}>
                         <path d={platform.path} />
                     </svg>

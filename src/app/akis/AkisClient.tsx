@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
-import { Image as ImageIcon, PenLine, Clapperboard, Sparkles, X, ChevronLeft, ExternalLink } from "lucide-react";
+import { Image as ImageIcon, PenLine, Clapperboard, Sparkles, X, ChevronLeft, ExternalLink, Heart } from "lucide-react";
 import type { ElementType } from "react";
 
 export interface Post {
@@ -23,10 +23,10 @@ export interface Post {
 type CategoryId = "resimler" | "yazilar" | "editler" | "diger";
 
 const CATEGORIES: { id: CategoryId; label: string; icon: ElementType; color: string; bg: string; border: string }[] = [
-    { id: "resimler", label: "Resimler", icon: ImageIcon,   color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.2)" },
-    { id: "yazilar",  label: "Yazılar",  icon: PenLine,     color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)"  },
-    { id: "editler",  label: "Editler",  icon: Clapperboard,color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.2)"  },
-    { id: "diger",    label: "Diğer",    icon: Sparkles,    color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"  },
+    { id: "resimler", label: "Resimler", icon: ImageIcon,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.2)" },
+    { id: "yazilar",  label: "Yazılar",  icon: PenLine,      color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)"  },
+    { id: "editler",  label: "Editler",  icon: Clapperboard, color: "var(--violet-text)",    bg: "var(--violet-bg)",       border: "var(--violet-border)"  },
+    { id: "diger",    label: "Diğer",    icon: Sparkles,     color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"  },
 ];
 
 function timeAgo(dateStr: string) {
@@ -73,7 +73,7 @@ function LinkPreview({ url }: { url: string }) {
         <div className="mx-4 mb-3">
             <a href={url} target="_blank" rel="noopener noreferrer"
                className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs transition-all duration-200"
-               style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.15)", color: "rgba(167,139,250,0.8)" }}>
+               style={{ background: "var(--violet-bg)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
                 <ExternalLink size={12} />
                 <span className="truncate">{url}</span>
             </a>
@@ -92,10 +92,13 @@ function CategoryBadge({ id }: { id: string }) {
     );
 }
 
-function PostCard({ post, supabaseUrl, userId, onDelete }: {
+function PostCard({ post, supabaseUrl, userId, likeCount, likedByMe, onLike, onDelete }: {
     post: Post;
     supabaseUrl: string;
     userId: string;
+    likeCount: number;
+    likedByMe: boolean;
+    onLike: (postId: string) => void;
     onDelete: (id: string) => void;
 }) {
     const [imgLoaded, setImgLoaded] = useState(false);
@@ -118,7 +121,7 @@ function PostCard({ post, supabaseUrl, userId, onDelete }: {
         <div className="relative mx-4 mb-3 rounded-xl overflow-hidden">
             {!imgLoaded && (
                 <div className="w-full h-48 animate-pulse rounded-xl"
-                     style={{ background: "rgba(124,58,237,0.08)" }} />
+                     style={{ background: "var(--violet-bg)" }} />
             )}
             <Image
                 src={imageUrl}
@@ -143,8 +146,8 @@ function PostCard({ post, supabaseUrl, userId, onDelete }: {
                         <div className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shrink-0"
                              style={{
                                  background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(59,130,246,0.2))",
-                                 border: "1px solid rgba(124,58,237,0.2)",
-                                 color: "#E0F2FE",
+                                 border: "1px solid var(--violet-border)",
+                                 color: "var(--text-1)",
                              }}>
                             {post.username[0].toUpperCase()}
                         </div>
@@ -152,10 +155,10 @@ function PostCard({ post, supabaseUrl, userId, onDelete }: {
                     <div>
                         <Link href={`/profil/${post.username}`}
                               className="text-sm font-medium hover:opacity-80 transition-opacity"
-                              style={{ color: "#E0F2FE" }}>
+                              style={{ color: "var(--text-1)" }}>
                             @{post.username}
                         </Link>
-                        <p className="text-[10px]" style={{ color: "rgba(224,242,254,0.25)" }}>
+                        <p className="text-[10px]" style={{ color: "var(--text-4)" }}>
                             {timeAgo(post.created_at)}
                         </p>
                     </div>
@@ -189,7 +192,7 @@ function PostCard({ post, supabaseUrl, userId, onDelete }: {
             {/* Yazı içeriği */}
             {post.content && (
                 <div className="px-4 mb-3">
-                    <p className="text-sm leading-relaxed" style={{ color: "rgba(224,242,254,0.8)" }}>
+                    <p className="text-sm leading-relaxed" style={{ color: "var(--text-2)" }}>
                         {post.content}
                     </p>
                 </div>
@@ -198,24 +201,37 @@ function PostCard({ post, supabaseUrl, userId, onDelete }: {
             {/* Açıklama */}
             {post.description && (
                 <div className="px-4 pb-4">
-                    <p className="text-xs" style={{ color: "rgba(224,242,254,0.4)" }}>
+                    <p className="text-xs" style={{ color: "var(--text-3)" }}>
                         {post.description}
                     </p>
                 </div>
             )}
 
-            {/* Dosya varken ref_url varsa küçük link ikonu */}
-            {imageUrl && post.ref_url && (
-                <div className="px-4 pb-3">
+            {/* Footer — beğeni + link */}
+            <div className="flex items-center justify-between px-4 pb-4 pt-1">
+                <button
+                    onClick={() => onLike(post.id)}
+                    className="flex items-center gap-1.5 transition-all duration-200 group"
+                    style={{ color: likedByMe ? "rgba(244,114,182,0.9)" : "var(--text-4)" }}>
+                    <Heart
+                        size={15}
+                        strokeWidth={2}
+                        fill={likedByMe ? "rgba(244,114,182,0.9)" : "none"}
+                        className="transition-transform duration-150 group-active:scale-90"
+                    />
+                    {likeCount > 0 && (
+                        <span className="text-[11px] font-medium tabular-nums">{likeCount}</span>
+                    )}
+                </button>
+
+                {imageUrl && post.ref_url && (
                     <a href={post.ref_url} target="_blank" rel="noopener noreferrer"
                        className="inline-flex items-center gap-1.5 text-[10px] transition-opacity hover:opacity-70"
-                       style={{ color: "rgba(167,139,250,0.6)" }}>
+                       style={{ color: "var(--violet-text)" }}>
                         <ExternalLink size={10} /> Linke git
                     </a>
-                </div>
-            )}
-
-            {!post.content && !post.description && !post.ref_url && !imageUrl && <div className="pb-2" />}
+                )}
+            </div>
         </div>
     );
 }
@@ -298,26 +314,32 @@ function UploadModal({ onClose, onPost, userId, username }: {
 
     const linkPreviewActive = needsFile && linkUrl.trim() && !preview;
 
+    const inputStyle = {
+        background: "var(--bg-2)",
+        border: "1px solid var(--border-2)",
+        color: "var(--text-1)",
+    } as React.CSSProperties;
+
     return (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
-             style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }}
+             style={{ background: "var(--overlay)", backdropFilter: "blur(8px)" }}
              onClick={(e) => e.target === e.currentTarget && onClose()}>
             <div className="w-full max-w-lg rounded-3xl overflow-hidden"
-                 style={{ background: "rgba(20,30,58,0.92)", backdropFilter: "blur(32px)", WebkitBackdropFilter: "blur(32px)", border: "1px solid rgba(255,255,255,0.1)" }}>
+                 style={{ background: "rgba(20,30,58,0.92)", backdropFilter: "blur(32px)", WebkitBackdropFilter: "blur(32px)", border: "1px solid var(--border-1)" }}>
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-5 border-b"
-                     style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-                    <h2 className="text-sm font-semibold" style={{ color: "#E0F2FE" }}>Yeni Post</h2>
+                     style={{ borderColor: "var(--border-3)" }}>
+                    <h2 className="text-sm font-semibold" style={{ color: "var(--text-1)" }}>Yeni Post</h2>
                     <button onClick={onClose} className="flex items-center justify-center transition-opacity hover:opacity-60"
-                            style={{ color: "rgba(224,242,254,0.4)" }}><X size={16} /></button>
+                            style={{ color: "var(--text-3)" }}><X size={16} /></button>
                 </div>
 
                 <div className="p-6 flex flex-col gap-5 max-h-[80vh] overflow-y-auto">
 
                     {/* Kategori */}
                     <div>
-                        <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "rgba(224,242,254,0.25)" }}>
+                        <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
                             Kategori
                         </p>
                         <div className="grid grid-cols-4 gap-2">
@@ -325,9 +347,9 @@ function UploadModal({ onClose, onPost, userId, username }: {
                                 <button key={c.id} onClick={() => { setCategory(c.id); setFile(null); setPreview(null); setLinkUrl(""); }}
                                         className="flex flex-col items-center gap-1.5 py-3 rounded-xl text-xs font-medium transition-all duration-200"
                                         style={{
-                                            background: category === c.id ? c.bg : "rgba(255,255,255,0.02)",
-                                            border: `1px solid ${category === c.id ? c.border : "rgba(255,255,255,0.06)"}`,
-                                            color: category === c.id ? c.color : "rgba(224,242,254,0.3)",
+                                            background: category === c.id ? c.bg : "var(--bg-3)",
+                                            border: `1px solid ${category === c.id ? c.border : "var(--border-3)"}`,
+                                            color: category === c.id ? c.color : "var(--text-4)",
                                         }}>
                                     <c.icon size={16} strokeWidth={1.8} />
                                     {c.label}
@@ -339,8 +361,8 @@ function UploadModal({ onClose, onPost, userId, username }: {
                     {/* Dosya yükleme */}
                     {needsFile && (
                         <div>
-                            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "rgba(224,242,254,0.25)" }}>
-                                Dosya <span style={{ color: "rgba(224,242,254,0.12)" }}>(maks. {limitMb} MB)</span>
+                            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
+                                Dosya <span style={{ color: "var(--text-5)" }}>(maks. {limitMb} MB)</span>
                             </p>
                             {preview ? (
                                 <div className="relative rounded-xl overflow-hidden">
@@ -351,12 +373,12 @@ function UploadModal({ onClose, onPost, userId, username }: {
                                     )}
                                     <button onClick={() => { setFile(null); setPreview(null); }}
                                             className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs"
-                                            style={{ background: "rgba(0,0,0,0.6)", color: "#fff" }}><X size={12} /></button>
+                                            style={{ background: "var(--overlay)", color: "#fff" }}><X size={12} /></button>
                                 </div>
                             ) : (
                                 <button onClick={() => fileRef.current?.click()}
                                         className="w-full h-32 rounded-xl flex flex-col items-center justify-center gap-2 transition-all duration-200"
-                                        style={{ border: "1.5px dashed rgba(124,58,237,0.3)", background: "rgba(124,58,237,0.04)", color: "rgba(167,139,250,0.6)" }}>
+                                        style={{ border: "1.5px dashed var(--violet-border)", background: "var(--violet-bg)", color: "var(--violet-text)" }}>
                                     <span className="text-2xl">+</span>
                                     <span className="text-xs">Dosya seç</span>
                                 </button>
@@ -369,17 +391,16 @@ function UploadModal({ onClose, onPost, userId, username }: {
                     {/* Link alanı */}
                     {needsFile && (
                         <div>
-                            <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "rgba(224,242,254,0.25)" }}>
-                                Link <span style={{ color: "rgba(224,242,254,0.12)" }}>(opsiyonel)</span>
+                            <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "var(--text-4)" }}>
+                                Link <span style={{ color: "var(--text-5)" }}>(opsiyonel)</span>
                             </p>
                             <input
                                 value={linkUrl}
                                 onChange={(e) => setLinkUrl(e.target.value)}
                                 placeholder="https://..."
                                 className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-                                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "#E0F2FE" }}
+                                style={inputStyle}
                             />
-                            {/* Link önizleme */}
                             {linkPreviewActive && (
                                 <div className="mt-3 rounded-xl overflow-hidden">
                                     {getYoutubeId(linkUrl) ? (
@@ -396,7 +417,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                                         <img src={linkUrl} alt="link önizleme" className="w-full h-48 object-cover rounded-xl" />
                                     ) : (
                                         <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs"
-                                             style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.15)", color: "rgba(167,139,250,0.7)" }}>
+                                             style={{ background: "var(--violet-bg)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
                                             <ExternalLink size={12} />
                                             <span className="truncate">{linkUrl}</span>
                                         </div>
@@ -409,7 +430,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                     {/* Metin içeriği */}
                     {!needsFile && (
                         <div>
-                            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "rgba(224,242,254,0.25)" }}>
+                            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
                                 İçerik
                             </p>
                             <textarea
@@ -419,9 +440,9 @@ function UploadModal({ onClose, onPost, userId, username }: {
                                 rows={5}
                                 maxLength={2000}
                                 className="w-full resize-none rounded-xl px-4 py-3 text-sm outline-none leading-relaxed"
-                                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "#E0F2FE" }}
+                                style={inputStyle}
                             />
-                            <p className="text-[10px] mt-1 text-right" style={{ color: "rgba(224,242,254,0.2)" }}>
+                            <p className="text-[10px] mt-1 text-right" style={{ color: "var(--text-4)" }}>
                                 {content.length}/2000
                             </p>
                         </div>
@@ -429,8 +450,8 @@ function UploadModal({ onClose, onPost, userId, username }: {
 
                     {/* Açıklama */}
                     <div>
-                        <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "rgba(224,242,254,0.25)" }}>
-                            Açıklama <span style={{ color: "rgba(224,242,254,0.15)" }}>(opsiyonel)</span>
+                        <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
+                            Açıklama <span style={{ color: "var(--text-5)" }}>(opsiyonel)</span>
                         </p>
                         <input
                             value={description}
@@ -438,7 +459,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                             placeholder="Kısa bir açıklama..."
                             maxLength={200}
                             className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-                            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "#E0F2FE" }}
+                            style={inputStyle}
                         />
                     </div>
 
@@ -456,15 +477,46 @@ function UploadModal({ onClose, onPost, userId, username }: {
     );
 }
 
-export default function AkisClient({ userId, username, badges, initialPosts, supabaseUrl }: {
+export default function AkisClient({ userId, username, badges, initialPosts, initialLikesData, supabaseUrl }: {
     userId: string;
     username: string;
     badges: string[];
     initialPosts: Post[];
+    initialLikesData: { post_id: string; user_id: string }[];
     supabaseUrl: string;
 }) {
     const [posts, setPosts] = useState(initialPosts);
     const [showModal, setShowModal] = useState(false);
+
+    const buildLikesMap = (data: { post_id: string; user_id: string }[]) => {
+        const map = new Map<string, { count: number; liked: boolean }>();
+        for (const { post_id, user_id } of data) {
+            const cur = map.get(post_id) ?? { count: 0, liked: false };
+            map.set(post_id, {
+                count: cur.count + 1,
+                liked: cur.liked || user_id === userId,
+            });
+        }
+        return map;
+    };
+
+    const [likesMap, setLikesMap] = useState(() => buildLikesMap(initialLikesData));
+
+    const handleLike = useCallback(async (postId: string) => {
+        const cur = likesMap.get(postId) ?? { count: 0, liked: false };
+        const newLiked = !cur.liked;
+        setLikesMap((prev) => {
+            const next = new Map(prev);
+            next.set(postId, { count: cur.count + (newLiked ? 1 : -1), liked: newLiked });
+            return next;
+        });
+        const supabase = createClient();
+        if (newLiked) {
+            await supabase.from("post_likes").insert({ post_id: postId, user_id: userId });
+        } else {
+            await supabase.from("post_likes").delete().eq("post_id", postId).eq("user_id", userId);
+        }
+    }, [likesMap, userId]);
 
     const handlePost = useCallback((post: Post) => {
         setPosts((prev) => [post, ...prev]);
@@ -481,24 +533,24 @@ export default function AkisClient({ userId, username, badges, initialPosts, sup
 
             {/* Navbar */}
             <nav className="sticky top-0 z-40 flex items-center justify-between px-6 py-4 border-b nav-backdrop"
-                 style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+                 style={{ borderColor: "var(--border-3)" }}>
                 <div className="flex items-center gap-3">
                     <Link href="/home" className="text-xs px-2 py-1 rounded-lg transition-colors duration-200"
-                          style={{ color: "rgba(240,249,255,0.28)" }}
-                          onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.7)")}
-                          onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(240,249,255,0.28)")}>
+                          style={{ color: "var(--text-4)" }}
+                          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-2)")}
+                          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-4)")}>
                         <ChevronLeft size={15} />
                     </Link>
                     <Link href="/home" className="flex items-baseline gap-0.5 group">
-                        <span className="text-sm font-bold" style={{ color: "rgba(240,249,255,0.5)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "#7C3AED" }}>.</span>
+                        <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
+                        <span className="text-sm font-bold" style={{ color: "var(--violet)" }}>.</span>
                     </Link>
-                    <span style={{ color: "rgba(255,255,255,0.12)" }}>/</span>
-                    <span className="text-sm font-medium" style={{ color: "rgba(240,249,255,0.55)" }}>Akış</span>
+                    <span style={{ color: "var(--border-1)" }}>/</span>
+                    <span className="text-sm font-medium" style={{ color: "var(--text-3)" }}>Akış</span>
                 </div>
                 <button onClick={() => setShowModal(true)}
                         className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200"
-                        style={{ background: "rgba(124,58,237,0.14)", border: "1px solid rgba(124,58,237,0.3)", color: "rgba(167,139,250,0.95)" }}>
+                        style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
                     <span className="text-base leading-none">+</span> Paylaş
                 </button>
             </nav>
@@ -508,18 +560,23 @@ export default function AkisClient({ userId, username, badges, initialPosts, sup
                 {posts.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-32 gap-4">
                         <Sparkles size={36} className="opacity-10" />
-                        <p className="text-sm" style={{ color: "rgba(224,242,254,0.25)" }}>Henüz paylaşım yok.</p>
+                        <p className="text-sm" style={{ color: "var(--text-4)" }}>Henüz paylaşım yok.</p>
                         <button onClick={() => setShowModal(true)}
                                 className="mt-2 px-5 py-2.5 rounded-xl text-xs font-medium transition-all duration-200"
-                                style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.25)", color: "rgba(167,139,250,0.8)" }}>
+                                style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
                             İlk paylaşımı yap
                         </button>
                     </div>
                 ) : (
-                    posts.map((post) => (
-                        <PostCard key={post.id} post={post} supabaseUrl={supabaseUrl}
-                                  userId={userId} onDelete={handleDelete} />
-                    ))
+                    posts.map((post) => {
+                        const likes = likesMap.get(post.id) ?? { count: 0, liked: false };
+                        return (
+                            <PostCard key={post.id} post={post} supabaseUrl={supabaseUrl}
+                                      userId={userId} onDelete={handleDelete}
+                                      likeCount={likes.count} likedByMe={likes.liked}
+                                      onLike={handleLike} />
+                        );
+                    })
                 )}
             </div>
 
