@@ -273,7 +273,13 @@ export default async function HomePage() {
 
                     {/* Manifesto */}
                     <BentoCard className="sm:col-span-1 lg:col-span-7 flex flex-col gap-4">
-                        <p className="label-caps">Manifesto</p>
+                        <div className="flex items-center justify-between">
+                            <p className="label-caps">Manifesto</p>
+                            <Link href="/manifest" className="text-[10px] font-medium transition-opacity hover:opacity-60"
+                                  style={{ color: "var(--violet-text)" }}>
+                                Tahtaya Git <ChevronRight size={10} className="inline" />
+                            </Link>
+                        </div>
                         <div className="flex flex-col gap-3">
                             {MANIFESTO_LINES.map((line, i) => (
                                 <p key={i} className="text-xs leading-relaxed"

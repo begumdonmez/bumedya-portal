@@ -10,6 +10,7 @@ const LINKS = [
     { href: "/members",     label: "Üyeler"       },
     { href: "/etkinlikler", label: "Etkinlikler"  },
     { href: "/chat",        label: "Lounge"       },
+    { href: "/manifest",   label: "Manifest"     },
 ];
 
 export default function HomeNavLinks() {

@@ -28,6 +28,49 @@ const BADGES = [
     { label: "Kurucu",  color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)",   desc: "Topluluğun kurucu üyelerine özel rozettir, başvuruyla alınamaz." },
 ];
 
+const PAGES = [
+    {
+        path: "/galeri",
+        label: "Galeri",
+        desc: "Etkinliklerden fotoğraflar, çizimler, tasarımlar — topluluğun görsel belleği burada birikir. Yetkilendirilmiş üyeler kendi eserlerini de ekleyebilir.",
+        accent: "rgba(167,139,250,0.85)",
+        bg: "rgba(124,58,237,0.06)",
+        border: "rgba(124,58,237,0.18)",
+    },
+    {
+        path: "/akis",
+        label: "Akış",
+        desc: "Topluluktan kısa paylaşımlar, fikirler ve günlük üretimler. Yetkilendirilmiş üyeler metin veya görsel paylaşabilir, diğerleri beğeni bırakabilir.",
+        accent: "rgba(96,165,250,0.85)",
+        bg: "rgba(59,130,246,0.06)",
+        border: "rgba(59,130,246,0.18)",
+    },
+    {
+        path: "/etkinlikler",
+        label: "Etkinlikler",
+        desc: "Yaklaşan buluşmalar, workshoplar ve topluluk etkinlikleri. Haritadan konuma bak, takvime ekle, detaylara ulaş.",
+        accent: "rgba(52,211,153,0.85)",
+        bg: "rgba(52,211,153,0.06)",
+        border: "rgba(52,211,153,0.18)",
+    },
+    {
+        path: "/chat",
+        label: "Chat",
+        desc: "Gerçek zamanlı topluluk sohbeti. Fikirlerini anlık paylaş, sorularını sor, diğer üyelerle tanış.",
+        accent: "rgba(251,191,36,0.85)",
+        bg: "rgba(251,191,36,0.06)",
+        border: "rgba(251,191,36,0.18)",
+    },
+    {
+        path: "/manifest",
+        label: "Manifest",
+        desc: "Ortak kara tahta. Hayalini, notunu veya bir söz bırak — renk seç, tahtaya tıkla. Topluluktan herkesin notu burada birikir.",
+        accent: "rgba(52,211,153,0.85)",
+        bg: "rgba(52,211,153,0.06)",
+        border: "rgba(52,211,153,0.18)",
+    },
+];
+
 const PILLARS = [
     { label: "Çiz", accent: "rgba(167,139,250,1)", desc: "Kağıt sınır koymaz, ekran da koymaz." },
     { label: "Yaz", accent: "rgba(96,165,250,1)",  desc: "Kelimeler en keskin araçtır." },
@@ -267,6 +310,34 @@ export default async function LandingPage() {
                             <p className="text-xs leading-relaxed pt-1" style={{ color: "var(--text-3)" }}>
                                 {b.desc}
                             </p>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* PAGES */}
+            <section className="relative z-10 px-4 sm:px-6 pb-24 max-w-5xl mx-auto">
+                <div className="text-center mb-12">
+                    <p className="label-caps mb-4">Sayfalar</p>
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gradient-white">
+                        Nerede Ne Var?
+                    </h2>
+                    <p className="text-sm mt-3 max-w-md mx-auto" style={{ color: "var(--text-3)" }}>
+                        Platforma ilk adım atıyorsan, hangi sayfanın ne işe yaradığını öğren.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {PAGES.map((p) => (
+                        <div key={p.path} className="card p-5 flex flex-col gap-3">
+                            <div className="flex items-center gap-2.5">
+                                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md"
+                                      style={{ background: p.bg, border: `1px solid ${p.border}`, color: p.accent }}>
+                                    {p.path}
+                                </span>
+                                <span className="text-sm font-semibold" style={{ color: "var(--text-1)" }}>{p.label}</span>
+                            </div>
+                            <p className="text-xs leading-relaxed" style={{ color: "var(--text-3)" }}>{p.desc}</p>
                         </div>
                     ))}
                 </div>
