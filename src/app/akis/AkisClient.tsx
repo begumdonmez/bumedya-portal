@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
-import { Image as ImageIcon, PenLine, Clapperboard, Sparkles, X, ChevronLeft } from "lucide-react";
+import { Image as ImageIcon, PenLine, Clapperboard, Sparkles, X, ChevronLeft, ExternalLink } from "lucide-react";
 import type { ElementType } from "react";
 
 export interface Post {
@@ -17,6 +17,7 @@ export interface Post {
     storage_path: string | null;
     description: string | null;
     created_at: string;
+    ref_url?: string | null;
 }
 
 type CategoryId = "resimler" | "yazilar" | "editler" | "diger";
@@ -36,6 +37,48 @@ function timeAgo(dateStr: string) {
     const hrs = Math.floor(mins / 60);
     if (hrs < 24) return `${hrs} sa`;
     return `${Math.floor(hrs / 24)} gün`;
+}
+
+function isImageUrl(url: string) {
+    return /\.(jpg|jpeg|png|gif|webp|svg)(\?.*)?$/i.test(url);
+}
+function getYoutubeId(url: string) {
+    const m = url.match(/(?:v=|youtu\.be\/)([^&?/]+)/);
+    return m?.[1] ?? null;
+}
+
+function LinkPreview({ url }: { url: string }) {
+    const ytId = getYoutubeId(url);
+    if (ytId) {
+        return (
+            <div className="relative mx-4 mb-3 rounded-xl overflow-hidden" style={{ aspectRatio: "16/9" }}>
+                <iframe
+                    src={`https://www.youtube.com/embed/${ytId}`}
+                    className="w-full h-full"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                />
+            </div>
+        );
+    }
+    if (isImageUrl(url)) {
+        return (
+            <a href={url} target="_blank" rel="noopener noreferrer" className="block mx-4 mb-3 rounded-xl overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={url} alt="link önizleme" className="w-full h-auto object-cover rounded-xl" />
+            </a>
+        );
+    }
+    return (
+        <div className="mx-4 mb-3">
+            <a href={url} target="_blank" rel="noopener noreferrer"
+               className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs transition-all duration-200"
+               style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.15)", color: "rgba(167,139,250,0.8)" }}>
+                <ExternalLink size={12} />
+                <span className="truncate">{url}</span>
+            </a>
+        </div>
+    );
 }
 
 function CategoryBadge({ id }: { id: string }) {
@@ -70,6 +113,25 @@ function PostCard({ post, supabaseUrl, userId, onDelete }: {
         onDelete(post.id);
         toast.success("Post silindi.");
     };
+
+    const imageElement = imageUrl ? (
+        <div className="relative mx-4 mb-3 rounded-xl overflow-hidden">
+            {!imgLoaded && (
+                <div className="w-full h-48 animate-pulse rounded-xl"
+                     style={{ background: "rgba(124,58,237,0.08)" }} />
+            )}
+            <Image
+                src={imageUrl}
+                alt={post.description ?? "post görseli"}
+                width={800}
+                height={600}
+                className="w-full h-auto object-cover rounded-xl"
+                style={{ opacity: imgLoaded ? 1 : 0, transition: "opacity 0.4s" }}
+                onLoad={() => setImgLoaded(true)}
+                sizes="(max-width: 640px) 100vw, 600px"
+            />
+        </div>
+    ) : null;
 
     return (
         <div className="card rounded-2xl overflow-hidden transition-all duration-300">
@@ -112,25 +174,17 @@ function PostCard({ post, supabaseUrl, userId, onDelete }: {
                 </div>
             </div>
 
-            {/* Görsel */}
+            {/* Görsel — tıklanabilir eğer ref_url varsa */}
             {imageUrl && (
-                <div className="relative mx-4 mb-3 rounded-xl overflow-hidden">
-                    {!imgLoaded && (
-                        <div className="w-full h-48 animate-pulse rounded-xl"
-                             style={{ background: "rgba(124,58,237,0.08)" }} />
-                    )}
-                    <Image
-                        src={imageUrl}
-                        alt={post.description ?? "post görseli"}
-                        width={800}
-                        height={600}
-                        className="w-full h-auto object-cover rounded-xl"
-                        style={{ opacity: imgLoaded ? 1 : 0, transition: "opacity 0.4s" }}
-                        onLoad={() => setImgLoaded(true)}
-                        sizes="(max-width: 640px) 100vw, 600px"
-                    />
-                </div>
+                post.ref_url ? (
+                    <a href={post.ref_url} target="_blank" rel="noopener noreferrer" className="block cursor-pointer">
+                        {imageElement}
+                    </a>
+                ) : imageElement
             )}
+
+            {/* Link önizleme — dosya yoksa */}
+            {!imageUrl && post.ref_url && <LinkPreview url={post.ref_url} />}
 
             {/* Yazı içeriği */}
             {post.content && (
@@ -150,7 +204,18 @@ function PostCard({ post, supabaseUrl, userId, onDelete }: {
                 </div>
             )}
 
-            {!post.content && !post.description && <div className="pb-2" />}
+            {/* Dosya varken ref_url varsa küçük link ikonu */}
+            {imageUrl && post.ref_url && (
+                <div className="px-4 pb-3">
+                    <a href={post.ref_url} target="_blank" rel="noopener noreferrer"
+                       className="inline-flex items-center gap-1.5 text-[10px] transition-opacity hover:opacity-70"
+                       style={{ color: "rgba(167,139,250,0.6)" }}>
+                        <ExternalLink size={10} /> Linke git
+                    </a>
+                </div>
+            )}
+
+            {!post.content && !post.description && !post.ref_url && !imageUrl && <div className="pb-2" />}
         </div>
     );
 }
@@ -166,19 +231,29 @@ function UploadModal({ onClose, onPost, userId, username }: {
     const [description, setDescription] = useState("");
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
+    const [linkUrl, setLinkUrl] = useState("");
     const [loading, setLoading] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
 
     const needsFile = category === "resimler" || category === "editler";
+    const isVideo = category === "editler";
+    const limitMb = isVideo ? 25 : 5;
 
     const handleFile = (f: File | null) => {
         if (!f) return;
+        if (f.size > limitMb * 1024 * 1024) {
+            toast.error(`Dosya ${limitMb} MB'dan küçük olmalı.`);
+            return;
+        }
         setFile(f);
         setPreview(URL.createObjectURL(f));
     };
 
     const handleSubmit = async () => {
-        if (needsFile && !file) { toast.error("Dosya seç."); return; }
+        if (needsFile && !file && !linkUrl.trim()) {
+            toast.error("Dosya seç veya link ekle.");
+            return;
+        }
         if (!needsFile && !content.trim()) { toast.error("İçerik yaz."); return; }
 
         setLoading(true);
@@ -202,6 +277,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                 content: content.trim() || null,
                 storage_path,
                 description: description.trim() || null,
+                ref_url: linkUrl.trim() || null,
             })
             .select()
             .single();
@@ -220,6 +296,8 @@ function UploadModal({ onClose, onPost, userId, username }: {
         onClose();
     };
 
+    const linkPreviewActive = needsFile && linkUrl.trim() && !preview;
+
     return (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
              style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }}
@@ -235,7 +313,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                             style={{ color: "rgba(224,242,254,0.4)" }}><X size={16} /></button>
                 </div>
 
-                <div className="p-6 flex flex-col gap-5">
+                <div className="p-6 flex flex-col gap-5 max-h-[80vh] overflow-y-auto">
 
                     {/* Kategori */}
                     <div>
@@ -244,7 +322,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                         </p>
                         <div className="grid grid-cols-4 gap-2">
                             {CATEGORIES.map((c) => (
-                                <button key={c.id} onClick={() => setCategory(c.id)}
+                                <button key={c.id} onClick={() => { setCategory(c.id); setFile(null); setPreview(null); setLinkUrl(""); }}
                                         className="flex flex-col items-center gap-1.5 py-3 rounded-xl text-xs font-medium transition-all duration-200"
                                         style={{
                                             background: category === c.id ? c.bg : "rgba(255,255,255,0.02)",
@@ -262,11 +340,15 @@ function UploadModal({ onClose, onPost, userId, username }: {
                     {needsFile && (
                         <div>
                             <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "rgba(224,242,254,0.25)" }}>
-                                Dosya
+                                Dosya <span style={{ color: "rgba(224,242,254,0.12)" }}>(maks. {limitMb} MB)</span>
                             </p>
                             {preview ? (
                                 <div className="relative rounded-xl overflow-hidden">
-                                    <img src={preview} alt="preview" className="w-full h-48 object-cover rounded-xl" />
+                                    {isVideo ? (
+                                        <video src={preview} controls className="w-full rounded-xl max-h-48 object-contain" />
+                                    ) : (
+                                        <img src={preview} alt="preview" className="w-full h-48 object-cover rounded-xl" />
+                                    )}
                                     <button onClick={() => { setFile(null); setPreview(null); }}
                                             className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs"
                                             style={{ background: "rgba(0,0,0,0.6)", color: "#fff" }}><X size={12} /></button>
@@ -279,8 +361,48 @@ function UploadModal({ onClose, onPost, userId, username }: {
                                     <span className="text-xs">Dosya seç</span>
                                 </button>
                             )}
-                            <input ref={fileRef} type="file" accept="image/*,video/*" className="hidden"
+                            <input ref={fileRef} type="file" accept={isVideo ? "video/*" : "image/*"} className="hidden"
                                    onChange={(e) => handleFile(e.target.files?.[0] ?? null)} />
+                        </div>
+                    )}
+
+                    {/* Link alanı */}
+                    {needsFile && (
+                        <div>
+                            <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "rgba(224,242,254,0.25)" }}>
+                                Link <span style={{ color: "rgba(224,242,254,0.12)" }}>(opsiyonel)</span>
+                            </p>
+                            <input
+                                value={linkUrl}
+                                onChange={(e) => setLinkUrl(e.target.value)}
+                                placeholder="https://..."
+                                className="w-full rounded-xl px-4 py-3 text-sm outline-none"
+                                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)", color: "#E0F2FE" }}
+                            />
+                            {/* Link önizleme */}
+                            {linkPreviewActive && (
+                                <div className="mt-3 rounded-xl overflow-hidden">
+                                    {getYoutubeId(linkUrl) ? (
+                                        <div style={{ aspectRatio: "16/9" }}>
+                                            <iframe
+                                                src={`https://www.youtube.com/embed/${getYoutubeId(linkUrl)}`}
+                                                className="w-full h-full rounded-xl"
+                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                allowFullScreen
+                                            />
+                                        </div>
+                                    ) : isImageUrl(linkUrl) ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img src={linkUrl} alt="link önizleme" className="w-full h-48 object-cover rounded-xl" />
+                                    ) : (
+                                        <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs"
+                                             style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.15)", color: "rgba(167,139,250,0.7)" }}>
+                                            <ExternalLink size={12} />
+                                            <span className="truncate">{linkUrl}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
                         </div>
                     )}
 

@@ -20,7 +20,7 @@ export default async function GaleriPage() {
 
     const { data: items } = await supabase
         .from("gallery_items")
-        .select("id, user_id, username, title, storage_path, created_at")
+        .select("id, user_id, username, title, storage_path, created_at, ref_url")
         .order("created_at", { ascending: false });
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;

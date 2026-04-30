@@ -18,7 +18,7 @@ export default async function AkisPage() {
 
     const { data: posts } = await supabase
         .from("posts")
-        .select("id, user_id, username, category, content, storage_path, description, created_at")
+        .select("id, user_id, username, category, content, storage_path, description, created_at, ref_url")
         .order("created_at", { ascending: false })
         .limit(40);
 

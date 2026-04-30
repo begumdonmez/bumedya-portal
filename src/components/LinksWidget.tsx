@@ -49,11 +49,11 @@ const LINKS = [
     {
         icon: MessageCircle,
         label: "Discord",
-        sub: "Yakında",
-        href: null,
-        color: "rgba(224,242,254,0.25)",
-        bg: "rgba(255,255,255,0.03)",
-        border: "rgba(255,255,255,0.07)",
+        sub: "Sunucuya Katıl",
+        href: "https://discord.gg/rpbQV6ra",
+        color: "rgba(129,140,248,0.9)",
+        bg: "rgba(99,102,241,0.08)",
+        border: "rgba(99,102,241,0.2)",
     },
 ];
 
