@@ -108,7 +108,11 @@ export default function ManifestClient({
 
     const handleDelete = useCallback(async (id: string) => {
         const supabase = createClient();
-        await supabase.from("manifest_notes").delete().eq("id", id);
+        const { error } = await supabase.from("manifest_notes").delete().eq("id", id);
+        if (error) {
+            toast.error("Silinemedi: " + error.message);
+            return;
+        }
         setNotes((prev) => prev.filter((n) => n.id !== id));
         if (editingId === id) setEditingId(null);
     }, [editingId]);
@@ -262,8 +266,8 @@ export default function ManifestClient({
                                     {canDelete && (
                                         <button
                                             onClick={() => handleDelete(note.id)}
-                                            className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
-                                            style={{ background: "rgba(0,0,0,0.12)", color: s.text }}>
+                                            className="absolute top-1.5 right-1.5 w-4 h-4 rounded-full flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
+                                            style={{ background: "rgba(0,0,0,0.15)", color: s.text }}>
                                             <X size={9} />
                                         </button>
                                     )}

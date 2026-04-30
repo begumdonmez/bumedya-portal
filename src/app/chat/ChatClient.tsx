@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { MessageSquare, Palette, PenLine, BookOpen, CalendarDays, ChevronLeft } from "lucide-react";
+import { toast } from "sonner";
 import type { ElementType } from "react";
 
 interface Message {
@@ -151,7 +152,13 @@ export default function ChatClient({ userId, username, initialMessages }: {
         setSending(true);
         setInput("");
         const supabase = createClient();
-        await supabase.from("messages").insert({ room_id: activeRoom, user_id: userId, username, content });
+        const { error } = await supabase.from("messages").insert({ room_id: activeRoom, user_id: userId, username, content });
+        if (error) {
+            setInput(content);
+            toast.error("Gönderilemedi: " + error.message);
+            setSending(false);
+            return;
+        }
         await supabase.from("activities").insert({ user_id: userId, username, type: "lounge_join", payload: {} });
         setSending(false);
         inputRef.current?.focus();
