@@ -190,11 +190,7 @@ export default async function LandingPage() {
                     )}
                     <a href="#kesfet" className="btn-ghost flex items-center justify-center">Keşfet</a>
                 </div>
-
-                <div className="absolute bottom-10 flex flex-col items-center gap-2 animate-float-up delay-500"
-                     style={{ animationFillMode: "backwards" }}>
-                    <div className="w-[1px] h-10 bg-gradient-to-b from-transparent via-white/20 to-transparent" />
-                </div>
+                
             </section>
 
             {/* PILLARS */}
