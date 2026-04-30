@@ -15,6 +15,7 @@ interface Profile {
     role: "member" | "creator";
     badges: string[];
     bio: string | null;
+    display_name: string | null;
     created_at: string;
     social_links: SocialLinksData | null;
 }
@@ -55,7 +56,7 @@ export default async function PublicProfilePage(
     // Profili çek
     const { data: profile } = await supabase
         .from("profiles")
-        .select("id, username, role, badges, bio, created_at, social_links")
+        .select("id, username, role, badges, bio, display_name, created_at, social_links")
         .eq("username", username)
         .single();
 
@@ -145,9 +146,14 @@ export default async function PublicProfilePage(
                         </div>
 
                         <div className="flex-1 min-w-0">
-                            <h1 className="text-xl font-bold tracking-tight mb-2" style={{ color: "#E0F2FE" }}>
+                            <h1 className="text-xl font-bold tracking-tight" style={{ color: "#E0F2FE" }}>
                                 @{profile.username}
                             </h1>
+                            {profile.display_name && (
+                                <p className="text-xs mt-0.5 mb-2" style={{ color: "rgba(224,242,254,0.35)" }}>
+                                    {profile.display_name}
+                                </p>
+                            )}
 
                             {/* Rol rozeti */}
                             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full"
