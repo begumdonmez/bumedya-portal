@@ -19,6 +19,15 @@ const RULES = [
     { icon: "05", title: "Topluluk kuralları", desc: "Nefret söylemi, taciz ve spam'e sıfır tolerans." },
 ];
 
+const BADGES = [
+    { label: "Onaylı",  color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)",   desc: "Kimliği veya üreticiliği admin tarafından doğrulanmış üyeler alır." },
+    { label: "Üretici", color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.25)",  desc: "Düzenli içerik üreten, akışa aktif katkı sağlayan üyelere verilir." },
+    { label: "Yazar",   color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)",   desc: "Fanzin, makale veya özgün metin paylaşan yazarlara verilir." },
+    { label: "Sanatçı", color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.25)", desc: "İllüstrasyon, tasarım veya görsel sanat üretimiyle öne çıkanlara verilir." },
+    { label: "Editör",  color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.25)",  desc: "Topluluğun içerik kalitesine katkıda bulunan editörlere verilir." },
+    { label: "Kurucu",  color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)",   desc: "Topluluğun kurucu üyelerine özel rozettir, başvuruyla alınamaz." },
+];
+
 const PILLARS = [
     { label: "Çiz", accent: "rgba(167,139,250,1)", desc: "Kağıt sınır koymaz, ekran da koymaz." },
     { label: "Yaz", accent: "rgba(96,165,250,1)",  desc: "Kelimeler en keskin araçtır." },
@@ -210,6 +219,33 @@ export default async function LandingPage() {
                             Katıl
                         </Link>
                     </div>
+                </div>
+            </section>
+
+            {/* BADGES */}
+            <section className="relative z-10 px-4 sm:px-6 pb-24 max-w-5xl mx-auto">
+                <div className="text-center mb-12">
+                    <p className="label-caps mb-4">Rozetler</p>
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gradient-white">
+                        Hangi Rozet Ne Anlama Gelir?
+                    </h2>
+                    <p className="text-sm mt-3 max-w-md mx-auto" style={{ color: "rgba(240,249,255,0.38)" }}>
+                        Rozetler admin tarafından verilir, başvuruyla alınamaz — katkılarınla kazan.
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                    {BADGES.map((b) => (
+                        <div key={b.label} className="card p-5 flex items-start gap-4">
+                            <span className="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-medium tracking-wide mt-0.5"
+                                  style={{ background: b.bg, border: `1px solid ${b.border}`, color: b.color }}>
+                                {b.label}
+                            </span>
+                            <p className="text-xs leading-relaxed pt-1" style={{ color: "rgba(240,249,255,0.5)" }}>
+                                {b.desc}
+                            </p>
+                        </div>
+                    ))}
                 </div>
             </section>
 

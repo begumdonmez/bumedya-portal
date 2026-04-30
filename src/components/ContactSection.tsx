@@ -1,4 +1,4 @@
-import { Link2, Mail } from "lucide-react";
+import { Link2, Mail, MessageCircle } from "lucide-react";
 import ContactForm from "./ContactForm";
 
 const CHANNELS = [
@@ -10,6 +10,15 @@ const CHANNELS = [
         color: "rgba(244,114,182,0.9)",
         bg: "rgba(244,114,182,0.08)",
         border: "rgba(244,114,182,0.2)",
+    },
+    {
+        icon: MessageCircle,
+        label: "Discord",
+        sub: "discord.gg/rpbQV6ra",
+        href: "https://discord.gg/rpbQV6ra",
+        color: "rgba(129,140,248,0.9)",
+        bg: "rgba(99,102,241,0.08)",
+        border: "rgba(99,102,241,0.2)",
     },
     {
         icon: Mail,
