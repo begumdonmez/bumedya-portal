@@ -1,6 +1,6 @@
 // YouTube playlist ID — youtube.com/playlist?list=BURAYA_ID
 // Ya da tek video ID — youtube.com/watch?v=BURAYA_ID  (VIDEO_ID olarak gir)
-const YOUTUBE_PLAYLIST_ID = "";
+const YOUTUBE_PLAYLIST_ID = "PLgwqULytG_043H7fXxDQutR-QyR-RMQzb";
 const YOUTUBE_VIDEO_ID    = "";
 const YOUTUBE_CHANNEL_URL = "https://www.youtube.com/@BumedyaOfficial";
 

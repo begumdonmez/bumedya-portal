@@ -1,4 +1,4 @@
-import { ExternalLink, BookOpen, Palette, Link2, MessageCircle } from "lucide-react";
+import { ExternalLink, BookOpen, Palette, Link2, MessageCircle, PlayCircle } from "lucide-react";
 
 const LINKS = [
     {
@@ -27,6 +27,24 @@ const LINKS = [
         color: "rgba(167,139,250,0.9)",
         bg: "rgba(124,58,237,0.08)",
         border: "rgba(124,58,237,0.2)",
+    },
+    {
+        icon: Link2,
+        label: "Instagram",
+        sub: "@bumedya",
+        href: "https://tr.ee/P6nG2_pCeD",
+        color: "rgba(244,114,182,0.9)",
+        bg: "rgba(244,114,182,0.06)",
+        border: "rgba(244,114,182,0.18)",
+    },
+    {
+        icon: PlayCircle,
+        label: "YouTube",
+        sub: "@BumedyaOfficial",
+        href: "https://www.youtube.com/@BumedyaOfficial",
+        color: "rgba(255,80,80,0.9)",
+        bg: "rgba(255,0,0,0.06)",
+        border: "rgba(255,0,0,0.15)",
     },
     {
         icon: MessageCircle,
