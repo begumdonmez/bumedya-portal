@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Metadata } from "next";
 import ProfilPosts from "@/components/ProfilPosts";
 import type { Post } from "@/app/akis/AkisClient";
+import { SocialLinksDisplay, type SocialLinksData } from "@/components/SocialLinks";
 import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
 import type { ElementType } from "react";
 
@@ -15,6 +16,7 @@ interface Profile {
     badges: string[];
     bio: string | null;
     created_at: string;
+    social_links: SocialLinksData | null;
 }
 
 /* ─── Dinamik metadata ──────────────────────────────────────── */
@@ -53,7 +55,7 @@ export default async function PublicProfilePage(
     // Profili çek
     const { data: profile } = await supabase
         .from("profiles")
-        .select("id, username, role, badges, bio, created_at")
+        .select("id, username, role, badges, bio, created_at, social_links")
         .eq("username", username)
         .single();
 
@@ -183,6 +185,7 @@ export default async function PublicProfilePage(
                         <p className="text-sm leading-relaxed" style={{ color: profile.bio ? "rgba(224,242,254,0.6)" : "rgba(224,242,254,0.2)" }}>
                             {profile.bio || "Henüz bir bio eklenmedi."}
                         </p>
+                        <SocialLinksDisplay links={profile.social_links ?? {}} />
                     </div>
 
                     {/* Katılım */}

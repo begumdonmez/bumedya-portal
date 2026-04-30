@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import ProfilPosts from "@/components/ProfilPosts";
 import type { Post } from "@/app/akis/AkisClient";
+import { SocialLinksDisplay, SOCIAL_PLATFORMS, type SocialLinksData } from "@/components/SocialLinks";
 
 /* ─── Tipler ────────────────────────────────────────────────── */
 interface Profile {
@@ -19,6 +20,7 @@ interface Profile {
     bio: string | null;
     avatar_url: string | null;
     created_at: string;
+    social_links: SocialLinksData | null;
 }
 
 /* ─── Topluluk rolü (member / creator) ─────────────────────── */
@@ -92,8 +94,9 @@ export default function ProfilPage() {
     const [editing, setEditing]       = useState(false);
     const [saving,  setSaving]        = useState(false);
     const [signingOut, setSigningOut] = useState(false);
-    const [editUsername, setEditUsername] = useState("");
-    const [editBio,      setEditBio]      = useState("");
+    const [editUsername,    setEditUsername]    = useState("");
+    const [editBio,         setEditBio]         = useState("");
+    const [editSocialLinks, setEditSocialLinks] = useState<SocialLinksData>({});
     const [posts, setPosts] = useState<Post[]>([]);
 
     useEffect(() => {
@@ -107,6 +110,7 @@ export default function ProfilPage() {
             setProfile(data as Profile);
             setEditUsername(data.username);
             setEditBio(data.bio ?? "");
+            setEditSocialLinks((data.social_links as SocialLinksData) ?? {});
 
             const { data: userPosts } = await supabase
                 .from("posts")
@@ -128,14 +132,19 @@ export default function ProfilPage() {
         setSaving(true);
         const toastId = toast.loading("Kaydediliyor...");
         const supabase = createClient();
+        const cleanLinks = Object.fromEntries(
+            Object.entries(editSocialLinks).filter(([, v]) => v.trim() !== "")
+        );
         const { error } = await supabase.from("profiles").update({
-            username: trimmed, bio: editBio.trim() || null, updated_at: new Date().toISOString(),
+            username: trimmed, bio: editBio.trim() || null,
+            social_links: Object.keys(cleanLinks).length > 0 ? cleanLinks : null,
+            updated_at: new Date().toISOString(),
         }).eq("id", profile.id);
         if (error) {
             toast.error(error.message.includes("duplicate") ? "Bu kullanıcı adı zaten alınmış." : "Kaydedilemedi: " + error.message, { id: toastId });
             setSaving(false); return;
         }
-        setProfile({ ...profile, username: trimmed, bio: editBio.trim() || null });
+        setProfile({ ...profile, username: trimmed, bio: editBio.trim() || null, social_links: Object.keys(cleanLinks).length > 0 ? cleanLinks : null });
         toast.success("Profil güncellendi.", { id: toastId });
         setSaving(false); setEditing(false);
     };
@@ -251,11 +260,41 @@ export default function ProfilPage() {
                                 <p className="text-[10px] mt-1 text-right" style={{ color: "rgba(224,242,254,0.2)" }}>{editBio.length}/160</p>
                             </>
                         ) : (
-                            <p className="text-sm leading-relaxed" style={{ color: profile.bio ? "rgba(224,242,254,0.6)" : "rgba(224,242,254,0.2)" }}>
-                                {profile.bio || "Henüz bir bio eklenmedi."}
-                            </p>
+                            <>
+                                <p className="text-sm leading-relaxed" style={{ color: profile.bio ? "rgba(224,242,254,0.6)" : "rgba(224,242,254,0.2)" }}>
+                                    {profile.bio || "Henüz bir bio eklenmedi."}
+                                </p>
+                                <SocialLinksDisplay links={profile.social_links ?? {}} />
+                            </>
                         )}
                     </div>
+
+                    {/* Sosyal Linkler — sadece düzenleme modunda */}
+                    {editing && (
+                        <div className="mb-6">
+                            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "rgba(224,242,254,0.3)" }}>Sosyal Linkler</p>
+                            <div className="flex flex-col gap-2">
+                                {SOCIAL_PLATFORMS.map(platform => (
+                                    <div key={platform.id} className="flex items-center gap-2">
+                                        <div className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                                             style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.07)" }}>
+                                            <svg viewBox="0 0 24 24" className="w-3.5 h-3.5" fill="currentColor" style={{ color: platform.color }}>
+                                                {platform.svg}
+                                            </svg>
+                                        </div>
+                                        <input
+                                            type="url"
+                                            value={editSocialLinks[platform.id] ?? ""}
+                                            onChange={e => setEditSocialLinks(prev => ({ ...prev, [platform.id]: e.target.value }))}
+                                            placeholder={platform.placeholder}
+                                            className="flex-1 rounded-xl px-3 py-2 text-xs outline-none"
+                                            style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(124,58,237,0.3)", color: "#E0F2FE" }}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     {/* Katılım tarihi */}
                     <div className="pt-5" style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
@@ -273,7 +312,7 @@ export default function ProfilPage() {
                                     ? <span className="flex items-center justify-center gap-2"><span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />Kaydediliyor...</span>
                                     : "Kaydet"}
                             </button>
-                            <button onClick={() => { setEditing(false); setEditUsername(profile.username); setEditBio(profile.bio ?? ""); }}
+                            <button onClick={() => { setEditing(false); setEditUsername(profile.username); setEditBio(profile.bio ?? ""); setEditSocialLinks(profile.social_links ?? {}); }}
                                     className="px-6 py-3 rounded-xl text-sm transition-all duration-300"
                                     style={{ color: "rgba(224,242,254,0.5)", border: "1px solid rgba(255,255,255,0.07)", background: "rgba(255,255,255,0.03)" }}>
                                 İptal
