@@ -174,28 +174,28 @@ export default function ManifestClient({
     }, [editingId]);
 
     return (
-        <div className="flex flex-col" style={{ height: "100dvh", background: "#c8dfc0" }}>
+        <div className="flex flex-col" style={{ height: "100dvh", background: "#04061a" }}>
 
             {/* Navbar */}
             <nav className="shrink-0 relative z-20 flex items-center justify-between px-5 py-3.5 border-b"
-                 style={{ borderColor: "rgba(80,120,70,0.2)", background: "rgba(180,210,165,0.85)", backdropFilter: "blur(16px)" }}>
+                 style={{ borderColor: "rgba(124,58,237,0.15)", background: "rgba(4,6,26,0.88)", backdropFilter: "blur(20px)" }}>
                 <div className="flex items-center gap-3">
                     <Link href="/home"
                           className="p-1.5 rounded-lg transition-colors"
-                          style={{ color: "rgba(60,100,50,0.5)" }}
-                          onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(60,100,50,0.9)")}
-                          onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(60,100,50,0.5)")}>
+                          style={{ color: "rgba(224,242,254,0.45)" }}
+                          onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.9)")}
+                          onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.45)")}>
                         <ChevronLeft size={16} />
                     </Link>
                     <Link href="/home" className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "rgba(60,100,50,0.6)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
+                        <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.55)" }}>bumedya</span>
+                        <span className="text-sm font-bold" style={{ color: "rgba(167,139,250,0.8)" }}>.</span>
                     </Link>
-                    <span style={{ color: "rgba(60,100,50,0.3)" }}>/</span>
-                    <span className="text-sm font-medium" style={{ color: "rgba(60,100,50,0.7)" }}>Manifest</span>
+                    <span style={{ color: "rgba(224,242,254,0.2)" }}>/</span>
+                    <span className="text-sm font-medium" style={{ color: "rgba(224,242,254,0.55)" }}>Manifest</span>
                 </div>
 
-                <p className="text-xs hidden sm:block" style={{ color: "rgba(60,100,50,0.45)" }}>
+                <p className="text-xs hidden sm:block" style={{ color: "rgba(224,242,254,0.3)" }}>
                     {notes.length} not • tahtaya tıkla, bir şey bırak
                 </p>
             </nav>
@@ -204,11 +204,11 @@ export default function ManifestClient({
 
                 {/* Sidebar */}
                 <aside className="shrink-0 flex flex-col items-center gap-3 px-2.5 py-4 border-r z-10"
-                       style={{ borderColor: "rgba(80,120,70,0.2)", background: "rgba(175,208,158,0.7)", width: 52 }}>
+                       style={{ borderColor: "rgba(124,58,237,0.12)", background: "rgba(4,6,26,0.75)", width: 52 }}>
 
                     {/* Renk seçici */}
                     <p className="text-[9px] uppercase tracking-widest mb-1"
-                       style={{ color: "rgba(60,100,50,0.45)", writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
+                       style={{ color: "rgba(224,242,254,0.35)", writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
                         Renk
                     </p>
                     {Object.entries(NOTE_STYLES).map(([id, style]) => {
@@ -235,9 +235,9 @@ export default function ManifestClient({
                     })}
 
                     {/* Şekil seçici */}
-                    <div className="w-7 h-px my-1" style={{ background: "rgba(60,100,50,0.2)" }} />
+                    <div className="w-7 h-px my-1" style={{ background: "var(--border-3)" }} />
                     <p className="text-[9px] uppercase tracking-widest mb-1"
-                       style={{ color: "rgba(60,100,50,0.45)", writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
+                       style={{ color: "rgba(224,242,254,0.35)", writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
                         Şekil
                     </p>
                     {(Object.keys(NOTE_SHAPES) as ShapeId[]).map((id) => {
@@ -249,13 +249,13 @@ export default function ManifestClient({
                                 onClick={() => setSelectedShape(id)}
                                 className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-150"
                                 style={{
-                                    background: active ? "rgba(80,140,60,0.2)" : "rgba(80,140,60,0.07)",
-                                    boxShadow: active ? "0 0 0 1.5px rgba(80,140,60,0.4)" : "none",
+                                    background: active ? "var(--violet-bg-md)" : "var(--bg-1)",
+                                    boxShadow: active ? "0 0 0 1.5px var(--violet-border)" : "none",
                                     transform: active ? "scale(1.1)" : "scale(1)",
                                 }}>
                                 <ShapeIcon
                                     shape={id}
-                                    color={active ? "rgba(50,90,35,0.9)" : "rgba(60,100,45,0.4)"}
+                                    color={active ? "rgba(167,139,250,0.9)" : "rgba(255,255,255,0.25)"}
                                 />
                             </button>
                         );
@@ -265,7 +265,7 @@ export default function ManifestClient({
                         <button
                             onClick={() => setSelectedColor(null)}
                             className="mt-auto transition-opacity hover:opacity-80"
-                            style={{ color: "rgba(60,100,50,0.4)" }}>
+                            style={{ color: "rgba(224,242,254,0.4)" }}>
                             <X size={12} />
                         </button>
                     )}
@@ -279,39 +279,55 @@ export default function ManifestClient({
                     style={{
                         cursor: selectedColor ? "crosshair" : "default",
                         background: [
-                            "radial-gradient(ellipse at 18% 65%, rgba(180,225,160,0.5) 0%, transparent 52%)",
-                            "radial-gradient(ellipse at 78% 22%, rgba(200,235,180,0.4) 0%, transparent 48%)",
-                            "radial-gradient(ellipse at 50% 100%, rgba(160,210,140,0.45) 0%, transparent 60%)",
-                            "#c8dfc0",
+                            "radial-gradient(ellipse at 12% 55%, rgba(109,40,217,0.22) 0%, transparent 48%)",
+                            "radial-gradient(ellipse at 88% 18%, rgba(37,99,235,0.16) 0%, transparent 42%)",
+                            "radial-gradient(ellipse at 62% 90%, rgba(124,58,237,0.14) 0%, transparent 45%)",
+                            "radial-gradient(ellipse at 38% 12%, rgba(236,72,153,0.07) 0%, transparent 32%)",
+                            "#04061a",
                         ].join(", "),
                     }}>
 
-                    {/* Dot grid */}
+                    {/* Uzak yıldızlar */}
                     <div className="absolute inset-0 pointer-events-none" style={{
-                        backgroundImage: "radial-gradient(circle, rgba(100,160,85,0.3) 1px, transparent 1px)",
-                        backgroundSize: "28px 28px",
+                        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px)",
+                        backgroundSize: "48px 48px",
+                    }} />
+                    {/* Yakın yıldızlar */}
+                    <div className="absolute inset-0 pointer-events-none" style={{
+                        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px)",
+                        backgroundSize: "22px 22px",
+                        backgroundPosition: "11px 11px",
                     }} />
 
-                    {/* Ambient depth orbs */}
+                    {/* Nebula — sol violet */}
                     <div className="absolute pointer-events-none" style={{
-                        width: 480, height: 480,
-                        left: "10%", top: "45%",
-                        transform: "translate(-50%, -50%)",
-                        background: "radial-gradient(circle, rgba(160,220,130,0.35) 0%, transparent 70%)",
-                        filter: "blur(40px)",
+                        width: 700, height: 700,
+                        left: "-8%", top: "30%",
+                        transform: "translateY(-50%)",
+                        background: "radial-gradient(circle, rgba(109,40,217,0.18) 0%, rgba(88,28,220,0.08) 40%, transparent 70%)",
+                        filter: "blur(60px)",
                     }} />
+                    {/* Nebula — sağ üst mavi */}
                     <div className="absolute pointer-events-none" style={{
-                        width: 360, height: 360,
-                        right: "12%", top: "15%",
-                        background: "radial-gradient(circle, rgba(190,230,160,0.4) 0%, transparent 70%)",
-                        filter: "blur(48px)",
+                        width: 550, height: 550,
+                        right: "-5%", top: "-10%",
+                        background: "radial-gradient(circle, rgba(37,99,235,0.14) 0%, rgba(59,130,246,0.06) 45%, transparent 70%)",
+                        filter: "blur(70px)",
+                    }} />
+                    {/* Nebula — alt orta */}
+                    <div className="absolute pointer-events-none" style={{
+                        width: 500, height: 400,
+                        left: "50%", bottom: "-5%",
+                        transform: "translateX(-50%)",
+                        background: "radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)",
+                        filter: "blur(55px)",
                     }} />
 
                     {/* Placing hint */}
                     {selectedColor && (
                         <div className="absolute inset-0 flex items-end justify-center pb-8 pointer-events-none">
                             <p className="text-sm animate-pulse"
-                               style={{ color: "rgba(60,100,50,0.4)" }}>
+                               style={{ color: "rgba(224,242,254,0.4)" }}>
                                 Tıkladığın yere not bırak
                             </p>
                         </div>
@@ -321,11 +337,11 @@ export default function ManifestClient({
                     {notes.length === 0 && !selectedColor && (
                         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none">
                             <p className="text-3xl font-bold tracking-tight"
-                               style={{ color: "rgba(60,100,50,0.12)" }}>
+                               style={{ color: "rgba(224,242,254,0.25)" }}>
                                 Hayalini bırak
                             </p>
                             <p className="text-xs"
-                               style={{ color: "rgba(60,100,50,0.3)" }}>
+                               style={{ color: "rgba(224,242,254,0.4)" }}>
                                 Sol taraftan renk ve şekil seç, tahtaya tıkla
                             </p>
                         </div>
