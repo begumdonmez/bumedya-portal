@@ -55,6 +55,15 @@ const LINKS = [
         bg: "rgba(99,102,241,0.08)",
         border: "rgba(99,102,241,0.2)",
     },
+    {
+        icon: PlayCircle,
+        label: "Spotify",
+        sub: "Playlist & Müzik",
+        href: "https://open.spotify.com/user/31snmflqv6wdmuoi4zkmsk7rh3vq",
+        color: "rgba(29,185,84,0.9)",
+        bg: "rgba(29,185,84,0.06)",
+        border: "rgba(29,185,84,0.18)",
+    },
 ];
 
 export default function LinksWidget() {

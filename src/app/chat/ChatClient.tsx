@@ -77,6 +77,8 @@ export default function ChatClient({ userId, username, initialMessages }: {
     const bottomRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const channelRef = useRef<any>(null);
 
     const messages = messagesByRoom[activeRoom] ?? [];
     const activeRoomData = ROOMS.find((r) => r.id === activeRoom)!;
@@ -99,8 +101,15 @@ export default function ChatClient({ userId, username, initialMessages }: {
                     if (msg.user_id !== userId) setTypingUsers(false);
                 }
             )
+            .on("broadcast", { event: "typing" }, ({ payload }: { payload: { username: string } }) => {
+                if (payload.username === username) return;
+                setTypingUsers(true);
+                if (typingTimer.current) clearTimeout(typingTimer.current);
+                typingTimer.current = setTimeout(() => setTypingUsers(false), 3000);
+            })
             .subscribe();
-        return () => { supabase.removeChannel(channel); };
+        channelRef.current = channel;
+        return () => { supabase.removeChannel(channel); channelRef.current = null; };
     }, [activeRoom, userId]);
 
     /* Diğer odalardaki yeni mesajları unread say */
@@ -170,9 +179,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setInput(e.target.value);
-        setTypingUsers(true);
-        if (typingTimer.current) clearTimeout(typingTimer.current);
-        typingTimer.current = setTimeout(() => setTypingUsers(false), 2000);
+        channelRef.current?.send({ type: "broadcast", event: "typing", payload: { username } });
     };
 
     return (

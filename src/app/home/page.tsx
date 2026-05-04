@@ -9,7 +9,6 @@ import LiveFeed from "@/components/LiveFeed";
 import EventMapClient from "@/components/EventMapClient";
 import AnnouncementsWidget from "@/components/AnnouncementsWidget";
 import LinksWidget from "@/components/LinksWidget";
-import SpotifyWidget from "@/components/SpotifyWidget";
 import YoutubeWidget from "@/components/YoutubeWidget";
 import ContactSection from "@/components/ContactSection";
 import SiteFooter from "@/components/SiteFooter";
@@ -148,31 +147,25 @@ export default async function HomePage() {
                         </div>
                     </BentoCard>
 
-                    {/* Spotify — Şu An Çalıyor */}
-                    <BentoCard className="sm:col-span-1 lg:col-span-5 flex flex-col justify-between min-h-[220px]">
+                    {/* Spotify — Playlist */}
+                    <BentoCard className="sm:col-span-1 lg:col-span-5 flex flex-col min-h-[220px]">
                         <div className="flex items-center justify-between mb-4">
-                            <p className="label-caps">Şu An Çalıyor</p>
-                            <span className="text-[10px] tracking-wider flex items-center gap-1.5" style={{ color: "rgba(52,211,153,0.8)" }}>
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />Canlı
-                            </span>
+                            <p className="label-caps">Playlist</p>
+                            <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor" style={{ color: "rgba(29,185,84,0.7)" }}>
+                                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                            </svg>
                         </div>
-                        <div className="flex items-end gap-[3px] h-10 mb-4">
-                            {[5,8,13,7,11,9,14,6,10,8,12,5,9,7,11].map((h, i) => (
-                                <div key={i} className="flex-1 rounded-sm"
-                                     style={{ height: `${h * 5}%`, background: "rgba(124,58,237,0.6)", animation: `typing-dot ${0.6 + i * 0.05}s ease-in-out infinite`, animationDelay: `${i * 40}ms` }} />
-                            ))}
-                        </div>
-                        <div>
-                            <p className="text-sm font-medium" style={{ color: "var(--text-2)" }}>Spotify Widget</p>
-                            <p className="text-xs mt-0.5" style={{ color: "var(--text-4)" }}>Yakında entegre edilecek</p>
-                        </div>
-                        <div className="mt-4 glass rounded-xl px-4 py-3 flex items-center gap-3">
-                            <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm shrink-0"
-                                 style={{ background: "var(--violet-border)", border: "1px solid var(--violet-border)" }}>♪</div>
-                            <div className="min-w-0">
-                                <p className="text-xs font-medium" style={{ color: "var(--text-2)" }}>Spotify'ı Bağla</p>
-                                <p className="text-[10px]" style={{ color: "var(--text-4)" }}>Dinlediklerini paylaş</p>
-                            </div>
+                        <div className="flex-1 rounded-xl overflow-hidden">
+                            <iframe
+                                src="https://open.spotify.com/embed/playlist/5LL38hkw6sRXzQrcdCyTWE?utm_source=generator&theme=0"
+                                width="100%"
+                                height="100%"
+                                style={{ minHeight: 152 }}
+                                frameBorder="0"
+                                allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                                loading="lazy"
+                                className="rounded-xl"
+                            />
                         </div>
                     </BentoCard>
 
@@ -265,8 +258,13 @@ export default async function HomePage() {
                                 <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
                             </svg>
                         </div>
-                        <div className="flex-1 flex flex-col justify-center">
-                            <SpotifyWidget />
+                        <div className="flex-1 flex flex-col items-center justify-center gap-3 py-4">
+                            <svg viewBox="0 0 24 24" className="w-8 h-8 opacity-20" fill="currentColor" style={{ color: "#1DB954" }}>
+                                <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+                            </svg>
+                            <p className="text-xs text-center" style={{ color: "var(--text-4)" }}>
+                                Podcast yakında<br />burada olacak
+                            </p>
                         </div>
                     </BentoCard>
 
