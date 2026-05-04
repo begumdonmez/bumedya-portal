@@ -16,7 +16,7 @@ export default function ContactForm() {
 
         setLoading(true);
         const supabase = createClient();
-        const { error } = await supabase.from("messages").insert({
+        const { error } = await supabase.from("contact_messages").insert({
             name: form.name.trim(),
             email: form.email.trim(),
             message: form.message.trim(),
