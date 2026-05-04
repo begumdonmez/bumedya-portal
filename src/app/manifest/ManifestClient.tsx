@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { ChevronLeft, X, Plus } from "lucide-react";
+import { ChevronLeft, X, Plus, Compass } from "lucide-react";
 
 interface Note {
     id: string;
@@ -63,6 +63,9 @@ const NOTE_SHAPES: Record<ShapeId, ShapeDef> = {
     },
 };
 
+const CANVAS_W = 4000;
+const CANVAS_H = 3000;
+
 function ShapeIcon({ shape, color }: { shape: ShapeId; color: string }) {
     switch (shape) {
         case "square":
@@ -91,10 +94,7 @@ function getRotation(id: string): number {
 }
 
 export default function ManifestClient({
-    userId,
-    username,
-    badges,
-    initialNotes,
+    userId, username, badges, initialNotes,
 }: {
     userId: string;
     username: string;
@@ -107,8 +107,53 @@ export default function ManifestClient({
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editContent, setEditContent] = useState("");
     const [saving, setSaving] = useState(false);
-    const boardRef = useRef<HTMLDivElement>(null);
+    const [pan, setPan] = useState({ x: 0, y: 0 });
+    const [grabbing, setGrabbing] = useState(false);
+
+    const outerRef = useRef<HTMLDivElement>(null);
+    const canvasRef = useRef<HTMLDivElement>(null);
+    // Tek bir ref objesi — tüm drag state'i burada, stale closure yok
+    const drag = useRef({ active: false, startX: 0, startY: 0, panX: 0, panY: 0 });
+    const hasMoved = useRef(false);
     const isAdmin = badges.includes("admin");
+
+    const clampPan = useCallback((x: number, y: number) => {
+        if (!outerRef.current) return { x, y };
+        const { width, height } = outerRef.current.getBoundingClientRect();
+        return {
+            x: Math.min(Math.max(x, -(CANVAS_W - 120)), width - 120),
+            y: Math.min(Math.max(y, -(CANVAS_H - 120)), height - 120),
+        };
+    }, []);
+
+    // Canvas'ı başlangıçta ortala
+    useEffect(() => {
+        if (outerRef.current) {
+            const { width, height } = outerRef.current.getBoundingClientRect();
+            setPan({ x: (width - CANVAS_W) / 2, y: (height - CANVAS_H) / 2 });
+        }
+    }, []);
+
+    // Window-level drag dinleyicileri — drag ref ile stale closure sorunu yok
+    useEffect(() => {
+        const onMove = (e: MouseEvent) => {
+            if (!drag.current.active) return;
+            const dx = e.clientX - drag.current.startX;
+            const dy = e.clientY - drag.current.startY;
+            if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved.current = true;
+            setPan(clampPan(drag.current.panX + dx, drag.current.panY + dy));
+        };
+        const onUp = () => {
+            drag.current.active = false;
+            setGrabbing(false);
+        };
+        window.addEventListener("mousemove", onMove);
+        window.addEventListener("mouseup", onUp);
+        return () => {
+            window.removeEventListener("mousemove", onMove);
+            window.removeEventListener("mouseup", onUp);
+        };
+    }, [clampPan]);
 
     // Realtime
     useEffect(() => {
@@ -131,14 +176,48 @@ export default function ManifestClient({
         return () => { supabase.removeChannel(channel); };
     }, []);
 
-    const handleBoardClick = useCallback(async (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!selectedColor) return;
-        if (!boardRef.current) return;
-        if (editingId) return;
+    const centerCanvas = useCallback(() => {
+        if (outerRef.current) {
+            const { width, height } = outerRef.current.getBoundingClientRect();
+            setPan({ x: (width - CANVAS_W) / 2, y: (height - CANVAS_H) / 2 });
+        }
+    }, []);
 
-        const rect = boardRef.current.getBoundingClientRect();
-        const x = Math.min(Math.max(((e.clientX - rect.left) / rect.width) * 100, 4), 94);
-        const y = Math.min(Math.max(((e.clientY - rect.top) / rect.height) * 100, 3), 90);
+    const handleMouseDown = (e: React.MouseEvent) => {
+        if (e.button !== 0) return;
+        const target = e.target as HTMLElement;
+        if (target.closest("button") || target.closest("textarea") || target.closest("aside")) return;
+        drag.current = { active: true, startX: e.clientX, startY: e.clientY, panX: pan.x, panY: pan.y };
+        hasMoved.current = false;
+        setGrabbing(true);
+    };
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        const target = e.target as HTMLElement;
+        if (target.closest("button") || target.closest("textarea") || target.closest("aside")) return;
+        const t = e.touches[0];
+        drag.current = { active: true, startX: t.clientX, startY: t.clientY, panX: pan.x, panY: pan.y };
+        hasMoved.current = false;
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (!drag.current.active) return;
+        const t = e.touches[0];
+        const dx = t.clientX - drag.current.startX;
+        const dy = t.clientY - drag.current.startY;
+        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved.current = true;
+        setPan(clampPan(drag.current.panX + dx, drag.current.panY + dy));
+    };
+
+    const handleTouchEnd = () => { drag.current.active = false; };
+
+    const handleBoardClick = useCallback(async (e: React.MouseEvent) => {
+        if (!selectedColor || !canvasRef.current || editingId) return;
+        if (hasMoved.current) return;
+
+        const rect = canvasRef.current.getBoundingClientRect();
+        const x = Math.min(Math.max(((e.clientX - rect.left) / CANVAS_W) * 100, 2), 98);
+        const y = Math.min(Math.max(((e.clientY - rect.top) / CANVAS_H) * 100, 2), 98);
 
         const supabase = createClient();
         const { data, error } = await supabase
@@ -173,6 +252,12 @@ export default function ManifestClient({
         if (editingId === id) setEditingId(null);
     }, [editingId]);
 
+    const cursor = selectedColor ? "crosshair" : grabbing ? "grabbing" : "grab";
+
+    // Yıldız grid'i canvas ile birlikte kayar — backgroundPosition pan'a göre offset alır
+    const starBgPos1 = `${pan.x % 64}px ${pan.y % 64}px`;
+    const starBgPos2 = `${(pan.x + 14) % 28}px ${(pan.y + 14) % 28}px`;
+
     return (
         <div className="flex flex-col" style={{ height: "100dvh", background: "#04061a" }}>
 
@@ -195,9 +280,21 @@ export default function ManifestClient({
                     <span className="text-sm font-medium" style={{ color: "rgba(224,242,254,0.55)" }}>Manifest</span>
                 </div>
 
-                <p className="text-xs hidden sm:block" style={{ color: "rgba(224,242,254,0.3)" }}>
-                    {notes.length} not • tahtaya tıkla, bir şey bırak
-                </p>
+                <div className="flex items-center gap-3">
+                    <p className="text-xs hidden sm:block" style={{ color: "rgba(224,242,254,0.3)" }}>
+                        {notes.length} not
+                    </p>
+                    <button
+                        onClick={centerCanvas}
+                        title="Merkeze git"
+                        className="p-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5"
+                        style={{ color: "rgba(224,242,254,0.35)", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.8)")}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.35)")}>
+                        <Compass size={14} />
+                        <span className="text-[10px] hidden sm:inline">Merkez</span>
+                    </button>
+                </div>
             </nav>
 
             <div className="flex flex-1 overflow-hidden">
@@ -206,7 +303,6 @@ export default function ManifestClient({
                 <aside className="shrink-0 flex flex-col items-center gap-3 px-2.5 py-4 border-r z-10"
                        style={{ borderColor: "rgba(124,58,237,0.12)", background: "rgba(4,6,26,0.75)", width: 52 }}>
 
-                    {/* Renk seçici */}
                     <p className="text-[9px] uppercase tracking-widest mb-1"
                        style={{ color: "rgba(224,242,254,0.35)", writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
                         Renk
@@ -214,28 +310,20 @@ export default function ManifestClient({
                     {Object.entries(NOTE_STYLES).map(([id, style]) => {
                         const active = selectedColor === id;
                         return (
-                            <button
-                                key={id}
-                                title={style.label}
-                                onClick={() => setSelectedColor(active ? null : id)}
-                                className="w-8 h-8 rounded-xl transition-all duration-150 relative"
-                                style={{
-                                    background: style.bg,
-                                    boxShadow: active
-                                        ? `0 0 0 2px ${style.muted}, 0 4px 12px ${style.shadow}`
-                                        : `0 2px 6px ${style.shadow}`,
-                                    transform: active ? "scale(1.15)" : "scale(1)",
-                                }}>
-                                {active && (
-                                    <Plus size={12} className="absolute inset-0 m-auto"
-                                          style={{ color: style.text }} />
-                                )}
+                            <button key={id} title={style.label}
+                                    onClick={() => setSelectedColor(active ? null : id)}
+                                    className="w-8 h-8 rounded-xl transition-all duration-150 relative"
+                                    style={{
+                                        background: style.bg,
+                                        boxShadow: active ? `0 0 0 2px ${style.muted}, 0 4px 12px ${style.shadow}` : `0 2px 6px ${style.shadow}`,
+                                        transform: active ? "scale(1.15)" : "scale(1)",
+                                    }}>
+                                {active && <Plus size={12} className="absolute inset-0 m-auto" style={{ color: style.text }} />}
                             </button>
                         );
                     })}
 
-                    {/* Şekil seçici */}
-                    <div className="w-7 h-px my-1" style={{ background: "var(--border-3)" }} />
+                    <div className="w-7 h-px my-1" style={{ background: "rgba(255,255,255,0.06)" }} />
                     <p className="text-[9px] uppercase tracking-widest mb-1"
                        style={{ color: "rgba(224,242,254,0.35)", writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
                         Şekil
@@ -243,219 +331,168 @@ export default function ManifestClient({
                     {(Object.keys(NOTE_SHAPES) as ShapeId[]).map((id) => {
                         const active = selectedShape === id;
                         return (
-                            <button
-                                key={id}
-                                title={NOTE_SHAPES[id].label}
-                                onClick={() => setSelectedShape(id)}
-                                className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-150"
-                                style={{
-                                    background: active ? "var(--violet-bg-md)" : "var(--bg-1)",
-                                    boxShadow: active ? "0 0 0 1.5px var(--violet-border)" : "none",
-                                    transform: active ? "scale(1.1)" : "scale(1)",
-                                }}>
-                                <ShapeIcon
-                                    shape={id}
-                                    color={active ? "rgba(167,139,250,0.9)" : "rgba(255,255,255,0.25)"}
-                                />
+                            <button key={id} title={NOTE_SHAPES[id].label}
+                                    onClick={() => setSelectedShape(id)}
+                                    className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-150"
+                                    style={{
+                                        background: active ? "rgba(124,58,237,0.18)" : "rgba(255,255,255,0.04)",
+                                        boxShadow: active ? "0 0 0 1.5px rgba(124,58,237,0.4)" : "none",
+                                        transform: active ? "scale(1.1)" : "scale(1)",
+                                    }}>
+                                <ShapeIcon shape={id} color={active ? "rgba(167,139,250,0.9)" : "rgba(255,255,255,0.25)"} />
                             </button>
                         );
                     })}
 
                     {selectedColor && (
-                        <button
-                            onClick={() => setSelectedColor(null)}
-                            className="mt-auto transition-opacity hover:opacity-80"
-                            style={{ color: "rgba(224,242,254,0.4)" }}>
+                        <button onClick={() => setSelectedColor(null)}
+                                className="mt-auto transition-opacity hover:opacity-80"
+                                style={{ color: "rgba(224,242,254,0.4)" }}>
                             <X size={12} />
                         </button>
                     )}
                 </aside>
 
-                {/* Board */}
+                {/* Outer container — klip alanı, drag hedefi */}
                 <div
-                    ref={boardRef}
-                    onClick={handleBoardClick}
+                    ref={outerRef}
                     className="relative flex-1 overflow-hidden select-none"
                     style={{
-                        cursor: selectedColor ? "crosshair" : "default",
-                        background: [
-                            "radial-gradient(ellipse at 12% 55%, rgba(109,40,217,0.22) 0%, transparent 48%)",
-                            "radial-gradient(ellipse at 88% 18%, rgba(37,99,235,0.16) 0%, transparent 42%)",
-                            "radial-gradient(ellipse at 62% 90%, rgba(124,58,237,0.14) 0%, transparent 45%)",
-                            "radial-gradient(ellipse at 38% 12%, rgba(236,72,153,0.07) 0%, transparent 32%)",
-                            "#04061a",
+                        cursor,
+                        // Yıldız grid'i + nebula — yıldızlar pan ile kayar (backgroundPosition)
+                        background: "#04061a",
+                        backgroundImage: [
+                            `radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px)`,
+                            `radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px)`,
+                            `radial-gradient(ellipse at 12% 55%, rgba(109,40,217,0.22) 0%, transparent 48%)`,
+                            `radial-gradient(ellipse at 88% 18%, rgba(37,99,235,0.16) 0%, transparent 42%)`,
+                            `radial-gradient(ellipse at 62% 90%, rgba(124,58,237,0.14) 0%, transparent 45%)`,
+                            `radial-gradient(ellipse at 38% 12%, rgba(236,72,153,0.07) 0%, transparent 32%)`,
                         ].join(", "),
-                    }}>
+                        backgroundSize: "64px 64px, 28px 28px, auto, auto, auto, auto",
+                        backgroundPosition: `${starBgPos1}, ${starBgPos2}, 0 0, 0 0, 0 0, 0 0`,
+                        backgroundRepeat: "repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat",
+                    }}
+                    onMouseDown={handleMouseDown}
+                    onTouchStart={handleTouchStart}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                    onClick={handleBoardClick}>
 
-                    {/* Uzak yıldızlar */}
-                    <div className="absolute inset-0 pointer-events-none" style={{
-                        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px)",
-                        backgroundSize: "48px 48px",
-                    }} />
-                    {/* Yakın yıldızlar */}
-                    <div className="absolute inset-0 pointer-events-none" style={{
-                        backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.2) 1px, transparent 1px)",
-                        backgroundSize: "22px 22px",
-                        backgroundPosition: "11px 11px",
-                    }} />
+                    {/* Canvas — infinite tahta */}
+                    <div
+                        ref={canvasRef}
+                        className="absolute"
+                        style={{
+                            width: CANVAS_W,
+                            height: CANVAS_H,
+                            transform: `translate(${pan.x}px, ${pan.y}px)`,
+                            willChange: "transform",
+                        }}>
 
-                    {/* Nebula — sol violet */}
-                    <div className="absolute pointer-events-none" style={{
-                        width: 700, height: 700,
-                        left: "-8%", top: "30%",
-                        transform: "translateY(-50%)",
-                        background: "radial-gradient(circle, rgba(109,40,217,0.18) 0%, rgba(88,28,220,0.08) 40%, transparent 70%)",
-                        filter: "blur(60px)",
-                    }} />
-                    {/* Nebula — sağ üst mavi */}
-                    <div className="absolute pointer-events-none" style={{
-                        width: 550, height: 550,
-                        right: "-5%", top: "-10%",
-                        background: "radial-gradient(circle, rgba(37,99,235,0.14) 0%, rgba(59,130,246,0.06) 45%, transparent 70%)",
-                        filter: "blur(70px)",
-                    }} />
-                    {/* Nebula — alt orta */}
-                    <div className="absolute pointer-events-none" style={{
-                        width: 500, height: 400,
-                        left: "50%", bottom: "-5%",
-                        transform: "translateX(-50%)",
-                        background: "radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%)",
-                        filter: "blur(55px)",
-                    }} />
+                        {/* Empty state */}
+                        {notes.length === 0 && !selectedColor && (
+                            <div className="absolute pointer-events-none"
+                                 style={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)", textAlign: "center" }}>
+                                <p className="text-4xl font-bold tracking-tight mb-2"
+                                   style={{ color: "rgba(224,242,254,0.06)" }}>Hayalini bırak</p>
+                                <p className="text-sm" style={{ color: "rgba(224,242,254,0.12)" }}>
+                                    Sol taraftan renk ve şekil seç, tahtaya tıkla
+                                </p>
+                            </div>
+                        )}
+
+                        {/* Notes */}
+                        {notes.map((note) => {
+                            const s = NOTE_STYLES[note.color] ?? NOTE_STYLES.yellow;
+                            const shapeId = (note.shape as ShapeId) ?? "square";
+                            const shape = NOTE_SHAPES[shapeId] ?? NOTE_SHAPES.square;
+                            const rot = getRotation(note.id);
+                            const isEditing = editingId === note.id;
+                            const isOwn = note.user_id === userId;
+                            const canDelete = isOwn || isAdmin;
+
+                            return (
+                                <div key={note.id} className="absolute"
+                                     style={{
+                                         left: `${note.x}%`, top: `${note.y}%`,
+                                         transform: `translate(-50%, -50%) rotate(${isEditing ? 0 : rot}deg)`,
+                                         zIndex: isEditing ? 30 : 1,
+                                         transition: isEditing ? "transform 0.15s ease" : undefined,
+                                     }}
+                                     onClick={(e) => e.stopPropagation()}>
+
+                                    {shape.ears && (
+                                        <>
+                                            <div style={{ position: "absolute", top: -11, left: 10, width: 27, height: 27, borderRadius: "50%", background: s.bg, boxShadow: `2px 3px 10px ${s.shadow}` }} />
+                                            <div style={{ position: "absolute", top: -11, right: 10, width: 27, height: 27, borderRadius: "50%", background: s.bg, boxShadow: `2px 3px 10px ${s.shadow}` }} />
+                                        </>
+                                    )}
+
+                                    <div className="relative flex flex-col"
+                                         style={{
+                                             width: shape.width, height: shape.height, minHeight: shape.minHeight,
+                                             background: s.bg, borderRadius: shape.borderRadius, clipPath: shape.clipPath,
+                                             boxShadow: `2px 4px 16px ${s.shadow}, 0 1px 3px rgba(0,0,0,0.3)`,
+                                             padding: shape.padding,
+                                         }}>
+
+                                        {shape.showTape && (
+                                            <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 w-10 h-5 rounded-sm"
+                                                 style={{ background: "rgba(255,255,255,0.4)" }} />
+                                        )}
+
+                                        {canDelete && (
+                                            <button onClick={() => handleDelete(note.id)}
+                                                    className="absolute w-4 h-4 rounded-full flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
+                                                    style={{ top: shape.deletePos?.top ?? 6, right: shape.deletePos?.right ?? 6, background: "rgba(0,0,0,0.15)", color: s.text }}>
+                                                <X size={9} />
+                                            </button>
+                                        )}
+
+                                        {isEditing ? (
+                                            <textarea autoFocus value={editContent}
+                                                      onChange={(e) => setEditContent(e.target.value)}
+                                                      onBlur={() => handleSave(note.id)}
+                                                      onKeyDown={(e) => { if (e.key === "Escape") handleSave(note.id); }}
+                                                      placeholder="Hayalini yaz..." maxLength={200} rows={4}
+                                                      className="w-full resize-none outline-none bg-transparent text-xs leading-relaxed font-medium placeholder:opacity-40 flex-1"
+                                                      style={{ color: s.text }} />
+                                        ) : (
+                                            <p className="text-xs leading-relaxed font-medium flex-1 cursor-pointer text-center"
+                                               style={{ color: s.text, minHeight: 48, whiteSpace: "pre-wrap", wordBreak: "break-word" }}
+                                               onClick={() => { if (isOwn) { setEditingId(note.id); setEditContent(note.content); } }}>
+                                                {note.content || (isOwn ? <span style={{ opacity: 0.35 }}>Düzenle...</span> : "")}
+                                            </p>
+                                        )}
+
+                                        <p className="text-[9px] mt-2 font-medium text-center"
+                                           style={{ color: s.muted, opacity: 0.7 }}>
+                                            @{note.username}
+                                        </p>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
 
                     {/* Placing hint */}
                     {selectedColor && (
                         <div className="absolute inset-0 flex items-end justify-center pb-8 pointer-events-none">
-                            <p className="text-sm animate-pulse"
-                               style={{ color: "rgba(224,242,254,0.4)" }}>
+                            <p className="text-sm animate-pulse" style={{ color: "rgba(224,242,254,0.4)" }}>
                                 Tıkladığın yere not bırak
                             </p>
                         </div>
                     )}
 
-                    {/* Empty state */}
-                    {notes.length === 0 && !selectedColor && (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none">
-                            <p className="text-3xl font-bold tracking-tight"
-                               style={{ color: "rgba(224,242,254,0.25)" }}>
-                                Hayalini bırak
-                            </p>
-                            <p className="text-xs"
-                               style={{ color: "rgba(224,242,254,0.4)" }}>
-                                Sol taraftan renk ve şekil seç, tahtaya tıkla
+                    {/* Pan hint */}
+                    {!selectedColor && notes.length > 0 && (
+                        <div className="pointer-events-none" style={{ position: "absolute", bottom: 20, right: 20 }}>
+                            <p className="text-[10px] tracking-wider" style={{ color: "rgba(224,242,254,0.15)" }}>
+                                sürükle · keşfet
                             </p>
                         </div>
                     )}
-
-                    {/* Notes */}
-                    {notes.map((note) => {
-                        const s = NOTE_STYLES[note.color] ?? NOTE_STYLES.yellow;
-                        const shapeId = (note.shape as ShapeId) ?? "square";
-                        const shape = NOTE_SHAPES[shapeId] ?? NOTE_SHAPES.square;
-                        const rot = getRotation(note.id);
-                        const isEditing = editingId === note.id;
-                        const isOwn = note.user_id === userId;
-                        const canDelete = isOwn || isAdmin;
-
-                        return (
-                            <div
-                                key={note.id}
-                                className="absolute"
-                                style={{
-                                    left: `${note.x}%`,
-                                    top: `${note.y}%`,
-                                    transform: `translate(-50%, -50%) rotate(${isEditing ? 0 : rot}deg)`,
-                                    zIndex: isEditing ? 30 : 1,
-                                    transition: isEditing ? "transform 0.15s ease" : undefined,
-                                }}
-                                onClick={(e) => e.stopPropagation()}>
-
-                                {/* Bear ears — rendered before card so they appear behind */}
-                                {shape.ears && (
-                                    <>
-                                        <div style={{
-                                            position: "absolute", top: -11, left: 10,
-                                            width: 27, height: 27, borderRadius: "50%",
-                                            background: s.bg,
-                                            boxShadow: `2px 3px 10px ${s.shadow}`,
-                                        }} />
-                                        <div style={{
-                                            position: "absolute", top: -11, right: 10,
-                                            width: 27, height: 27, borderRadius: "50%",
-                                            background: s.bg,
-                                            boxShadow: `2px 3px 10px ${s.shadow}`,
-                                        }} />
-                                    </>
-                                )}
-
-                                <div
-                                    className="relative flex flex-col"
-                                    style={{
-                                        width: shape.width,
-                                        height: shape.height,
-                                        minHeight: shape.minHeight,
-                                        background: s.bg,
-                                        borderRadius: shape.borderRadius,
-                                        clipPath: shape.clipPath,
-                                        boxShadow: `2px 4px 16px ${s.shadow}, 0 1px 3px rgba(0,0,0,0.3)`,
-                                        padding: shape.padding,
-                                    }}>
-
-                                    {/* Tape strip */}
-                                    {shape.showTape && (
-                                        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 w-10 h-5 rounded-sm"
-                                             style={{ background: "rgba(255,255,255,0.4)" }} />
-                                    )}
-
-                                    {/* Delete */}
-                                    {canDelete && (
-                                        <button
-                                            onClick={() => handleDelete(note.id)}
-                                            className="absolute w-4 h-4 rounded-full flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
-                                            style={{
-                                                top: shape.deletePos?.top ?? 6,
-                                                right: shape.deletePos?.right ?? 6,
-                                                background: "rgba(0,0,0,0.15)",
-                                                color: s.text,
-                                            }}>
-                                            <X size={9} />
-                                        </button>
-                                    )}
-
-                                    {/* Content */}
-                                    {isEditing ? (
-                                        <textarea
-                                            autoFocus
-                                            value={editContent}
-                                            onChange={(e) => setEditContent(e.target.value)}
-                                            onBlur={() => handleSave(note.id)}
-                                            onKeyDown={(e) => { if (e.key === "Escape") handleSave(note.id); }}
-                                            placeholder="Hayalini yaz..."
-                                            maxLength={200}
-                                            rows={4}
-                                            className="w-full resize-none outline-none bg-transparent text-xs leading-relaxed font-medium placeholder:opacity-40 flex-1"
-                                            style={{ color: s.text }}
-                                        />
-                                    ) : (
-                                        <p
-                                            className="text-xs leading-relaxed font-medium flex-1 cursor-pointer text-center"
-                                            style={{ color: s.text, minHeight: 48, whiteSpace: "pre-wrap", wordBreak: "break-word" }}
-                                            onClick={() => {
-                                                if (isOwn) { setEditingId(note.id); setEditContent(note.content); }
-                                            }}>
-                                            {note.content || (isOwn ? <span style={{ opacity: 0.35 }}>Düzenle...</span> : "")}
-                                        </p>
-                                    )}
-
-                                    {/* Username */}
-                                    <p className="text-[9px] mt-2 font-medium text-center"
-                                       style={{ color: s.muted, opacity: 0.7 }}>
-                                        @{note.username}
-                                    </p>
-                                </div>
-                            </div>
-                        );
-                    })}
                 </div>
             </div>
         </div>
