@@ -47,7 +47,9 @@ export default async function HomePage() {
         { count: creatorCount },
         { count: memberCount },
         { data: activities },
-        { data: allProfiles },
+        { count: editorCount },
+        { count: writerCount },
+        { count: artistCount },
         { data: events },
         { data: announcements },
     ] = await Promise.all([
@@ -55,14 +57,12 @@ export default async function HomePage() {
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "creator"),
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "member"),
         supabase.from("activities").select("id, username, type, payload, created_at").order("created_at", { ascending: false }).limit(8),
-        supabase.from("profiles").select("badges"),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).contains("badges", ["editor"]),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).contains("badges", ["writer"]),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).contains("badges", ["artist"]),
         supabase.from("events").select("id, username, title, address, lat, lng, event_date, ref_url").order("event_date", { ascending: true }),
         supabase.from("announcements").select("id, user_id, username, content, created_at").order("created_at", { ascending: false }).limit(10),
     ]);
-
-    const editorCount = allProfiles?.filter((p) => (p.badges as string[])?.includes("editor")).length ?? 0;
-    const writerCount = allProfiles?.filter((p) => (p.badges as string[])?.includes("writer")).length ?? 0;
-    const artistCount = allProfiles?.filter((p) => (p.badges as string[])?.includes("artist")).length ?? 0;
 
     const hours = new Date().getHours();
     const greeting = hours < 6 ? "gece geç saatte ne arıyorsun?" : hours < 12 ? "günaydın!" : hours < 17 ? "iyi günler!" : hours < 21 ? "iyi akşamlar!" : "iyi geceler!";

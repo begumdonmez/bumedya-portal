@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, memo } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -92,7 +92,7 @@ function CategoryBadge({ id }: { id: string }) {
     );
 }
 
-function PostCard({ post, supabaseUrl, userId, likeCount, likedByMe, onLike, onDelete }: {
+const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, likedByMe, onLike, onDelete }: {
     post: Post;
     supabaseUrl: string;
     userId: string;
@@ -234,7 +234,7 @@ function PostCard({ post, supabaseUrl, userId, likeCount, likedByMe, onLike, onD
             </div>
         </div>
     );
-}
+});
 
 function UploadModal({ onClose, onPost, userId, username }: {
     onClose: () => void;
@@ -501,9 +501,11 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
     };
 
     const [likesMap, setLikesMap] = useState(() => buildLikesMap(initialLikesData));
+    const likesMapRef = useRef(likesMap);
+    likesMapRef.current = likesMap;
 
     const handleLike = useCallback(async (postId: string) => {
-        const cur = likesMap.get(postId) ?? { count: 0, liked: false };
+        const cur = likesMapRef.current.get(postId) ?? { count: 0, liked: false };
         const newLiked = !cur.liked;
         setLikesMap((prev) => {
             const next = new Map(prev);
@@ -516,7 +518,7 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
         } else {
             await supabase.from("post_likes").delete().eq("post_id", postId).eq("user_id", userId);
         }
-    }, [likesMap, userId]);
+    }, [userId]);
 
     const handlePost = useCallback((post: Post) => {
         setPosts((prev) => [post, ...prev]);

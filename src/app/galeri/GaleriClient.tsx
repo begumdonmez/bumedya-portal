@@ -236,13 +236,17 @@ export default function GaleriClient({
     const [numCols, setNumCols] = useState(4);
 
     useEffect(() => {
+        let timer: ReturnType<typeof setTimeout>;
         const update = () => {
-            const w = window.innerWidth;
-            setNumCols(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : 4);
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                const w = window.innerWidth;
+                setNumCols(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : 4);
+            }, 150);
         };
         update();
         window.addEventListener("resize", update);
-        return () => window.removeEventListener("resize", update);
+        return () => { window.removeEventListener("resize", update); clearTimeout(timer); };
     }, []);
 
     const masonryCols = useMemo(() => {
