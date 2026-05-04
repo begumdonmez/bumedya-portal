@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -112,6 +112,17 @@ export default function ManifestClient({
 
     const outerRef = useRef<HTMLDivElement>(null);
     const canvasRef = useRef<HTMLDivElement>(null);
+
+    const stars = useMemo(() => {
+        let s = 180731;
+        const rand = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
+        const out: { x: number; y: number; r: number; opacity: number; twinkle: boolean }[] = [];
+        for (let i = 0; i < 480; i++) out.push({ x: rand() * CANVAS_W, y: rand() * CANVAS_H, r: rand() * 0.5 + 0.2, opacity: rand() * 0.3 + 0.08, twinkle: false });
+        for (let i = 0; i < 180; i++) out.push({ x: rand() * CANVAS_W, y: rand() * CANVAS_H, r: rand() * 0.6 + 0.7, opacity: rand() * 0.35 + 0.25, twinkle: false });
+        for (let i = 0; i < 60;  i++) out.push({ x: rand() * CANVAS_W, y: rand() * CANVAS_H, r: rand() * 0.6 + 1.3, opacity: rand() * 0.3  + 0.55, twinkle: false });
+        for (let i = 0; i < 18;  i++) out.push({ x: rand() * CANVAS_W, y: rand() * CANVAS_H, r: rand() * 0.8 + 2.0, opacity: rand() * 0.2  + 0.75, twinkle: true  });
+        return out;
+    }, []);
     // Tek bir ref objesi — tüm drag state'i burada, stale closure yok
     const drag = useRef({ active: false, startX: 0, startY: 0, panX: 0, panY: 0 });
     const hasMoved = useRef(false);
@@ -254,9 +265,6 @@ export default function ManifestClient({
 
     const cursor = selectedColor ? "crosshair" : grabbing ? "grabbing" : "grab";
 
-    // Yıldız grid'i canvas ile birlikte kayar — backgroundPosition pan'a göre offset alır
-    const starBgPos1 = `${pan.x % 64}px ${pan.y % 64}px`;
-    const starBgPos2 = `${(pan.x + 14) % 28}px ${(pan.y + 14) % 28}px`;
 
     return (
         <div className="flex flex-col" style={{ height: "100dvh", background: "#04061a" }}>
@@ -359,19 +367,13 @@ export default function ManifestClient({
                     className="relative flex-1 overflow-hidden select-none"
                     style={{
                         cursor,
-                        // Yıldız grid'i + nebula — yıldızlar pan ile kayar (backgroundPosition)
                         background: "#04061a",
                         backgroundImage: [
-                            `radial-gradient(circle, rgba(255,255,255,0.55) 1px, transparent 1px)`,
-                            `radial-gradient(circle, rgba(255,255,255,0.18) 1px, transparent 1px)`,
-                            `radial-gradient(ellipse at 12% 55%, rgba(109,40,217,0.22) 0%, transparent 48%)`,
-                            `radial-gradient(ellipse at 88% 18%, rgba(37,99,235,0.16) 0%, transparent 42%)`,
-                            `radial-gradient(ellipse at 62% 90%, rgba(124,58,237,0.14) 0%, transparent 45%)`,
-                            `radial-gradient(ellipse at 38% 12%, rgba(236,72,153,0.07) 0%, transparent 32%)`,
+                            `radial-gradient(ellipse at 15% 60%, rgba(109,40,217,0.2) 0%, transparent 50%)`,
+                            `radial-gradient(ellipse at 82% 22%, rgba(37,99,235,0.14) 0%, transparent 44%)`,
+                            `radial-gradient(ellipse at 58% 88%, rgba(124,58,237,0.13) 0%, transparent 42%)`,
+                            `radial-gradient(ellipse at 40% 10%, rgba(236,72,153,0.07) 0%, transparent 35%)`,
                         ].join(", "),
-                        backgroundSize: "64px 64px, 28px 28px, auto, auto, auto, auto",
-                        backgroundPosition: `${starBgPos1}, ${starBgPos2}, 0 0, 0 0, 0 0, 0 0`,
-                        backgroundRepeat: "repeat, repeat, no-repeat, no-repeat, no-repeat, no-repeat",
                     }}
                     onMouseDown={handleMouseDown}
                     onTouchStart={handleTouchStart}
@@ -389,6 +391,30 @@ export default function ManifestClient({
                             transform: `translate(${pan.x}px, ${pan.y}px)`,
                             willChange: "transform",
                         }}>
+
+                        {/* Yıldız haritası */}
+                        <svg
+                            style={{ position: "absolute", inset: 0, width: CANVAS_W, height: CANVAS_H, pointerEvents: "none" }}
+                            aria-hidden>
+                            <defs>
+                                <filter id="star-glow">
+                                    <feGaussianBlur stdDeviation="1.8" result="blur" />
+                                    <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+                                </filter>
+                            </defs>
+                            {stars.map((star, i) => (
+                                <circle
+                                    key={i}
+                                    cx={star.x} cy={star.y} r={star.r}
+                                    fill="white"
+                                    opacity={star.opacity}
+                                    filter={star.twinkle ? "url(#star-glow)" : undefined}
+                                    style={star.twinkle ? {
+                                        animation: `twinkle ${2.5 + (i % 7) * 0.4}s ease-in-out ${(i % 11) * 0.3}s infinite`,
+                                    } : undefined}
+                                />
+                            ))}
+                        </svg>
 
                         {/* Empty state */}
                         {notes.length === 0 && !selectedColor && (
@@ -495,6 +521,13 @@ export default function ManifestClient({
                     )}
                 </div>
             </div>
+            <style>{`
+                @keyframes twinkle {
+                    0%, 100% { opacity: 0.85; }
+                    40%      { opacity: 0.15; }
+                    60%      { opacity: 0.6;  }
+                }
+            `}</style>
         </div>
     );
 }
