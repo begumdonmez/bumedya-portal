@@ -154,6 +154,18 @@ export default function ProfilPage() {
         setSaving(false); setEditing(false);
     };
 
+    const handleRoleSwitch = async (newRole: "member" | "creator") => {
+        if (!profile) return;
+        const supabase = createClient();
+        const { error } = await supabase
+            .from("profiles")
+            .update({ role: newRole, updated_at: new Date().toISOString() })
+            .eq("id", profile.id);
+        if (error) { toast.error("Rol değiştirilemedi."); return; }
+        setProfile({ ...profile, role: newRole });
+        toast.success(newRole === "creator" ? "Üretici oldun!" : "İzleyiciye geçildi.");
+    };
+
     const handleSignOut = async () => {
         setSigningOut(true);
         const supabase = createClient();
@@ -358,12 +370,17 @@ export default function ProfilPage() {
                             <p className="text-xs leading-relaxed" style={{ color: "var(--text-3)" }}>{roleConf.desc}</p>
                         </div>
 
-                        {/* Sadece member ise geçiş butonu */}
-                        {profile.role === "member" && (
-                            <button onClick={() => router.push("/onboarding")}
+                        {profile.role === "member" ? (
+                            <button onClick={() => handleRoleSwitch("creator")}
                                     className="shrink-0 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-300 whitespace-nowrap"
                                     style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
-                                Üretici Ol <ChevronRight size={13} />
+                                Üretici Ol <ChevronRight size={13} className="inline" />
+                            </button>
+                        ) : (
+                            <button onClick={() => handleRoleSwitch("member")}
+                                    className="shrink-0 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-300 whitespace-nowrap"
+                                    style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", color: "rgba(147,197,253,0.9)" }}>
+                                İzleyiciye Dön
                             </button>
                         )}
                     </div>
