@@ -24,6 +24,23 @@ const ROOMS: { id: string; label: string; icon: ElementType; desc: string }[] = 
     { id: "etkinlik-gruplasma", label: "Etkinlik Grupları", icon: CalendarDays,  desc: "Etkinlik Gruplasma" },
 ];
 
+function renderContent(content: string, myUsername: string) {
+    const parts = content.split(/(@[a-zA-Z0-9_]+)/g);
+    return (
+        <>
+            {parts.map((part, i) =>
+                part.startsWith("@") ? (
+                    <span key={i} className="font-semibold" style={{
+                        color: part.slice(1) === myUsername ? "rgba(252,211,77,0.95)" : "rgba(167,139,250,0.9)",
+                    }}>
+                        {part}
+                    </span>
+                ) : part
+            )}
+        </>
+    );
+}
+
 function timeLabel(dateStr: string) {
     return new Date(dateStr).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
 }
@@ -74,6 +91,9 @@ export default function ChatClient({ userId, username, initialMessages }: {
     const [newMsgIds, setNewMsgIds] = useState<Set<string>>(new Set());
     const [unread, setUnread] = useState<Record<string, number>>({});
     const [onlineUsers, setOnlineUsers] = useState<{ username: string; room: string }[]>([]);
+    const [usersMap, setUsersMap] = useState<Map<string, string>>(new Map());
+    const [mentionQuery, setMentionQuery] = useState<string | null>(null);
+    const [mentionIndex, setMentionIndex] = useState(0);
     const bottomRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLTextAreaElement>(null);
     const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -82,6 +102,16 @@ export default function ChatClient({ userId, username, initialMessages }: {
 
     const messages = messagesByRoom[activeRoom] ?? [];
     const activeRoomData = ROOMS.find((r) => r.id === activeRoom)!;
+    const mentionResults = mentionQuery !== null
+        ? [...usersMap.keys()].filter((u) => u !== username && u.toLowerCase().startsWith(mentionQuery.toLowerCase())).slice(0, 6)
+        : [];
+
+    useEffect(() => {
+        const supabase = createClient();
+        supabase.from("profiles").select("id, username").then(({ data }) => {
+            setUsersMap(new Map((data ?? []).map((p) => [p.username, p.id])));
+        });
+    }, []);
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -150,6 +180,16 @@ export default function ChatClient({ userId, username, initialMessages }: {
         return () => { supabase.removeChannel(presence); };
     }, [username, activeRoom]);
 
+    const handleMentionSelect = (selected: string) => {
+        const cursor = inputRef.current?.selectionStart ?? input.length;
+        const before = input.slice(0, cursor).replace(/@([a-zA-Z0-9_]*)$/, `@${selected} `);
+        const after = input.slice(cursor);
+        setInput(before + after);
+        setMentionQuery(null);
+        setMentionIndex(0);
+        setTimeout(() => inputRef.current?.focus(), 0);
+    };
+
     const switchRoom = (id: string) => {
         setActiveRoom(id);
         setUnread((prev) => ({ ...prev, [id]: 0 }));
@@ -160,6 +200,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
         if (!content || sending) return;
         setSending(true);
         setInput("");
+        setMentionQuery(null);
         const supabase = createClient();
         const { error } = await supabase.from("messages").insert({ room_id: activeRoom, user_id: userId, username, content });
         if (error) {
@@ -169,17 +210,41 @@ export default function ChatClient({ userId, username, initialMessages }: {
             return;
         }
         await supabase.from("activities").insert({ user_id: userId, username, type: "lounge_join", payload: {} });
+
+        const mentioned = [...new Set((content.match(/@([a-zA-Z0-9_]+)/g) ?? []).map((m) => m.slice(1)).filter((u) => u !== username && usersMap.has(u)))];
+        if (mentioned.length > 0) {
+            await supabase.from("notifications").insert(
+                mentioned.map((u) => ({
+                    user_id: usersMap.get(u)!,
+                    from_username: username,
+                    type: "mention",
+                    payload: { room_id: activeRoom, message: content.slice(0, 100) },
+                }))
+            );
+        }
+
         setSending(false);
         inputRef.current?.focus();
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        if (mentionQuery !== null && mentionResults.length > 0) {
+            if (e.key === "ArrowDown") { e.preventDefault(); setMentionIndex((i) => Math.min(i + 1, mentionResults.length - 1)); return; }
+            if (e.key === "ArrowUp")   { e.preventDefault(); setMentionIndex((i) => Math.max(i - 1, 0)); return; }
+            if (e.key === "Enter")     { e.preventDefault(); handleMentionSelect(mentionResults[mentionIndex]); return; }
+            if (e.key === "Escape")    { setMentionQuery(null); return; }
+        }
         if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        setInput(e.target.value);
+        const value = e.target.value;
+        setInput(value);
         channelRef.current?.send({ type: "broadcast", event: "typing", payload: { username } });
+        const cursor = e.target.selectionStart ?? value.length;
+        const match = value.slice(0, cursor).match(/@([a-zA-Z0-9_]*)$/);
+        if (match) { setMentionQuery(match[1]); setMentionIndex(0); }
+        else setMentionQuery(null);
     };
 
     return (
@@ -438,7 +503,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
                                                              color: "var(--text-2)",
                                                              borderRadius: "18px 18px 18px 4px",
                                                          }}>
-                                                        {msg.content}
+                                                        {renderContent(msg.content, username)}
                                                     </div>
                                                     {!isOwn && (
                                                         <span className="text-[10px] shrink-0 mb-1" style={{ color: "var(--text-5)" }}>
@@ -457,8 +522,25 @@ export default function ChatClient({ userId, username, initialMessages }: {
                 </div>
 
                 {/* Input */}
-                <div className="shrink-0 px-3 sm:px-6 pb-4 sm:pb-6 pt-3">
-                    <div className="rounded-2xl overflow-hidden transition-all duration-200"
+                <div className="shrink-0 px-3 sm:px-6 pb-4 sm:pb-6 pt-3 relative">
+                    {/* Mention dropdown */}
+                    {mentionQuery !== null && mentionResults.length > 0 && (
+                        <div className="absolute bottom-full left-3 sm:left-6 right-3 sm:right-6 mb-2 rounded-xl shadow-xl z-50 overflow-hidden"
+                             style={{ background: "rgba(15,25,50,0.97)", backdropFilter: "blur(24px)", border: "1px solid var(--border-1)", maxHeight: 240, overflowY: "auto" }}>
+                            {mentionResults.map((u, i) => (
+                                <button key={u} onMouseDown={(e) => { e.preventDefault(); handleMentionSelect(u); }}
+                                        className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left transition-colors duration-100"
+                                        style={{ background: i === mentionIndex ? "var(--violet-bg)" : "transparent" }}>
+                                    <div className="w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0"
+                                         style={{ background: "rgba(124,58,237,0.2)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
+                                        {u[0].toUpperCase()}
+                                    </div>
+                                    <span className="text-sm" style={{ color: i === mentionIndex ? "var(--violet-text)" : "var(--text-2)" }}>@{u}</span>
+                                </button>
+                            ))}
+                        </div>
+                    )}
+                    <div className="rounded-2xl transition-all duration-200"
                          style={{
                              background: "var(--bg-2)",
                              border: `1px solid ${input ? "var(--violet-border)" : "var(--border-2)"}`,

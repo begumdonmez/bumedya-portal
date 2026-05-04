@@ -12,6 +12,7 @@ import LinksWidget from "@/components/LinksWidget";
 import YoutubeWidget from "@/components/YoutubeWidget";
 import ContactSection from "@/components/ContactSection";
 import SiteFooter from "@/components/SiteFooter";
+import NotificationBell from "@/components/NotificationBell";
 
 export const metadata: Metadata = { title: "Ana Sayfa | bumedya." };
 
@@ -82,10 +83,13 @@ export default async function HomePage() {
                           style={{ color: "var(--violet)" }}>.</span>
                 </Link>
                 <HomeNavLinks />
-                <Link href="/profil" className="relative z-10 text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[120px] sm:max-w-none truncate"
-                      style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
-                    @{username}
-                </Link>
+                <div className="relative z-10 flex items-center gap-2">
+                    <NotificationBell userId={user.id} />
+                    <Link href="/profil" className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[120px] sm:max-w-none truncate"
+                          style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
+                        @{username}
+                    </Link>
+                </div>
             </nav>
 
             {/* Content */}

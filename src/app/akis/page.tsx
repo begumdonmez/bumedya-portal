@@ -20,7 +20,7 @@ export default async function AkisPage() {
         .from("posts")
         .select("id, user_id, username, category, content, storage_path, description, created_at, ref_url")
         .order("created_at", { ascending: false })
-        .limit(40);
+        .limit(20);
 
     const postIds = (posts ?? []).map((p) => p.id);
     let likesData: { post_id: string; user_id: string }[] = [];

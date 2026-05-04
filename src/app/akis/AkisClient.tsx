@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback, memo } from "react";
+import { useState, useRef, useCallback, memo, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -485,8 +485,13 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
     initialLikesData: { post_id: string; user_id: string }[];
     supabaseUrl: string;
 }) {
+    const PAGE_SIZE = 20;
+
     const [posts, setPosts] = useState(initialPosts);
     const [showModal, setShowModal] = useState(false);
+    const [hasMore, setHasMore] = useState(initialPosts.length === PAGE_SIZE);
+    const [loadingMore, setLoadingMore] = useState(false);
+    const sentinelRef = useRef<HTMLDivElement>(null);
 
     const buildLikesMap = (data: { post_id: string; user_id: string }[]) => {
         const map = new Map<string, { count: number; liked: boolean }>();
@@ -519,6 +524,43 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
             await supabase.from("post_likes").delete().eq("post_id", postId).eq("user_id", userId);
         }
     }, [userId]);
+
+    const loadMore = useCallback(async () => {
+        if (loadingMore || !hasMore) return;
+        setLoadingMore(true);
+        const supabase = createClient();
+        const oldest = posts[posts.length - 1]?.created_at;
+        const { data: newPosts } = await supabase
+            .from("posts")
+            .select("id, user_id, username, category, content, storage_path, description, created_at, ref_url")
+            .order("created_at", { ascending: false })
+            .lt("created_at", oldest)
+            .limit(PAGE_SIZE);
+
+        if (!newPosts || newPosts.length === 0) { setHasMore(false); setLoadingMore(false); return; }
+
+        const postIds = newPosts.map((p) => p.id);
+        const { data: likes } = await supabase.from("post_likes").select("post_id, user_id").in("post_id", postIds);
+        setLikesMap((prev) => {
+            const next = new Map(prev);
+            for (const { post_id, user_id } of likes ?? []) {
+                const cur = next.get(post_id) ?? { count: 0, liked: false };
+                next.set(post_id, { count: cur.count + 1, liked: cur.liked || user_id === userId });
+            }
+            return next;
+        });
+        setPosts((prev) => [...prev, ...(newPosts as Post[])]);
+        if (newPosts.length < PAGE_SIZE) setHasMore(false);
+        setLoadingMore(false);
+    }, [loadingMore, hasMore, posts, userId]);
+
+    useEffect(() => {
+        const el = sentinelRef.current;
+        if (!el) return;
+        const observer = new IntersectionObserver(([entry]) => { if (entry.isIntersecting) loadMore(); }, { rootMargin: "200px" });
+        observer.observe(el);
+        return () => observer.disconnect();
+    }, [loadMore]);
 
     const handlePost = useCallback((post: Post) => {
         setPosts((prev) => [post, ...prev]);
@@ -570,15 +612,25 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
                         </button>
                     </div>
                 ) : (
-                    posts.map((post) => {
-                        const likes = likesMap.get(post.id) ?? { count: 0, liked: false };
-                        return (
-                            <PostCard key={post.id} post={post} supabaseUrl={supabaseUrl}
-                                      userId={userId} onDelete={handleDelete}
-                                      likeCount={likes.count} likedByMe={likes.liked}
-                                      onLike={handleLike} />
-                        );
-                    })
+                    <>
+                        {posts.map((post) => {
+                            const likes = likesMap.get(post.id) ?? { count: 0, liked: false };
+                            return (
+                                <PostCard key={post.id} post={post} supabaseUrl={supabaseUrl}
+                                          userId={userId} onDelete={handleDelete}
+                                          likeCount={likes.count} likedByMe={likes.liked}
+                                          onLike={handleLike} />
+                            );
+                        })}
+                        <div ref={sentinelRef} className="flex justify-center py-6">
+                            {loadingMore && (
+                                <span className="w-5 h-5 rounded-full border-2 border-white/10 border-t-purple-500 animate-spin" />
+                            )}
+                            {!hasMore && posts.length > 0 && (
+                                <p className="text-xs" style={{ color: "var(--text-5)" }}>Hepsi bu kadar.</p>
+                            )}
+                        </div>
+                    </>
                 )}
             </div>
 
