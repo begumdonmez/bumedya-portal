@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2, FileText, Check, Clock } from "lucide-react";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2, FileText, Check, Clock, Music2, Plus } from "lucide-react";
 import { POSITIONS } from "@/app/basvuru/positions";
 import type { ElementType } from "react";
 
@@ -382,6 +382,127 @@ function ApplicationsTab({ applications: initialApps }: { applications: Applicat
     );
 }
 
+/* ─── Playlist sekmesi ──────────────────────────────────────── */
+interface SpotifyPlaylist { id: string; name: string; spotify_id: string; description: string | null; }
+
+function PlaylistsTab() {
+    const [playlists, setPlaylists] = useState<SpotifyPlaylist[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [name, setName] = useState("");
+    const [spotifyUrl, setSpotifyUrl] = useState("");
+    const [description, setDescription] = useState("");
+    const [adding, setAdding] = useState(false);
+
+    /* İlk yükleme */
+    useState(() => {
+        (async () => {
+            const { createClient } = await import("@/lib/supabase/client");
+            const supabase = createClient();
+            const { data } = await supabase.from("spotify_playlists").select("*").order("created_at", { ascending: true });
+            setPlaylists(data ?? []);
+            setLoading(false);
+        })();
+    });
+
+    const extractId = (url: string) => {
+        const match = url.match(/playlist\/([A-Za-z0-9]+)/);
+        return match ? match[1] : url.trim();
+    };
+
+    const handleAdd = async () => {
+        const spotify_id = extractId(spotifyUrl);
+        if (!name.trim() || !spotify_id) { toast.error("Playlist adı ve Spotify linki gerekli."); return; }
+        setAdding(true);
+        const { createClient } = await import("@/lib/supabase/client");
+        const supabase = createClient();
+        const { data, error } = await supabase
+            .from("spotify_playlists")
+            .insert({ name: name.trim(), spotify_id, description: description.trim() || null })
+            .select().single();
+        if (error) { toast.error("Eklenemedi: " + error.message); setAdding(false); return; }
+        setPlaylists(prev => [...prev, data]);
+        setName(""); setSpotifyUrl(""); setDescription("");
+        setAdding(false);
+        toast.success("Playlist eklendi ✓");
+    };
+
+    const handleDelete = async (id: string) => {
+        const { createClient } = await import("@/lib/supabase/client");
+        const supabase = createClient();
+        const { error } = await supabase.from("spotify_playlists").delete().eq("id", id);
+        if (error) { toast.error("Silinemedi: " + error.message); return; }
+        setPlaylists(prev => prev.filter(p => p.id !== id));
+        toast.success("Playlist silindi");
+    };
+
+    return (
+        <div className="flex flex-col gap-5">
+
+            {/* Ekleme formu */}
+            <div className="card p-5 flex flex-col gap-3">
+                <p className="text-xs font-semibold" style={{ color: "var(--text-2)" }}>Yeni Playlist Ekle</p>
+                <input
+                    value={name} onChange={e => setName(e.target.value)}
+                    placeholder="Playlist adı"
+                    className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none"
+                    style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-1)" }}
+                />
+                <input
+                    value={spotifyUrl} onChange={e => setSpotifyUrl(e.target.value)}
+                    placeholder="Spotify playlist linki veya ID"
+                    className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none"
+                    style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-1)" }}
+                />
+                <input
+                    value={description} onChange={e => setDescription(e.target.value)}
+                    placeholder="Açıklama (opsiyonel)"
+                    className="w-full rounded-xl px-3.5 py-2.5 text-sm outline-none"
+                    style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-1)" }}
+                />
+                <button onClick={handleAdd} disabled={adding}
+                        className="self-start flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50"
+                        style={{ background: "rgba(29,185,84,0.12)", border: "1px solid rgba(29,185,84,0.3)", color: "rgba(29,185,84,0.9)" }}>
+                    <Plus size={13} /> {adding ? "Ekleniyor..." : "Ekle"}
+                </button>
+            </div>
+
+            {/* Mevcut listeler */}
+            {loading ? (
+                <p className="text-xs text-center py-8" style={{ color: "var(--text-4)" }}>Yükleniyor...</p>
+            ) : playlists.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 gap-3">
+                    <Music2 size={28} className="opacity-10" />
+                    <p className="text-sm" style={{ color: "var(--text-4)" }}>Henüz playlist eklenmemiş.</p>
+                </div>
+            ) : (
+                <div className="card overflow-hidden">
+                    {playlists.map((pl, i) => (
+                        <div key={pl.id}
+                             className="flex items-center gap-4 px-5 py-3.5"
+                             style={{ borderBottom: i < playlists.length - 1 ? "1px solid var(--border-3)" : "none" }}>
+                            <div className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                                 style={{ background: "rgba(29,185,84,0.1)", border: "1px solid rgba(29,185,84,0.2)" }}>
+                                <Music2 size={14} style={{ color: "rgba(29,185,84,0.8)" }} />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium truncate" style={{ color: "var(--text-1)" }}>{pl.name}</p>
+                                <p className="text-[10px] truncate" style={{ color: "var(--text-4)" }}>
+                                    {pl.description ?? pl.spotify_id}
+                                </p>
+                            </div>
+                            <button onClick={() => handleDelete(pl.id)}
+                                    className="w-7 h-7 rounded-lg flex items-center justify-center transition-opacity hover:opacity-70 shrink-0"
+                                    style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "rgba(239,68,68,0.7)" }}>
+                                <Trash2 size={12} />
+                            </button>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
 export default function AdminClient({ profiles: initialProfiles, myBadges, messages: initialMessages, applications: initialApplications }: {
     profiles: Profile[];
     myBadges: string[];
@@ -392,7 +513,7 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
     const isAuthorized = myBadges.includes("authorized");
     const [profiles, setProfiles] = useState<Profile[]>(initialProfiles);
     const [messages, setMessages] = useState<Message[]>(initialMessages);
-    const [tab, setTab] = useState<"users" | "messages" | "applications">("users");
+    const [tab, setTab] = useState<"users" | "messages" | "applications" | "playlists">("users");
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState<"all" | "member" | "creator">("all");
     const unreadCount = messages.filter(m => !m.read).length;
@@ -501,6 +622,7 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                         { id: "users",        label: "Kullanıcılar", badge: undefined as number | undefined },
                         { id: "messages",     label: "Mesajlar",     badge: unreadCount as number | undefined },
                         { id: "applications", label: "Başvurular",   badge: pendingAppsCount as number | undefined },
+                        { id: "playlists",    label: "Playlist",     badge: undefined as number | undefined },
                     ] as const).map(({ id, label, badge }) => (
                         <button key={id} onClick={() => setTab(id)}
                                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200"
@@ -527,6 +649,9 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                 {tab === "applications" && (
                     <ApplicationsTab applications={initialApplications} />
                 )}
+
+                {/* Playlist sekmesi */}
+                {tab === "playlists" && <PlaylistsTab />}
 
                 {/* Kullanıcılar sekmesi başlık */}
                 {tab === "users" && <div>

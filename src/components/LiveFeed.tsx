@@ -95,7 +95,7 @@ export default function LiveFeed({ initial }: { initial: Activity[] }) {
                             </div>
 
                             {/* Zaman */}
-                            <span className="text-[10px] text-buz-mavisi/25 shrink-0 mt-0.5">
+                            <span suppressHydrationWarning className="text-[10px] text-buz-mavisi/25 shrink-0 mt-0.5">
                                 {timeAgo(item.created_at)}
                             </span>
                         </div>
