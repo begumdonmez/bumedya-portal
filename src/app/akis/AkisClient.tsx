@@ -576,7 +576,7 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
             <div aria-hidden className="aurora-orb-pink" />
 
             {/* Navbar */}
-            <nav className="sticky top-0 z-40 flex items-center justify-between px-6 py-4 border-b nav-backdrop"
+            <nav className="sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6 py-4 border-b nav-backdrop"
                  style={{ borderColor: "var(--border-3)" }}>
                 <div className="flex items-center gap-3">
                     <Link href="/home" className="text-xs px-2 py-1 rounded-lg transition-colors duration-200"

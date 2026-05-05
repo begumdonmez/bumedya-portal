@@ -85,7 +85,8 @@ export default async function HomePage() {
                 <HomeNavLinks />
                 <div className="relative z-10 flex items-center gap-2">
                     <NotificationBell userId={user.id} />
-                    <Link href="/profil" className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[120px] sm:max-w-none truncate"
+                    <Link href="/profil"
+                          className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
                           style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
                         @{username}
                     </Link>
@@ -152,7 +153,7 @@ export default async function HomePage() {
                     </BentoCard>
 
                     {/* Spotify — Playlist */}
-                    <BentoCard className="sm:col-span-1 lg:col-span-5 flex flex-col min-h-[220px]">
+                    <BentoCard className="sm:col-span-1 lg:col-span-5 flex flex-col" style={{ minHeight: 200 }}>
                         <div className="flex items-center justify-between mb-4">
                             <p className="label-caps">Playlist</p>
                             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor" style={{ color: "rgba(29,185,84,0.7)" }}>

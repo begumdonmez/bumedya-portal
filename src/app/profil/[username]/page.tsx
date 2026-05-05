@@ -125,12 +125,12 @@ export default async function PublicProfilePage(
             </nav>
 
             {/* İçerik */}
-            <div className="relative z-10 max-w-2xl mx-auto w-full px-6 py-12 flex flex-col gap-4">
+            <div className="relative z-10 max-w-2xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-12 flex flex-col gap-4">
 
                 {/* Ana kart */}
-                <div className="card rounded-3xl p-8" style={{ backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)" }}>
-                    <div className="h-[1px] -mt-8 mb-8"
-                         style={{ marginLeft: "-2rem", width: "calc(100% + 4rem)", background: "linear-gradient(90deg, transparent, rgba(124,58,237,0.5) 40%, rgba(167,139,250,0.3) 60%, transparent)" }} />
+                <div className="card rounded-3xl p-4 sm:p-8" style={{ backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)" }}>
+                    <div className="h-[1px] -mt-4 sm:-mt-8 mb-4 sm:mb-8"
+                         style={{ marginLeft: "-1rem", width: "calc(100% + 2rem)", background: "linear-gradient(90deg, transparent, rgba(124,58,237,0.5) 40%, rgba(167,139,250,0.3) 60%, transparent)" }} />
 
                     {/* Avatar + bilgiler */}
                     <div className="flex items-start gap-5 mb-6">

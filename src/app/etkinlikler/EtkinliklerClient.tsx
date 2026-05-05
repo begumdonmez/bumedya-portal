@@ -141,7 +141,7 @@ export default function EtkinliklerClient({
             <div aria-hidden className="aurora-orb-pink" />
 
             {/* Navbar */}
-            <nav className="relative z-10 flex items-center justify-between px-6 py-4 border-b nav-backdrop"
+            <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 border-b nav-backdrop"
                  style={{ borderColor: "var(--border-3)" }}>
                 <div className="flex items-center gap-3">
                     <Link href="/home" className="text-xs px-2 py-1 rounded-lg hover:opacity-70 transition-opacity"
@@ -155,14 +155,14 @@ export default function EtkinliklerClient({
                     <span style={{ color: "var(--border-1)" }}>/</span>
                     <span className="text-sm font-medium" style={{ color: "var(--text-3)" }}>Etkinlikler</span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                     {todayEvs.length > 0 && (
-                        <span className="text-xs px-2 py-0.5 rounded-full"
+                        <span className="hidden sm:inline text-xs px-2 py-0.5 rounded-full"
                               style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.25)", color: "rgba(52,211,153,0.85)" }}>
                             {todayEvs.length} bugün
                         </span>
                     )}
-                    <span className="text-xs" style={{ color: "var(--text-4)" }}>
+                    <span className="hidden sm:inline text-xs" style={{ color: "var(--text-4)" }}>
                         {upcoming.length + future.length} etkinlik
                     </span>
                     <button
@@ -170,17 +170,17 @@ export default function EtkinliklerClient({
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200"
                         style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
                         <Plus size={13} />
-                        Etkinlik Ekle
+                        <span className="hidden sm:inline">Etkinlik </span>Ekle
                     </button>
                 </div>
             </nav>
 
-            <div className="relative z-10 max-w-5xl mx-auto w-full px-6 py-10 flex flex-col gap-6">
+            <div className="relative z-10 max-w-5xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-10 flex flex-col gap-6">
                 {/* Harita */}
                 <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--violet-bg-md)" }}>
                     <EventMapClient
                         events={events}
-                        height={340}
+                        height={260}
                         zoom={10}
                         onMarkerClick={handleMarkerClick}
                         selectedId={selected?.id}

@@ -281,7 +281,7 @@ export default function GaleriClient({
             <div aria-hidden className="aurora-orb-pink" />
 
             {/* Navbar */}
-            <nav className="relative z-10 flex items-center justify-between px-6 py-4 border-b nav-backdrop"
+            <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 border-b nav-backdrop"
                  style={{ borderColor: "var(--border-3)" }}>
                 <div className="flex items-center gap-3">
                     <Link href="/home" className="text-xs px-2 py-1 rounded-lg transition-colors duration-200"
@@ -315,7 +315,7 @@ export default function GaleriClient({
             </nav>
 
             {/* Grid */}
-            <div className="relative z-10 max-w-6xl mx-auto w-full px-6 py-10">
+            <div className="relative z-10 max-w-6xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-10">
                 {items.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-32 gap-4">
                         <ImageIcon size={36} className="opacity-10" />
