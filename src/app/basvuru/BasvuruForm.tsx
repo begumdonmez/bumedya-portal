@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { X, Check, AlertCircle } from "lucide-react";
+import { X, Check, CheckCircle2, AlertCircle } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import type { Position } from "./positions";
@@ -25,6 +25,8 @@ export default function BasvuruForm({
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
 
+    const Icon = position.icon;
+
     const handleSubmit = async () => {
         const unanswered = position.questions.filter(q => !answers[q.key]?.trim());
         if (unanswered.length > 0) { toast.error("Lütfen tüm soruları yanıtla."); return; }
@@ -41,7 +43,6 @@ export default function BasvuruForm({
     };
 
     return (
-        /* Overlay */
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
              style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }}
              onClick={(e) => e.target === e.currentTarget && onClose()}>
@@ -53,13 +54,17 @@ export default function BasvuruForm({
                 <div className="shrink-0 flex items-center justify-between px-5 py-4 border-b"
                      style={{ borderColor: "var(--border-3)" }}>
                     <div className="flex items-center gap-2.5">
-                        <span className="text-xl">{position.emoji}</span>
+                        <div className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
+                             style={{ background: position.bg, border: `1px solid ${position.border}` }}>
+                            <Icon size={15} style={{ color: position.color }} />
+                        </div>
                         <div>
                             <p className="text-sm font-semibold" style={{ color: "var(--text-1)" }}>{position.title}</p>
                             <p className="text-[11px]" style={{ color: position.color }}>{position.subtitle}</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="w-8 h-8 rounded-xl flex items-center justify-center transition-opacity hover:opacity-60"
+                    <button onClick={onClose}
+                            className="w-8 h-8 rounded-xl flex items-center justify-center transition-opacity hover:opacity-60"
                             style={{ background: "var(--bg-2)", color: "var(--text-3)" }}>
                         <X size={14} />
                     </button>
@@ -70,8 +75,10 @@ export default function BasvuruForm({
 
                     {submitted ? (
                         <div className="flex flex-col items-center text-center gap-4 py-8">
-                            <div className="w-14 h-14 rounded-2xl flex items-center justify-center text-2xl"
-                                 style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.25)" }}>✅</div>
+                            <div className="w-14 h-14 rounded-2xl flex items-center justify-center"
+                                 style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.25)" }}>
+                                <CheckCircle2 size={26} style={{ color: "rgba(52,211,153,0.9)" }} />
+                            </div>
                             <div>
                                 <p className="text-base font-bold mb-1" style={{ color: "var(--text-1)" }}>Başvurun Alındı!</p>
                                 <p className="text-xs leading-relaxed" style={{ color: "var(--text-3)" }}>

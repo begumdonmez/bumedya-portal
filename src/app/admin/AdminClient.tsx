@@ -218,15 +218,23 @@ interface Application {
 }
 
 const TYPE_LABELS: Record<string, { label: string; emoji: string }> = {
-    topluluk_yk: { label: "Topluluk YK", emoji: "🏛" },
-    kulup_yk:    { label: "Kulüp YK",    emoji: "🛡" },
-    admin:       { label: "Admin",        emoji: "⚡" },
+    topluluk_yk:  { label: "Topluluk YK",   emoji: "🏛"  },
+    kulup_yk:     { label: "Kulüp YK",       emoji: "🛡"  },
+    admin:        { label: "Admin",           emoji: "⚡"  },
+    rozet_editor: { label: "Editör Rozeti",   emoji: "✏️" },
+    rozet_cizer:  { label: "Çizer Rozeti",    emoji: "🎨" },
+    rozet_yazar:  { label: "Yazar Rozeti",    emoji: "🖊️" },
+    kulup_ac:     { label: "Kulüp Aç",        emoji: "🏫" },
 };
 
 const QUESTION_LABELS: Record<string, Record<string, string>> = {
-    topluluk_yk: { motivation: "Neden başvuruyor?", contribution: "Ne katkı sağlayabilir?", experience: "Deneyimi", vision: "Vizyonu", time: "Müsaitlik" },
-    kulup_yk:    { which_branch: "Hangi kol?", motivation: "Neden başvuruyor?", portfolio: "Portföy", project_idea: "Proje fikri", time: "Müsaitlik" },
-    admin:       { motivation: "Neden başvuruyor?", moderation: "Moderasyon yaklaşımı", technical: "Teknik geçmiş", conflict: "Çatışma yönetimi", availability: "Müsaitlik" },
+    topluluk_yk:  { motivation: "Neden başvuruyor?", role: "Hangi alanda katkı?", contribution: "Ne katkı sağlayabilir?", vision: "Vizyonu", time: "Müsaitlik" },
+    kulup_yk:     { university: "Üniversite & kulüp", motivation: "Neden başvuruyor?", event_idea: "Etkinlik fikri", content: "İçerik katkısı", time: "Müsaitlik" },
+    admin:        { admin_type: "DC mi Web mi?", motivation: "Neden başvuruyor?", moderation: "Moderasyon yaklaşımı", technical: "Teknik geçmiş", availability: "Müsaitlik" },
+    rozet_editor: { portfolio: "Portföy / çalışmalar", experience: "Deneyim", contribution: "Katkı planı" },
+    rozet_cizer:  { portfolio: "Portföy / çalışmalar", style: "Tarz & araçlar", contribution: "Katkı planı" },
+    rozet_yazar:  { portfolio: "Portföy / çalışmalar", genre: "Yazı türü", contribution: "Katkı planı" },
+    kulup_ac:     { university: "Üniversite & şehir", team: "Ekip durumu", plan: "Etkinlik planı", motivation: "Motivasyon" },
 };
 
 function ApplicationsTab({ applications: initialApps }: { applications: Application[] }) {
