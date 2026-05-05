@@ -117,10 +117,14 @@ export default function ManifestClient({
         let s = 180731;
         const rand = () => { s = (s * 9301 + 49297) % 233280; return s / 233280; };
         const out: { x: number; y: number; r: number; opacity: number; twinkle: boolean }[] = [];
-        for (let i = 0; i < 480; i++) out.push({ x: rand() * CANVAS_W, y: rand() * CANVAS_H, r: rand() * 0.5 + 0.2, opacity: rand() * 0.3 + 0.08, twinkle: false });
-        for (let i = 0; i < 180; i++) out.push({ x: rand() * CANVAS_W, y: rand() * CANVAS_H, r: rand() * 0.6 + 0.7, opacity: rand() * 0.35 + 0.25, twinkle: false });
-        for (let i = 0; i < 60;  i++) out.push({ x: rand() * CANVAS_W, y: rand() * CANVAS_H, r: rand() * 0.6 + 1.3, opacity: rand() * 0.3  + 0.55, twinkle: false });
-        for (let i = 0; i < 18;  i++) out.push({ x: rand() * CANVAS_W, y: rand() * CANVAS_H, r: rand() * 0.8 + 2.0, opacity: rand() * 0.2  + 0.75, twinkle: true  });
+        // Arka plan mikro yıldızları — çok ince, yüksek yoğunluk
+        for (let i = 0; i < 1400; i++) out.push({ x: rand() * CANVAS_W, y: rand() * CANVAS_H, r: rand() * 0.45 + 0.15, opacity: rand() * 0.28 + 0.06, twinkle: false });
+        // Küçük yıldızlar
+        for (let i = 0; i < 380; i++) out.push({ x: rand() * CANVAS_W, y: rand() * CANVAS_H, r: rand() * 0.55 + 0.6,  opacity: rand() * 0.35 + 0.22, twinkle: false });
+        // Orta yıldızlar
+        for (let i = 0; i < 80;  i++) out.push({ x: rand() * CANVAS_W, y: rand() * CANVAS_H, r: rand() * 0.6  + 1.2,  opacity: rand() * 0.3  + 0.50, twinkle: false });
+        // Parlak / titreyen yıldızlar (glow filter sadece bunlarda)
+        for (let i = 0; i < 22;  i++) out.push({ x: rand() * CANVAS_W, y: rand() * CANVAS_H, r: rand() * 0.8  + 1.9,  opacity: rand() * 0.2  + 0.72, twinkle: true  });
         return out;
     }, []);
     // Tek bir ref objesi — tüm drag state'i burada, stale closure yok
@@ -132,8 +136,8 @@ export default function ManifestClient({
         if (!outerRef.current) return { x, y };
         const { width, height } = outerRef.current.getBoundingClientRect();
         return {
-            x: Math.min(Math.max(x, -(CANVAS_W - 120)), width - 120),
-            y: Math.min(Math.max(y, -(CANVAS_H - 120)), height - 120),
+            x: Math.min(Math.max(x, -(CANVAS_W - width)), 0),
+            y: Math.min(Math.max(y, -(CANVAS_H - height)), 0),
         };
     }, []);
 
@@ -397,8 +401,8 @@ export default function ManifestClient({
                             style={{ position: "absolute", inset: 0, width: CANVAS_W, height: CANVAS_H, pointerEvents: "none" }}
                             aria-hidden>
                             <defs>
-                                <filter id="star-glow">
-                                    <feGaussianBlur stdDeviation="1.8" result="blur" />
+                                <filter id="star-glow" x="-80%" y="-80%" width="260%" height="260%">
+                                    <feGaussianBlur stdDeviation="1.4" result="blur" />
                                     <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
                                 </filter>
                             </defs>
