@@ -258,19 +258,19 @@ export default function ChatClient({ userId, username, initialMessages }: {
                 <div className="hidden sm:block px-5 pt-6 pb-5" style={{ borderBottom: "1px solid var(--border-3)" }}>
                     <div className="flex items-center gap-2">
                         <Link href="/home" className="text-xs px-1.5 py-1 rounded-lg transition-colors duration-200"
-                              style={{ color: "var(--text-4)" }}
-                              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-2)")}
-                              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-4)")}>
+                              style={{ color: "var(--text-3)" }}
+                              onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-1)")}
+                              onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-3)")}>
                             <ChevronLeft size={15} />
                         </Link>
                         <Link href="/home" className="flex items-baseline gap-0.5">
-                            <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                            <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
+                            <span className="text-sm font-bold" style={{ color: "var(--text-1)" }}>bumedya</span>
+                            <span className="text-sm font-bold" style={{ color: "rgba(167,139,250,0.9)" }}>.</span>
                         </Link>
                     </div>
                     <div className="flex items-center gap-2 mt-2">
-                        <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "rgba(52,211,153,0.8)" }} />
-                        <span className="text-[10px] tracking-widest uppercase" style={{ color: "var(--text-5)" }}>Lounge</span>
+                        <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "rgba(52,211,153,0.9)" }} />
+                        <span className="text-[10px] tracking-widest uppercase" style={{ color: "var(--text-3)" }}>Lounge</span>
                     </div>
                 </div>
                 {/* Mobile logo placeholder spacing */}
@@ -278,7 +278,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
 
                 {/* Odalar */}
                 <div className="flex-1 px-1 sm:px-3 py-4 flex flex-col gap-0.5 overflow-y-auto">
-                    <p className="text-[9px] tracking-widest uppercase px-2 sm:px-3 mb-2 hidden sm:block" style={{ color: "var(--text-3)" }}>
+                    <p className="text-[9px] tracking-widest uppercase px-2 sm:px-3 mb-2 hidden sm:block" style={{ color: "var(--text-2)" }}>
                         ODALAR
                     </p>
                     {ROOMS.map((room) => {

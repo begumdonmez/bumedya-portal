@@ -40,7 +40,7 @@ export default function HomeNavLinks() {
                             href={href}
                             onClick={active ? () => window.scrollTo({ top: 0, behavior: "smooth" }) : undefined}
                             className="text-xs tracking-widest uppercase font-medium transition-colors duration-200"
-                            style={{ color: active ? "rgba(240,249,255,0.9)" : "rgba(240,249,255,0.38)" }}
+                            style={{ color: active ? "rgba(240,249,255,0.95)" : "rgba(240,249,255,0.58)" }}
                         >
                             {label}
                         </Link>
@@ -49,18 +49,20 @@ export default function HomeNavLinks() {
             </div>
 
             {/* Mobile hamburger button */}
-            <button
-                onClick={() => setOpen((v) => !v)}
-                className="md:hidden relative z-10 flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200"
-                style={{
-                    background: open ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.04)",
-                    border: `1px solid ${open ? "rgba(124,58,237,0.35)" : "rgba(255,255,255,0.08)"}`,
-                    color: "rgba(240,249,255,0.7)",
-                }}
-                aria-label="Menüyü aç"
-            >
-                {open ? <X size={16} /> : <Menu size={16} />}
-            </button>
+            <div className="md:hidden relative z-10">
+                <button
+                    onClick={() => setOpen((v) => !v)}
+                    className="flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200"
+                    style={{
+                        background: open ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.04)",
+                        border: `1px solid ${open ? "rgba(124,58,237,0.35)" : "rgba(255,255,255,0.08)"}`,
+                        color: "rgba(240,249,255,0.7)",
+                    }}
+                    aria-label="Menüyü aç"
+                >
+                    {open ? <X size={16} /> : <Menu size={16} />}
+                </button>
+            </div>
 
             {/* Mobile overlay */}
             {open && (

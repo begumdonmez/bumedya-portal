@@ -40,16 +40,16 @@
     color-scheme: dark;
 
     /* ── Text ───────────────────────── */
-    --text-1: #E0F2FE;                    /* headings, strong labels */
-    --text-2: rgba(224,242,254,0.7);      /* body text */
-    --text-3: rgba(224,242,254,0.45);     /* secondary / muted */
-    --text-4: rgba(224,242,254,0.25);     /* faint hints */
-    --text-5: rgba(224,242,254,0.12);     /* ghost / placeholders */
+    --text-1: #F0F9FF;                    /* headings, strong labels */
+    --text-2: rgba(224,242,254,0.88);     /* body text */
+    --text-3: rgba(224,242,254,0.62);     /* secondary / muted */
+    --text-4: rgba(224,242,254,0.40);     /* faint hints */
+    --text-5: rgba(224,242,254,0.22);     /* ghost / placeholders */
 
     /* ── Borders ────────────────────── */
-    --border-1: rgba(255,255,255,0.12);   /* visible */
-    --border-2: rgba(255,255,255,0.08);   /* subtle */
-    --border-3: rgba(255,255,255,0.05);   /* barely visible */
+    --border-1: rgba(255,255,255,0.16);   /* visible */
+    --border-2: rgba(255,255,255,0.10);   /* subtle */
+    --border-3: rgba(255,255,255,0.07);   /* barely visible */
 
     /* ── Backgrounds ────────────────── */
     --bg-1: rgba(255,255,255,0.06);       /* card surface */
@@ -58,10 +58,10 @@
 
     /* ── Violet brand ───────────────── */
     --violet:         #7C3AED;
-    --violet-text:    rgba(167,139,250,0.85);
-    --violet-bg:      rgba(124,58,237,0.08);
-    --violet-bg-md:   rgba(124,58,237,0.14);
-    --violet-border:  rgba(124,58,237,0.25);
+    --violet-text:    rgba(192,168,255,0.95);
+    --violet-bg:      rgba(124,58,237,0.10);
+    --violet-bg-md:   rgba(124,58,237,0.18);
+    --violet-border:  rgba(124,58,237,0.30);
 
     /* ── Overlay ────────────────────── */
     --overlay: rgba(0,0,0,0.7);
@@ -242,15 +242,15 @@ body {
 }
 
 .card {
-    background: rgba(20,30,65,0.38);
-    border: 1px solid rgba(255,255,255,0.10);
+    background: rgba(20,30,65,0.52);
+    border: 1px solid rgba(255,255,255,0.12);
     border-radius: var(--radius-card);
     backdrop-filter: blur(28px) saturate(160%);
     -webkit-backdrop-filter: blur(28px) saturate(160%);
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.07),
-        0 16px 36px rgba(0,0,0,0.30),
-        0 4px 10px rgba(0,0,0,0.18);
+        inset 0 1px 0 rgba(255,255,255,0.09),
+        0 16px 36px rgba(0,0,0,0.32),
+        0 4px 10px rgba(0,0,0,0.20);
     transition: box-shadow var(--duration-mid) ease, border-color var(--duration-mid) ease, transform var(--duration-mid) ease;
 }
 
@@ -308,10 +308,10 @@ body {
 
 .label-caps {
     font-size: 10px;
-    font-weight: 500;
+    font-weight: 600;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: rgba(240,249,255,0.3);
+    color: rgba(240,249,255,0.5);
 }
 
 /* ── Buttons ───────────────────────────────────────────────── */

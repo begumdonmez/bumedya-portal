@@ -286,7 +286,7 @@ export default async function HomePage() {
                         <div className="flex flex-col gap-3">
                             {MANIFESTO_LINES.map((line, i) => (
                                 <p key={i} className="text-xs leading-relaxed"
-                                   style={{ color: `rgba(240,249,255,${0.62 - i * 0.08})` }}>
+                                   style={{ color: `rgba(240,249,255,${0.80 - i * 0.07})` }}>
                                     {line}
                                 </p>
                             ))}
