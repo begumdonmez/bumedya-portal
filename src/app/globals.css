@@ -73,6 +73,11 @@ html {
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* iPhone notch / home bar */
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
 }
 
 body {
@@ -537,3 +542,8 @@ input:-webkit-autofill:focus {
     color: rgba(224,242,254,0.85) !important;
     background: transparent !important;
 }
+
+/* ── Safe area yardımcı class'lar (iPhone notch / home bar) ─── */
+.safe-top    { padding-top:    env(safe-area-inset-top,    0px); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+.pb-safe     { padding-bottom: env(safe-area-inset-bottom, 0px); }

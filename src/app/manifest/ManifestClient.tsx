@@ -271,7 +271,14 @@ export default function ManifestClient({
 
 
     return (
-        <div className="flex flex-col" style={{ height: "100dvh", background: "#04061a" }}>
+        <div className="flex flex-col" style={{
+            position: "fixed",
+            top: "env(safe-area-inset-top, 0px)",
+            left: "env(safe-area-inset-left, 0px)",
+            right: "env(safe-area-inset-right, 0px)",
+            bottom: "env(safe-area-inset-bottom, 0px)",
+            background: "#04061a",
+        }}>
 
             {/* Navbar */}
             <nav className="shrink-0 relative z-20 flex items-center justify-between px-5 py-3.5 border-b"
