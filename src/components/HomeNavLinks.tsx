@@ -13,6 +13,7 @@ const LINKS = [
     { href: "/etkinlikler", label: "Etkinlikler"  },
     { href: "/chat",        label: "Lounge"       },
     { href: "/manifest",    label: "Manifest"     },
+    { href: "/basvuru",     label: "Başvuru"      },
 ];
 
 export default function HomeNavLinks() {

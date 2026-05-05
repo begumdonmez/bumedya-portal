@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2 } from "lucide-react";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2, FileText, Check, Clock } from "lucide-react";
 import type { ElementType } from "react";
 
 /* ─── Tipler ────────────────────────────────────────────────── */
@@ -206,19 +206,169 @@ function MessagesTab({ messages, setMessages }: { messages: Message[]; setMessag
 }
 
 /* ─── Ana admin client bileşeni ─────────────────────────────── */
-export default function AdminClient({ profiles: initialProfiles, myBadges, messages: initialMessages }: {
+interface Application {
+    id: string;
+    user_id: string;
+    username: string;
+    type: string;
+    answers: Record<string, string>;
+    status: "pending" | "approved" | "rejected";
+    admin_note: string | null;
+    created_at: string;
+}
+
+const TYPE_LABELS: Record<string, { label: string; emoji: string }> = {
+    topluluk_yk: { label: "Topluluk YK", emoji: "🏛" },
+    kulup_yk:    { label: "Kulüp YK",    emoji: "🛡" },
+    admin:       { label: "Admin",        emoji: "⚡" },
+};
+
+const QUESTION_LABELS: Record<string, Record<string, string>> = {
+    topluluk_yk: { motivation: "Neden başvuruyor?", contribution: "Ne katkı sağlayabilir?", experience: "Deneyimi", vision: "Vizyonu", time: "Müsaitlik" },
+    kulup_yk:    { which_branch: "Hangi kol?", motivation: "Neden başvuruyor?", portfolio: "Portföy", project_idea: "Proje fikri", time: "Müsaitlik" },
+    admin:       { motivation: "Neden başvuruyor?", moderation: "Moderasyon yaklaşımı", technical: "Teknik geçmiş", conflict: "Çatışma yönetimi", availability: "Müsaitlik" },
+};
+
+function ApplicationsTab({ applications: initialApps }: { applications: Application[] }) {
+    const [apps, setApps] = useState<Application[]>(initialApps);
+    const [selected, setSelected] = useState<Application | null>(null);
+    const [note, setNote] = useState("");
+    const [processing, setProcessing] = useState(false);
+    const [filterStatus, setFilterStatus] = useState<"all" | "pending" | "approved" | "rejected">("pending");
+
+    const filtered = apps.filter(a => filterStatus === "all" || a.status === filterStatus);
+    const pendingCount = apps.filter(a => a.status === "pending").length;
+
+    const handleDecision = async (status: "approved" | "rejected") => {
+        if (!selected) return;
+        setProcessing(true);
+        const supabase = createClient();
+        const { error } = await supabase
+            .from("applications")
+            .update({ status, admin_note: note.trim() || null })
+            .eq("id", selected.id);
+        if (error) { toast.error("Güncellenemedi: " + error.message); setProcessing(false); return; }
+        setApps(prev => prev.map(a => a.id === selected.id ? { ...a, status, admin_note: note.trim() || null } : a));
+        toast.success(status === "approved" ? "Başvuru onaylandı ✓" : "Başvuru reddedildi");
+        setSelected(null);
+        setNote("");
+        setProcessing(false);
+    };
+
+    if (selected) {
+        const labels = QUESTION_LABELS[selected.type] ?? {};
+        const typeInfo = TYPE_LABELS[selected.type];
+        return (
+            <div className="flex flex-col gap-4">
+                <button onClick={() => { setSelected(null); setNote(""); }}
+                        className="self-start flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl transition-all duration-200"
+                        style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-3)" }}>
+                    <ChevronLeft size={13} /> Geri
+                </button>
+
+                <div className="card p-5 flex flex-col gap-4">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <span className="text-2xl">{typeInfo?.emoji}</span>
+                            <div>
+                                <p className="text-sm font-bold" style={{ color: "var(--text-1)" }}>@{selected.username}</p>
+                                <p className="text-xs" style={{ color: "var(--text-4)" }}>{typeInfo?.label} · {new Date(selected.created_at).toLocaleDateString("tr-TR")}</p>
+                            </div>
+                        </div>
+                        <span className={`text-xs px-3 py-1 rounded-full ${selected.status === "pending" ? "bg-amber-500/10 border-amber-500/25 text-amber-400" : selected.status === "approved" ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400" : "bg-red-500/10 border-red-500/25 text-red-400"} border`}>
+                            {selected.status === "pending" ? "Beklemede" : selected.status === "approved" ? "Onaylandı" : "Reddedildi"}
+                        </span>
+                    </div>
+
+                    {Object.entries(selected.answers).map(([key, val]) => (
+                        <div key={key} className="flex flex-col gap-1.5">
+                            <p className="text-[10px] font-semibold tracking-widest uppercase" style={{ color: "var(--text-4)" }}>{labels[key] ?? key}</p>
+                            <p className="text-sm leading-relaxed px-3 py-2.5 rounded-xl" style={{ background: "var(--bg-2)", color: "var(--text-2)", border: "1px solid var(--border-3)" }}>{val}</p>
+                        </div>
+                    ))}
+
+                    {selected.status === "pending" && (
+                        <div className="flex flex-col gap-3 pt-2 border-t" style={{ borderColor: "var(--border-3)" }}>
+                            <p className="text-[10px] font-semibold tracking-widest uppercase" style={{ color: "var(--text-4)" }}>Admin Notu (opsiyonel)</p>
+                            <textarea value={note} onChange={e => setNote(e.target.value)} rows={2}
+                                      placeholder="Onay/red sebebi, geri bildirim..."
+                                      className="w-full resize-none rounded-xl px-4 py-2.5 text-sm outline-none"
+                                      style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-1)" }} />
+                            <div className="flex gap-3">
+                                <button onClick={() => handleDecision("approved")} disabled={processing}
+                                        className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50"
+                                        style={{ background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.3)", color: "rgba(52,211,153,0.9)" }}>
+                                    <Check size={14} /> Onayla
+                                </button>
+                                <button onClick={() => handleDecision("rejected")} disabled={processing}
+                                        className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50"
+                                        style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "rgba(239,68,68,0.8)" }}>
+                                    <X size={14} /> Reddet
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-col gap-4">
+            <div className="flex gap-2 flex-wrap">
+                {(["pending", "all", "approved", "rejected"] as const).map(s => (
+                    <button key={s} onClick={() => setFilterStatus(s)}
+                            className="px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200"
+                            style={{ background: filterStatus === s ? "rgba(124,58,237,0.2)" : "var(--bg-2)", border: `1px solid ${filterStatus === s ? "rgba(124,58,237,0.4)" : "var(--border-2)"}`, color: filterStatus === s ? "var(--violet-text)" : "var(--text-3)" }}>
+                        {s === "all" ? "Tümü" : s === "pending" ? `Bekleyen${pendingCount > 0 ? ` (${pendingCount})` : ""}` : s === "approved" ? "Onaylı" : "Reddedilen"}
+                    </button>
+                ))}
+            </div>
+            {filtered.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 gap-3">
+                    <FileText size={28} className="opacity-10" />
+                    <p className="text-sm" style={{ color: "var(--text-4)" }}>Başvuru bulunamadı.</p>
+                </div>
+            ) : (
+                <div className="flex flex-col gap-2">
+                    {filtered.map(app => {
+                        const typeInfo = TYPE_LABELS[app.type];
+                        return (
+                            <button key={app.id} onClick={() => { setSelected(app); setNote(app.admin_note ?? ""); }}
+                                    className="card p-4 flex items-center gap-4 text-left w-full transition-all duration-150 hover:border-violet-500/20">
+                                <span className="text-xl shrink-0">{typeInfo?.emoji ?? "📋"}</span>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium" style={{ color: "var(--text-1)" }}>@{app.username}</p>
+                                    <p className="text-xs" style={{ color: "var(--text-4)" }}>{typeInfo?.label} · {new Date(app.created_at).toLocaleDateString("tr-TR")}</p>
+                                </div>
+                                <span className={`shrink-0 text-xs px-2.5 py-1 rounded-full border ${app.status === "pending" ? "bg-amber-500/10 border-amber-500/25 text-amber-400" : app.status === "approved" ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400" : "bg-red-500/10 border-red-500/25 text-red-400"}`}>
+                                    {app.status === "pending" ? <Clock size={11} className="inline mr-1" /> : app.status === "approved" ? <Check size={11} className="inline mr-1" /> : <X size={11} className="inline mr-1" />}
+                                    {app.status === "pending" ? "Bekliyor" : app.status === "approved" ? "Onaylı" : "Reddedildi"}
+                                </span>
+                            </button>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+}
+
+export default function AdminClient({ profiles: initialProfiles, myBadges, messages: initialMessages, applications: initialApplications }: {
     profiles: Profile[];
     myBadges: string[];
     messages: Message[];
+    applications: Application[];
 }) {
     const router = useRouter();
     const isAuthorized = myBadges.includes("authorized");
     const [profiles, setProfiles] = useState<Profile[]>(initialProfiles);
     const [messages, setMessages] = useState<Message[]>(initialMessages);
-    const [tab, setTab] = useState<"users" | "messages">("users");
+    const [tab, setTab] = useState<"users" | "messages" | "applications">("users");
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState<"all" | "member" | "creator">("all");
     const unreadCount = messages.filter(m => !m.read).length;
+    const pendingAppsCount = initialApplications.filter(a => a.status === "pending").length;
 
     /* Filtrelenmiş liste */
     const filtered = useMemo(() => {
@@ -318,10 +468,11 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
             <div className="relative z-10 max-w-3xl mx-auto w-full px-6 py-10 flex flex-col gap-6">
 
                 {/* Sekmeler */}
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
                     {([
-                        { id: "users",    label: "Kullanıcılar", badge: undefined as number | undefined },
-                        { id: "messages", label: "Mesajlar",     badge: unreadCount as number | undefined },
+                        { id: "users",        label: "Kullanıcılar", badge: undefined as number | undefined },
+                        { id: "messages",     label: "Mesajlar",     badge: unreadCount as number | undefined },
+                        { id: "applications", label: "Başvurular",   badge: pendingAppsCount as number | undefined },
                     ] as const).map(({ id, label, badge }) => (
                         <button key={id} onClick={() => setTab(id)}
                                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200"
@@ -342,6 +493,11 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                 {/* Mesajlar sekmesi */}
                 {tab === "messages" && (
                     <MessagesTab messages={messages} setMessages={setMessages} />
+                )}
+
+                {/* Başvurular sekmesi */}
+                {tab === "applications" && (
+                    <ApplicationsTab applications={initialApplications} />
                 )}
 
                 {/* Kullanıcılar sekmesi başlık */}
