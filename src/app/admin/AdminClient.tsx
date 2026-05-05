@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2, FileText, Check, Clock } from "lucide-react";
+import { POSITIONS } from "@/app/basvuru/positions";
 import type { ElementType } from "react";
 
 /* ─── Tipler ────────────────────────────────────────────────── */
@@ -17,16 +18,23 @@ interface Profile {
 }
 
 /* ─── Rozet konfigürasyonu ──────────────────────────────────── */
-type BadgeId = "authorized" | "admin" | "editor" | "artist" | "writer" | "verified" | "founder";
+type BadgeId = "authorized" | "admin" | "founder" | "verified" | "nakkas" | "kalemsor" | "muretti" | "katkici" | "cizer" | "yazar" | "editor";
 
 const BADGES: { id: BadgeId; label: string; icon: ElementType; color: string; bg: string; border: string; authorizedOnly: boolean }[] = [
+    /* ── Sistem ── */
     { id: "authorized", label: "Authorized", icon: Layers,     color: "rgba(255,255,255,0.9)", bg: "rgba(255,255,255,0.06)", border: "rgba(255,255,255,0.2)",  authorizedOnly: true  },
     { id: "admin",      label: "Admin",       icon: Zap,        color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.1)",   border: "rgba(239,68,68,0.3)",   authorizedOnly: true  },
-    { id: "editor",     label: "Editör",      icon: Shield,     color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.1)",  border: "rgba(251,191,36,0.3)",  authorizedOnly: false },
-    { id: "artist",     label: "Sanatçı",     icon: Palette,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.1)", border: "rgba(244,114,182,0.3)", authorizedOnly: false },
-    { id: "writer",     label: "Yazar",       icon: PenLine,    color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.1)",  border: "rgba(52,211,153,0.3)",  authorizedOnly: false },
+    { id: "founder",    label: "Kurucu",      icon: Sparkles,   color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)", border: "rgba(251,191,36,0.2)",  authorizedOnly: true  },
     { id: "verified",   label: "Onaylı",      icon: BadgeCheck, color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.1)",  border: "rgba(59,130,246,0.3)",  authorizedOnly: false },
-    { id: "founder",    label: "Kurucu",      icon: Sparkles,   color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)", border: "rgba(251,191,36,0.2)",  authorizedOnly: false },
+    /* ── Kazanılan (form + onay) ── */
+    { id: "nakkas",     label: "Nakkaş",      icon: Palette,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.1)", border: "rgba(244,114,182,0.3)", authorizedOnly: false },
+    { id: "kalemsor",   label: "Kalemşor",    icon: PenLine,    color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.1)",  border: "rgba(52,211,153,0.3)",  authorizedOnly: false },
+    { id: "muretti",    label: "Mürettip",    icon: Shield,     color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.1)",  border: "rgba(251,191,36,0.3)",  authorizedOnly: false },
+    { id: "katkici",    label: "Katkıcı",     icon: BadgeCheck, color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)", border: "rgba(59,130,246,0.25)", authorizedOnly: false },
+    /* ── İlgi alanı (serbest) ── */
+    { id: "cizer",      label: "Çizer",       icon: Palette,    color: "rgba(244,114,182,0.7)", bg: "rgba(244,114,182,0.06)", border: "rgba(244,114,182,0.2)", authorizedOnly: false },
+    { id: "yazar",      label: "Yazar",       icon: PenLine,    color: "rgba(52,211,153,0.7)",  bg: "rgba(52,211,153,0.06)",  border: "rgba(52,211,153,0.2)",  authorizedOnly: false },
+    { id: "editor",     label: "Editör",      icon: Shield,     color: "rgba(251,191,36,0.7)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)",  authorizedOnly: false },
 ];
 
 /* ─── Rozet pill bileşeni ───────────────────────────────────── */
@@ -221,9 +229,9 @@ const TYPE_LABELS: Record<string, { label: string; emoji: string }> = {
     topluluk_yk:  { label: "Topluluk YK",   emoji: "🏛"  },
     kulup_yk:     { label: "Kulüp YK",       emoji: "🛡"  },
     admin:        { label: "Admin",           emoji: "⚡"  },
-    rozet_editor: { label: "Editör Rozeti",   emoji: "✏️" },
-    rozet_cizer:  { label: "Çizer Rozeti",    emoji: "🎨" },
-    rozet_yazar:  { label: "Yazar Rozeti",    emoji: "🖊️" },
+    rozet_editor: { label: "Mürettip",  emoji: "✏️" },
+    rozet_cizer:  { label: "Nakkaş",    emoji: "🎨" },
+    rozet_yazar:  { label: "Kalemşor", emoji: "🖊️" },
     kulup_ac:     { label: "Kulüp Aç",        emoji: "🏫" },
 };
 
@@ -277,7 +285,12 @@ function ApplicationsTab({ applications: initialApps }: { applications: Applicat
                 <div className="card p-5 flex flex-col gap-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
-                            <span className="text-2xl">{typeInfo?.emoji}</span>
+                            {(() => { const pos = POSITIONS.find(p => p.id === selected.type); const Icon = pos?.icon; return (
+                                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                                     style={{ background: pos?.bg ?? "var(--bg-2)", border: `1px solid ${pos?.border ?? "var(--border-2)"}` }}>
+                                    {Icon ? <Icon size={17} style={{ color: pos?.color }} /> : <FileText size={17} style={{ color: "var(--text-3)" }} />}
+                                </div>
+                            ); })()}
                             <div>
                                 <p className="text-sm font-bold" style={{ color: "var(--text-1)" }}>@{selected.username}</p>
                                 <p className="text-xs" style={{ color: "var(--text-4)" }}>{typeInfo?.label} · {new Date(selected.created_at).toLocaleDateString("tr-TR")}</p>
@@ -341,10 +354,17 @@ function ApplicationsTab({ applications: initialApps }: { applications: Applicat
                 <div className="flex flex-col gap-2">
                     {filtered.map(app => {
                         const typeInfo = TYPE_LABELS[app.type];
+                        const pos = POSITIONS.find(p => p.id === app.type);
+                        const Icon = pos?.icon;
                         return (
                             <button key={app.id} onClick={() => { setSelected(app); setNote(app.admin_note ?? ""); }}
                                     className="card p-4 flex items-center gap-4 text-left w-full transition-all duration-150 hover:border-violet-500/20">
-                                <span className="text-xl shrink-0">{typeInfo?.emoji ?? "📋"}</span>
+                                <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                                     style={{ background: pos?.bg ?? "var(--bg-2)", border: `1px solid ${pos?.border ?? "var(--border-2)"}` }}>
+                                    {Icon
+                                        ? <Icon size={15} style={{ color: pos?.color }} />
+                                        : <FileText size={15} style={{ color: "var(--text-3)" }} />}
+                                </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="text-sm font-medium" style={{ color: "var(--text-1)" }}>@{app.username}</p>
                                     <p className="text-xs" style={{ color: "var(--text-4)" }}>{typeInfo?.label} · {new Date(app.created_at).toLocaleDateString("tr-TR")}</p>

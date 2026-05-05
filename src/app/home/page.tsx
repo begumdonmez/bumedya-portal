@@ -50,6 +50,9 @@ export default async function HomePage() {
         { count: editorCount },
         { count: writerCount },
         { count: artistCount },
+        { count: murrettiCount },
+        { count: kalemsorCount },
+        { count: nakkasCount },
         { data: events },
         { data: announcements },
     ] = await Promise.all([
@@ -58,8 +61,11 @@ export default async function HomePage() {
         supabase.from("profiles").select("*", { count: "exact", head: true }).eq("role", "member"),
         supabase.from("activities").select("id, username, type, payload, created_at").order("created_at", { ascending: false }).limit(8),
         supabase.from("profiles").select("*", { count: "exact", head: true }).contains("badges", ["editor"]),
-        supabase.from("profiles").select("*", { count: "exact", head: true }).contains("badges", ["writer"]),
-        supabase.from("profiles").select("*", { count: "exact", head: true }).contains("badges", ["artist"]),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).contains("badges", ["yazar"]),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).contains("badges", ["cizer"]),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).contains("badges", ["muretti"]),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).contains("badges", ["kalemsor"]),
+        supabase.from("profiles").select("*", { count: "exact", head: true }).contains("badges", ["nakkas"]),
         supabase.from("events").select("id, username, title, address, lat, lng, event_date, ref_url").order("event_date", { ascending: true }),
         supabase.from("announcements").select("id, user_id, username, content, created_at").order("created_at", { ascending: false }).limit(10),
     ]);
@@ -115,7 +121,7 @@ export default async function HomePage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4">
 
                     {/* Topluluk Durumu */}
-                    <BentoCard className="sm:col-span-1 lg:col-span-7">
+                    <BentoCard className="sm:col-span-1 lg:col-span-5">
                         <div aria-hidden className="absolute -top-8 -left-8 w-48 h-48 rounded-full pointer-events-none"
                              style={{ background: "var(--violet-bg-md)", filter: "blur(50px)" }} />
                         <div className="relative z-10">
@@ -135,17 +141,37 @@ export default async function HomePage() {
                                 </div>
                             </div>
                             <div className="grid grid-cols-3 gap-2">
-                                {[
-                                    { label: "Editör", count: editorCount, color: "rgba(251,191,36,0.8)", bg: "rgba(251,191,36,0.06)", border: "rgba(251,191,36,0.14)" },
-                                    { label: "Yazar",  count: writerCount, color: "rgba(52,211,153,0.8)",  bg: "rgba(52,211,153,0.06)",  border: "rgba(52,211,153,0.14)"  },
-                                    { label: "Çizer",  count: artistCount, color: "rgba(244,114,182,0.8)", bg: "rgba(244,114,182,0.06)", border: "rgba(244,114,182,0.14)" },
-                                ].map(({ label, count, color, bg, border }) => (
-                                    <div key={label} className="rounded-2xl px-3 py-3 flex flex-col gap-1"
+                                {([
+                                    {
+                                        interest: { label: "Editör",   count: editorCount,  color: "rgba(251,191,36,0.7)"  },
+                                        earned:   { label: "Mürettip", count: murrettiCount, color: "rgba(251,191,36,0.95)" },
+                                        bg: "rgba(251,191,36,0.05)", border: "rgba(251,191,36,0.13)", divider: "rgba(251,191,36,0.1)",
+                                    },
+                                    {
+                                        interest: { label: "Yazar",    count: writerCount,   color: "rgba(52,211,153,0.7)"  },
+                                        earned:   { label: "Kalemşor", count: kalemsorCount, color: "rgba(52,211,153,0.95)" },
+                                        bg: "rgba(52,211,153,0.05)",  border: "rgba(52,211,153,0.13)",  divider: "rgba(52,211,153,0.1)",
+                                    },
+                                    {
+                                        interest: { label: "Çizer",  count: artistCount, color: "rgba(244,114,182,0.7)"  },
+                                        earned:   { label: "Nakkaş", count: nakkasCount, color: "rgba(244,114,182,0.95)" },
+                                        bg: "rgba(244,114,182,0.05)", border: "rgba(244,114,182,0.13)", divider: "rgba(244,114,182,0.1)",
+                                    },
+                                ] as const).map(({ interest, earned, bg, border, divider }) => (
+                                    <div key={interest.label} className="rounded-2xl px-3 py-3 flex flex-col gap-2"
                                          style={{ background: bg, border: `1px solid ${border}` }}>
-                                        <span className="text-[10px] tracking-widest uppercase" style={{ color }}>
-                                            {label}
-                                        </span>
-                                        <span className="text-xl font-bold" style={{ color }}>{count}</span>
+                                        {/* İlgi rozeti */}
+                                        <div className="flex items-baseline justify-between gap-1">
+                                            <span className="text-[9px] tracking-widest uppercase font-medium" style={{ color: interest.color }}>{interest.label}</span>
+                                            <span className="text-base font-bold leading-none" style={{ color: interest.color }}>{interest.count ?? 0}</span>
+                                        </div>
+                                        {/* Ayraç */}
+                                        <div className="h-px w-full" style={{ background: divider }} />
+                                        {/* Kazanılan rozet */}
+                                        <div className="flex items-baseline justify-between gap-1">
+                                            <span className="text-[9px] tracking-widest uppercase font-semibold" style={{ color: earned.color }}>{earned.label}</span>
+                                            <span className="text-base font-bold leading-none" style={{ color: earned.color }}>{earned.count ?? 0}</span>
+                                        </div>
                                     </div>
                                 ))}
                             </div>
@@ -153,7 +179,7 @@ export default async function HomePage() {
                     </BentoCard>
 
                     {/* Spotify — Playlist */}
-                    <BentoCard className="sm:col-span-1 lg:col-span-5 flex flex-col" style={{ minHeight: 200 }}>
+                    <BentoCard className="sm:col-span-1 lg:col-span-7 flex flex-col" style={{ minHeight: 200 }}>
                         <div className="flex items-center justify-between mb-4">
                             <p className="label-caps">Playlist</p>
                             <svg viewBox="0 0 24 24" className="w-4 h-4" fill="currentColor" style={{ color: "rgba(29,185,84,0.7)" }}>
