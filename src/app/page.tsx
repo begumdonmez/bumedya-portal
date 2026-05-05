@@ -20,12 +20,18 @@ const RULES = [
 ];
 
 const BADGES = [
-    { label: "Onaylı",  color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)",   desc: "Kimliği veya üreticiliği admin tarafından doğrulanmış üyeler alır." },
-    { label: "Üretici", color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.25)",  desc: "Düzenli içerik üreten, akışa aktif katkı sağlayan üyelere verilir." },
-    { label: "Yazar",   color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)",   desc: "Fanzin, makale veya özgün metin paylaşan yazarlara verilir." },
-    { label: "Sanatçı", color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.25)", desc: "İllüstrasyon, tasarım veya görsel sanat üretimiyle öne çıkanlara verilir." },
-    { label: "Editör",  color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.25)",  desc: "Topluluğun içerik kalitesine katkıda bulunan editörlere verilir." },
-    { label: "Kurucu",  color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)",   desc: "Topluluğun kurucu üyelerine özel rozettir, başvuruyla alınamaz." },
+    // — Sistem —
+    { label: "Onaylı", color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)",   desc: "Admin tarafından doğrulanmış üyelere verilir. Başvuruyla alınamaz." },
+    { label: "Kurucu",           color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)",   desc: "Topluluğun kurucu üyelerine özel rozettir. Başvuruyla alınamaz." },
+    { label: "Katkıcı",          color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.2)",   desc: "Topluluk projelerine aktif katkı sağlayan üyelere admin tarafından verilir." },
+    // — Başvuruyla kazanılan —
+    { label: "Nakkaş",   color: "rgba(244,114,182,0.95)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.25)", desc: "Çizim, illüstrasyon veya görsel sanat alanında üretim yapan üyelere başvuru ile verilir." },
+    { label: "Kalemşor", color: "rgba(52,211,153,0.95)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)",   desc: "Yazı, şiir veya özgün metin üreten üyelere başvuru ile verilir." },
+    { label: "Mürettip", color: "rgba(251,191,36,0.95)",  bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.25)",  desc: "İçerikleri derleyip düzenleyen, editoryal katkı sağlayan üyelere başvuru ile verilir." },
+    // — İlgi alanı —
+    { label: "Çizer",  color: "rgba(244,114,182,0.7)", bg: "rgba(244,114,182,0.05)", border: "rgba(244,114,182,0.18)", desc: "Görsel sanat ve illüstrasyona ilgi duyan üyeleri gösterir." },
+    { label: "Yazar",  color: "rgba(52,211,153,0.7)",  bg: "rgba(52,211,153,0.05)",  border: "rgba(52,211,153,0.15)",  desc: "Yazı ve edebiyata ilgi duyan üyeleri gösterir." },
+    { label: "Editör", color: "rgba(251,191,36,0.7)",  bg: "rgba(251,191,36,0.05)",  border: "rgba(251,191,36,0.18)",  desc: "Editoryal alana ilgi duyan üyeleri gösterir." },
 ];
 
 const PAGES = [
@@ -40,7 +46,7 @@ const PAGES = [
     {
         path: "/akis",
         label: "Akış",
-        desc: "Topluluktan kısa paylaşımlar, fikirler ve günlük üretimler. Yetkilendirilmiş üyeler metin veya görsel paylaşabilir, diğerleri beğeni bırakabilir.",
+        desc: "Topluluktan kısa paylaşımlar, fikirler ve günlük üretimler. Üyeler metin veya görsel paylaşabilir, beğeni bırakabilir.",
         accent: "rgba(96,165,250,0.85)",
         bg: "rgba(59,130,246,0.06)",
         border: "rgba(59,130,246,0.18)",
@@ -68,6 +74,14 @@ const PAGES = [
         accent: "rgba(52,211,153,0.85)",
         bg: "rgba(52,211,153,0.06)",
         border: "rgba(52,211,153,0.18)",
+    },
+    {
+        path: "/basvuru",
+        label: "Başvuru",
+        desc: "Yönetim kuruluna katıl, rozet başvurusu yap veya okulunda bir Bumedya kulübü aç. Formlar yeteneklerini ölçmek için değil, seni tanımak için.",
+        accent: "rgba(244,114,182,0.85)",
+        bg: "rgba(244,114,182,0.06)",
+        border: "rgba(244,114,182,0.18)",
     },
 ];
 
@@ -292,7 +306,7 @@ export default async function LandingPage() {
                         Hangi Rozet Ne Anlama Gelir?
                     </h2>
                     <p className="text-sm mt-3 max-w-md mx-auto" style={{ color: "var(--text-3)" }}>
-                        Rozetler admin tarafından verilir, başvuruyla alınamaz — katkılarınla kazan.
+                        Bazı rozetler başvuruyla, bazıları admin tarafından, bazıları ise ilgi alanına göre verilir.
                     </p>
                 </div>
 
@@ -350,8 +364,8 @@ export default async function LandingPage() {
                 <div className="flex flex-col gap-3">
                     {[
                         { q: "Platforma katılmak ücretsiz mi?", a: "Evet, tamamen ücretsiz. Kayıt ol, doğrula, kullanmaya başla." },
-                        { q: "İçerik yüklemek için özel bir izin gerekiyor mu?", a: "Akışa ve galeriye yükleme yapabilmek için hesabının yetkilendirilmiş olması gerekir. Yeni üyeler önce toplulukla tanışır, ardından içerik üretimine geçer." },
-                        { q: "Rozet başvurusu yapabilir miyim?", a: "Rozetler başvuruyla verilmez. Admin ekibi katkılarını takip eder ve uygun gördüğünde rozet tanımlar." },
+                        { q: "İçerik yüklemek için üye olmam gerekiyor mu?", a: "Akışa ve galeriye içerik yükleyebilmek için platforma üye olman yeterli. Kayıt ol, doğrula ve paylaşmaya başla." },
+                        { q: "Rozet başvurusu yapabilir miyim?", a: "Bazı rozetler başvuruyla alınabilir. Nakkaş, Kalemşor ve Mürettip rozetleri için /başvuru sayfasından form doldurabilirsin. Kurucu ve Yetkilendirilmiş gibi sistem rozetleri ise yalnızca admin tarafından verilir." },
                         { q: "Paylaştığım içerikler kime ait?", a: "Tüm içerikler sana aittir. Platforma yüklemen, içeriğin başkalarına devredildiği anlamına gelmez." },
                         { q: "Bir sorunum olursa kime ulaşabilirim?", a: "Discord sunucumuzdan veya bumedyailetisim@gmail.com adresinden bize ulaşabilirsin." },
                     ].map(({ q, a }) => (
