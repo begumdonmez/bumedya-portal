@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2, FileText, Check, Clock, Music2, Plus } from "lucide-react";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2, FileText, Check, Clock, Music2, Plus, Star, Film, Tv, BookOpen, Music } from "lucide-react";
 import { POSITIONS } from "@/app/basvuru/positions";
 import type { ElementType } from "react";
 
@@ -503,21 +503,125 @@ function PlaylistsTab() {
     );
 }
 
-export default function AdminClient({ profiles: initialProfiles, myBadges, messages: initialMessages, applications: initialApplications }: {
+/* ─── Yıldızlar sekmesi ─────────────────────────────────────── */
+interface WeeklyNomination {
+    id: string;
+    category: string;
+    title: string;
+    description: string | null;
+    submitted_by: string;
+    status: "pending" | "approved" | "rejected";
+    week_start: string;
+    created_at: string;
+}
+
+const CAT_CONFIG: Record<string, { label: string; icon: React.ElementType; color: string; bg: string; border: string }> = {
+    film:  { label: "Film",   icon: Film,     color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.25)"  },
+    dizi:  { label: "Dizi",   icon: Tv,       color: "rgba(96,165,250,0.9)",  bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.25)"  },
+    kitap: { label: "Kitap",  icon: BookOpen, color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.25)"  },
+    sarki: { label: "Şarkı",  icon: Music,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.25)" },
+};
+
+function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomination[] }) {
+    const [noms, setNoms] = useState<WeeklyNomination[]>(initialNoms);
+    const [filterStatus, setFilterStatus] = useState<"pending" | "approved" | "rejected" | "all">("pending");
+    const [processing, setProcessing] = useState<string | null>(null);
+
+    const pendingCount = noms.filter(n => n.status === "pending").length;
+    const filtered = noms.filter(n => filterStatus === "all" || n.status === filterStatus);
+
+    const handleDecision = async (id: string, status: "approved" | "rejected") => {
+        setProcessing(id);
+        const supabase = createClient();
+        const { error } = await supabase.from("weekly_nominations").update({ status }).eq("id", id);
+        if (error) { toast.error("Güncellenemedi: " + error.message); setProcessing(null); return; }
+        setNoms(prev => prev.map(n => n.id === id ? { ...n, status } : n));
+        toast.success(status === "approved" ? "Öneri onaylandı ✓" : "Öneri reddedildi");
+        setProcessing(null);
+    };
+
+    return (
+        <div className="flex flex-col gap-4">
+            <div className="flex gap-2 flex-wrap">
+                {(["pending", "all", "approved", "rejected"] as const).map(s => (
+                    <button key={s} onClick={() => setFilterStatus(s)}
+                            className="px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200"
+                            style={{ background: filterStatus === s ? "rgba(124,58,237,0.2)" : "var(--bg-2)", border: `1px solid ${filterStatus === s ? "rgba(124,58,237,0.4)" : "var(--border-2)"}`, color: filterStatus === s ? "var(--violet-text)" : "var(--text-3)" }}>
+                        {s === "all" ? "Tümü" : s === "pending" ? `Bekleyen${pendingCount > 0 ? ` (${pendingCount})` : ""}` : s === "approved" ? "Onaylı" : "Reddedilen"}
+                    </button>
+                ))}
+            </div>
+
+            {filtered.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 gap-3">
+                    <Star size={28} className="opacity-10" />
+                    <p className="text-sm" style={{ color: "var(--text-4)" }}>Öneri bulunamadı.</p>
+                </div>
+            ) : (
+                <div className="flex flex-col gap-2">
+                    {filtered.map(nom => {
+                        const cat = CAT_CONFIG[nom.category] ?? CAT_CONFIG.film;
+                        const Icon = cat.icon;
+                        return (
+                            <div key={nom.id} className="card p-4 flex items-center gap-4">
+                                <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                                     style={{ background: cat.bg, border: `1px solid ${cat.border}` }}>
+                                    <Icon size={15} style={{ color: cat.color }} />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium truncate" style={{ color: "var(--text-1)" }}>{nom.title}</p>
+                                    {nom.description && (
+                                        <p className="text-xs truncate" style={{ color: "var(--text-4)" }}>{nom.description}</p>
+                                    )}
+                                    <p className="text-[10px] mt-0.5" style={{ color: "var(--text-5)" }}>
+                                        @{nom.submitted_by} · {cat.label} · {nom.week_start}
+                                    </p>
+                                </div>
+                                {nom.status === "pending" ? (
+                                    <div className="flex gap-2 shrink-0">
+                                        <button onClick={() => handleDecision(nom.id, "approved")} disabled={processing === nom.id}
+                                                className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50"
+                                                style={{ background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.3)", color: "rgba(52,211,153,0.9)" }}>
+                                            <Check size={12} /> Onayla
+                                        </button>
+                                        <button onClick={() => handleDecision(nom.id, "rejected")} disabled={processing === nom.id}
+                                                className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50"
+                                                style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "rgba(239,68,68,0.8)" }}>
+                                            <X size={12} /> Reddet
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <span className={`shrink-0 text-xs px-2.5 py-1 rounded-full border ${nom.status === "approved" ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400" : "bg-red-500/10 border-red-500/25 text-red-400"}`}>
+                                        {nom.status === "approved" ? <Check size={11} className="inline mr-1" /> : <X size={11} className="inline mr-1" />}
+                                        {nom.status === "approved" ? "Onaylı" : "Reddedildi"}
+                                    </span>
+                                )}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+        </div>
+    );
+}
+
+export default function AdminClient({ profiles: initialProfiles, myBadges, messages: initialMessages, applications: initialApplications, nominations: initialNominations }: {
     profiles: Profile[];
     myBadges: string[];
     messages: Message[];
     applications: Application[];
+    nominations: WeeklyNomination[];
 }) {
     const router = useRouter();
     const isAuthorized = myBadges.includes("authorized");
     const [profiles, setProfiles] = useState<Profile[]>(initialProfiles);
     const [messages, setMessages] = useState<Message[]>(initialMessages);
-    const [tab, setTab] = useState<"users" | "messages" | "applications" | "playlists">("users");
+    const [tab, setTab] = useState<"users" | "messages" | "applications" | "playlists" | "nominations">("users");
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState<"all" | "member" | "creator">("all");
     const unreadCount = messages.filter(m => !m.read).length;
     const pendingAppsCount = initialApplications.filter(a => a.status === "pending").length;
+    const pendingNomCount = initialNominations.filter(n => n.status === "pending").length;
 
     /* Filtrelenmiş liste */
     const filtered = useMemo(() => {
@@ -623,6 +727,7 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                         { id: "users",        label: "Kullanıcılar", badge: undefined as number | undefined },
                         { id: "messages",     label: "Mesajlar",     badge: unreadCount as number | undefined },
                         { id: "applications", label: "Başvurular",   badge: pendingAppsCount as number | undefined },
+                        { id: "nominations",  label: "Yıldızlar",    badge: pendingNomCount as number | undefined },
                         { id: "playlists",    label: "Playlist",     badge: undefined as number | undefined },
                     ] as const).map(({ id, label, badge }) => (
                         <button key={id} onClick={() => setTab(id)}
@@ -650,6 +755,9 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                 {tab === "applications" && (
                     <ApplicationsTab applications={initialApplications} />
                 )}
+
+                {/* Yıldızlar sekmesi */}
+                {tab === "nominations" && <NominationsTab nominations={initialNominations} />}
 
                 {/* Playlist sekmesi */}
                 {tab === "playlists" && <PlaylistsTab />}

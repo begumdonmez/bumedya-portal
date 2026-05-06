@@ -8,6 +8,7 @@ import { Menu, X } from "lucide-react";
 const LINKS = [
     { href: "/home",        label: "Ana Sayfa"   },
     { href: "/akis",        label: "Akış"         },
+    { href: "/yildizlar",   label: "Yıldızlar"    },
     { href: "/galeri",      label: "Galeri"       },
     { href: "/members",     label: "Üyeler"       },
     { href: "/etkinlikler", label: "Etkinlikler"  },
