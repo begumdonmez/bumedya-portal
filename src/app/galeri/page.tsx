@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import GaleriClient from "./GaleriClient";
 
-export const metadata: Metadata = { title: "Galeri | bumedya." };
+export const metadata: Metadata = { title: "Galeri" };
 
 export default async function GaleriPage() {
     const supabase = await createClient();

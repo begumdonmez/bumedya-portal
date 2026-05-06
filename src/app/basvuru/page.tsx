@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import BasvuruClient from "./BasvuruClient";
 
-export const metadata: Metadata = { title: "Başvuru | bumedya." };
+export const metadata: Metadata = { title: "Başvuru" };
 
 export default async function BasvuruPage() {
     const supabase = await createClient();

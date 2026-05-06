@@ -26,7 +26,7 @@ export async function generateMetadata(
 ): Promise<Metadata> {
     const { username } = await params;
     return {
-        title: `@${username} | bumedya.`,
+        title: `@${username}`,
         description: `bumedya topluluğunda @${username} profili.`,
     };
 }

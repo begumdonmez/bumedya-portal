@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import EtkinliklerClient from "./EtkinliklerClient";
 import type { EventItem } from "@/components/EventMap";
 
-export const metadata: Metadata = { title: "Etkinlikler | bumedya." };
+export const metadata: Metadata = { title: "Etkinlikler" };
 
 export default async function EtkinliklerPage() {
     const supabase = await createClient();

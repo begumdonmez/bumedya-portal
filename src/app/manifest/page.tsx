@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import ManifestClient from "./ManifestClient";
 
-export const metadata: Metadata = { title: "Manifest | bumedya." };
+export const metadata: Metadata = { title: "Manifest" };
 
 /*
   Supabase tablosu:

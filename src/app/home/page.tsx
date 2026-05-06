@@ -15,7 +15,7 @@ import SiteFooter from "@/components/SiteFooter";
 import NotificationBell from "@/components/NotificationBell";
 import SpotifyWidget from "./SpotifyWidget";
 
-export const metadata: Metadata = { title: "Ana Sayfa | bumedya." };
+export const metadata: Metadata = { title: "Ana Sayfa" };
 
 function BentoCard({ children, className = "", style }: { children: React.ReactNode; className?: string; style?: React.CSSProperties }) {
     return (

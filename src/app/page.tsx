@@ -7,7 +7,7 @@ import SiteFooter from "@/components/SiteFooter";
 import ContactSection from "@/components/ContactSection";
 
 export const metadata: Metadata = {
-    title: "bumedya. | Yaratıcı Dijital Evren",
+    title: "bumedya.",
     description: "Fikirlerin forma dönüştüğü, sınırların bulanıklaştığı yeni nesil dijital fanzin ve topluluk portalı.",
 };
 
@@ -38,7 +38,7 @@ const PAGES = [
     {
         path: "/galeri",
         label: "Galeri",
-        desc: "Etkinliklerden fotoğraflar, çizimler, tasarımlar — topluluğun görsel belleği burada birikir. Yetkilendirilmiş üyeler kendi eserlerini de ekleyebilir.",
+        desc: "Etkinliklerden fotoğraflar, çizimler, tasarımlar — topluluğun görsel belleği burada birikir. Yalnızca adminler içerik yükleyebilir.",
         accent: "rgba(167,139,250,0.85)",
         bg: "rgba(124,58,237,0.06)",
         border: "rgba(124,58,237,0.18)",

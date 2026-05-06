@@ -2,7 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ChatClient from "./ChatClient";
 
-export const metadata = { title: "Lounge | bumedya." };
+export const metadata = { title: "Lounge" };
 
 export default async function ChatPage() {
     const supabase = await createClient();

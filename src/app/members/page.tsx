@@ -5,7 +5,7 @@ import MembersClient from "./MembersClient";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import { ChevronLeft } from "lucide-react";
 
-export const metadata = { title: "Üyeler | bumedya." };
+export const metadata = { title: "Üyeler" };
 
 export default async function MembersPage() {
     const supabase = await createClient();

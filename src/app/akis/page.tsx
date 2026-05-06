@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import AkisClient from "./AkisClient";
 
-export const metadata: Metadata = { title: "Akış | bumedya." };
+export const metadata: Metadata = { title: "Akış" };
 
 export default async function AkisPage() {
     const supabase = await createClient();
