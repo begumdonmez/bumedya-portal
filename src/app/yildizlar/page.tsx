@@ -19,14 +19,11 @@ export default async function YildizlarPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect("/login");
 
-    const { data: profile } = await supabase
-        .from("profiles").select("username, badges").eq("id", user.id).single();
-    const username = profile?.username ?? "";
-    const isAdmin = (profile?.badges as string[] ?? []).includes("admin");
-
     const weekStart = getWeekStart();
 
-    const [{ data: nominations }, { data: myVotes }] = await Promise.all([
+    // Profil + nomination listesi + kullanıcının oyları → hepsi paralel
+    const [{ data: profile }, { data: nominations }, { data: myVotes }] = await Promise.all([
+        supabase.from("profiles").select("username, badges").eq("id", user.id).single(),
         supabase
             .from("weekly_nominations")
             .select("id, category, title, description, submitted_by, created_at")
@@ -39,10 +36,18 @@ export default async function YildizlarPage() {
             .eq("user_id", user.id),
     ]);
 
-    // Her nomination için oy sayısını çek
+    if (!profile) redirect("/login");
+
+    const username = profile.username ?? "";
+    const isAdmin = (profile.badges as string[] ?? []).includes("admin");
+
+    // Oy sayıları: sadece bu haftanın nomination'larına ait oylar
     const nominationIds = (nominations ?? []).map(n => n.id);
     const { data: allVotes } = nominationIds.length > 0
-        ? await supabase.from("weekly_votes").select("nomination_id").in("nomination_id", nominationIds)
+        ? await supabase
+              .from("weekly_votes")
+              .select("nomination_id")
+              .in("nomination_id", nominationIds)
         : { data: [] };
 
     const voteCounts: Record<string, number> = {};
@@ -50,7 +55,11 @@ export default async function YildizlarPage() {
         voteCounts[v.nomination_id] = (voteCounts[v.nomination_id] ?? 0) + 1;
     }
 
-    const myVoteIds = new Set((myVotes ?? []).map(v => v.nomination_id));
+    // Kullanıcının bu haftaki oy verdikleri (myVotes sadece bu haftanın nomination'larıyla filtrele)
+    const nominationIdSet = new Set(nominationIds);
+    const myVoteIds = (myVotes ?? [])
+        .map(v => v.nomination_id)
+        .filter(id => nominationIdSet.has(id));
 
     return (
         <YildizlarClient
@@ -60,7 +69,7 @@ export default async function YildizlarPage() {
             weekStart={weekStart}
             nominations={nominations ?? []}
             voteCounts={voteCounts}
-            myVoteIds={[...myVoteIds]}
+            myVoteIds={myVoteIds}
         />
     );
 }
