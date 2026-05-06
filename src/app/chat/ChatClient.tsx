@@ -31,7 +31,11 @@ function renderContent(content: string, myUsername: string) {
             {parts.map((part, i) =>
                 part.startsWith("@") ? (
                     <span key={i} className="font-semibold" style={{
-                        color: part.slice(1) === myUsername ? "rgba(252,211,77,0.95)" : "rgba(167,139,250,0.9)",
+                        color: part === "@all"
+                            ? "rgba(252,211,77,0.95)"
+                            : part.slice(1) === myUsername
+                                ? "rgba(252,211,77,0.95)"
+                                : "rgba(167,139,250,0.9)",
                     }}>
                         {part}
                     </span>
@@ -103,7 +107,10 @@ export default function ChatClient({ userId, username, initialMessages }: {
     const messages = messagesByRoom[activeRoom] ?? [];
     const activeRoomData = ROOMS.find((r) => r.id === activeRoom)!;
     const mentionResults = mentionQuery !== null
-        ? [...usersMap.keys()].filter((u) => u !== username && u.toLowerCase().startsWith(mentionQuery.toLowerCase())).slice(0, 6)
+        ? [
+            ...("all".startsWith(mentionQuery.toLowerCase()) && mentionQuery.length > 0 ? ["all"] : []),
+            ...[...usersMap.keys()].filter((u) => u !== username && u.toLowerCase().startsWith(mentionQuery.toLowerCase())).slice(0, 6),
+          ]
         : [];
 
     useEffect(() => {
@@ -211,16 +218,29 @@ export default function ChatClient({ userId, username, initialMessages }: {
         }
         await supabase.from("activities").insert({ user_id: userId, username, type: "lounge_join", payload: {} });
 
-        const mentioned = [...new Set((content.match(/@([a-zA-Z0-9_]+)/g) ?? []).map((m) => m.slice(1)).filter((u) => u !== username && usersMap.has(u)))];
-        if (mentioned.length > 0) {
-            await supabase.from("notifications").insert(
-                mentioned.map((u) => ({
-                    user_id: usersMap.get(u)!,
+        const hasAll = /@all\b/.test(content);
+        if (hasAll) {
+            const everyone = [...usersMap.entries()]
+                .filter(([u]) => u !== username)
+                .map(([, id]) => ({
+                    user_id: id,
                     from_username: username,
                     type: "mention",
                     payload: { room_id: activeRoom, message: content.slice(0, 100) },
-                }))
-            );
+                }));
+            if (everyone.length > 0) await supabase.from("notifications").insert(everyone);
+        } else {
+            const mentioned = [...new Set((content.match(/@([a-zA-Z0-9_]+)/g) ?? []).map((m) => m.slice(1)).filter((u) => u !== username && usersMap.has(u)))];
+            if (mentioned.length > 0) {
+                await supabase.from("notifications").insert(
+                    mentioned.map((u) => ({
+                        user_id: usersMap.get(u)!,
+                        from_username: username,
+                        type: "mention",
+                        payload: { room_id: activeRoom, message: content.slice(0, 100) },
+                    }))
+                );
+            }
         }
 
         setSending(false);
@@ -527,17 +547,23 @@ export default function ChatClient({ userId, username, initialMessages }: {
                     {mentionQuery !== null && mentionResults.length > 0 && (
                         <div className="absolute bottom-full left-3 sm:left-6 right-3 sm:right-6 mb-2 rounded-xl shadow-xl z-50 overflow-hidden"
                              style={{ background: "rgba(15,25,50,0.97)", backdropFilter: "blur(24px)", border: "1px solid var(--border-1)", maxHeight: 240, overflowY: "auto" }}>
-                            {mentionResults.map((u, i) => (
-                                <button key={u} onMouseDown={(e) => { e.preventDefault(); handleMentionSelect(u); }}
-                                        className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left transition-colors duration-100"
-                                        style={{ background: i === mentionIndex ? "var(--violet-bg)" : "transparent" }}>
-                                    <div className="w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0"
-                                         style={{ background: "rgba(124,58,237,0.2)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
-                                        {u[0].toUpperCase()}
-                                    </div>
-                                    <span className="text-sm" style={{ color: i === mentionIndex ? "var(--violet-text)" : "var(--text-2)" }}>@{u}</span>
-                                </button>
-                            ))}
+                            {mentionResults.map((u, i) => {
+                                const isAll = u === "all";
+                                return (
+                                    <button key={u} onMouseDown={(e) => { e.preventDefault(); handleMentionSelect(u); }}
+                                            className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left transition-colors duration-100"
+                                            style={{ background: i === mentionIndex ? (isAll ? "rgba(252,211,77,0.08)" : "var(--violet-bg)") : "transparent" }}>
+                                        <div className="w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-bold shrink-0"
+                                             style={{ background: isAll ? "rgba(252,211,77,0.15)" : "rgba(124,58,237,0.2)", border: `1px solid ${isAll ? "rgba(252,211,77,0.3)" : "var(--violet-border)"}`, color: isAll ? "rgba(252,211,77,0.9)" : "var(--violet-text)" }}>
+                                            {isAll ? "★" : u[0].toUpperCase()}
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-sm" style={{ color: isAll ? "rgba(252,211,77,0.95)" : i === mentionIndex ? "var(--violet-text)" : "var(--text-2)" }}>@{u}</span>
+                                            {isAll && <span className="text-[10px]" style={{ color: "rgba(252,211,77,0.5)" }}>Herkese bildirim gönder</span>}
+                                        </div>
+                                    </button>
+                                );
+                            })}
                         </div>
                     )}
                     <div className="rounded-2xl transition-all duration-200"

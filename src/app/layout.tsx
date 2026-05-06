@@ -31,6 +31,7 @@ export const metadata: Metadata = {
         "Fikirlerin forma dönüştüğü, sınırların bulanıklaştığı yeni nesil dijital fanzin ve topluluk portalı.",
     keywords: ["dijital fanzin", "yaratıcı topluluk", "sanat portalı", "bumedya"],
     authors: [{ name: "bumedya." }],
+    icons: { icon: "/logo.png" },
     openGraph: {
         type: "website",
         locale: "tr_TR",
