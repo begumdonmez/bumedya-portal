@@ -46,7 +46,7 @@ const PAGES = [
     {
         path: "/akis",
         label: "Akış",
-        desc: "Topluluktan kısa paylaşımlar, fikirler ve günlük üretimler. Üyeler metin veya görsel paylaşabilir, beğeni bırakabilir.",
+        desc: "Topluluktan kısa paylaşımlar, fikirler ve günlük üretimler. Üyeler metin veya görsel paylaşabilir,un dev beğeni bırakabilir.",
         accent: "rgba(96,165,250,0.85)",
         bg: "rgba(59,130,246,0.06)",
         border: "rgba(59,130,246,0.18)",
@@ -327,16 +327,14 @@ export default async function LandingPage() {
                             </span>
                         </div>
                     ))}
-                    <div className="card px-5 py-4 flex items-center gap-3 opacity-40">
+                    <Link href={user ? "/basvuru#kulup-ac" : "/register?next=%2Fbasvuru%23kulup-ac"}
+                          className="card px-5 py-4 flex items-center gap-3 transition-all duration-200 hover:border-violet-500/30"
+                          style={{ opacity: 0.6 }}>
                         <div className="flex flex-col gap-0.5">
                             <p className="text-sm font-semibold" style={{ color: "var(--text-2)" }}>Üniversiten burada olabilir</p>
-                            <p className="text-xs" style={{ color: "var(--text-4)" }}>Kulüp açmak için başvur</p>
+                            <p className="text-xs" style={{ color: "var(--text-4)" }}>Kulüp açmak için başvur →</p>
                         </div>
-                        <span className="text-xs px-2.5 py-1 rounded-full"
-                              style={{ background: "var(--bg-2)", border: "1px solid var(--border-3)", color: "var(--text-4)" }}>
-                            Yakında
-                        </span>
-                    </div>
+                    </Link>
                 </div>
             </section>
 

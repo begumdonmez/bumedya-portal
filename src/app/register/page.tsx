@@ -2,7 +2,7 @@
 
 import React, { useState, useId } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { registerSchema } from "@/lib/schemas";
@@ -153,6 +153,8 @@ function SuccessScreen({ email }: { email: string }) {
 /* ─── Ana bileşen ────────────────────────────────────────────── */
 export default function RegisterPage() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const nextUrl = searchParams.get("next") ?? "/onboarding";
     const formId = useId();
 
     const [email, setEmail]             = useState("");
@@ -211,7 +213,7 @@ export default function RegisterPage() {
                 email: parsed.data.email,
                 password: parsed.data.password,
                 options: {
-                    emailRedirectTo: `${window.location.origin}/auth/callback`,
+                    emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextUrl)}`,
                     data: {
                         username: parsed.data.username,
                     },

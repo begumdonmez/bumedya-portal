@@ -201,7 +201,7 @@ export default function BasvuruClient({
                     </div>
 
                     {/* ── Kulüp Aç ── */}
-                    <div className="flex flex-col gap-5">
+                    <div id="kulup-ac" className="flex flex-col gap-5">
                         <SectionHeading
                             icon={GraduationCap}
                             title="Kulüp Aç"
