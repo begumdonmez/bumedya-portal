@@ -85,6 +85,10 @@ const PAGES = [
     },
 ];
 
+const CLUBS = [
+    { uni: "Beykoz Üniversitesi", city: "İstanbul", active: true },
+];
+
 const PILLARS = [
     { label: "Çiz", accent: "rgba(167,139,250,1)", desc: "Kağıt sınır koymaz, ekran da koymaz." },
     { label: "Yaz", accent: "rgba(96,165,250,1)",  desc: "Kelimeler en keskin araçtır." },
@@ -295,6 +299,44 @@ export default async function LandingPage() {
                             <p className="text-xs leading-relaxed" style={{ color: "var(--text-3)" }}>{desc}</p>
                         </div>
                     ))}
+                </div>
+            </section>
+
+            {/* CLUBS */}
+            <section className="relative z-10 px-4 sm:px-6 pb-24 max-w-5xl mx-auto">
+                <div className="text-center mb-10">
+                    <p className="label-caps mb-4">Kulüpler</p>
+                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gradient-white">
+                        Nerelerde Varız?
+                    </h2>
+                    <p className="text-sm mt-3 max-w-md mx-auto" style={{ color: "var(--text-3)" }}>
+                        Topluluğun üniversitelerdeki uzantıları. Yakında daha fazlası.
+                    </p>
+                </div>
+                <div className="flex flex-wrap justify-center gap-3">
+                    {CLUBS.map((c) => (
+                        <div key={c.uni} className="card px-5 py-4 flex items-center gap-4">
+                            <div className="flex flex-col gap-0.5">
+                                <p className="text-sm font-semibold" style={{ color: "var(--text-2)" }}>{c.uni}</p>
+                                <p className="text-xs" style={{ color: "var(--text-4)" }}>{c.city}</p>
+                            </div>
+                            <span className="flex items-center gap-1.5 text-[10px] font-medium tracking-wider uppercase px-2.5 py-1 rounded-full"
+                                  style={{ background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.2)", color: "rgba(52,211,153,0.8)" }}>
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                Aktif
+                            </span>
+                        </div>
+                    ))}
+                    <div className="card px-5 py-4 flex items-center gap-3 opacity-40">
+                        <div className="flex flex-col gap-0.5">
+                            <p className="text-sm font-semibold" style={{ color: "var(--text-2)" }}>Üniversiten burada olabilir</p>
+                            <p className="text-xs" style={{ color: "var(--text-4)" }}>Kulüp açmak için başvur</p>
+                        </div>
+                        <span className="text-xs px-2.5 py-1 rounded-full"
+                              style={{ background: "var(--bg-2)", border: "1px solid var(--border-3)", color: "var(--text-4)" }}>
+                            Yakında
+                        </span>
+                    </div>
                 </div>
             </section>
 
