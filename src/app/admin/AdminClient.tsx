@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2, FileText, Check, Clock, Music2, Plus, Star, Film, Tv, BookOpen, Music, MessageCircle, Headphones } from "lucide-react";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2, FileText, Check, Clock, Music2, Plus, Star, Film, Tv, BookOpen, Music, MessageCircle, Headphones, Edit2, ScrollText } from "lucide-react";
 import { POSITIONS } from "@/app/basvuru/positions";
 import type { ElementType } from "react";
 
@@ -513,7 +513,19 @@ interface WeeklyNomination {
     description: string | null;
     submitted_by: string;
     status: "pending" | "approved" | "rejected";
+    admin_note: string | null;
+    reviewed_by: string | null;
+    reviewed_at: string | null;
     week_start: string;
+    created_at: string;
+}
+
+interface AdminLog {
+    id: string;
+    admin_username: string;
+    action: string;
+    target_id: string;
+    details: { title?: string; description?: string; category?: string; admin_note?: string } | null;
     created_at: string;
 }
 
@@ -529,23 +541,81 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
     const [filterStatus, setFilterStatus] = useState<"pending" | "approved" | "rejected" | "all">("pending");
     const [processing, setProcessing] = useState<string | null>(null);
 
+    // Düzenleme state
+    const [editingId, setEditingId]     = useState<string | null>(null);
+    const [editTitle, setEditTitle]     = useState("");
+    const [editDesc, setEditDesc]       = useState("");
+    const [editCat, setEditCat]         = useState("");
+
+    // Reddetme state
+    const [rejectingId, setRejectingId] = useState<string | null>(null);
+    const [rejectNote, setRejectNote]   = useState("");
+
     const pendingCount = noms.filter(n => n.status === "pending").length;
     const filtered = noms.filter(n => filterStatus === "all" || n.status === filterStatus);
 
-    const handleDecision = async (id: string, status: "approved" | "rejected") => {
-        setProcessing(id);
+    const openEdit = (nom: WeeklyNomination) => {
+        setRejectingId(null);
+        setEditingId(nom.id);
+        setEditTitle(nom.title);
+        setEditDesc(nom.description ?? "");
+        setEditCat(nom.category);
+    };
+
+    const openReject = (id: string) => {
+        setEditingId(null);
+        setRejectingId(id);
+        setRejectNote("");
+    };
+
+    const apiCall = async (body: Record<string, unknown>) => {
         const res = await fetch("/api/admin/nominations", {
             method: "PATCH",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id, status }),
+            body: JSON.stringify(body),
         });
         if (!res.ok) {
             const json = await res.json().catch(() => ({}));
-            toast.error("Güncellenemedi: " + (json.error ?? res.statusText));
-            setProcessing(null); return;
+            toast.error(json.error ?? "İşlem başarısız.");
+            return false;
         }
-        setNoms(prev => prev.map(n => n.id === id ? { ...n, status } : n));
-        toast.success(status === "approved" ? "Öneri onaylandı ✓" : "Öneri reddedildi");
+        return true;
+    };
+
+    const handleEdit = async (id: string) => {
+        if (!editTitle.trim()) { toast.error("Başlık boş olamaz."); return; }
+        setProcessing(id);
+        const ok = await apiCall({ action: "edit", id, title: editTitle, description: editDesc, category: editCat });
+        if (ok) {
+            setNoms(prev => prev.map(n => n.id === id
+                ? { ...n, title: editTitle.trim(), description: editDesc.trim() || null, category: editCat }
+                : n));
+            toast.success("Öneri düzenlendi.");
+            setEditingId(null);
+        }
+        setProcessing(null);
+    };
+
+    const handleApprove = async (id: string) => {
+        setProcessing(id);
+        const ok = await apiCall({ action: "approve", id });
+        if (ok) {
+            setNoms(prev => prev.map(n => n.id === id ? { ...n, status: "approved" } : n));
+            toast.success("Öneri onaylandı ✓");
+        }
+        setProcessing(null);
+    };
+
+    const handleReject = async (id: string) => {
+        setProcessing(id);
+        const ok = await apiCall({ action: "reject", id, admin_note: rejectNote });
+        if (ok) {
+            setNoms(prev => prev.map(n => n.id === id
+                ? { ...n, status: "rejected", admin_note: rejectNote.trim() || null }
+                : n));
+            toast.success("Öneri reddedildi.");
+            setRejectingId(null);
+        }
         setProcessing(null);
     };
 
@@ -570,40 +640,123 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
                 <div className="flex flex-col gap-2">
                     {filtered.map(nom => {
                         const cat = CAT_CONFIG[nom.category] ?? CAT_CONFIG.film;
-                        const Icon = cat.icon;
+                        const CatIcon = cat.icon;
+                        const isEditing   = editingId === nom.id;
+                        const isRejecting = rejectingId === nom.id;
+                        const busy        = processing === nom.id;
                         return (
-                            <div key={nom.id} className="card p-4 flex items-center gap-4">
-                                <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                                     style={{ background: cat.bg, border: `1px solid ${cat.border}` }}>
-                                    <Icon size={15} style={{ color: cat.color }} />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium truncate" style={{ color: "var(--text-1)" }}>{nom.title}</p>
-                                    {nom.description && (
-                                        <p className="text-xs truncate" style={{ color: "var(--text-4)" }}>{nom.description}</p>
-                                    )}
-                                    <p className="text-[10px] mt-0.5" style={{ color: "var(--text-5)" }}>
-                                        @{nom.submitted_by} · {cat.label} · {nom.week_start}
-                                    </p>
-                                </div>
-                                {nom.status === "pending" ? (
-                                    <div className="flex gap-2 shrink-0">
-                                        <button onClick={() => handleDecision(nom.id, "approved")} disabled={processing === nom.id}
-                                                className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50"
-                                                style={{ background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.3)", color: "rgba(52,211,153,0.9)" }}>
-                                            <Check size={12} /> Onayla
-                                        </button>
-                                        <button onClick={() => handleDecision(nom.id, "rejected")} disabled={processing === nom.id}
-                                                className="flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50"
-                                                style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "rgba(239,68,68,0.8)" }}>
-                                            <X size={12} /> Reddet
-                                        </button>
+                            <div key={nom.id} className="card overflow-hidden">
+                                {/* Ana satır */}
+                                <div className="p-4 flex items-center gap-3">
+                                    <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                                         style={{ background: cat.bg, border: `1px solid ${cat.border}` }}>
+                                        <CatIcon size={15} style={{ color: cat.color }} />
                                     </div>
-                                ) : (
-                                    <span className={`shrink-0 text-xs px-2.5 py-1 rounded-full border ${nom.status === "approved" ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400" : "bg-red-500/10 border-red-500/25 text-red-400"}`}>
-                                        {nom.status === "approved" ? <Check size={11} className="inline mr-1" /> : <X size={11} className="inline mr-1" />}
-                                        {nom.status === "approved" ? "Onaylı" : "Reddedildi"}
-                                    </span>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-sm font-medium truncate" style={{ color: "var(--text-1)" }}>{nom.title}</p>
+                                        {nom.description && (
+                                            <p className="text-xs truncate" style={{ color: "var(--text-4)" }}>{nom.description}</p>
+                                        )}
+                                        <p className="text-[10px] mt-0.5" style={{ color: "var(--text-5)" }}>
+                                            @{nom.submitted_by} · {cat.label} · {nom.week_start}
+                                        </p>
+                                    </div>
+                                    {nom.status === "pending" ? (
+                                        <div className="flex gap-1.5 shrink-0">
+                                            <button onClick={() => isEditing ? setEditingId(null) : openEdit(nom)} disabled={busy}
+                                                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 disabled:opacity-50"
+                                                    style={{ background: isEditing ? "rgba(251,191,36,0.15)" : "var(--bg-2)", border: `1px solid ${isEditing ? "rgba(251,191,36,0.4)" : "var(--border-2)"}`, color: isEditing ? "rgba(251,191,36,0.9)" : "var(--text-3)" }}>
+                                                <Edit2 size={11} /> Düzenle
+                                            </button>
+                                            <button onClick={() => isRejecting ? setRejectingId(null) : openReject(nom.id)} disabled={busy}
+                                                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50"
+                                                    style={{ background: isRejecting ? "rgba(239,68,68,0.15)" : "rgba(239,68,68,0.06)", border: `1px solid ${isRejecting ? "rgba(239,68,68,0.4)" : "rgba(239,68,68,0.2)"}`, color: "rgba(239,68,68,0.8)" }}>
+                                                <X size={11} /> Reddet
+                                            </button>
+                                            <button onClick={() => handleApprove(nom.id)} disabled={busy}
+                                                    className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50"
+                                                    style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)", color: "rgba(52,211,153,0.9)" }}>
+                                                {busy ? <span className="w-3 h-3 rounded-full border border-emerald-400/30 border-t-emerald-400 animate-spin" /> : <Check size={11} />}
+                                                Onayla
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <div className="flex flex-col items-end gap-1 shrink-0">
+                                            <span className={`text-xs px-2.5 py-1 rounded-full border ${nom.status === "approved" ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400" : "bg-red-500/10 border-red-500/25 text-red-400"}`}>
+                                                {nom.status === "approved" ? <Check size={11} className="inline mr-1" /> : <X size={11} className="inline mr-1" />}
+                                                {nom.status === "approved" ? "Onaylı" : "Reddedildi"}
+                                            </span>
+                                            {nom.reviewed_by && (
+                                                <span className="text-[10px]" style={{ color: "var(--text-5)" }}>@{nom.reviewed_by}</span>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Reddet notu — rejected ise göster */}
+                                {nom.status === "rejected" && nom.admin_note && (
+                                    <div className="px-4 pb-3 pt-0">
+                                        <p className="text-xs px-3 py-2 rounded-xl italic"
+                                           style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)", color: "rgba(239,68,68,0.7)" }}>
+                                            "{nom.admin_note}"
+                                        </p>
+                                    </div>
+                                )}
+
+                                {/* Düzenleme formu */}
+                                {isEditing && (
+                                    <div className="px-4 pb-4 pt-1 flex flex-col gap-2 border-t" style={{ borderColor: "rgba(251,191,36,0.15)", background: "rgba(251,191,36,0.03)" }}>
+                                        <p className="text-[10px] tracking-widest uppercase mt-1" style={{ color: "rgba(251,191,36,0.7)" }}>Düzenleme</p>
+                                        <select value={editCat} onChange={e => setEditCat(e.target.value)}
+                                                className="rounded-xl px-3 py-2 text-xs outline-none"
+                                                style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-1)" }}>
+                                            {Object.entries(CAT_CONFIG).map(([k, v]) => (
+                                                <option key={k} value={k}>{v.label}</option>
+                                            ))}
+                                        </select>
+                                        <input value={editTitle} onChange={e => setEditTitle(e.target.value)}
+                                               placeholder="Başlık" className="rounded-xl px-3 py-2 text-sm outline-none"
+                                               style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-1)" }} />
+                                        <input value={editDesc} onChange={e => setEditDesc(e.target.value)}
+                                               placeholder="Açıklama (opsiyonel)" className="rounded-xl px-3 py-2 text-xs outline-none"
+                                               style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-1)" }} />
+                                        <div className="flex gap-2 mt-1">
+                                            <button onClick={() => handleEdit(nom.id)} disabled={busy}
+                                                    className="flex items-center gap-1 px-4 py-1.5 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
+                                                    style={{ background: "rgba(251,191,36,0.15)", border: "1px solid rgba(251,191,36,0.4)", color: "rgba(251,191,36,0.9)" }}>
+                                                {busy ? <span className="w-3 h-3 rounded-full border border-yellow-400/30 border-t-yellow-400 animate-spin" /> : <Check size={11} />}
+                                                Kaydet
+                                            </button>
+                                            <button onClick={() => setEditingId(null)} className="px-4 py-1.5 rounded-xl text-xs transition-all"
+                                                    style={{ color: "var(--text-4)", border: "1px solid var(--border-2)", background: "var(--bg-3)" }}>
+                                                İptal
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Ret nedeni formu */}
+                                {isRejecting && (
+                                    <div className="px-4 pb-4 pt-1 flex flex-col gap-2 border-t" style={{ borderColor: "rgba(239,68,68,0.15)", background: "rgba(239,68,68,0.03)" }}>
+                                        <p className="text-[10px] tracking-widest uppercase mt-1" style={{ color: "rgba(239,68,68,0.7)" }}>Ret Nedeni</p>
+                                        <textarea value={rejectNote} onChange={e => setRejectNote(e.target.value)}
+                                                  placeholder="Opsiyonel — örn. 'Bu içerik uygun değil.'"
+                                                  rows={2} maxLength={300}
+                                                  className="rounded-xl px-3 py-2 text-xs outline-none resize-none"
+                                                  style={{ background: "var(--bg-2)", border: "1px solid rgba(239,68,68,0.2)", color: "var(--text-1)" }} />
+                                        <div className="flex gap-2 mt-1">
+                                            <button onClick={() => handleReject(nom.id)} disabled={busy}
+                                                    className="flex items-center gap-1 px-4 py-1.5 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
+                                                    style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.35)", color: "rgba(239,68,68,0.9)" }}>
+                                                {busy ? <span className="w-3 h-3 rounded-full border border-red-400/30 border-t-red-400 animate-spin" /> : <X size={11} />}
+                                                Reddi Onayla
+                                            </button>
+                                            <button onClick={() => setRejectingId(null)} className="px-4 py-1.5 rounded-xl text-xs transition-all"
+                                                    style={{ color: "var(--text-4)", border: "1px solid var(--border-2)", background: "var(--bg-3)" }}>
+                                                İptal
+                                            </button>
+                                        </div>
+                                    </div>
                                 )}
                             </div>
                         );
@@ -614,18 +767,64 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
     );
 }
 
-export default function AdminClient({ profiles: initialProfiles, myBadges, messages: initialMessages, applications: initialApplications, nominations: initialNominations }: {
+/* ─── Log sekmesi ───────────────────────────────────────────── */
+const ACTION_LABELS: Record<string, { label: string; color: string }> = {
+    nomination_approved: { label: "Onaylandı",  color: "rgba(52,211,153,0.9)"  },
+    nomination_rejected: { label: "Reddedildi", color: "rgba(239,68,68,0.85)"  },
+    nomination_edited:   { label: "Düzenlendi", color: "rgba(251,191,36,0.9)"  },
+};
+
+function LogsTab({ logs }: { logs: AdminLog[] }) {
+    if (logs.length === 0) return (
+        <div className="flex flex-col items-center justify-center py-16 gap-3">
+            <ScrollText size={28} className="opacity-10" />
+            <p className="text-sm" style={{ color: "var(--text-4)" }}>Henüz log kaydı yok.</p>
+        </div>
+    );
+    return (
+        <div className="flex flex-col gap-2">
+            {logs.map(log => {
+                const al = ACTION_LABELS[log.action] ?? { label: log.action, color: "var(--text-3)" };
+                const d = log.details;
+                return (
+                    <div key={log.id} className="card p-3 flex items-center gap-3">
+                        <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium truncate" style={{ color: "var(--text-1)" }}>
+                                {d?.title ?? "—"}
+                            </p>
+                            {d?.admin_note && (
+                                <p className="text-xs italic truncate" style={{ color: "rgba(239,68,68,0.65)" }}>
+                                    "{d.admin_note}"
+                                </p>
+                            )}
+                            <p className="text-[10px] mt-0.5" style={{ color: "var(--text-5)" }}>
+                                @{log.admin_username} · {new Date(log.created_at).toLocaleString("tr-TR")}
+                            </p>
+                        </div>
+                        <span className="shrink-0 text-xs px-2.5 py-1 rounded-full border whitespace-nowrap"
+                              style={{ color: al.color, background: al.color.replace(/[\d.]+\)$/, "0.08)"), borderColor: al.color.replace(/[\d.]+\)$/, "0.25)") }}>
+                            {al.label}
+                        </span>
+                    </div>
+                );
+            })}
+        </div>
+    );
+}
+
+export default function AdminClient({ profiles: initialProfiles, myBadges, messages: initialMessages, applications: initialApplications, nominations: initialNominations, logs: initialLogs }: {
     profiles: Profile[];
     myBadges: string[];
     messages: Message[];
     applications: Application[];
     nominations: WeeklyNomination[];
+    logs: AdminLog[];
 }) {
     const router = useRouter();
     const isAuthorized = myBadges.includes("authorized");
     const [profiles, setProfiles] = useState<Profile[]>(initialProfiles);
     const [messages, setMessages] = useState<Message[]>(initialMessages);
-    const [tab, setTab] = useState<"users" | "messages" | "applications" | "playlists" | "nominations">("users");
+    const [tab, setTab] = useState<"users" | "messages" | "applications" | "playlists" | "nominations" | "logs">("users");
     const [search, setSearch] = useState("");
     const [filter, setFilter] = useState<"all" | "member" | "creator">("all");
     const unreadCount = messages.filter(m => !m.read).length;
@@ -738,6 +937,7 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                         { id: "applications", label: "Başvurular",   badge: pendingAppsCount as number | undefined },
                         { id: "nominations",  label: "Yıldızlar",    badge: pendingNomCount as number | undefined },
                         { id: "playlists",    label: "Playlist",     badge: undefined as number | undefined },
+                        { id: "logs",         label: "Loglar",       badge: undefined as number | undefined },
                     ] as const).map(({ id, label, badge }) => (
                         <button key={id} onClick={() => setTab(id)}
                                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200"
@@ -767,6 +967,9 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
 
                 {/* Yıldızlar sekmesi */}
                 {tab === "nominations" && <NominationsTab nominations={initialNominations} />}
+
+                {/* Loglar sekmesi */}
+                {tab === "logs" && <LogsTab logs={initialLogs} />}
 
                 {/* Playlist sekmesi */}
                 {tab === "playlists" && <PlaylistsTab />}

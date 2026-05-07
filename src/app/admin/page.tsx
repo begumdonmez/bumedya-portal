@@ -24,12 +24,13 @@ export default async function AdminPage() {
     // yoksa admins kendi dışındaki kullanıcıların önerilerini göremez.
     const adminSupabase = createAdminClient();
 
-    const [{ data: profiles }, { data: messages }, { data: applications }, { data: nominations }] = await Promise.all([
+    const [{ data: profiles }, { data: messages }, { data: applications }, { data: nominations }, { data: logs }] = await Promise.all([
         supabase.from("profiles").select("id, username, role, badges, created_at").order("created_at", { ascending: false }),
         supabase.from("messages").select("id, name, email, message, read, created_at").order("created_at", { ascending: false }),
         supabase.from("applications").select("id, user_id, username, type, answers, status, admin_note, created_at").order("created_at", { ascending: false }),
-        adminSupabase.from("weekly_nominations").select("id, category, title, description, submitted_by, status, week_start, created_at").order("created_at", { ascending: false }),
+        adminSupabase.from("weekly_nominations").select("id, category, title, description, submitted_by, status, admin_note, reviewed_by, reviewed_at, week_start, created_at").order("created_at", { ascending: false }),
+        adminSupabase.from("admin_logs").select("id, admin_username, action, target_id, target_type, details, created_at").order("created_at", { ascending: false }).limit(200),
     ]);
 
-    return <AdminClient profiles={profiles ?? []} myBadges={me?.badges ?? []} messages={messages ?? []} applications={applications ?? []} nominations={nominations ?? []} />;
+    return <AdminClient profiles={profiles ?? []} myBadges={me?.badges ?? []} messages={messages ?? []} applications={applications ?? []} nominations={nominations ?? []} logs={logs ?? []} />;
 }
