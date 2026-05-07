@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2, FileText, Check, Clock, Music2, Plus, Star, Film, Tv, BookOpen, Music } from "lucide-react";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2, FileText, Check, Clock, Music2, Plus, Star, Film, Tv, BookOpen, Music, MessageCircle, Headphones } from "lucide-react";
 import { POSITIONS } from "@/app/basvuru/positions";
 import type { ElementType } from "react";
 
@@ -18,7 +18,7 @@ interface Profile {
 }
 
 /* ─── Rozet konfigürasyonu ──────────────────────────────────── */
-type BadgeId = "authorized" | "admin" | "founder" | "verified" | "nakkas" | "kalemsor" | "muretti" | "katkici" | "cizer" | "yazar" | "editor";
+type BadgeId = "authorized" | "admin" | "founder" | "verified" | "nakkas" | "kalemsor" | "muretti" | "katkici" | "cizer" | "yazar" | "editor" | "sosyal_kelebek";
 
 const BADGES: { id: BadgeId; label: string; icon: ElementType; color: string; bg: string; border: string; authorizedOnly: boolean }[] = [
     /* ── Sistem ── */
@@ -32,9 +32,11 @@ const BADGES: { id: BadgeId; label: string; icon: ElementType; color: string; bg
     { id: "muretti",    label: "Mürettip",    icon: Shield,     color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.1)",  border: "rgba(251,191,36,0.3)",  authorizedOnly: false },
     { id: "katkici",    label: "Katkıcı",     icon: BadgeCheck, color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)", border: "rgba(59,130,246,0.25)", authorizedOnly: false },
     /* ── İlgi alanı (serbest) ── */
-    { id: "cizer",      label: "Çizer",       icon: Palette,    color: "rgba(244,114,182,0.7)", bg: "rgba(244,114,182,0.06)", border: "rgba(244,114,182,0.2)", authorizedOnly: false },
-    { id: "yazar",      label: "Yazar",       icon: PenLine,    color: "rgba(52,211,153,0.7)",  bg: "rgba(52,211,153,0.06)",  border: "rgba(52,211,153,0.2)",  authorizedOnly: false },
-    { id: "editor",     label: "Editör",      icon: Shield,     color: "rgba(251,191,36,0.7)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)",  authorizedOnly: false },
+    { id: "cizer",          label: "Çizer",          icon: Palette,        color: "rgba(244,114,182,0.7)", bg: "rgba(244,114,182,0.06)", border: "rgba(244,114,182,0.2)", authorizedOnly: false },
+    { id: "yazar",          label: "Yazar",          icon: PenLine,        color: "rgba(52,211,153,0.7)",  bg: "rgba(52,211,153,0.06)",  border: "rgba(52,211,153,0.2)",  authorizedOnly: false },
+    { id: "editor",         label: "Editör",         icon: Shield,         color: "rgba(251,191,36,0.7)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)",  authorizedOnly: false },
+    /* ── Sosyal ── */
+    { id: "sosyal_kelebek", label: "Sosyal Kelebek", icon: MessageCircle,  color: "rgba(251,146,60,0.9)",  bg: "rgba(251,146,60,0.08)",  border: "rgba(251,146,60,0.25)", authorizedOnly: false },
 ];
 
 /* ─── Rozet pill bileşeni ───────────────────────────────────── */

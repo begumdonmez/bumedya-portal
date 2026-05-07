@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Award, ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Award, ChevronLeft, ChevronRight, Eye, Tv, BookOpen, Headphones, MessageCircle } from "lucide-react";
 import type { ElementType } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -48,15 +48,28 @@ const ROLE_CONFIG: Record<string, { label: string; sublabel: string; desc: strin
     },
 };
 
-/* ─── Rozet tanımları (admin atar) ─────────────────────────── */
+/* ─── Rozet tanımları ───────────────────────────────────────── */
 const BADGE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; icon: ElementType }> = {
-    admin:    { label: "Admin",    icon: Zap,         color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.08)",   border: "rgba(239,68,68,0.25)"   },
-    editor:   { label: "Editör",   icon: Shield,      color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.25)"  },
-    artist:   { label: "Sanatçı",  icon: Palette,     color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.25)" },
-    writer:   { label: "Yazar",    icon: PenLine,     color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)"   },
-    verified: { label: "Onaylı",   icon: BadgeCheck,  color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"   },
-    founder:  { label: "Kurucu",   icon: Sparkles,    color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)"   },
+    // Admin tarafından verilir
+    admin:           { label: "Admin",          icon: Zap,          color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.08)",   border: "rgba(239,68,68,0.25)"   },
+    editor:          { label: "Editör",         icon: Shield,       color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.25)"  },
+    artist:          { label: "Sanatçı",        icon: Palette,      color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.25)" },
+    writer:          { label: "Yazar",          icon: PenLine,      color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)"   },
+    verified:        { label: "Onaylı",         icon: BadgeCheck,   color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"   },
+    founder:         { label: "Kurucu",         icon: Sparkles,     color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)"   },
+    sosyal_kelebek:  { label: "Sosyal Kelebek", icon: MessageCircle,color: "rgba(251,146,60,0.9)",  bg: "rgba(251,146,60,0.08)",  border: "rgba(251,146,60,0.25)"  },
+    // Kullanıcı kendi alabilir
+    seri_izleyici:   { label: "Seri İzleyici",  icon: Tv,           color: "rgba(96,165,250,0.9)",  bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.25)"  },
+    kitap_kurdu:     { label: "Kitap Kurdu",    icon: BookOpen,     color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.25)"  },
+    plak_kafasi:     { label: "Plak Kafası",    icon: Headphones,   color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.25)" },
 };
+
+/* ─── Kullanıcının kendi alabileceği rozetler ───────────────── */
+const SELF_BADGES: { id: string; desc: string }[] = [
+    { id: "seri_izleyici", desc: "Film & dizi tutkunları için" },
+    { id: "kitap_kurdu",   desc: "Okumaktan yorulmayanlar için" },
+    { id: "plak_kafasi",   desc: "Müziği yaşayıp nefes alanlar için" },
+];
 
 /* ─── Avatar ────────────────────────────────────────────────── */
 function Avatar({ username, size = 72 }: { username: string; size?: number }) {
@@ -164,6 +177,19 @@ export default function ProfilPage() {
         if (error) { toast.error("Rol değiştirilemedi."); return; }
         setProfile({ ...profile, role: newRole });
         toast.success(newRole === "creator" ? "Üretici oldun!" : "İzleyiciye geçildi.");
+    };
+
+    const handleToggleSelfBadge = async (badgeId: string) => {
+        if (!profile) return;
+        const res = await fetch("/api/profile/self-badge", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ badgeId }),
+        });
+        const json = await res.json();
+        if (!res.ok) { toast.error(json.error ?? "Rozet güncellenemedi."); return; }
+        setProfile({ ...profile, badges: json.badges });
+        toast.success(json.added ? "Rozet eklendi!" : "Rozet kaldırıldı.");
     };
 
     const handleSignOut = async () => {
@@ -419,6 +445,45 @@ export default function ProfilPage() {
                             </p>
                         </div>
                     )}
+                </div>
+
+                {/* ── İLGİ ROZETLERİ ── */}
+                <div className="card rounded-3xl p-6">
+                    <p className="text-[10px] tracking-widest uppercase mb-1" style={{ color: "var(--text-4)" }}>
+                        İlgi Rozetleri
+                    </p>
+                    <p className="text-xs mb-4" style={{ color: "var(--text-5)" }}>
+                        İlgi alanlarına uyan rozetleri kendine ekleyebilirsin.
+                    </p>
+                    <div className="flex flex-col gap-3">
+                        {SELF_BADGES.map(({ id, desc }) => {
+                            const conf = BADGE_CONFIG[id];
+                            if (!conf) return null;
+                            const active = profile.badges.includes(id);
+                            return (
+                                <div key={id} className="flex items-center justify-between gap-4 px-4 py-3 rounded-2xl transition-all duration-200"
+                                     style={{ background: active ? conf.bg : "var(--bg-3)", border: `1px solid ${active ? conf.border : "var(--border-3)"}` }}>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                                             style={{ background: active ? conf.bg : "var(--bg-2)", border: `1px solid ${active ? conf.border : "var(--border-2)"}`, color: active ? conf.color : "var(--text-4)" }}>
+                                            <conf.icon size={17} strokeWidth={1.8} />
+                                        </div>
+                                        <div>
+                                            <p className="text-xs font-semibold" style={{ color: active ? conf.color : "var(--text-2)" }}>{conf.label}</p>
+                                            <p className="text-[11px]" style={{ color: "var(--text-5)" }}>{desc}</p>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => handleToggleSelfBadge(id)}
+                                            className="shrink-0 px-3 py-1.5 rounded-xl text-[11px] font-medium transition-all duration-200"
+                                            style={active
+                                                ? { background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "rgba(239,68,68,0.75)" }
+                                                : { background: conf.bg, border: `1px solid ${conf.border}`, color: conf.color }}>
+                                        {active ? "Kaldır" : "Al"}
+                                    </button>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
 
                 {/* Postlar */}
