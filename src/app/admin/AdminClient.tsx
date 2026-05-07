@@ -92,10 +92,12 @@ function UserRow({ profile, onBadgeToggle, isAuthorized }: {
                         </span>
                     </div>
 
-                    {/* Mevcut rozetler */}
+                    {/* Mevcut rozetler — authorized rozeti sadece authorized admine görünür */}
                     {profile.badges.length > 0 && (
                         <div className="flex gap-1 flex-wrap mt-1.5">
-                            {profile.badges.map((b) => <BadgePill key={b} id={b} />)}
+                            {profile.badges
+                                .filter(b => b !== "authorized" || isAuthorized)
+                                .map((b) => <BadgePill key={b} id={b} />)}
                         </div>
                     )}
                 </div>
