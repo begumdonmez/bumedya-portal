@@ -42,19 +42,30 @@ export interface EventItem {
     approved?: boolean;
 }
 
-function makeIcon(bg: string, border: string, glow: string, size = 14) {
+function makeIcon(color: string, glow: string, size = 28) {
+    const s = size;
+    const svg = `
+        <svg width="${s}" height="${Math.round(s * 1.35)}" viewBox="0 0 28 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <filter id="glow">
+                <feGaussianBlur stdDeviation="2" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+            </filter>
+            <path d="M14 0C6.268 0 0 6.268 0 14c0 9.333 14 24 14 24S28 23.333 28 14C28 6.268 21.732 0 14 0z"
+                fill="${color}" filter="url(#glow)" style="filter:drop-shadow(0 2px 8px ${glow})"/>
+            <circle cx="14" cy="14" r="5.5" fill="rgba(255,255,255,0.9)"/>
+        </svg>`;
     return L.divIcon({
-        html: `<span style="display:block;width:${size}px;height:${size}px;border-radius:50%;background:${bg};border:2px solid ${border};box-shadow:0 0 12px ${glow}"></span>`,
+        html: svg,
         className: "",
-        iconSize: [size, size],
-        iconAnchor: [size / 2, size / 2],
-        popupAnchor: [0, -(size / 2 + 4)],
+        iconSize: [s, Math.round(s * 1.35)],
+        iconAnchor: [s / 2, Math.round(s * 1.35)],
+        popupAnchor: [0, -Math.round(s * 1.35)],
     });
 }
 
-const regularIcon  = makeIcon("rgba(124,58,237,0.9)",  "rgba(167,139,250,0.9)", "rgba(124,58,237,0.7)");
-const approvedIcon = makeIcon("rgba(52,211,153,0.9)",  "rgba(52,211,153,0.9)",  "rgba(52,211,153,0.6)");
-const selectedIcon = makeIcon("rgba(251,191,36,0.95)", "rgba(251,191,36,0.9)",  "rgba(251,191,36,0.8)", 18);
+const regularIcon  = makeIcon("rgba(124,58,237,0.95)", "rgba(124,58,237,0.6)");
+const approvedIcon = makeIcon("rgba(52,211,153,0.95)", "rgba(52,211,153,0.5)");
+const selectedIcon = makeIcon("rgba(251,191,36,0.98)", "rgba(251,191,36,0.7)", 34);
 
 export default function EventMap({
     events,
