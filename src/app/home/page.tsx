@@ -69,7 +69,7 @@ export default async function HomePage() {
         supabase.from("profiles").select("*", { count: "exact", head: true }).contains("badges", ["kalemsor"]),
         supabase.from("profiles").select("*", { count: "exact", head: true }).contains("badges", ["nakkas"]),
         supabase.from("spotify_playlists").select("id, name, spotify_id, description").order("created_at", { ascending: true }),
-        supabase.from("events").select("id, username, title, address, lat, lng, event_date, ref_url").order("event_date", { ascending: true }),
+        supabase.from("events").select("id, username, title, address, lat, lng, event_date, ref_url, approved").order("event_date", { ascending: true }),
         supabase.from("announcements").select("id, user_id, username, content, created_at").order("created_at", { ascending: false }).limit(10),
     ]);
 
