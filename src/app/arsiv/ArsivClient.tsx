@@ -46,75 +46,91 @@ const CREATOR_LABEL: Record<Category, string> = {
     sarki: "Sanatçı",
 };
 
-/* ── DVD Kartı (Film) ────────────────────────────────────────── */
+/* ── DVD Spindle Kartı (Film) ────────────────────────────────── */
 function DvdCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
     return (
         <div style={{
-            width: 130, height: 185, display: "flex", overflow: "hidden",
-            borderRadius: "3px 6px 6px 3px",
-            border: "1px solid rgba(124,58,237,0.35)",
-            boxShadow: "4px 6px 22px rgba(0,0,0,0.55), inset 0 0 0 1px rgba(255,255,255,0.03)",
-            background: "linear-gradient(160deg, #0d0b22 0%, #160e38 100%)",
-            flexShrink: 0, position: "relative", cursor: "pointer",
-            transition: "transform 0.18s, box-shadow 0.18s",
+            width: 96, flexShrink: 0, cursor: "pointer",
+            display: "flex", flexDirection: "column", alignItems: "center",
+            transition: "transform 0.18s",
         }}
-            className="group hover:scale-[1.04] hover:shadow-2xl"
+            className="hover:-translate-y-1.5"
         >
-            {/* Sol spine */}
+            {/* Spindle pin */}
             <div style={{
-                width: 15, flexShrink: 0,
-                background: "linear-gradient(180deg, rgba(124,58,237,0.6), rgba(124,58,237,0.3))",
-                borderRight: "1px solid rgba(124,58,237,0.25)",
-                display: "flex", alignItems: "center", justifyContent: "center", padding: "6px 0",
+                width: 7, height: 14, zIndex: 3, position: "relative",
+                background: "linear-gradient(180deg, #777 0%, #444 100%)",
+                borderRadius: "3px 3px 0 0",
+                boxShadow: "0 0 4px rgba(0,0,0,0.5)",
+            }} />
+
+            {/* Üst disk */}
+            <div style={{
+                width: 90, height: 90, borderRadius: "50%", flexShrink: 0,
+                background: "conic-gradient(from 30deg, #c8c8c8 0deg, #f0f0f0 25deg, #b0b0b0 50deg, #e8e8e8 75deg, #c0c0c0 100deg, #ececec 130deg, #b8b8b8 160deg, #e0e0e0 190deg, #c4c4c4 220deg, #f0f0f0 250deg, #b8b8b8 280deg, #e4e4e4 310deg, #c8c8c8 340deg, #f0f0f0 360deg)",
+                border: "1px solid #aaa",
+                boxShadow: "0 3px 12px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)",
+                position: "relative", zIndex: 2,
+                display: "flex", alignItems: "center", justifyContent: "center",
             }}>
-                <span style={{
-                    writingMode: "vertical-rl", transform: "rotate(180deg)",
-                    fontSize: 7, color: "rgba(255,255,255,0.75)", fontWeight: 700,
-                    letterSpacing: 0.5, overflow: "hidden", maxHeight: 140,
-                    textOverflow: "ellipsis", whiteSpace: "nowrap",
-                }}>{item.title}</span>
-            </div>
-
-            {/* Cover alanı */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: "8px 8px 6px" }}>
-                {/* Kapak görseli */}
+                {/* Merkez etiket */}
                 <div style={{
-                    flex: 1, borderRadius: 4, marginBottom: 8,
-                    background: "linear-gradient(135deg, rgba(124,58,237,0.15) 0%, rgba(124,58,237,0.04) 100%)",
-                    border: "1px solid rgba(124,58,237,0.2)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    position: "relative", overflow: "hidden",
+                    width: 38, height: 38, borderRadius: "50%",
+                    background: "linear-gradient(135deg, rgba(124,58,237,0.45), rgba(124,58,237,0.18))",
+                    border: "1px solid rgba(124,58,237,0.55)",
+                    display: "flex", flexDirection: "column",
+                    alignItems: "center", justifyContent: "center", gap: 2, padding: 4,
                 }}>
-                    <Film size={30} style={{ color: "rgba(124,58,237,0.3)" }} />
-                    {avg != null && (
-                        <div style={{
-                            position: "absolute", top: 5, right: 5,
-                            background: "rgba(0,0,0,0.7)", borderRadius: 4,
-                            padding: "2px 5px", display: "flex", alignItems: "center", gap: 2,
-                        }}>
-                            <Star size={7} fill="rgba(252,211,77,0.9)" style={{ color: "rgba(252,211,77,0.9)" }} />
-                            <span style={{ fontSize: 8, color: "rgba(252,211,77,0.9)", fontWeight: 700 }}>{avg}</span>
-                        </div>
-                    )}
+                    <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#1a1a1a", border: "1px solid #555" }} />
+                    <p style={{
+                        fontSize: 5.5, fontWeight: 700,
+                        color: "rgba(167,139,250,0.95)", textAlign: "center",
+                        lineHeight: 1.2, margin: 0, maxWidth: 28,
+                        overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    }}>{item.title}</p>
+                    {item.year && <p style={{ fontSize: 5, color: "rgba(255,255,255,0.35)", margin: 0 }}>{item.year}</p>}
                 </div>
 
-                {/* Alt disc + başlık */}
-                <div style={{ display: "flex", alignItems: "center", gap: 5 }}>
-                    {/* Mini DVD disc */}
+                {/* Puan */}
+                {avg != null && (
                     <div style={{
-                        width: 20, height: 20, borderRadius: "50%", flexShrink: 0,
-                        background: "conic-gradient(from 0deg, #555 0%, #bbb 15%, #777 30%, #ccc 45%, #666 60%, #bbb 75%, #555 90%, #aaa 100%)",
-                        border: "2px solid #2a2a2a", position: "relative",
-                        display: "flex", alignItems: "center", justifyContent: "center",
+                        position: "absolute", bottom: 7,
+                        display: "flex", alignItems: "center", gap: 2,
                     }}>
-                        <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#111", border: "1px solid #444" }} />
+                        <Star size={6} fill="rgba(252,211,77,0.9)" style={{ color: "rgba(252,211,77,0.9)" }} />
+                        <span style={{ fontSize: 7, color: "rgba(252,211,77,0.9)", fontWeight: 700 }}>{avg}</span>
                     </div>
-                    <div style={{ minWidth: 0 }}>
-                        <p style={{ fontSize: 8, fontWeight: 700, color: "rgba(255,255,255,0.85)", margin: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", lineHeight: 1.2 }}>{item.title}</p>
-                        {item.year && <p style={{ fontSize: 7, color: "rgba(255,255,255,0.3)", margin: "1px 0 0" }}>{item.year}</p>}
-                    </div>
-                </div>
+                )}
             </div>
+
+            {/* Disk yığını (cake kenarları) */}
+            <div style={{ width: 88, position: "relative", zIndex: 1 }}>
+                {Array.from({ length: 9 }, (_, i) => (
+                    <div key={i} style={{
+                        height: i === 0 ? 2 : 2,
+                        background: i % 2 === 0
+                            ? "linear-gradient(180deg, #d0d0d0 0%, #a8a8a8 100%)"
+                            : "linear-gradient(180deg, #b8b8b8 0%, #888 100%)",
+                        borderLeft: "1px solid #bbb",
+                        borderRight: "1px solid #888",
+                    }} />
+                ))}
+                {/* Alt tutucu */}
+                <div style={{
+                    height: 7,
+                    background: "linear-gradient(180deg, #3a3a3a 0%, #1a1a1a 100%)",
+                    borderRadius: "0 0 5px 5px",
+                    border: "1px solid #555", borderTop: "none",
+                }} />
+            </div>
+
+            {/* Başlık */}
+            <p style={{
+                fontSize: 8, fontWeight: 600, textAlign: "center",
+                color: "rgba(255,255,255,0.75)", marginTop: 7,
+                maxWidth: 88, overflow: "hidden",
+                textOverflow: "ellipsis", whiteSpace: "nowrap",
+            }}>{item.title}</p>
         </div>
     );
 }
@@ -201,59 +217,81 @@ function Reel() {
     );
 }
 
-/* ── Kitap Kartı ─────────────────────────────────────────────── */
+/* ── Kitap renk paleti (id'den deterministik renk) ───────────── */
+const BOOK_PALETTE = [
+    { bg: "linear-gradient(175deg, #0e2a4a 0%, #0a1d36 100%)", accent: "rgba(96,165,250,0.85)",  border: "rgba(59,130,246,0.45)"  },
+    { bg: "linear-gradient(175deg, #2a0f4a 0%, #1c0a36 100%)", accent: "rgba(167,139,250,0.85)", border: "rgba(124,58,237,0.45)"  },
+    { bg: "linear-gradient(175deg, #0a2a1a 0%, #072016 100%)", accent: "rgba(52,211,153,0.85)",  border: "rgba(16,185,129,0.45)"  },
+    { bg: "linear-gradient(175deg, #3a0f1e 0%, #2a0a16 100%)", accent: "rgba(251,113,133,0.85)", border: "rgba(244,63,94,0.45)"   },
+    { bg: "linear-gradient(175deg, #2a200a 0%, #1e1708 100%)", accent: "rgba(251,191,36,0.85)",  border: "rgba(245,158,11,0.45)"  },
+    { bg: "linear-gradient(175deg, #1a2a0a 0%, #121e08 100%)", accent: "rgba(163,230,53,0.85)",  border: "rgba(132,204,22,0.45)"  },
+    { bg: "linear-gradient(175deg, #2a1a0a 0%, #1e1208 100%)", accent: "rgba(251,146,60,0.85)",  border: "rgba(249,115,22,0.45)"  },
+    { bg: "linear-gradient(175deg, #0a1e2a 0%, #081520 100%)", accent: "rgba(34,211,238,0.85)",  border: "rgba(6,182,212,0.45)"   },
+];
+
+function getBookColor(id: string) {
+    const hash = id.replace(/-/g, "").split("").reduce((acc, c) => acc + c.charCodeAt(0), 0);
+    return BOOK_PALETTE[hash % BOOK_PALETTE.length];
+}
+
+/* ── Kitap Kartı — sırt görünümü ─────────────────────────────── */
 function BookCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
+    const col = getBookColor(item.id);
     return (
         <div style={{
-            width: 120, height: 185, display: "flex", overflow: "hidden",
-            borderRadius: "3px 6px 6px 3px",
-            border: "1px solid rgba(52,211,153,0.35)",
-            boxShadow: "-2px 2px 8px rgba(0,0,0,0.4), 4px 6px 22px rgba(0,0,0,0.55)",
-            background: "linear-gradient(160deg, #051a10 0%, #0a2218 100%)",
-            flexShrink: 0, cursor: "pointer",
+            width: 52, height: 215, flexShrink: 0,
+            borderRadius: "4px 5px 5px 4px",
+            background: col.bg,
+            border: `1px solid ${col.border}`,
+            boxShadow: `2px 4px 16px rgba(0,0,0,0.6), inset 2px 0 0 rgba(255,255,255,0.06), inset -1px 0 0 rgba(0,0,0,0.3)`,
+            display: "flex", flexDirection: "column",
+            alignItems: "center", padding: "12px 0 10px",
+            cursor: "pointer", position: "relative",
             transition: "transform 0.18s, box-shadow 0.18s",
         }}
-            className="group hover:scale-[1.04] hover:shadow-2xl"
+            className="hover:-translate-y-1.5 hover:shadow-2xl"
         >
-            {/* Sol sırt */}
+            {/* Şerit (bookmark) */}
             <div style={{
-                width: 16, flexShrink: 0,
-                background: "linear-gradient(180deg, rgba(52,211,153,0.55), rgba(52,211,153,0.3))",
-                borderRight: "1px solid rgba(52,211,153,0.2)",
-                display: "flex", alignItems: "center", justifyContent: "center", padding: "6px 0",
-            }}>
-                <span style={{
+                width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
+                background: col.accent,
+                boxShadow: `0 0 8px ${col.accent}`,
+                marginBottom: 14,
+            }} />
+
+            {/* Dikey başlık */}
+            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: "0 10px" }}>
+                <p style={{
                     writingMode: "vertical-rl", transform: "rotate(180deg)",
-                    fontSize: 7, color: "rgba(255,255,255,0.8)", fontWeight: 700,
-                    letterSpacing: 0.5, maxHeight: 145, overflow: "hidden",
-                    textOverflow: "ellipsis", whiteSpace: "nowrap",
-                }}>{item.title}</span>
+                    fontSize: 11, fontWeight: 600,
+                    color: "rgba(255,255,255,0.9)", letterSpacing: 0.6,
+                    margin: 0, lineHeight: 1.25,
+                    overflow: "hidden", whiteSpace: "nowrap",
+                    textOverflow: "ellipsis", maxHeight: 130,
+                }}>{item.title}</p>
             </div>
 
-            {/* Kapak */}
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: "8px 8px 7px" }}>
+            {/* Yazar */}
+            {item.creator && (
+                <p style={{
+                    writingMode: "vertical-rl", transform: "rotate(180deg)",
+                    fontSize: 7.5, color: "rgba(255,255,255,0.38)",
+                    margin: "10px 0 0", letterSpacing: 0.2,
+                    overflow: "hidden", whiteSpace: "nowrap",
+                    textOverflow: "ellipsis", maxHeight: 44, flexShrink: 0,
+                }}>{item.creator}</p>
+            )}
+
+            {/* Puan */}
+            {avg != null && (
                 <div style={{
-                    flex: 1, borderRadius: 3, marginBottom: 7,
-                    background: "linear-gradient(135deg, rgba(52,211,153,0.1) 0%, rgba(52,211,153,0.03) 100%)",
-                    border: "1px solid rgba(52,211,153,0.15)",
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    position: "relative", overflow: "hidden",
+                    position: "absolute", bottom: 8,
+                    display: "flex", alignItems: "center", gap: 2,
                 }}>
-                    <BookOpen size={26} style={{ color: "rgba(52,211,153,0.3)" }} />
-                    {avg != null && (
-                        <div style={{
-                            position: "absolute", top: 5, right: 5,
-                            background: "rgba(0,0,0,0.7)", borderRadius: 4,
-                            padding: "2px 5px", display: "flex", alignItems: "center", gap: 2,
-                        }}>
-                            <Star size={7} fill="rgba(252,211,77,0.9)" style={{ color: "rgba(252,211,77,0.9)" }} />
-                            <span style={{ fontSize: 8, color: "rgba(252,211,77,0.9)", fontWeight: 700 }}>{avg}</span>
-                        </div>
-                    )}
+                    <Star size={7} fill="rgba(252,211,77,0.9)" style={{ color: "rgba(252,211,77,0.9)" }} />
+                    <span style={{ fontSize: 7.5, color: "rgba(252,211,77,0.9)", fontWeight: 700 }}>{avg}</span>
                 </div>
-                <p style={{ fontSize: 8, fontWeight: 700, color: "rgba(255,255,255,0.85)", margin: 0, lineHeight: 1.25, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{item.title}</p>
-                {item.creator && <p style={{ fontSize: 7.5, color: "rgba(52,211,153,0.6)", margin: "2px 0 0", fontStyle: "italic", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.creator}</p>}
-            </div>
+            )}
         </div>
     );
 }
@@ -337,21 +375,19 @@ function ShelfLabel({ category }: { category: Category }) {
 
 /* ── Medya kartı wrapper ──────────────────────────────────────── */
 function MediaCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
-    const isVinyl = item.category === "sarki";
     return (
         <Link
             href={`/arsiv/${item.id}`}
-            className={`flex flex-col items-center gap-2 group ${isVinyl ? "pt-0" : ""}`}
-            style={{ textDecoration: "none" }}
+            style={{ textDecoration: "none", flexShrink: 0 }}
         >
-            {item.category === "film"  && <DvdCard  item={item} avg={avg} />}
-            {item.category === "dizi"  && <VhsCard  item={item} avg={avg} />}
-            {item.category === "kitap" && <BookCard item={item} avg={avg} />}
+            {item.category === "film"  && <DvdCard   item={item} avg={avg} />}
+            {item.category === "dizi"  && <VhsCard   item={item} avg={avg} />}
+            {item.category === "kitap" && <BookCard  item={item} avg={avg} />}
             {item.category === "sarki" && (
-                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
                     <VinylCard item={item} avg={avg} />
                     <p style={{ fontSize: 8, fontWeight: 700, color: "rgba(244,114,182,0.8)", textAlign: "center", maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</p>
-                    {item.creator && <p style={{ fontSize: 7.5, color: "rgba(255,255,255,0.35)", margin: "-4px 0 0", textAlign: "center" }}>{item.creator}</p>}
+                    {item.creator && <p style={{ fontSize: 7.5, color: "rgba(255,255,255,0.3)", margin: "-3px 0 0", textAlign: "center" }}>{item.creator}</p>}
                 </div>
             )}
         </Link>
