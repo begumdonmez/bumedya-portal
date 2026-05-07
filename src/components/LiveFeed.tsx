@@ -12,12 +12,33 @@ interface Activity {
     created_at: string;
 }
 
+const BADGE_LABELS: Record<string, string> = {
+    editor:          "Editör",
+    artist:          "Sanatçı",
+    writer:          "Yazar",
+    verified:        "Onaylı",
+    founder:         "Kurucu",
+    nakkas:          "Nakkaş",
+    kalemsor:        "Kalemşor",
+    muretti:         "Mürettip",
+    katkici:         "Katkıcı",
+    cizer:           "Çizer",
+    yazar:           "Yazar",
+    sosyal_kelebek:  "Sosyal Kelebek",
+    seri_izleyici:   "Seri İzleyici",
+    kitap_kurdu:     "Kitap Kurdu",
+    plak_kafasi:     "Plak Kafası",
+};
+
 function activityText(type: string, payload: Record<string, string>): { text: string; dot: string } {
     switch (type) {
         case "join":         return { text: "topluluğa katıldı", dot: "bg-emerald-500" };
         case "post_image":   return { text: `bir resim paylaştı${payload.title ? ` · ${payload.title}` : ""}`, dot: "bg-canli-mor" };
         case "post_text":    return { text: `bir yazı paylaştı${payload.title ? ` · ${payload.title}` : ""}`, dot: "bg-blue-500" };
-        case "badge_earned": return { text: `${payload.badge ?? "yeni"} rozeti kazandı`, dot: "bg-amber-500" };
+        case "badge_earned": {
+            const label = payload.badge ? (BADGE_LABELS[payload.badge] ?? payload.badge) : "yeni";
+            return { text: `"${label}" rozetini kazandı`, dot: "bg-amber-500" };
+        }
         case "event_created":return { text: `yeni etkinlik oluşturdu${payload.title ? ` · ${payload.title}` : ""}`, dot: "bg-pink-500" };
         case "lounge_join":    return { text: "Lounge'a katıldı", dot: "bg-blue-400" };
         case "role_change":    return { text: "üretici oldu", dot: "bg-canli-mor" };
