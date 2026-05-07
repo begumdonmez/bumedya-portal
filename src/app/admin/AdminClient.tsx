@@ -525,7 +525,7 @@ interface AdminLog {
     admin_username: string;
     action: string;
     target_id: string;
-    details: { title?: string; description?: string; category?: string; admin_note?: string } | null;
+    details: { title?: string; description?: string; category?: string; admin_note?: string; username?: string; added_badge?: string } | null;
     created_at: string;
 }
 
@@ -769,9 +769,10 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
 
 /* ─── Log sekmesi ───────────────────────────────────────────── */
 const ACTION_LABELS: Record<string, { label: string; color: string }> = {
-    nomination_approved: { label: "Onaylandı",  color: "rgba(52,211,153,0.9)"  },
-    nomination_rejected: { label: "Reddedildi", color: "rgba(239,68,68,0.85)"  },
-    nomination_edited:   { label: "Düzenlendi", color: "rgba(251,191,36,0.9)"  },
+    nomination_approved: { label: "Öneri Onaylandı",  color: "rgba(52,211,153,0.9)"  },
+    nomination_rejected: { label: "Öneri Reddedildi", color: "rgba(239,68,68,0.85)"  },
+    nomination_edited:   { label: "Öneri Düzenlendi", color: "rgba(251,191,36,0.9)"  },
+    badge_updated:       { label: "Rozet Güncellendi", color: "rgba(167,139,250,0.9)" },
 };
 
 function LogsTab({ logs }: { logs: AdminLog[] }) {
@@ -790,8 +791,13 @@ function LogsTab({ logs }: { logs: AdminLog[] }) {
                     <div key={log.id} className="card p-3 flex items-center gap-3">
                         <div className="flex-1 min-w-0">
                             <p className="text-sm font-medium truncate" style={{ color: "var(--text-1)" }}>
-                                {d?.title ?? "—"}
+                                {d?.title ?? (d?.username ? `@${d.username}` : "—")}
                             </p>
+                            {d?.added_badge && (
+                                <p className="text-xs truncate" style={{ color: "rgba(167,139,250,0.7)" }}>
+                                    +{d.added_badge}
+                                </p>
+                            )}
                             {d?.admin_note && (
                                 <p className="text-xs italic truncate" style={{ color: "rgba(239,68,68,0.65)" }}>
                                     "{d.admin_note}"

@@ -106,6 +106,14 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
     const imageUrl = post.storage_path
         ? `${supabaseUrl}/storage/v1/object/public/posts/${post.storage_path}`
         : null;
+    // Sadece http/https URL'lere izin ver — eski kayıtlarda javascript: vb. olabilir
+    const safeRefUrl = (() => {
+        if (!post.ref_url) return null;
+        try {
+            const p = new URL(post.ref_url);
+            return (p.protocol === "http:" || p.protocol === "https:") ? post.ref_url : null;
+        } catch { return null; }
+    })();
 
     const handleDelete = async () => {
         const supabase = createClient();
@@ -179,15 +187,15 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
 
             {/* Görsel — tıklanabilir eğer ref_url varsa */}
             {imageUrl && (
-                post.ref_url ? (
-                    <a href={post.ref_url} target="_blank" rel="noopener noreferrer" className="block cursor-pointer">
+                safeRefUrl ? (
+                    <a href={safeRefUrl} target="_blank" rel="noopener noreferrer" className="block cursor-pointer">
                         {imageElement}
                     </a>
                 ) : imageElement
             )}
 
             {/* Link önizleme — dosya yoksa */}
-            {!imageUrl && post.ref_url && <LinkPreview url={post.ref_url} />}
+            {!imageUrl && safeRefUrl && <LinkPreview url={safeRefUrl} />}
 
             {/* Yazı içeriği */}
             {post.content && (
@@ -224,8 +232,8 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
                     )}
                 </button>
 
-                {imageUrl && post.ref_url && (
-                    <a href={post.ref_url} target="_blank" rel="noopener noreferrer"
+                {imageUrl && safeRefUrl && (
+                    <a href={safeRefUrl} target="_blank" rel="noopener noreferrer"
                        className="inline-flex items-center gap-1.5 text-[10px] transition-opacity hover:opacity-70"
                        style={{ color: "var(--violet-text)" }}>
                         <ExternalLink size={10} /> Linke git
@@ -277,11 +285,37 @@ function UploadModal({ onClose, onPost, userId, username }: {
         let storage_path: string | null = null;
 
         if (file) {
-            const ext = file.name.split(".").pop();
-            const path = `${userId}/${Date.now()}.${ext}`;
+            // İzin verilen uzantılar — güvenlik için whitelist
+            const ALLOWED_IMAGE_EXT = new Set(["jpg", "jpeg", "png", "gif", "webp", "avif"]);
+            const ALLOWED_VIDEO_EXT = new Set(["mp4", "mov", "webm"]);
+            const rawExt = file.name.split(".").pop()?.toLowerCase() ?? "";
+            const allowed = isVideo ? ALLOWED_VIDEO_EXT : ALLOWED_IMAGE_EXT;
+            if (!allowed.has(rawExt)) {
+                toast.error(`Desteklenmeyen dosya formatı. İzinliler: ${[...allowed].join(", ")}`);
+                setLoading(false); return;
+            }
+            const path = `${userId}/${Date.now()}.${rawExt}`;
             const { error } = await supabase.storage.from("posts").upload(path, file, { cacheControl: "3600" });
             if (error) { toast.error("Yükleme hatası: " + error.message); setLoading(false); return; }
             storage_path = path;
+        }
+
+        // ref_url güvenlik kontrolü — sadece http/https kabul et
+        const rawUrl = linkUrl.trim();
+        let safeRefUrl: string | null = null;
+        if (rawUrl) {
+            try {
+                const parsed = new URL(rawUrl);
+                if (parsed.protocol === "http:" || parsed.protocol === "https:") {
+                    safeRefUrl = rawUrl;
+                } else {
+                    toast.error("Geçersiz link — sadece http/https desteklenir.");
+                    setLoading(false); return;
+                }
+            } catch {
+                toast.error("Geçersiz link formatı.");
+                setLoading(false); return;
+            }
         }
 
         const { data, error } = await supabase
@@ -293,7 +327,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                 content: content.trim() || null,
                 storage_path,
                 description: description.trim() || null,
-                ref_url: linkUrl.trim() || null,
+                ref_url: safeRefUrl,
             })
             .select()
             .single();

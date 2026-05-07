@@ -33,6 +33,8 @@ async function writeLog(
     } catch { /* log tablosu yoksa sessizce geç */ }
 }
 
+const VALID_CATEGORIES = new Set(["film", "dizi", "kitap", "sarki"]);
+
 // PATCH /api/admin/nominations
 // action: "approve" | "reject" | "edit"
 export async function PATCH(req: Request) {
@@ -46,10 +48,18 @@ export async function PATCH(req: Request) {
     }
 
     const adminSupabase = createAdminClient();
+
+    // Nomination'ın gerçekten var olup olmadığını doğrula
+    const { data: nomCheck } = await adminSupabase
+        .from("weekly_nominations").select("id, title").eq("id", id).single();
+    if (!nomCheck) return NextResponse.json({ error: "Öneri bulunamadı." }, { status: 404 });
     const now = new Date().toISOString();
 
     if (action === "edit") {
         if (!title?.trim()) return NextResponse.json({ error: "Başlık boş olamaz." }, { status: 400 });
+        if (category && !VALID_CATEGORIES.has(category)) {
+            return NextResponse.json({ error: "Geçersiz kategori." }, { status: 400 });
+        }
         const { error } = await adminSupabase
             .from("weekly_nominations")
             .update({ title: title.trim(), description: description?.trim() || null, category })
