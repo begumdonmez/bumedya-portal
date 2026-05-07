@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 interface Notification {
     id: string;
+    user_id: string;
     from_username: string;
     type: string;
     payload: { room_id?: string; message?: string };
@@ -50,54 +51,60 @@ export default function NotificationBell({ userId }: { userId: string }) {
             .limit(20)
             .then(({ data }) => setNotifications((data as Notification[]) ?? []));
 
+        const showToast = (n: Notification) => {
+            const room = n.payload?.room_id ? ROOM_LABELS[n.payload.room_id] ?? n.payload.room_id : null;
+            const isAll = n.payload?.message?.includes("@all");
+            toast.custom(() => (
+                <div style={{
+                    background: isAll ? "rgba(30,15,5,0.97)" : "rgba(15,10,35,0.97)",
+                    border: `1px solid ${isAll ? "rgba(252,211,77,0.25)" : "rgba(124,58,237,0.25)"}`,
+                    borderRadius: 16,
+                    padding: "12px 16px",
+                    backdropFilter: "blur(32px)",
+                    boxShadow: `0 8px 32px ${isAll ? "rgba(252,211,77,0.08)" : "rgba(124,58,237,0.12)"}, 0 2px 8px rgba(0,0,0,0.4)`,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 4,
+                    minWidth: 280,
+                    maxWidth: 340,
+                }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                        <span style={{
+                            width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
+                            background: isAll ? "rgba(252,211,77,0.9)" : "rgba(167,139,250,0.9)",
+                            boxShadow: `0 0 6px ${isAll ? "rgba(252,211,77,0.6)" : "rgba(167,139,250,0.6)"}`,
+                        }} />
+                        <p style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.9)", margin: 0 }}>
+                            {isAll
+                                ? <><span style={{ color: "rgba(252,211,77,0.95)" }}>@{n.from_username}</span> herkesi mention etti</>
+                                : <><span style={{ color: "rgba(167,139,250,0.95)" }}>@{n.from_username}</span> seni mention etti</>
+                            }
+                        </p>
+                    </div>
+                    {room && (
+                        <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", margin: 0, paddingLeft: 16 }}>
+                            #{room}
+                        </p>
+                    )}
+                    {n.payload?.message && (
+                        <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", margin: 0, paddingLeft: 16, fontStyle: "italic" }}>
+                            &ldquo;{n.payload.message.slice(0, 80)}{n.payload.message.length > 80 ? "…" : ""}&rdquo;
+                        </p>
+                    )}
+                </div>
+            ), { duration: 5000 });
+        };
+
+        // filter parametresi yerine callback'te filtrele — daha güvenilir
         const channel = supabase
             .channel(`notifications-${userId}`)
             .on("postgres_changes",
-                { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
+                { event: "INSERT", schema: "public", table: "notifications" },
                 (payload) => {
                     const n = payload.new as Notification;
-                    setNotifications((prev) => [n, ...prev]);
-                    const room = n.payload?.room_id ? ROOM_LABELS[n.payload.room_id] ?? n.payload.room_id : null;
-                    const isAll = n.payload?.message?.includes("@all");
-                    toast.custom(() => (
-                        <div style={{
-                            background: isAll ? "rgba(30,15,5,0.97)" : "rgba(15,10,35,0.97)",
-                            border: `1px solid ${isAll ? "rgba(252,211,77,0.25)" : "rgba(124,58,237,0.25)"}`,
-                            borderRadius: 16,
-                            padding: "12px 16px",
-                            backdropFilter: "blur(32px)",
-                            boxShadow: `0 8px 32px ${isAll ? "rgba(252,211,77,0.08)" : "rgba(124,58,237,0.12)"}, 0 2px 8px rgba(0,0,0,0.4)`,
-                            display: "flex",
-                            flexDirection: "column",
-                            gap: 4,
-                            minWidth: 280,
-                            maxWidth: 340,
-                        }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                                <span style={{
-                                    width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
-                                    background: isAll ? "rgba(252,211,77,0.9)" : "rgba(167,139,250,0.9)",
-                                    boxShadow: `0 0 6px ${isAll ? "rgba(252,211,77,0.6)" : "rgba(167,139,250,0.6)"}`,
-                                }} />
-                                <p style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.9)", margin: 0 }}>
-                                    {isAll
-                                        ? <><span style={{ color: "rgba(252,211,77,0.95)" }}>@{n.from_username}</span> herkesi mention etti</>
-                                        : <><span style={{ color: "rgba(167,139,250,0.95)" }}>@{n.from_username}</span> seni mention etti</>
-                                    }
-                                </p>
-                            </div>
-                            {room && (
-                                <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", margin: 0, paddingLeft: 16 }}>
-                                    #{room}
-                                </p>
-                            )}
-                            {n.payload?.message && (
-                                <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", margin: 0, paddingLeft: 16, fontStyle: "italic" }}>
-                                    &ldquo;{n.payload.message.slice(0, 80)}{n.payload.message.length > 80 ? "…" : ""}&rdquo;
-                                </p>
-                            )}
-                        </div>
-                    ), { duration: 5000 });
+                    if (n.user_id !== userId) return; // başkasının bildirimi
+                    setNotifications((prev) => prev.some((x) => x.id === n.id) ? prev : [n, ...prev]);
+                    showToast(n);
                 }
             )
             .subscribe();
