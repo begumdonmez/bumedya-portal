@@ -114,10 +114,13 @@ export default function EtkinliklerClient({
     };
 
     const handleApprove = async (ev: EventItem) => {
-        const supabase = createClient();
         const newVal = !ev.approved;
-        const { error } = await supabase.from("events").update({ approved: newVal }).eq("id", ev.id);
-        if (error) { toast.error("Güncelleme başarısız."); return; }
+        const res = await fetch("/api/events", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: ev.id, approved: newVal }),
+        });
+        if (!res.ok) { toast.error("Güncelleme başarısız."); return; }
         const updated = { ...ev, approved: newVal };
         setEvents(prev => prev.map(e => e.id === ev.id ? updated : e));
         if (selected?.id === ev.id) setSelected(updated);
@@ -125,9 +128,8 @@ export default function EtkinliklerClient({
     };
 
     const handleDelete = async (ev: EventItem) => {
-        const supabase = createClient();
-        const { error } = await supabase.from("events").delete().eq("id", ev.id);
-        if (error) { toast.error("Silinemedi."); return; }
+        const res = await fetch(`/api/events?id=${ev.id}`, { method: "DELETE" });
+        if (!res.ok) { toast.error("Silinemedi."); return; }
         setEvents(prev => prev.filter(e => e.id !== ev.id));
         if (selected?.id === ev.id) setSelected(null);
         toast.success("Etkinlik silindi.");

@@ -61,14 +61,19 @@ export const SOCIAL_PLATFORMS = [
     },
 ];
 
+function safeUrl(url: string): string | null {
+    try { const p = new URL(url); return (p.protocol === "https:" || p.protocol === "http:") ? url : null; }
+    catch { return null; }
+}
+
 export function SocialLinksDisplay({ links }: { links: SocialLinksData }) {
-    const active = SOCIAL_PLATFORMS.filter(p => links[p.id]);
+    const active = SOCIAL_PLATFORMS.filter(p => links[p.id] && safeUrl(links[p.id]));
     if (active.length === 0) return null;
 
     return (
         <div className="flex items-center flex-wrap gap-2 mt-3">
             {active.map(platform => (
-                <a key={platform.id} href={links[platform.id]} target="_blank" rel="noopener noreferrer"
+                <a key={platform.id} href={safeUrl(links[platform.id])!} target="_blank" rel="noopener noreferrer"
                    title={platform.label}
                    className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-200 hover:scale-110"
                    style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)" }}>

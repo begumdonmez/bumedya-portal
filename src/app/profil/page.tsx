@@ -153,7 +153,12 @@ export default function ProfilPage() {
         const toastId = toast.loading("Kaydediliyor...");
         const supabase = createClient();
         const cleanLinks = Object.fromEntries(
-            Object.entries(editSocialLinks).filter(([, v]) => v.trim() !== "")
+            Object.entries(editSocialLinks)
+                .filter(([, v]) => v.trim() !== "")
+                .filter(([, v]) => {
+                    try { const p = new URL(v.trim()); return p.protocol === "https:" || p.protocol === "http:"; }
+                    catch { return false; }
+                })
         );
         const { error } = await supabase.from("profiles").update({
             username: trimmed,

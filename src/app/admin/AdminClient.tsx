@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
@@ -157,16 +157,17 @@ interface Message {
 /* ─── Mesajlar sekmesi ──────────────────────────────────────── */
 function MessagesTab({ messages, setMessages }: { messages: Message[]; setMessages: React.Dispatch<React.SetStateAction<Message[]>> }) {
     const markRead = async (id: string) => {
-        const { createClient } = await import("@/lib/supabase/client");
-        const supabase = createClient();
-        await supabase.from("messages").update({ read: true }).eq("id", id);
+        await fetch("/api/admin/messages", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id }),
+        });
         setMessages(prev => prev.map(m => m.id === id ? { ...m, read: true } : m));
     };
 
     const handleDelete = async (id: string) => {
-        const { createClient } = await import("@/lib/supabase/client");
-        const supabase = createClient();
-        await supabase.from("messages").delete().eq("id", id);
+        const res = await fetch(`/api/admin/messages?id=${id}`, { method: "DELETE" });
+        if (!res.ok) { toast.error("Silinemedi."); return; }
         setMessages(prev => prev.filter(m => m.id !== id));
     };
 
@@ -262,12 +263,12 @@ function ApplicationsTab({ applications: initialApps }: { applications: Applicat
     const handleDecision = async (status: "approved" | "rejected") => {
         if (!selected) return;
         setProcessing(true);
-        const supabase = createClient();
-        const { error } = await supabase
-            .from("applications")
-            .update({ status, admin_note: note.trim() || null })
-            .eq("id", selected.id);
-        if (error) { toast.error("Güncellenemedi: " + error.message); setProcessing(false); return; }
+        const res = await fetch("/api/admin/applications", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: selected.id, status, admin_note: note.trim() || null }),
+        });
+        if (!res.ok) { toast.error("Güncellenemedi."); setProcessing(false); return; }
         setApps(prev => prev.map(a => a.id === selected.id ? { ...a, status, admin_note: note.trim() || null } : a));
         toast.success(status === "approved" ? "Başvuru onaylandı ✓" : "Başvuru reddedildi");
         setSelected(null);
@@ -398,7 +399,7 @@ function PlaylistsTab() {
     const [adding, setAdding] = useState(false);
 
     /* İlk yükleme */
-    useState(() => {
+    useEffect(() => {
         (async () => {
             const { createClient } = await import("@/lib/supabase/client");
             const supabase = createClient();
@@ -406,7 +407,7 @@ function PlaylistsTab() {
             setPlaylists(data ?? []);
             setLoading(false);
         })();
-    });
+    }, []);
 
     const extractId = (url: string) => {
         const match = url.match(/playlist\/([A-Za-z0-9]+)/);
@@ -417,24 +418,22 @@ function PlaylistsTab() {
         const spotify_id = extractId(spotifyUrl);
         if (!name.trim() || !spotify_id) { toast.error("Playlist adı ve Spotify linki gerekli."); return; }
         setAdding(true);
-        const { createClient } = await import("@/lib/supabase/client");
-        const supabase = createClient();
-        const { data, error } = await supabase
-            .from("spotify_playlists")
-            .insert({ name: name.trim(), spotify_id, description: description.trim() || null })
-            .select().single();
-        if (error) { toast.error("Eklenemedi: " + error.message); setAdding(false); return; }
-        setPlaylists(prev => [...prev, data]);
+        const res = await fetch("/api/admin/playlists", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: name.trim(), spotify_id, description: description.trim() || null }),
+        });
+        if (!res.ok) { toast.error("Eklenemedi."); setAdding(false); return; }
+        const { playlist } = await res.json();
+        setPlaylists(prev => [...prev, playlist]);
         setName(""); setSpotifyUrl(""); setDescription("");
         setAdding(false);
         toast.success("Playlist eklendi ✓");
     };
 
     const handleDelete = async (id: string) => {
-        const { createClient } = await import("@/lib/supabase/client");
-        const supabase = createClient();
-        const { error } = await supabase.from("spotify_playlists").delete().eq("id", id);
-        if (error) { toast.error("Silinemedi: " + error.message); return; }
+        const res = await fetch(`/api/admin/playlists?id=${id}`, { method: "DELETE" });
+        if (!res.ok) { toast.error("Silinemedi."); return; }
         setPlaylists(prev => prev.filter(p => p.id !== id));
         toast.success("Playlist silindi");
     };

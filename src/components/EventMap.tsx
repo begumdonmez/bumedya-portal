@@ -117,12 +117,19 @@ export default function EventMap({
                                         {new Date(ev.event_date + "T00:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })}
                                         {ev.event_time ? ` · ${ev.event_time.slice(0, 5)}` : ""}
                                     </p>
-                                    {ev.ref_url && (
-                                        <a href={ev.ref_url} target="_blank" rel="noopener noreferrer"
-                                           style={{ fontSize: 11, color: "rgba(124,58,237,0.9)", textDecoration: "none", display: "block", marginTop: 6 }}>
-                                            Detaylar ›
-                                        </a>
-                                    )}
+                                    {(() => {
+                                        if (!ev.ref_url) return null;
+                                        try {
+                                            const p = new URL(ev.ref_url);
+                                            if (p.protocol !== "https:" && p.protocol !== "http:") return null;
+                                        } catch { return null; }
+                                        return (
+                                            <a href={ev.ref_url} target="_blank" rel="noopener noreferrer"
+                                               style={{ fontSize: 11, color: "rgba(124,58,237,0.9)", textDecoration: "none", display: "block", marginTop: 6 }}>
+                                                Detaylar ›
+                                            </a>
+                                        );
+                                    })()}
                                 </div>
                             </Popup>
                         )}

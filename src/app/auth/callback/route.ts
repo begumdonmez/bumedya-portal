@@ -11,7 +11,9 @@ export async function GET(request: NextRequest) {
     const { searchParams, origin } = new URL(request.url);
 
     const code = searchParams.get("code");
-    const next = searchParams.get("next") ?? "/onboarding";
+    // Open redirect koruması: sadece göreceli path'lere izin ver
+    const rawNext = searchParams.get("next") ?? "/onboarding";
+    const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/onboarding";
 
     if (!code) {
         // Geçersiz link

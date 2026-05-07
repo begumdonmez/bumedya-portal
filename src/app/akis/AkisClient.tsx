@@ -116,11 +116,8 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
     })();
 
     const handleDelete = async () => {
-        const supabase = createClient();
-        if (post.storage_path) {
-            await supabase.storage.from("posts").remove([post.storage_path]);
-        }
-        await supabase.from("posts").delete().eq("id", post.id);
+        const res = await fetch(`/api/posts?id=${post.id}`, { method: "DELETE" });
+        if (!res.ok) { toast.error("Silinemedi."); return; }
         onDelete(post.id);
         toast.success("Post silindi.");
     };
@@ -564,12 +561,17 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
         setLoadingMore(true);
         const supabase = createClient();
         const oldest = posts[posts.length - 1]?.created_at;
-        const { data: newPosts } = await supabase
+
+        const postsQuery = supabase
             .from("posts")
             .select("id, user_id, username, category, content, storage_path, description, created_at, ref_url")
             .order("created_at", { ascending: false })
             .lt("created_at", oldest)
             .limit(PAGE_SIZE);
+
+        // İlk olarak postları çek, sonra likes'ı paralel olmak zorunda değil —
+        // ama postIds olmadan likes çekemeyiz, o yüzden posts önce gelir.
+        const { data: newPosts } = await postsQuery;
 
         if (!newPosts || newPosts.length === 0) { setHasMore(false); setLoadingMore(false); return; }
 
