@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { ChevronLeft, Film, Tv, BookOpen, Music, Star, Send, Loader2, Trash2 } from "lucide-react";
+import { ChevronLeft, Film, Tv, BookOpen, Music, Star, Send, Loader2, Trash2, Pencil, X, Check } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
@@ -217,6 +217,17 @@ export default function DetailClient({ userId, username, isAdmin, item, comments
     const [sending, setSending] = useState(false);
     const [rating, setRating] = useState(false);
 
+    // Düzenleme formu (admin)
+    const [editing, setEditing] = useState(false);
+    const [editData, setEditData] = useState({
+        title: item.title,
+        creator: item.creator ?? "",
+        year: item.year ? String(item.year) : "",
+        description: item.description ?? "",
+    });
+    const [currentItem, setCurrentItem] = useState(item);
+    const [saving, setSaving] = useState(false);
+
     /* Puan ver/güncelle */
     const handleRate = async (r: number) => {
         if (rating) return;
@@ -267,6 +278,30 @@ export default function DetailClient({ userId, username, isAdmin, item, comments
         setComments(prev => prev.filter(c => c.id !== commentId));
     };
 
+    /* Item düzenle (sadece admin) */
+    const handleSaveEdit = async () => {
+        if (!editData.title.trim()) return;
+        setSaving(true);
+        const supabase = createClient();
+        const { error } = await supabase.from("archive_items").update({
+            title: editData.title.trim(),
+            creator: editData.creator.trim() || null,
+            year: editData.year ? parseInt(editData.year) : null,
+            description: editData.description.trim() || null,
+        }).eq("id", currentItem.id);
+        if (error) { toast.error("Kaydedilemedi: " + error.message); setSaving(false); return; }
+        setCurrentItem(prev => ({
+            ...prev,
+            title: editData.title.trim(),
+            creator: editData.creator.trim() || null,
+            year: editData.year ? parseInt(editData.year) : null,
+            description: editData.description.trim() || null,
+        }));
+        toast.success("Güncellendi ✓");
+        setEditing(false);
+        setSaving(false);
+    };
+
     /* Item sil (sadece admin) */
     const handleDeleteItem = async () => {
         if (!confirm(`"${item.title}" arşivden silinsin mi?`)) return;
@@ -307,63 +342,123 @@ export default function DetailClient({ userId, username, isAdmin, item, comments
 
                 {/* Hero */}
                 <div className="flex gap-6 sm:gap-8 items-end mb-8 flex-wrap sm:flex-nowrap">
-                    <MediaHero item={item} cat={cat} />
+                    <MediaHero item={currentItem} cat={cat} />
 
                     <div className="flex flex-col gap-3 min-w-0 flex-1">
-                        <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-lg flex items-center justify-center"
-                                 style={{ background: cat.bg, border: `1px solid ${cat.border}` }}>
-                                <Icon size={12} style={{ color: cat.color }} />
+                        <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2">
+                                <div className="w-6 h-6 rounded-lg flex items-center justify-center"
+                                     style={{ background: cat.bg, border: `1px solid ${cat.border}` }}>
+                                    <Icon size={12} style={{ color: cat.color }} />
+                                </div>
+                                <span className="text-xs font-semibold" style={{ color: cat.color }}>{cat.label}</span>
                             </div>
-                            <span className="text-xs font-semibold" style={{ color: cat.color }}>{cat.label}</span>
-                        </div>
-
-                        <h1 className="text-xl sm:text-2xl font-bold leading-tight" style={{ color: "var(--text-1)" }}>
-                            {item.title}
-                        </h1>
-
-                        {(item.creator || item.year) && (
-                            <div className="flex items-center gap-3 text-sm flex-wrap">
-                                {item.creator && (
-                                    <span style={{ color: "var(--text-3)" }}>
-                                        <span style={{ color: "var(--text-5)", fontSize: 11 }}>{CREATOR_LABEL[item.category]} </span>
-                                        {item.creator}
-                                    </span>
-                                )}
-                                {item.year && (
-                                    <span className="text-xs px-2 py-0.5 rounded-lg"
-                                          style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-4)" }}>
-                                        {item.year}
-                                    </span>
-                                )}
-                            </div>
-                        )}
-
-                        {/* Rating gösterimi */}
-                        <div className="flex items-center gap-3">
-                            {avg != null ? (
-                                <>
-                                    <div className="flex items-center gap-1.5">
-                                        <Star size={16} fill="rgba(252,211,77,0.9)" style={{ color: "rgba(252,211,77,0.9)" }} />
-                                        <span className="text-lg font-bold" style={{ color: "rgba(252,211,77,0.9)" }}>{avg}</span>
-                                        <span className="text-xs" style={{ color: "var(--text-5)" }}>/ 10</span>
-                                    </div>
-                                    <span className="text-xs" style={{ color: "var(--text-5)" }}>{total} puan</span>
-                                </>
-                            ) : (
-                                <span className="text-xs" style={{ color: "var(--text-5)" }}>Henüz puanlanmamış</span>
+                            {isAdmin && !editing && (
+                                <button onClick={() => setEditing(true)}
+                                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200"
+                                        style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-3)" }}>
+                                    <Pencil size={11} /> Düzenle
+                                </button>
                             )}
                         </div>
 
-                        {item.description && (
-                            <p className="text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>
-                                {item.description}
-                            </p>
-                        )}
+                        {editing ? (
+                            /* ── Düzenleme formu ── */
+                            <div className="flex flex-col gap-2.5">
+                                <input
+                                    value={editData.title}
+                                    onChange={e => setEditData(p => ({ ...p, title: e.target.value }))}
+                                    placeholder="Başlık *" maxLength={120}
+                                    className="w-full bg-transparent text-sm outline-none px-3 py-2 rounded-xl"
+                                    style={{ border: "1px solid var(--border-2)", color: "var(--text-1)" }}
+                                />
+                                <div className="flex gap-2">
+                                    <input
+                                        value={editData.creator}
+                                        onChange={e => setEditData(p => ({ ...p, creator: e.target.value }))}
+                                        placeholder={CREATOR_LABEL[currentItem.category]} maxLength={80}
+                                        className="flex-1 bg-transparent text-sm outline-none px-3 py-2 rounded-xl"
+                                        style={{ border: "1px solid var(--border-2)", color: "var(--text-2)" }}
+                                    />
+                                    <input
+                                        value={editData.year}
+                                        onChange={e => setEditData(p => ({ ...p, year: e.target.value }))}
+                                        placeholder="Yıl" maxLength={4}
+                                        className="bg-transparent text-sm outline-none px-3 py-2 rounded-xl"
+                                        style={{ width: 70, border: "1px solid var(--border-2)", color: "var(--text-2)" }}
+                                    />
+                                </div>
+                                <textarea
+                                    value={editData.description}
+                                    onChange={e => setEditData(p => ({ ...p, description: e.target.value }))}
+                                    placeholder="Açıklama" rows={2} maxLength={400}
+                                    className="w-full bg-transparent text-sm outline-none px-3 py-2 rounded-xl resize-none"
+                                    style={{ border: "1px solid var(--border-2)", color: "var(--text-2)" }}
+                                />
+                                <div className="flex gap-2">
+                                    <button onClick={handleSaveEdit} disabled={saving || !editData.title.trim()}
+                                            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50"
+                                            style={{ background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.3)", color: "rgba(52,211,153,0.9)" }}>
+                                        {saving ? <Loader2 size={11} className="animate-spin" /> : <Check size={11} />}
+                                        Kaydet
+                                    </button>
+                                    <button onClick={() => { setEditing(false); setEditData({ title: currentItem.title, creator: currentItem.creator ?? "", year: currentItem.year ? String(currentItem.year) : "", description: currentItem.description ?? "" }); }}
+                                            className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
+                                            style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-4)" }}>
+                                        <X size={11} /> Vazgeç
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            /* ── Normal görünüm ── */
+                            <>
+                                <h1 className="text-xl sm:text-2xl font-bold leading-tight" style={{ color: "var(--text-1)" }}>
+                                    {currentItem.title}
+                                </h1>
 
-                        <p className="text-[10px]" style={{ color: "var(--text-5)" }}>
-                            @{item.created_by} tarafından eklendi
-                        </p>
+                                {(currentItem.creator || currentItem.year) && (
+                                    <div className="flex items-center gap-3 text-sm flex-wrap">
+                                        {currentItem.creator && (
+                                            <span style={{ color: "var(--text-3)" }}>
+                                                <span style={{ color: "var(--text-5)", fontSize: 11 }}>{CREATOR_LABEL[currentItem.category]} </span>
+                                                {currentItem.creator}
+                                            </span>
+                                        )}
+                                        {currentItem.year && (
+                                            <span className="text-xs px-2 py-0.5 rounded-lg"
+                                                  style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-4)" }}>
+                                                {currentItem.year}
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
+
+                                <div className="flex items-center gap-3">
+                                    {avg != null ? (
+                                        <>
+                                            <div className="flex items-center gap-1.5">
+                                                <Star size={16} fill="rgba(252,211,77,0.9)" style={{ color: "rgba(252,211,77,0.9)" }} />
+                                                <span className="text-lg font-bold" style={{ color: "rgba(252,211,77,0.9)" }}>{avg}</span>
+                                                <span className="text-xs" style={{ color: "var(--text-5)" }}>/ 10</span>
+                                            </div>
+                                            <span className="text-xs" style={{ color: "var(--text-5)" }}>{total} puan</span>
+                                        </>
+                                    ) : (
+                                        <span className="text-xs" style={{ color: "var(--text-5)" }}>Henüz puanlanmamış</span>
+                                    )}
+                                </div>
+
+                                {currentItem.description && (
+                                    <p className="text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>
+                                        {currentItem.description}
+                                    </p>
+                                )}
+
+                                <p className="text-[10px]" style={{ color: "var(--text-5)" }}>
+                                    @{currentItem.created_by} tarafından eklendi
+                                </p>
+                            </>
+                        )}
                     </div>
                 </div>
 
