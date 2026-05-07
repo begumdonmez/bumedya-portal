@@ -534,9 +534,16 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
 
     const handleDecision = async (id: string, status: "approved" | "rejected") => {
         setProcessing(id);
-        const supabase = createClient();
-        const { error } = await supabase.from("weekly_nominations").update({ status }).eq("id", id);
-        if (error) { toast.error("Güncellenemedi: " + error.message); setProcessing(null); return; }
+        const res = await fetch("/api/admin/nominations", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id, status }),
+        });
+        if (!res.ok) {
+            const json = await res.json().catch(() => ({}));
+            toast.error("Güncellenemedi: " + (json.error ?? res.statusText));
+            setProcessing(null); return;
+        }
         setNoms(prev => prev.map(n => n.id === id ? { ...n, status } : n));
         toast.success(status === "approved" ? "Öneri onaylandı ✓" : "Öneri reddedildi");
         setProcessing(null);
