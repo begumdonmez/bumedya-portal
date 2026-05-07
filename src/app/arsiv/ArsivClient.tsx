@@ -219,14 +219,14 @@ function Reel() {
 
 /* ── Kitap renk paleti (id'den deterministik renk) ───────────── */
 const BOOK_PALETTE = [
-    { bg: "linear-gradient(175deg, #0e2a4a 0%, #0a1d36 100%)", accent: "rgba(96,165,250,0.85)",  border: "rgba(59,130,246,0.45)"  },
-    { bg: "linear-gradient(175deg, #2a0f4a 0%, #1c0a36 100%)", accent: "rgba(167,139,250,0.85)", border: "rgba(124,58,237,0.45)"  },
-    { bg: "linear-gradient(175deg, #0a2a1a 0%, #072016 100%)", accent: "rgba(52,211,153,0.85)",  border: "rgba(16,185,129,0.45)"  },
-    { bg: "linear-gradient(175deg, #3a0f1e 0%, #2a0a16 100%)", accent: "rgba(251,113,133,0.85)", border: "rgba(244,63,94,0.45)"   },
-    { bg: "linear-gradient(175deg, #2a200a 0%, #1e1708 100%)", accent: "rgba(251,191,36,0.85)",  border: "rgba(245,158,11,0.45)"  },
-    { bg: "linear-gradient(175deg, #1a2a0a 0%, #121e08 100%)", accent: "rgba(163,230,53,0.85)",  border: "rgba(132,204,22,0.45)"  },
-    { bg: "linear-gradient(175deg, #2a1a0a 0%, #1e1208 100%)", accent: "rgba(251,146,60,0.85)",  border: "rgba(249,115,22,0.45)"  },
-    { bg: "linear-gradient(175deg, #0a1e2a 0%, #081520 100%)", accent: "rgba(34,211,238,0.85)",  border: "rgba(6,182,212,0.45)"   },
+    { grad: "linear-gradient(160deg, #0f2d52 0%, #071a30 100%)", accent: "rgba(96,165,250,0.9)",   stripe: "rgba(96,165,250,0.15)",  text: "rgba(186,224,255,0.95)"  },
+    { grad: "linear-gradient(160deg, #2e1054 0%, #180830 100%)", accent: "rgba(167,139,250,0.9)",  stripe: "rgba(167,139,250,0.15)", text: "rgba(220,210,255,0.95)"  },
+    { grad: "linear-gradient(160deg, #052e1c 0%, #021a0f 100%)", accent: "rgba(52,211,153,0.9)",   stripe: "rgba(52,211,153,0.15)",  text: "rgba(167,243,208,0.95)"  },
+    { grad: "linear-gradient(160deg, #3f0d1e 0%, #220710 100%)", accent: "rgba(251,113,133,0.9)",  stripe: "rgba(251,113,133,0.15)", text: "rgba(255,200,210,0.95)"  },
+    { grad: "linear-gradient(160deg, #2e1e04 0%, #1a1102 100%)", accent: "rgba(251,191,36,0.9)",   stripe: "rgba(251,191,36,0.15)",  text: "rgba(254,230,138,0.95)"  },
+    { grad: "linear-gradient(160deg, #1a2e04 0%, #0e1a02 100%)", accent: "rgba(163,230,53,0.9)",   stripe: "rgba(163,230,53,0.15)",  text: "rgba(217,249,157,0.95)"  },
+    { grad: "linear-gradient(160deg, #2e1504 0%, #1a0c02 100%)", accent: "rgba(251,146,60,0.9)",   stripe: "rgba(251,146,60,0.15)",  text: "rgba(254,215,170,0.95)"  },
+    { grad: "linear-gradient(160deg, #042030 0%, #02121e 100%)", accent: "rgba(34,211,238,0.9)",   stripe: "rgba(34,211,238,0.15)",  text: "rgba(165,243,252,0.95)"  },
 ];
 
 function getBookColor(id: string) {
@@ -234,64 +234,96 @@ function getBookColor(id: string) {
     return BOOK_PALETTE[hash % BOOK_PALETTE.length];
 }
 
-/* ── Kitap Kartı — sırt görünümü ─────────────────────────────── */
+/* ── Kitap Kartı — kapak görünümü ────────────────────────────── */
 function BookCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
     const col = getBookColor(item.id);
     return (
         <div style={{
-            width: 52, height: 215, flexShrink: 0,
-            borderRadius: "4px 5px 5px 4px",
-            background: col.bg,
-            border: `1px solid ${col.border}`,
-            boxShadow: `2px 4px 16px rgba(0,0,0,0.6), inset 2px 0 0 rgba(255,255,255,0.06), inset -1px 0 0 rgba(0,0,0,0.3)`,
+            width: 96, height: 140, flexShrink: 0,
+            borderRadius: "3px 6px 6px 3px",
+            background: col.grad,
+            boxShadow: [
+                "4px 6px 20px rgba(0,0,0,0.7)",
+                "-3px 0 0 rgba(0,0,0,0.35)",          // sol kenar — sırt gölgesi
+                "inset 3px 0 6px rgba(0,0,0,0.4)",    // iç sırt
+                `inset 0 0 0 1px rgba(255,255,255,0.06)`,
+            ].join(", "),
             display: "flex", flexDirection: "column",
-            alignItems: "center", padding: "12px 0 10px",
-            cursor: "pointer", position: "relative",
-            transition: "transform 0.18s, box-shadow 0.18s",
+            cursor: "pointer", position: "relative", overflow: "hidden",
+            transition: "transform 0.2s ease, box-shadow 0.2s ease",
         }}
-            className="hover:-translate-y-1.5 hover:shadow-2xl"
+            className="hover:-translate-y-2 group"
+            onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.boxShadow = [
+                    "8px 12px 32px rgba(0,0,0,0.8)",
+                    "-3px 0 0 rgba(0,0,0,0.35)",
+                    "inset 3px 0 6px rgba(0,0,0,0.4)",
+                    `inset 0 0 0 1px rgba(255,255,255,0.08)`,
+                    `0 0 20px ${col.accent.replace("0.9", "0.15")}`,
+                ].join(", ");
+            }}
+            onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.boxShadow = [
+                    "4px 6px 20px rgba(0,0,0,0.7)",
+                    "-3px 0 0 rgba(0,0,0,0.35)",
+                    "inset 3px 0 6px rgba(0,0,0,0.4)",
+                    `inset 0 0 0 1px rgba(255,255,255,0.06)`,
+                ].join(", ");
+            }}
         >
-            {/* Şerit (bookmark) */}
-            <div style={{
-                width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
-                background: col.accent,
-                boxShadow: `0 0 8px ${col.accent}`,
-                marginBottom: 14,
-            }} />
+            {/* Üst dekoratif şerit */}
+            <div style={{ height: 3, background: col.accent, opacity: 0.7, flexShrink: 0 }} />
 
-            {/* Dikey başlık */}
-            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", overflow: "hidden", padding: "0 10px" }}>
+            {/* İçerik alanı */}
+            <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: "10px 10px 8px", gap: 6 }}>
+
+                {/* Dekoratif çizgiler */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 2, marginBottom: 4 }}>
+                    <div style={{ height: 1, background: col.stripe, borderRadius: 1 }} />
+                    <div style={{ height: 1, width: "60%", background: col.stripe, borderRadius: 1 }} />
+                </div>
+
+                {/* Başlık */}
                 <p style={{
-                    writingMode: "vertical-rl", transform: "rotate(180deg)",
-                    fontSize: 11, fontWeight: 600,
-                    color: "rgba(255,255,255,0.9)", letterSpacing: 0.6,
-                    margin: 0, lineHeight: 1.25,
-                    overflow: "hidden", whiteSpace: "nowrap",
-                    textOverflow: "ellipsis", maxHeight: 130,
+                    fontSize: 10, fontWeight: 700, color: col.text,
+                    margin: 0, lineHeight: 1.35, letterSpacing: 0.2,
+                    display: "-webkit-box", WebkitLineClamp: 4,
+                    WebkitBoxOrient: "vertical", overflow: "hidden",
+                    flex: 1,
                 }}>{item.title}</p>
+
+                {/* Yazar */}
+                {item.creator && (
+                    <p style={{
+                        fontSize: 7.5, color: "rgba(255,255,255,0.38)",
+                        margin: 0, letterSpacing: 0.3, fontWeight: 500,
+                        overflow: "hidden", whiteSpace: "nowrap",
+                        textOverflow: "ellipsis", flexShrink: 0,
+                    }}>{item.creator}</p>
+                )}
             </div>
 
-            {/* Yazar */}
-            {item.creator && (
-                <p style={{
-                    writingMode: "vertical-rl", transform: "rotate(180deg)",
-                    fontSize: 7.5, color: "rgba(255,255,255,0.38)",
-                    margin: "10px 0 0", letterSpacing: 0.2,
-                    overflow: "hidden", whiteSpace: "nowrap",
-                    textOverflow: "ellipsis", maxHeight: 44, flexShrink: 0,
-                }}>{item.creator}</p>
-            )}
+            {/* Alt bar — puan */}
+            <div style={{
+                height: 22, flexShrink: 0, background: "rgba(0,0,0,0.3)",
+                borderTop: `1px solid ${col.stripe}`,
+                display: "flex", alignItems: "center", justifyContent: "center", gap: 3,
+            }}>
+                {avg != null ? (
+                    <>
+                        <Star size={8} fill={col.accent} style={{ color: col.accent }} />
+                        <span style={{ fontSize: 9, color: col.accent, fontWeight: 700 }}>{avg}</span>
+                    </>
+                ) : (
+                    <span style={{ fontSize: 7.5, color: "rgba(255,255,255,0.2)", letterSpacing: 0.5 }}>—</span>
+                )}
+            </div>
 
-            {/* Puan */}
-            {avg != null && (
-                <div style={{
-                    position: "absolute", bottom: 8,
-                    display: "flex", alignItems: "center", gap: 2,
-                }}>
-                    <Star size={7} fill="rgba(252,211,77,0.9)" style={{ color: "rgba(252,211,77,0.9)" }} />
-                    <span style={{ fontSize: 7.5, color: "rgba(252,211,77,0.9)", fontWeight: 700 }}>{avg}</span>
-                </div>
-            )}
+            {/* Sırt çizgisi */}
+            <div style={{
+                position: "absolute", left: 0, top: 0, bottom: 0, width: 3,
+                background: "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 50%, rgba(0,0,0,0.2) 100%)",
+            }} />
         </div>
     );
 }
