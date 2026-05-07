@@ -9,6 +9,7 @@ const LINKS = [
     { href: "/home",        label: "Ana Sayfa"   },
     { href: "/akis",        label: "Akış"         },
     { href: "/yildizlar",   label: "Yıldızlar"    },
+    { href: "/arsiv",       label: "Arşiv"        },
     { href: "/galeri",      label: "Galeri"       },
     { href: "/members",     label: "Üyeler"       },
     { href: "/etkinlikler", label: "Etkinlikler"  },
