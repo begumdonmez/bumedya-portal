@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Link from "next/link";
-import { Film, Tv, BookOpen, Music, Star, Plus, X, Loader2, ChevronRight } from "lucide-react";
+import { Film, Tv, BookOpen, Music, Star, Plus, X, Loader2, ChevronRight, ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
@@ -358,6 +358,53 @@ function VinylCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
 }
 
 /* ── Raf bölümü başlığı ──────────────────────────────────────── */
+function ShelfRow({ children }: { children: React.ReactNode }) {
+    const ref = useRef<HTMLDivElement>(null);
+    const [showLeft, setShowLeft] = useState(false);
+    const [showRight, setShowRight] = useState(true);
+
+    const scroll = (dir: "left" | "right") => {
+        ref.current?.scrollBy({ left: dir === "right" ? 320 : -320, behavior: "smooth" });
+    };
+
+    const onScroll = () => {
+        const el = ref.current;
+        if (!el) return;
+        setShowLeft(el.scrollLeft > 10);
+        setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 10);
+    };
+
+    const btnBase: React.CSSProperties = {
+        position: "absolute", top: "50%", transform: "translateY(-50%)",
+        zIndex: 10, width: 28, height: 28, borderRadius: "50%",
+        display: "flex", alignItems: "center", justifyContent: "center",
+        background: "rgba(20,30,58,0.92)", border: "1px solid rgba(124,58,237,0.3)",
+        color: "rgba(167,139,250,0.9)", cursor: "pointer",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.4)",
+        transition: "opacity 0.15s",
+    };
+
+    return (
+        <div style={{ position: "relative" }}>
+            {showLeft && (
+                <button onClick={() => scroll("left")} style={{ ...btnBase, left: -6 }} aria-label="Sola kaydır">
+                    <ChevronLeft size={14} />
+                </button>
+            )}
+            <div ref={ref} className="flex gap-4 overflow-x-auto pb-4"
+                 style={{ scrollbarWidth: "none", alignItems: "flex-end" }}
+                 onScroll={onScroll}>
+                {children}
+            </div>
+            {showRight && (
+                <button onClick={() => scroll("right")} style={{ ...btnBase, right: -6 }} aria-label="Sağa kaydır">
+                    <ChevronRight size={14} />
+                </button>
+            )}
+        </div>
+    );
+}
+
 function ShelfLabel({ category }: { category: Category }) {
     const c = CAT_CONFIG[category];
     const Icon = c.icon;
@@ -576,16 +623,13 @@ export default function ArsivClient({ userId, username, isAdmin, items: initialI
                                 <div key={cat}>
                                     <ShelfLabel category={cat} />
                                     {/* Shelf */}
-                                    <div style={{ position: "relative" }}>
-                                        <div className="flex gap-4 overflow-x-auto pb-4"
-                                             style={{ scrollbarWidth: "none", alignItems: "flex-end" }}>
-                                            {catItems.map(item => (
-                                                <MediaCard key={item.id} item={item} avg={avgRatings[item.id]} />
-                                            ))}
-                                        </div>
-                                        {/* Raf tahtası */}
-                                        <div style={{ height: 8, borderRadius: "0 0 4px 4px", background: "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)", border: "1px solid var(--border-3)", borderTop: "none", marginTop: -2 }} />
-                                    </div>
+                                    <ShelfRow>
+                                        {catItems.map(item => (
+                                            <MediaCard key={item.id} item={item} avg={avgRatings[item.id]} />
+                                        ))}
+                                    </ShelfRow>
+                                    {/* Raf tahtası */}
+                                    <div style={{ height: 8, borderRadius: "0 0 4px 4px", background: "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)", border: "1px solid var(--border-3)", borderTop: "none", marginTop: -2 }} />
                                 </div>
                             );
                         })}
