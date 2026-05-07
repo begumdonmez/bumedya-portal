@@ -42,8 +42,10 @@ export async function PATCH(request: Request) {
         return Response.json({ error: "Bad Request" }, { status: 400 });
     }
 
-    // Kendi rozetlerini değiştirmeye çalışıyorsa engelle
-    if (userId === user.id) {
+    const isAuthorized = me.badges.includes("authorized");
+
+    // Kendi rozetlerini değiştirmeye çalışıyorsa: sadece authorized izinli
+    if (userId === user.id && !isAuthorized) {
         return Response.json({ error: "Kendi rozetlerini bu yolla değiştiremezsin." }, { status: 403 });
     }
 
@@ -59,7 +61,6 @@ export async function PATCH(request: Request) {
     if (!target) return Response.json({ error: "Kullanıcı bulunamadı." }, { status: 404 });
 
     const currentBadges: string[] = target.badges ?? [];
-    const isAuthorized = me.badges.includes("authorized");
 
     // Sunucu tarafında güvenli rozet listesi oluştur:
     // - ELEVATED (admin, authorized): sadece "authorized" admin değiştirebilir
