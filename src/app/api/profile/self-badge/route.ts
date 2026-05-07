@@ -6,10 +6,13 @@ const SELF_CLAIMABLE = new Set(["seri_izleyici", "kitap_kurdu", "plak_kafasi"]);
 
 export async function PATCH(req: Request) {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const { badgeId } = await req.json();
+    // getUser ve body parse birbirinden bağımsız — paralel çalıştır
+    const [{ data: { user } }, { badgeId }] = await Promise.all([
+        supabase.auth.getUser(),
+        req.json(),
+    ]);
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     if (!SELF_CLAIMABLE.has(badgeId)) {
         return NextResponse.json({ error: "Bu rozet bu yolla alınamaz." }, { status: 403 });

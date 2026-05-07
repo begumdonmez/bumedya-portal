@@ -119,22 +119,26 @@ export default function ProfilPage() {
             const supabase = createClient();
             const { data: { user }, error: userErr } = await supabase.auth.getUser();
             if (userErr || !user) { router.push("/login"); return; }
-            const { data, error } = await supabase
-                .from("profiles").select("*").eq("id", user.id).single();
+
+            // Profil ve postları paralel çek — posts user_id ile filtrelendiğinden
+            // username'e gerek kalmadan ikisi aynı anda başlıyor.
+            const [{ data, error }, { data: userPosts }] = await Promise.all([
+                supabase.from("profiles")
+                    .select("id, username, role, badges, bio, display_name, avatar_url, created_at, social_links")
+                    .eq("id", user.id).single(),
+                supabase.from("posts")
+                    .select("id, user_id, username, category, content, storage_path, description, created_at")
+                    .eq("user_id", user.id)
+                    .order("created_at", { ascending: false }),
+            ]);
+
             if (error || !data) { toast.error("Profil yüklenemedi."); setLoading(false); return; }
             setProfile(data as Profile);
             setEditUsername(data.username);
             setEditBio(data.bio ?? "");
             setEditDisplayName(data.display_name ?? "");
             setEditSocialLinks((data.social_links as SocialLinksData) ?? {});
-
-            const { data: userPosts } = await supabase
-                .from("posts")
-                .select("id, user_id, username, category, content, storage_path, description, created_at")
-                .eq("username", data.username)
-                .order("created_at", { ascending: false });
             setPosts((userPosts ?? []) as Post[]);
-
             setLoading(false);
         };
         load();

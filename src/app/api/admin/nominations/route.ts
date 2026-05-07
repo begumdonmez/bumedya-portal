@@ -14,10 +14,12 @@ async function getAdminUser() {
 
 // PATCH /api/admin/nominations — onayla veya reddet
 export async function PATCH(req: Request) {
-    const admin = await getAdminUser();
+    // Admin kontrolü ve body parse birbirinden bağımsız — paralel çalıştır
+    const [admin, { id, status }] = await Promise.all([
+        getAdminUser(),
+        req.json(),
+    ]);
     if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
-    const { id, status } = await req.json();
     if (!id || !["approved", "rejected"].includes(status)) {
         return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });
     }
