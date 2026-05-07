@@ -219,14 +219,14 @@ function Reel() {
 
 /* ── Kitap renk paleti (id'den deterministik renk) ───────────── */
 const BOOK_PALETTE = [
-    { grad: "linear-gradient(160deg, #0f2d52 0%, #071a30 100%)", accent: "rgba(96,165,250,0.9)",   stripe: "rgba(96,165,250,0.15)",  text: "rgba(186,224,255,0.95)"  },
-    { grad: "linear-gradient(160deg, #2e1054 0%, #180830 100%)", accent: "rgba(167,139,250,0.9)",  stripe: "rgba(167,139,250,0.15)", text: "rgba(220,210,255,0.95)"  },
-    { grad: "linear-gradient(160deg, #052e1c 0%, #021a0f 100%)", accent: "rgba(52,211,153,0.9)",   stripe: "rgba(52,211,153,0.15)",  text: "rgba(167,243,208,0.95)"  },
-    { grad: "linear-gradient(160deg, #3f0d1e 0%, #220710 100%)", accent: "rgba(251,113,133,0.9)",  stripe: "rgba(251,113,133,0.15)", text: "rgba(255,200,210,0.95)"  },
-    { grad: "linear-gradient(160deg, #2e1e04 0%, #1a1102 100%)", accent: "rgba(251,191,36,0.9)",   stripe: "rgba(251,191,36,0.15)",  text: "rgba(254,230,138,0.95)"  },
-    { grad: "linear-gradient(160deg, #1a2e04 0%, #0e1a02 100%)", accent: "rgba(163,230,53,0.9)",   stripe: "rgba(163,230,53,0.15)",  text: "rgba(217,249,157,0.95)"  },
-    { grad: "linear-gradient(160deg, #2e1504 0%, #1a0c02 100%)", accent: "rgba(251,146,60,0.9)",   stripe: "rgba(251,146,60,0.15)",  text: "rgba(254,215,170,0.95)"  },
-    { grad: "linear-gradient(160deg, #042030 0%, #02121e 100%)", accent: "rgba(34,211,238,0.9)",   stripe: "rgba(34,211,238,0.15)",  text: "rgba(165,243,252,0.95)"  },
+    { grad: "linear-gradient(160deg, #c7d9f0 0%, #a8c4e8 100%)", accent: "rgba(59,100,180,0.8)",   stripe: "rgba(59,100,180,0.2)",  text: "rgba(30,58,120,0.95)"   },
+    { grad: "linear-gradient(160deg, #ddd0f5 0%, #c9b8ef 100%)", accent: "rgba(109,70,200,0.8)",   stripe: "rgba(109,70,200,0.2)",  text: "rgba(62,30,130,0.95)"   },
+    { grad: "linear-gradient(160deg, #b8ecd8 0%, #9de0c6 100%)", accent: "rgba(20,140,90,0.8)",    stripe: "rgba(20,140,90,0.2)",   text: "rgba(10,80,52,0.95)"    },
+    { grad: "linear-gradient(160deg, #f5c6d0 0%, #f0aab8 100%)", accent: "rgba(190,50,80,0.8)",    stripe: "rgba(190,50,80,0.2)",   text: "rgba(120,20,45,0.95)"   },
+    { grad: "linear-gradient(160deg, #faeab8 0%, #f5d98a 100%)", accent: "rgba(170,110,10,0.8)",   stripe: "rgba(170,110,10,0.2)",  text: "rgba(100,60,5,0.95)"    },
+    { grad: "linear-gradient(160deg, #ceefc8 0%, #b5e6ae 100%)", accent: "rgba(40,120,40,0.8)",    stripe: "rgba(40,120,40,0.2)",   text: "rgba(20,70,20,0.95)"    },
+    { grad: "linear-gradient(160deg, #fad8b8 0%, #f5c49a 100%)", accent: "rgba(190,90,20,0.8)",    stripe: "rgba(190,90,20,0.2)",   text: "rgba(110,50,10,0.95)"   },
+    { grad: "linear-gradient(160deg, #b8eaf5 0%, #9addef 100%)", accent: "rgba(10,130,170,0.8)",   stripe: "rgba(10,130,170,0.2)",  text: "rgba(5,70,100,0.95)"    },
 ];
 
 function getBookColor(id: string) {
@@ -305,7 +305,7 @@ function BookCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
 
             {/* Alt bar — puan */}
             <div style={{
-                height: 22, flexShrink: 0, background: "rgba(0,0,0,0.3)",
+                height: 22, flexShrink: 0, background: "rgba(0,0,0,0.1)",
                 borderTop: `1px solid ${col.stripe}`,
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 3,
             }}>
@@ -315,14 +315,14 @@ function BookCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
                         <span style={{ fontSize: 9, color: col.accent, fontWeight: 700 }}>{avg}</span>
                     </>
                 ) : (
-                    <span style={{ fontSize: 7.5, color: "rgba(255,255,255,0.2)", letterSpacing: 0.5 }}>—</span>
+                    <span style={{ fontSize: 7.5, color: "rgba(0,0,0,0.2)", letterSpacing: 0.5 }}>—</span>
                 )}
             </div>
 
             {/* Sırt çizgisi */}
             <div style={{
                 position: "absolute", left: 0, top: 0, bottom: 0, width: 3,
-                background: "linear-gradient(180deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 50%, rgba(0,0,0,0.2) 100%)",
+                background: "linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.15) 50%, rgba(0,0,0,0.1) 100%)",
             }} />
         </div>
     );
