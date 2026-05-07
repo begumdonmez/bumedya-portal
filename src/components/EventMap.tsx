@@ -63,9 +63,9 @@ function makeIcon(color: string, glow: string, size = 28) {
     });
 }
 
-const regularIcon  = makeIcon("rgba(124,58,237,0.95)", "rgba(124,58,237,0.6)");
-const approvedIcon = makeIcon("rgba(52,211,153,0.95)", "rgba(52,211,153,0.5)");
-const selectedIcon = makeIcon("rgba(251,191,36,0.98)", "rgba(251,191,36,0.7)", 34);
+const regularIcon  = makeIcon("rgba(124,58,237,0.95)", "rgba(124,58,237,0.6)", 18);
+const approvedIcon = makeIcon("rgba(52,211,153,0.95)", "rgba(52,211,153,0.5)", 18);
+const selectedIcon = makeIcon("rgba(251,191,36,0.98)", "rgba(251,191,36,0.7)", 22);
 
 export default function EventMap({
     events,
