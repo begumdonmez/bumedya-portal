@@ -10,17 +10,19 @@ export default async function AkisPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect("/login");
 
-    const { data: profile } = await supabase
-        .from("profiles")
-        .select("username, badges")
-        .eq("id", user.id)
-        .single();
-
-    const { data: posts } = await supabase
-        .from("posts")
-        .select("id, user_id, username, category, content, storage_path, description, created_at, ref_url")
-        .order("created_at", { ascending: false })
-        .limit(20);
+    // Profile + posts paralel
+    const [{ data: profile }, { data: posts }] = await Promise.all([
+        supabase
+            .from("profiles")
+            .select("username, badges")
+            .eq("id", user.id)
+            .single(),
+        supabase
+            .from("posts")
+            .select("id, user_id, username, category, content, storage_path, description, created_at, ref_url")
+            .order("created_at", { ascending: false })
+            .limit(20),
+    ]);
 
     const postIds = (posts ?? []).map((p) => p.id);
     let likesData: { post_id: string; user_id: string }[] = [];

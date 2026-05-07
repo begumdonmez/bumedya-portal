@@ -38,24 +38,25 @@ export default async function HomePage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect("/login");
 
-    const { data: profile } = await supabase
-        .from("profiles").select("username, badges").eq("id", user.id).single();
-    const username = profile?.username ?? user.email?.split("@")[0] ?? "";
-    const isAdmin = (profile?.badges as string[] ?? []).includes("admin");
-
+    // Profil + tüm widget verileri tek seferde paralel
     const [
+        { data: profile },
         { data: statsData },
         { data: activities },
         { data: playlists },
         { data: events },
         { data: announcements },
     ] = await Promise.all([
+        supabase.from("profiles").select("username, badges").eq("id", user.id).single(),
         supabase.rpc("get_profile_stats"),
         supabase.from("activities").select("id, username, type, payload, created_at").order("created_at", { ascending: false }).limit(8),
         supabase.from("spotify_playlists").select("id, name, spotify_id, description").order("created_at", { ascending: true }),
-        supabase.from("events").select("id, username, title, address, lat, lng, event_date, ref_url, approved").order("event_date", { ascending: true }),
+        supabase.from("events").select("id, username, title, address, lat, lng, event_date, ref_url, approved").order("event_date", { ascending: true }).limit(100),
         supabase.from("announcements").select("id, user_id, username, content, created_at").order("created_at", { ascending: false }).limit(10),
     ]);
+
+    const username = profile?.username ?? user.email?.split("@")[0] ?? "";
+    const isAdmin = (profile?.badges as string[] ?? []).includes("admin");
 
     const stats = (statsData as Record<string, number> | null) ?? {};
     const totalCount    = stats.total    ?? 0;

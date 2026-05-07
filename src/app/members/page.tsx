@@ -16,7 +16,7 @@ export default async function MembersPage() {
 
     const [{ data: profile }, { data: profiles }] = await Promise.all([
         supabase.from("profiles").select("username").eq("id", user.id).single(),
-        supabase.from("profiles").select("id, username, role, badges, bio, created_at").order("created_at", { ascending: false }),
+        supabase.from("profiles").select("id, username, role, badges, bio, created_at").order("created_at", { ascending: false }).limit(200),
     ]);
 
     const username = profile?.username ?? user.email?.split("@")[0] ?? "";

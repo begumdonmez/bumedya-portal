@@ -53,34 +53,35 @@ export default async function PublicProfilePage(
     const { username } = await params;
     const supabase = await createClient();
 
-    // Profili çek
-    const { data: profile } = await supabase
-        .from("profiles")
-        .select("id, username, role, badges, bio, display_name, created_at, social_links")
-        .eq("username", username)
-        .single();
+    // Profile + auth + posts → hepsini paralel çek
+    const [{ data: profile }, { data: { user } }, { data: posts }] = await Promise.all([
+        supabase
+            .from("profiles")
+            .select("id, username, role, badges, bio, display_name, created_at, social_links")
+            .eq("username", username)
+            .single(),
+        supabase.auth.getUser(),
+        supabase
+            .from("posts")
+            .select("id, user_id, username, category, content, storage_path, description, created_at, ref_url")
+            .eq("username", username)
+            .order("created_at", { ascending: false })
+            .limit(20),
+    ]);
 
     if (!profile) notFound();
 
-    // Mevcut kullanıcıyı çek — kendi profili mi, admin mi?
-    const { data: { user } } = await supabase.auth.getUser();
     const isOwnProfile = user?.id === profile.id;
 
+    // Admin kontrolü: kendi profiliyse zaten badge'lerimiz var, ekstra sorgu gerekmez
     let isAdmin = false;
-    if (user) {
+    if (isOwnProfile) {
+        isAdmin = (profile.badges as string[]).includes("admin");
+    } else if (user) {
         const { data: me } = await supabase
-            .from("profiles")
-            .select("badges")
-            .eq("id", user.id)
-            .single();
+            .from("profiles").select("badges").eq("id", user.id).single();
         isAdmin = me?.badges?.includes("admin") ?? false;
     }
-
-    const { data: posts } = await supabase
-        .from("posts")
-        .select("id, user_id, username, category, content, storage_path, description, created_at, ref_url")
-        .eq("username", username)
-        .order("created_at", { ascending: false });
 
     const roleConf = ROLE_CONFIG[profile.role as keyof typeof ROLE_CONFIG] ?? ROLE_CONFIG.member;
     const joinDate = new Date(profile.created_at).toLocaleDateString("tr-TR", {
