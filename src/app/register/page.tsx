@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useId } from "react";
+import React, { useState, useId, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
@@ -152,6 +152,14 @@ function SuccessScreen({ email }: { email: string }) {
 
 /* ─── Ana bileşen ────────────────────────────────────────────── */
 export default function RegisterPage() {
+    return (
+        <Suspense>
+            <RegisterForm />
+        </Suspense>
+    );
+}
+
+function RegisterForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const nextUrl = searchParams.get("next") ?? "/onboarding";
