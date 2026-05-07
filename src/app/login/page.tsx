@@ -58,10 +58,16 @@ function Field({ id, label, type = "text", value, onChange, placeholder, error, 
     );
 }
 
+const CALLBACK_ERROR_MESSAGES: Record<string, string> = {
+    confirmation_failed: "Doğrulama linki geçersiz veya süresi dolmuş. Tekrar kayıt olup yeni bir link talep edebilirsin.",
+    invalid_link:        "Doğrulama linki geçersiz. Lütfen e-postanı kontrol et.",
+};
+
 function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const redirectTo = searchParams.get("redirectTo") ?? "/";
+    const callbackError = searchParams.get("error");
     const formId = useId();
 
     const [identifier, setIdentifier] = useState("");
@@ -110,8 +116,16 @@ function LoginForm() {
 
             const { error } = await supabase.auth.signInWithPassword({ email, password });
             if (error) {
-                const msg = error.message.includes("Invalid login") ? "Kullanıcı adı/e-posta veya şifre hatalı."
-                    : error.message.includes("Email not confirmed") ? "E-postanı henüz doğrulamadın."
+                if (error.message.includes("Email not confirmed")) {
+                    toast.dismiss(toastId);
+                    toast.info("E-postanı henüz doğrulamadın. Gelen kutunu kontrol et.", {
+                        description: "Doğrulama maili bulunamıyorsa spam klasörüne bakabilirsin.",
+                        duration: 6000,
+                    });
+                    setLoading(false); return;
+                }
+                const msg = error.message.includes("Invalid login")
+                    ? "Kullanıcı adı/e-posta veya şifre hatalı."
                     : "Bir hata oluştu.";
                 toast.error(msg, { id: toastId });
                 setLoading(false); return;
@@ -126,6 +140,19 @@ function LoginForm() {
     };
 
     return (
+        <>
+        {/* Auth callback hata banner'ı */}
+        {callbackError && CALLBACK_ERROR_MESSAGES[callbackError] && (
+            <div className="mb-5 flex items-start gap-2.5 px-4 py-3 rounded-2xl text-xs leading-relaxed"
+                 style={{ background: "rgba(251,146,60,0.08)", border: "1px solid rgba(251,146,60,0.25)", color: "rgba(251,191,36,0.85)" }}>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0 mt-0.5">
+                    <path d="M7 1.5L12.5 11H1.5L7 1.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+                    <path d="M7 5.5v2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+                    <circle cx="7" cy="9.5" r="0.6" fill="currentColor"/>
+                </svg>
+                {CALLBACK_ERROR_MESSAGES[callbackError]}
+            </div>
+        )}
         <form id={formId} onSubmit={handleLogin} className="flex flex-col gap-1" noValidate>
             <Field id={`${formId}-identifier`} label="E-Posta veya Kullanıcı Adı"
                    value={identifier} onChange={setIdentifier} placeholder="fanzinci@mail.com veya kullaniciadi"
@@ -178,6 +205,7 @@ function LoginForm() {
                 </p>
             </div>
         </form>
+        </>
     );
 }
 
@@ -215,6 +243,7 @@ export default function LoginPage() {
                                 Dijital evrenine giriş yap.
                             </p>
                         </div>
+
 
                         <Suspense fallback={
                             <div className="flex items-center justify-center py-8">
