@@ -746,6 +746,26 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
         setPosts((prev) => prev.map((p) => p.id === updated.id ? updated : p));
     }, []);
 
+    // Realtime — başkalarının yaptığı paylaşımları/silmeleri/güncellemeleri anlık yansıt
+    useEffect(() => {
+        const supabase = createClient();
+        const channel = supabase
+            .channel("posts-realtime")
+            .on("postgres_changes", { event: "INSERT", schema: "public", table: "posts" }, (payload) => {
+                const newPost = payload.new as Post;
+                // Kendi paylaşımımızı handlePost zaten ekliyor, duplicate önle
+                setPosts((prev) => prev.some((p) => p.id === newPost.id) ? prev : [newPost, ...prev]);
+            })
+            .on("postgres_changes", { event: "DELETE", schema: "public", table: "posts" }, (payload) => {
+                setPosts((prev) => prev.filter((p) => p.id !== (payload.old as Post).id));
+            })
+            .on("postgres_changes", { event: "UPDATE", schema: "public", table: "posts" }, (payload) => {
+                setPosts((prev) => prev.map((p) => p.id === (payload.new as Post).id ? payload.new as Post : p));
+            })
+            .subscribe();
+        return () => { supabase.removeChannel(channel); };
+    }, []);
+
     return (
         <div className="aurora-bg relative min-h-screen flex flex-col">
             <div aria-hidden className="aurora-layer" />
