@@ -224,7 +224,7 @@ export default async function HomePage() {
                             {(events ?? [])
                                 .filter(e => e.event_date >= new Date().toISOString().split("T")[0])
                                 .sort((a, b) => a.event_date.localeCompare(b.event_date))
-                                .slice(0, 4)
+                                .slice(0, 8)
                                 .map(ev => {
                                     const today = new Date().toISOString().split("T")[0];
                                     const isToday = ev.event_date === today;
