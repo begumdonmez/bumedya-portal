@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo, memo, useCallback } from "react";
 import Link from "next/link";
 import { Film, Tv, BookOpen, Music, Star, Plus, X, Loader2, ChevronRight, ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -47,7 +47,7 @@ const CREATOR_LABEL: Record<Category, string> = {
 };
 
 /* ── DVD Spindle Kartı (Film) ────────────────────────────────── */
-function DvdCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
+const DvdCard = memo(function DvdCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
     return (
         <div style={{
             width: 96, flexShrink: 0, cursor: "pointer",
@@ -133,10 +133,10 @@ function DvdCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
             }}>{item.title}</p>
         </div>
     );
-}
+});
 
 /* ── VHS Kartı (Dizi) ────────────────────────────────────────── */
-function VhsCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
+const VhsCard = memo(function VhsCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
     return (
         <div style={{
             width: 185, height: 120, flexShrink: 0,
@@ -187,7 +187,7 @@ function VhsCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
             </div>
         </div>
     );
-}
+});
 
 function Reel() {
     return (
@@ -235,7 +235,7 @@ function getBookColor(id: string) {
 }
 
 /* ── Kitap Kartı — kapak görünümü ────────────────────────────── */
-function BookCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
+const BookCard = memo(function BookCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
     const col = getBookColor(item.id);
     return (
         <div style={{
@@ -326,10 +326,10 @@ function BookCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
             }} />
         </div>
     );
-}
+});
 
 /* ── Plak Kartı (Şarkı) ──────────────────────────────────────── */
-function VinylCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
+const VinylCard = memo(function VinylCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
     return (
         <div style={{
             width: 150, height: 150, flexShrink: 0,
@@ -387,7 +387,7 @@ function VinylCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
             </div>
         </div>
     );
-}
+});
 
 /* ── Raf bölümü başlığı ──────────────────────────────────────── */
 function ShelfRow({ children }: { children: React.ReactNode }) {
@@ -395,16 +395,21 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
     const [showLeft, setShowLeft] = useState(false);
     const [showRight, setShowRight] = useState(true);
 
-    const scroll = (dir: "left" | "right") => {
+    const scroll = useCallback((dir: "left" | "right") => {
         ref.current?.scrollBy({ left: dir === "right" ? 320 : -320, behavior: "smooth" });
-    };
+    }, []);
 
-    const onScroll = () => {
-        const el = ref.current;
-        if (!el) return;
-        setShowLeft(el.scrollLeft > 10);
-        setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 10);
-    };
+    const rafRef = useRef<number | null>(null);
+    const onScroll = useCallback(() => {
+        if (rafRef.current) return;
+        rafRef.current = requestAnimationFrame(() => {
+            rafRef.current = null;
+            const el = ref.current;
+            if (!el) return;
+            setShowLeft(el.scrollLeft > 10);
+            setShowRight(el.scrollLeft + el.clientWidth < el.scrollWidth - 10);
+        });
+    }, []);
 
     const btnBase: React.CSSProperties = {
         position: "absolute", top: "50%", transform: "translateY(-50%)",
@@ -453,7 +458,7 @@ function ShelfLabel({ category }: { category: Category }) {
 }
 
 /* ── Medya kartı wrapper ──────────────────────────────────────── */
-function MediaCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
+const MediaCard = memo(function MediaCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
     return (
         <Link
             href={`/arsiv/${item.id}`}
@@ -471,7 +476,7 @@ function MediaCard({ item, avg }: { item: ArchiveItem; avg?: number }) {
             )}
         </Link>
     );
-}
+});
 
 /* ── Admin ekleme formu ──────────────────────────────────────── */
 function AddItemForm({ onAdd }: { onAdd: (item: ArchiveItem) => void }) {
@@ -573,13 +578,21 @@ export default function ArsivClient({ userId, username, isAdmin, items: initialI
     const [items, setItems] = useState<ArchiveItem[]>(initialItems);
     const [activeFilter, setActiveFilter] = useState<Category | "tumü">("tumü");
 
-    const filtered = activeFilter === "tumü" ? items : items.filter(i => i.category === activeFilter);
+    const filtered = useMemo(
+        () => activeFilter === "tumü" ? items : items.filter(i => i.category === activeFilter),
+        [items, activeFilter]
+    );
 
-    // Kategoriye göre grupla
-    const byCategory = (cat: Category) => filtered.filter(i => i.category === cat);
     const showAll = activeFilter === "tumü";
 
-    const categories: Category[] = ["film", "dizi", "kitap", "sarki"];
+    // Kategoriye göre önceden grupla — filtered değişince bir kez hesapla
+    const byCat = useMemo(() => {
+        const map: Record<string, ArchiveItem[]> = { film: [], dizi: [], kitap: [], sarki: [] };
+        for (const item of filtered) map[item.category]?.push(item);
+        return map;
+    }, [filtered]);
+
+    const categories: Category[] = useMemo(() => ["film", "dizi", "kitap", "sarki"] as Category[], []);
 
     return (
         <div className="aurora-bg relative min-h-screen w-full overflow-hidden">
@@ -649,7 +662,7 @@ export default function ArsivClient({ userId, username, isAdmin, items: initialI
                     /* Tümü görünümü: kategoriye göre raflar */
                     <div className="flex flex-col gap-8">
                         {categories.map(cat => {
-                            const catItems = byCategory(cat);
+                            const catItems = byCat[cat] ?? [];
                             if (catItems.length === 0) return null;
                             return (
                                 <div key={cat}>
