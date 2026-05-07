@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
+import HomeNavLinks from "@/components/HomeNavLinks";
+import NotificationBell from "@/components/NotificationBell";
 import SetWelcomeCookie from "@/components/SetWelcomeCookie";
 import SiteFooter from "@/components/SiteFooter";
 import ContactSection from "@/components/ContactSection";
@@ -148,29 +150,17 @@ export default async function LandingPage() {
                     <span className="text-lg font-bold tracking-tight" style={{ color: "var(--text-2)" }}>bumedya</span>
                     <span className="text-lg font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_10px_rgba(124,58,237,0.9)]" style={{ color: "var(--violet)" }}>.</span>
                 </Link>
-                {user && (
-                    <div className="hidden md:flex items-center gap-7 relative z-10">
-                        {[
-                            { href: "/home",        label: "Ana Sayfa"   },
-                            { href: "/galeri",      label: "Galeri"      },
-                            { href: "/members",     label: "Üyeler"      },
-                            { href: "/etkinlikler", label: "Etkinlikler" },
-                            { href: "/chat",        label: "Lounge"      },
-                        ].map(({ href, label }) => (
-                            <Link key={href} href={href}
-                                  className="nav-link-dim text-xs tracking-widest uppercase font-medium transition-colors duration-200">
-                                {label}
-                            </Link>
-                        ))}
-                    </div>
-                )}
+                {user && <HomeNavLinks />}
                 <div className="flex items-center gap-2 shrink-0 relative z-10">
                     {user ? (
-                        <Link href="/home" className="glass flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200 hover:border-white/20"
-                              style={{ color: "var(--violet-text)" }}>
-                            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--violet)" }} />
-                            @{username}
-                        </Link>
+                        <>
+                            <NotificationBell userId={user.id} />
+                            <Link href="/profil"
+                                  className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
+                                  style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
+                                @{username}
+                            </Link>
+                        </>
                     ) : (
                         <>
                             <Link href="/login" className="text-xs font-medium transition-colors duration-200 px-3 py-2"

@@ -4,7 +4,9 @@ import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { ChevronLeft, X, Plus, Compass } from "lucide-react";
+import { X, Plus, Compass } from "lucide-react";
+import HomeNavLinks from "@/components/HomeNavLinks";
+import NotificationBell from "@/components/NotificationBell";
 
 interface Note {
     id: string;
@@ -281,26 +283,16 @@ export default function ManifestClient({
         }}>
 
             {/* Navbar */}
-            <nav className="shrink-0 relative z-20 flex items-center justify-between px-5 py-3.5 border-b"
+            <nav className="shrink-0 relative z-20 flex items-center justify-between px-4 sm:px-8 py-3.5 border-b"
                  style={{ borderColor: "rgba(124,58,237,0.15)", background: "rgba(4,6,26,0.88)", backdropFilter: "blur(20px)" }}>
-                <div className="flex items-center gap-3">
-                    <Link href="/home"
-                          className="p-1.5 rounded-lg transition-colors"
-                          style={{ color: "rgba(224,242,254,0.45)" }}
-                          onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.9)")}
-                          onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.45)")}>
-                        <ChevronLeft size={16} />
-                    </Link>
-                    <Link href="/home" className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.55)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "rgba(167,139,250,0.8)" }}>.</span>
-                    </Link>
-                    <span style={{ color: "rgba(224,242,254,0.2)" }}>/</span>
-                    <span className="text-sm font-medium" style={{ color: "rgba(224,242,254,0.55)" }}>Manifest</span>
-                </div>
-
-                <div className="flex items-center gap-3">
-                    <p className="text-xs hidden sm:block" style={{ color: "rgba(224,242,254,0.3)" }}>
+                <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
+                    <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.55)" }}>bumedya</span>
+                    <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(167,139,250,0.9)]"
+                          style={{ color: "rgba(167,139,250,0.8)" }}>.</span>
+                </Link>
+                <HomeNavLinks />
+                <div className="flex items-center gap-2 relative z-10">
+                    <p className="text-xs hidden lg:block" style={{ color: "rgba(224,242,254,0.3)" }}>
                         {notes.length} not
                     </p>
                     <button
@@ -313,6 +305,12 @@ export default function ManifestClient({
                         <Compass size={14} />
                         <span className="text-[10px] hidden sm:inline">Merkez</span>
                     </button>
+                    <NotificationBell userId={userId} />
+                    <Link href="/profil"
+                          className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
+                          style={{ color: "rgba(167,139,250,0.9)", border: "1px solid rgba(124,58,237,0.3)", background: "rgba(124,58,237,0.1)" }}>
+                        @{username}
+                    </Link>
                 </div>
             </nav>
 

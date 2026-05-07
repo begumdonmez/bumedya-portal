@@ -5,8 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
-import { Image as ImageIcon, PenLine, Clapperboard, Sparkles, X, ChevronLeft, ExternalLink, Heart } from "lucide-react";
+import { Image as ImageIcon, PenLine, Clapperboard, Sparkles, X, ExternalLink, Heart } from "lucide-react";
 import type { ElementType } from "react";
+import NavbarBackdrop from "@/components/NavbarBackdrop";
+import HomeNavLinks from "@/components/HomeNavLinks";
+import NotificationBell from "@/components/NotificationBell";
 
 export interface Post {
     id: string;
@@ -612,31 +615,31 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
             <div aria-hidden className="aurora-orb-pink" />
 
             {/* Navbar */}
-            <nav className="sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6 py-4 border-b nav-backdrop"
-                 style={{ borderColor: "var(--border-3)" }}>
-                <div className="flex items-center gap-3">
-                    <Link href="/home" className="text-xs px-2 py-1 rounded-lg transition-colors duration-200"
-                          style={{ color: "var(--text-4)" }}
-                          onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-2)")}
-                          onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-4)")}>
-                        <ChevronLeft size={15} />
+            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
+                <NavbarBackdrop />
+                <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
+                    <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
+                    <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
+                          style={{ color: "var(--violet)" }}>.</span>
+                </Link>
+                <HomeNavLinks />
+                <div className="relative z-10 flex items-center gap-2">
+                    <button onClick={() => setShowModal(true)}
+                            className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
+                            style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
+                        <span className="text-sm leading-none">+</span> Paylaş
+                    </button>
+                    <NotificationBell userId={userId} />
+                    <Link href="/profil"
+                          className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
+                          style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
+                        @{username}
                     </Link>
-                    <Link href="/home" className="flex items-baseline gap-0.5 group">
-                        <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "var(--violet)" }}>.</span>
-                    </Link>
-                    <span style={{ color: "var(--border-1)" }}>/</span>
-                    <span className="text-sm font-medium" style={{ color: "var(--text-3)" }}>Akış</span>
                 </div>
-                <button onClick={() => setShowModal(true)}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200"
-                        style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
-                    <span className="text-base leading-none">+</span> Paylaş
-                </button>
             </nav>
 
             {/* Feed */}
-            <div className="relative z-10 max-w-xl mx-auto w-full px-4 py-8 flex flex-col gap-4">
+            <div className="relative z-10 max-w-xl mx-auto w-full px-4 pt-24 pb-8 flex flex-col gap-4">
                 {posts.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-32 gap-4">
                         <Sparkles size={36} className="opacity-10" />

@@ -4,9 +4,12 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { CalendarDays, MapPin, Plus, X, CheckCircle, ChevronLeft, ExternalLink, Trash2 } from "lucide-react";
+import { CalendarDays, MapPin, Plus, X, CheckCircle, ExternalLink, Trash2 } from "lucide-react";
 import EventMapClient from "@/components/EventMapClient";
 import type { EventItem } from "@/components/EventMap";
+import NavbarBackdrop from "@/components/NavbarBackdrop";
+import HomeNavLinks from "@/components/HomeNavLinks";
+import NotificationBell from "@/components/NotificationBell";
 
 async function geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
     try {
@@ -143,41 +146,30 @@ export default function EtkinliklerClient({
             <div aria-hidden className="aurora-orb-pink" />
 
             {/* Navbar */}
-            <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 border-b nav-backdrop"
-                 style={{ borderColor: "var(--border-3)" }}>
-                <div className="flex items-center gap-3">
-                    <Link href="/home" className="text-xs px-2 py-1 rounded-lg hover:opacity-70 transition-opacity"
-                          style={{ color: "var(--text-4)" }}>
-                        <ChevronLeft size={15} />
-                    </Link>
-                    <Link href="/home" className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "var(--violet)" }}>.</span>
-                    </Link>
-                    <span style={{ color: "var(--border-1)" }}>/</span>
-                    <span className="text-sm font-medium" style={{ color: "var(--text-3)" }}>Etkinlikler</span>
-                </div>
-                <div className="flex items-center gap-2 sm:gap-3">
-                    {todayEvs.length > 0 && (
-                        <span className="hidden sm:inline text-xs px-2 py-0.5 rounded-full"
-                              style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.25)", color: "rgba(52,211,153,0.85)" }}>
-                            {todayEvs.length} bugün
-                        </span>
-                    )}
-                    <span className="hidden sm:inline text-xs" style={{ color: "var(--text-4)" }}>
-                        {upcoming.length + future.length} etkinlik
-                    </span>
-                    <button
-                        onClick={() => setShowForm(true)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200"
-                        style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
-                        <Plus size={13} />
-                        <span className="hidden sm:inline">Etkinlik </span>Ekle
+            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
+                <NavbarBackdrop />
+                <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
+                    <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
+                    <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
+                          style={{ color: "var(--violet)" }}>.</span>
+                </Link>
+                <HomeNavLinks />
+                <div className="relative z-10 flex items-center gap-2">
+                    <button onClick={() => setShowForm(true)}
+                            className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
+                            style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
+                        <Plus size={13} /> Etkinlik Ekle
                     </button>
+                    <NotificationBell userId={userId} />
+                    <Link href="/profil"
+                          className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
+                          style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
+                        @{username}
+                    </Link>
                 </div>
             </nav>
 
-            <div className="relative z-10 max-w-5xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-10 flex flex-col gap-6">
+            <div className="relative z-10 max-w-5xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 flex flex-col gap-6">
                 {/* Harita */}
                 <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--violet-bg-md)" }}>
                     <EventMapClient

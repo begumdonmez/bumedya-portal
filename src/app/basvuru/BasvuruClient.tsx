@@ -3,8 +3,11 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Check, Clock, X, Users, Award, GraduationCap, type LucideIcon } from "lucide-react";
+import { ChevronRight, Check, Clock, X, Users, Award, GraduationCap, type LucideIcon } from "lucide-react";
 import { POSITIONS_BY_CATEGORY, type PositionId, type Position } from "./positions";
+import NavbarBackdrop from "@/components/NavbarBackdrop";
+import HomeNavLinks from "@/components/HomeNavLinks";
+import NotificationBell from "@/components/NotificationBell";
 
 const BasvuruForm = dynamic(() => import("./BasvuruForm"), { ssr: false, loading: () => null });
 
@@ -136,23 +139,25 @@ export default function BasvuruClient({
                 <div aria-hidden className="aurora-orb-pink" />
 
                 {/* Navbar */}
-                <nav className="sticky top-0 z-40 flex items-center justify-between px-4 sm:px-6 py-4 border-b nav-backdrop"
-                     style={{ borderColor: "var(--border-3)" }}>
-                    <div className="flex items-center gap-3">
-                        <Link href="/home" className="text-xs px-2 py-1 rounded-lg transition-colors duration-200"
-                              style={{ color: "var(--text-3)" }}>
-                            <ChevronLeft size={15} />
+                <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
+                    <NavbarBackdrop />
+                    <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
+                        <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
+                        <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
+                              style={{ color: "var(--violet)" }}>.</span>
+                    </Link>
+                    <HomeNavLinks />
+                    <div className="relative z-10 flex items-center gap-2">
+                        <NotificationBell userId={userId} />
+                        <Link href="/profil"
+                              className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
+                              style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
+                            @{username}
                         </Link>
-                        <Link href="/home" className="flex items-baseline gap-0.5">
-                            <span className="text-sm font-bold" style={{ color: "var(--text-2)" }}>bumedya</span>
-                            <span className="text-sm font-bold" style={{ color: "var(--violet-text)" }}>.</span>
-                        </Link>
-                        <span style={{ color: "var(--border-1)" }}>/</span>
-                        <span className="text-sm font-medium" style={{ color: "var(--text-2)" }}>Başvuru</span>
                     </div>
                 </nav>
 
-                <div className="relative z-10 max-w-3xl mx-auto w-full px-4 sm:px-6 py-10 flex flex-col gap-12">
+                <div className="relative z-10 max-w-3xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 flex flex-col gap-12">
 
                     {/* Hero */}
                     <div className="text-center flex flex-col items-center gap-4">

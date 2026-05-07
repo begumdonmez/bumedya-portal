@@ -3,7 +3,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import MembersClient from "./MembersClient";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
-import { ChevronLeft } from "lucide-react";
+import HomeNavLinks from "@/components/HomeNavLinks";
+import NotificationBell from "@/components/NotificationBell";
 
 export const metadata = { title: "Üyeler" };
 
@@ -13,10 +14,12 @@ export default async function MembersPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect("/login");
 
-    const { data: profiles } = await supabase
-        .from("profiles")
-        .select("id, username, role, badges, bio, created_at")
-        .order("created_at", { ascending: false });
+    const [{ data: profile }, { data: profiles }] = await Promise.all([
+        supabase.from("profiles").select("username").eq("id", user.id).single(),
+        supabase.from("profiles").select("id, username, role, badges, bio, created_at").order("created_at", { ascending: false }),
+    ]);
+
+    const username = profile?.username ?? user.email?.split("@")[0] ?? "";
 
     return (
         <div className="aurora-bg relative min-h-screen flex flex-col">
@@ -24,16 +27,20 @@ export default async function MembersPage() {
             <div aria-hidden className="aurora-orb-pink" />
             <div aria-hidden className="fixed inset-0 dot-grid opacity-[0.28] pointer-events-none" style={{ zIndex: 0 }} />
 
-            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center px-4 sm:px-8 py-5">
+            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
                 <NavbarBackdrop />
-                <div className="flex items-center gap-2">
-                    <Link href="/home" className="text-xs px-1.5 py-1 rounded-lg transition-colors duration-200"
-                          style={{ color: "rgba(224,242,254,0.3)" }}>
-                        <ChevronLeft size={15} />
-                    </Link>
-                    <Link href="/home" className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.5)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
+                <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
+                    <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
+                    <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
+                          style={{ color: "var(--violet)" }}>.</span>
+                </Link>
+                <HomeNavLinks />
+                <div className="relative z-10 flex items-center gap-2">
+                    <NotificationBell userId={user.id} />
+                    <Link href="/profil"
+                          className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
+                          style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
+                        @{username}
                     </Link>
                 </div>
             </nav>
