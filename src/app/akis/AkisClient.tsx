@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
-import { Image as ImageIcon, PenLine, Clapperboard, Sparkles, X, ExternalLink, Heart } from "lucide-react";
+import { Image as ImageIcon, PenLine, Clapperboard, Sparkles, X, ExternalLink, Heart, Pencil } from "lucide-react";
 import type { ElementType } from "react";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import HomeNavLinks from "@/components/HomeNavLinks";
@@ -95,7 +95,7 @@ function CategoryBadge({ id }: { id: string }) {
     );
 }
 
-const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, likedByMe, onLike, onDelete }: {
+const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, likedByMe, onLike, onDelete, onEdit }: {
     post: Post;
     supabaseUrl: string;
     userId: string;
@@ -103,6 +103,7 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
     likedByMe: boolean;
     onLike: (postId: string) => void;
     onDelete: (id: string) => void;
+    onEdit: (post: Post) => void;
 }) {
     const [imgLoaded, setImgLoaded] = useState(false);
     const isOwn = post.user_id === userId;
@@ -174,13 +175,22 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
                 <div className="flex items-center gap-2">
                     <CategoryBadge id={post.category} />
                     {isOwn && (
-                        <button onClick={handleDelete}
-                                className="text-[10px] px-2 py-1 rounded-lg transition-all duration-200"
-                                style={{ color: "rgba(239,68,68,0.6)", border: "1px solid rgba(239,68,68,0.1)" }}
-                                onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(239,68,68,0.08)")}
-                                onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
-                            Sil
-                        </button>
+                        <div className="flex items-center gap-1">
+                            <button onClick={() => onEdit(post)}
+                                    className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg transition-all duration-200"
+                                    style={{ color: "rgba(124,58,237,0.6)", border: "1px solid rgba(124,58,237,0.1)" }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(124,58,237,0.08)")}
+                                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                                <Pencil size={10} /> Düzenle
+                            </button>
+                            <button onClick={handleDelete}
+                                    className="text-[10px] px-2 py-1 rounded-lg transition-all duration-200"
+                                    style={{ color: "rgba(239,68,68,0.6)", border: "1px solid rgba(239,68,68,0.1)" }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(239,68,68,0.08)")}
+                                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
+                                Sil
+                            </button>
+                        </div>
                     )}
                 </div>
             </div>
@@ -243,6 +253,128 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
         </div>
     );
 });
+
+function EditModal({ post, onClose, onSave }: {
+    post: Post;
+    onClose: () => void;
+    onSave: (updated: Post) => void;
+}) {
+    const needsFile = post.category === "resimler" || post.category === "editler";
+    const [content, setContent] = useState(post.content ?? "");
+    const [description, setDescription] = useState(post.description ?? "");
+    const [refUrl, setRefUrl] = useState(post.ref_url ?? "");
+    const [loading, setLoading] = useState(false);
+
+    const inputStyle = {
+        background: "var(--bg-2)",
+        border: "1px solid var(--border-2)",
+        color: "var(--text-1)",
+    } as React.CSSProperties;
+
+    const handleSave = async () => {
+        setLoading(true);
+        const res = await fetch("/api/posts", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                id: post.id,
+                content: content || null,
+                description: description || null,
+                ref_url: refUrl || null,
+            }),
+        });
+        if (!res.ok) {
+            const err = await res.json().catch(() => ({}));
+            toast.error(err.error ?? "Düzenlenemedi.");
+            setLoading(false);
+            return;
+        }
+        const { post: updated } = await res.json();
+        onSave(updated as Post);
+        toast.success("Post güncellendi.");
+        onClose();
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
+             style={{ background: "var(--overlay)", backdropFilter: "blur(8px)" }}
+             onClick={(e) => e.target === e.currentTarget && onClose()}>
+            <div className="w-full max-w-lg rounded-3xl overflow-hidden"
+                 style={{ background: "rgba(20,30,58,0.92)", backdropFilter: "blur(32px)", WebkitBackdropFilter: "blur(32px)", border: "1px solid var(--border-1)" }}>
+
+                {/* Header */}
+                <div className="flex items-center justify-between px-6 py-5 border-b"
+                     style={{ borderColor: "var(--border-3)" }}>
+                    <h2 className="text-sm font-semibold" style={{ color: "var(--text-1)" }}>Postu Düzenle</h2>
+                    <button onClick={onClose} className="flex items-center justify-center transition-opacity hover:opacity-60"
+                            style={{ color: "var(--text-3)" }}><X size={16} /></button>
+                </div>
+
+                <div className="p-6 flex flex-col gap-5 max-h-[80vh] overflow-y-auto">
+
+                    {/* Metin içeriği — yazılar ve diger */}
+                    {!needsFile && (
+                        <div>
+                            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>İçerik</p>
+                            <textarea
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                                placeholder="Ne paylaşmak istiyorsun?"
+                                rows={5}
+                                maxLength={2000}
+                                className="w-full resize-none rounded-xl px-4 py-3 text-sm outline-none leading-relaxed"
+                                style={inputStyle}
+                            />
+                            <p className="text-[10px] mt-1 text-right" style={{ color: "var(--text-4)" }}>
+                                {content.length}/2000
+                            </p>
+                        </div>
+                    )}
+
+                    {/* Link (resimler/editler için) */}
+                    {needsFile && (
+                        <div>
+                            <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "var(--text-4)" }}>
+                                Link <span style={{ color: "var(--text-5)" }}>(opsiyonel)</span>
+                            </p>
+                            <input
+                                value={refUrl}
+                                onChange={(e) => setRefUrl(e.target.value)}
+                                placeholder="https://..."
+                                className="w-full rounded-xl px-4 py-3 text-sm outline-none"
+                                style={inputStyle}
+                            />
+                        </div>
+                    )}
+
+                    {/* Açıklama */}
+                    <div>
+                        <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
+                            Açıklama <span style={{ color: "var(--text-5)" }}>(opsiyonel)</span>
+                        </p>
+                        <input
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="Kısa bir açıklama..."
+                            maxLength={200}
+                            className="w-full rounded-xl px-4 py-3 text-sm outline-none"
+                            style={inputStyle}
+                        />
+                    </div>
+
+                    {/* Kaydet */}
+                    <button onClick={handleSave} disabled={loading}
+                            className="w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-40"
+                            style={{ background: "rgba(124,58,237,0.8)", color: "#fff", border: "1px solid rgba(124,58,237,0.5)" }}>
+                        {loading ? (
+                            <span className="inline-block w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                        ) : "Kaydet"}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 function UploadModal({ onClose, onPost, userId, username }: {
     onClose: () => void;
@@ -523,6 +655,7 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
 
     const [posts, setPosts] = useState(initialPosts);
     const [showModal, setShowModal] = useState(false);
+    const [editingPost, setEditingPost] = useState<Post | null>(null);
     const [hasMore, setHasMore] = useState(initialPosts.length === PAGE_SIZE);
     const [loadingMore, setLoadingMore] = useState(false);
     const sentinelRef = useRef<HTMLDivElement>(null);
@@ -609,6 +742,10 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
         setPosts((prev) => prev.filter((p) => p.id !== id));
     }, []);
 
+    const handleEditSave = useCallback((updated: Post) => {
+        setPosts((prev) => prev.map((p) => p.id === updated.id ? updated : p));
+    }, []);
+
     return (
         <div className="aurora-bg relative min-h-screen flex flex-col">
             <div aria-hidden className="aurora-layer" />
@@ -658,7 +795,7 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
                                 <PostCard key={post.id} post={post} supabaseUrl={supabaseUrl}
                                           userId={userId} onDelete={handleDelete}
                                           likeCount={likes.count} likedByMe={likes.liked}
-                                          onLike={handleLike} />
+                                          onLike={handleLike} onEdit={setEditingPost} />
                             );
                         })}
                         <div ref={sentinelRef} className="flex justify-center py-6">
@@ -679,6 +816,14 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
                     onPost={handlePost}
                     userId={userId}
                     username={username}
+                />
+            )}
+
+            {editingPost && (
+                <EditModal
+                    post={editingPost}
+                    onClose={() => setEditingPost(null)}
+                    onSave={handleEditSave}
                 />
             )}
         </div>
