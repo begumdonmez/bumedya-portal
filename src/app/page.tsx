@@ -33,10 +33,10 @@ const BADGES = [
     { label: "Yazar",  color: "rgba(52,211,153,0.7)",  bg: "rgba(52,211,153,0.05)",  border: "rgba(52,211,153,0.15)",  desc: "Yazı ve edebiyata ilgi duyan üyeleri gösterir." },
     { label: "Editör", color: "rgba(251,191,36,0.7)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.18)",  desc: "Editoryal alana ilgi duyan üyeleri gösterir." },
     // — Kullanıcı kendi alır —
-    { label: "Sosyal Kelebek", color: "rgba(251,146,60,0.9)",  bg: "rgba(251,146,60,0.06)",  border: "rgba(251,146,60,0.2)",  desc: "Aktif sohbete katkı sağlayan, topluluğu canlı tutan üyelere admin tarafından verilir." },
+    { label: "Plak Kafası",    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.06)", border: "rgba(244,114,182,0.2)", desc: "Müziği yaşayıp nefes alanlar için. Profilden kendin alabilirsin." },
     { label: "Seri İzleyici",  color: "rgba(96,165,250,0.9)",  bg: "rgba(59,130,246,0.06)",  border: "rgba(59,130,246,0.2)",  desc: "Film ve dizi tutkunları için. Profilden kendin alabilirsin." },
     { label: "Kitap Kurdu",    color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.06)",  border: "rgba(52,211,153,0.2)",  desc: "Okumaktan yorulmayanlar için. Profilden kendin alabilirsin." },
-    { label: "Plak Kafası",    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.06)", border: "rgba(244,114,182,0.2)", desc: "Müziği yaşayıp nefes alanlar için. Profilden kendin alabilirsin." },
+    { label: "Sosyal Kelebek", color: "rgba(251,146,60,0.9)",  bg: "rgba(251,146,60,0.06)",  border: "rgba(251,146,60,0.2)",  desc: "Aktif sohbete katkı sağlayan, topluluğu canlı tutan üyelere admin tarafından verilir." },
 ];
 
 const PAGES = [
