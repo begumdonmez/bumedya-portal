@@ -60,7 +60,7 @@ function parseActivity(type: string, payload: Record<string, string>): ActivityC
         case "join":          return { before: "topluluğa katıldı", dot: "bg-emerald-500" };
         case "post_image":    return { before: `bir resim paylaştı${payload.title ? ` · ${payload.title}` : ""}`, dot: "bg-canli-mor" };
         case "post_text":     return { before: `bir yazı paylaştı${payload.title ? ` · ${payload.title}` : ""}`, dot: "bg-blue-500" };
-        case "badge_earned":  return { before: "rozetini kazandı →", badgeId: payload.badge, dot: "bg-amber-500" };
+        case "badge_earned":  return { before: "yeni bir rozet kazandı", badgeId: payload.badge, dot: "bg-amber-500" };
         case "event_created": return { before: `yeni etkinlik oluşturdu${payload.title ? ` · ${payload.title}` : ""}`, dot: "bg-pink-500" };
         case "lounge_join":   return { before: "Lounge'a katıldı", dot: "bg-blue-400" };
         case "role_change":   return { before: "üretici oldu", dot: "bg-canli-mor" };
@@ -131,8 +131,8 @@ export default function LiveFeed({ initial }: { initial: Activity[] }) {
                                         @{item.username}
                                     </Link>{" "}
                                     {before}
-                                    {badgeId && <BadgePill id={badgeId} />}
                                 </p>
+                                {badgeId && <div className="mt-1.5"><BadgePill id={badgeId} /></div>}
                                 {isNew && <span className="text-[9px] text-canli-mor/70 tracking-wider">● yeni</span>}
                             </div>
 

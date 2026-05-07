@@ -115,7 +115,7 @@ function UserRow({ profile, onBadgeToggle, isAuthorized }: {
                         Rozet Yönetimi
                     </p>
                     <div className="flex flex-wrap gap-2">
-                        {BADGES.filter((b) => b.id !== "admin" && (!b.authorizedOnly || isAuthorized)).map((badge) => {
+                        {BADGES.filter((b) => (!b.authorizedOnly || isAuthorized)).map((badge) => {
                             const hasIt = profile.badges.includes(badge.id);
                             return (
                                 <button
@@ -848,7 +848,7 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
 
     /* Rozet ekle/çıkar */
     const handleBadgeToggle = async (userId: string, badge: BadgeId, currentBadges: string[]) => {
-        if (badge === "admin") return; // admin yetkisi buradan değiştirilemez
+        if (badge === "admin" && !isAuthorized) return; // sadece authorized admin değiştirebilir
         const hasBadge = currentBadges.includes(badge);
         const newBadges = hasBadge
             ? currentBadges.filter((b) => b !== badge)

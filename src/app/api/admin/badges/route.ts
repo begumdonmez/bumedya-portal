@@ -2,11 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// Hiçbir admin bu endpoint üzerinden veremez/alamaz
-const IMMUTABLE_BADGES = new Set(["admin"]);
-
-// Sadece "authorized" rozeti olan adminler verebilir/alabilir
-const ELEVATED_BADGES = new Set(["authorized"]);
+// Sadece "authorized" rozeti olan adminler değiştirebilir (admin dahil)
+const ELEVATED_BADGES = new Set(["admin", "authorized"]);
 
 export async function PATCH(request: Request) {
     const cookieStore = await cookies();
@@ -65,27 +62,25 @@ export async function PATCH(request: Request) {
     const isAuthorized = me.badges.includes("authorized");
 
     // Sunucu tarafında güvenli rozet listesi oluştur:
-    // 1. IMMUTABLE rozetleri (admin) hiç dokunma — mevcut halini koru
-    // 2. ELEVATED rozetleri (authorized) sadece "authorized" admin değiştirebilir
-    const immutableKept    = currentBadges.filter(b => IMMUTABLE_BADGES.has(b));
-    const elevatedFromReq  = badges.filter(b => ELEVATED_BADGES.has(b));
-    const regularFromReq   = badges.filter(b => !IMMUTABLE_BADGES.has(b) && !ELEVATED_BADGES.has(b));
+    // - ELEVATED (admin, authorized): sadece "authorized" admin değiştirebilir
+    // - Diğerleri: tüm adminler değiştirebilir
+    const elevatedFromReq = badges.filter(b => ELEVATED_BADGES.has(b));
+    const regularFromReq  = badges.filter(b => !ELEVATED_BADGES.has(b));
 
     let elevatedFinal: string[];
     if (isAuthorized) {
-        // Authorized admin elevated rozetleri değiştirebilir
+        // Authorized admin, admin ve authorized rozetlerini değiştirebilir
         elevatedFinal = elevatedFromReq;
     } else {
         // Normal admin elevated rozetlere dokunamaz — mevcut halini koru
         elevatedFinal = currentBadges.filter(b => ELEVATED_BADGES.has(b));
-        // Eğer elevated rozet eklemeye çalışıyorsa hata ver
         const tryingToAddElevated = elevatedFromReq.some(b => !elevatedFinal.includes(b));
         if (tryingToAddElevated) {
             return Response.json({ error: "Bu rozeti verme yetkin yok." }, { status: 403 });
         }
     }
 
-    const safeBadges = [...new Set([...immutableKept, ...elevatedFinal, ...regularFromReq])];
+    const safeBadges = [...new Set([...elevatedFinal, ...regularFromReq])];
 
     const { error } = await adminClient
         .from("profiles")
@@ -111,8 +106,8 @@ export async function PATCH(request: Request) {
         });
     } catch { /* log tablosu yoksa sessizce geç */ }
 
-    // Aktivite kaydı — immutable ve elevated rozetler hariç
-    if (addedBadge && !IMMUTABLE_BADGES.has(addedBadge) && !ELEVATED_BADGES.has(addedBadge) && username) {
+    // Aktivite kaydı — elevated (admin/authorized) rozetler hariç
+    if (addedBadge && !ELEVATED_BADGES.has(addedBadge) && username) {
         try {
             await adminClient.from("activities").insert({
                 user_id: userId,
