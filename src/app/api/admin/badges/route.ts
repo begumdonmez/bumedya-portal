@@ -90,7 +90,7 @@ export async function PATCH(request: Request) {
         .update({ badges: safeBadges })
         .eq("id", userId);
 
-    if (error) return Response.json({ error: error.message }, { status: 500 });
+    if (error) return Response.json({ error: "Sunucu hatası." }, { status: 500 });
 
     // Sunucu tarafında hangi rozet eklendi/kaldırıldı hesapla — client'a güvenme
     const added   = safeBadges.filter(b => !currentBadges.includes(b));

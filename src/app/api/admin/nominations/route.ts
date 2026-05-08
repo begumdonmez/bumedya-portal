@@ -50,7 +50,7 @@ export async function PATCH(req: Request) {
             .from("weekly_nominations")
             .update({ title: title.trim(), description: description?.trim() || null, category })
             .eq("id", id);
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+        if (error) return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
         await writeLog(adminSupabase, admin, "nomination_edited", id, { title, description, category });
         return NextResponse.json({ ok: true });
     }
@@ -60,7 +60,7 @@ export async function PATCH(req: Request) {
             .from("weekly_nominations")
             .update({ status: "approved", reviewed_by: admin.username, reviewed_at: now })
             .eq("id", id);
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+        if (error) return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
         await writeLog(adminSupabase, admin, "nomination_approved", id, {});
         return NextResponse.json({ ok: true, status: "approved" });
     }
@@ -75,7 +75,7 @@ export async function PATCH(req: Request) {
                 reviewed_at: now,
             })
             .eq("id", id);
-        if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+        if (error) return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
         await writeLog(adminSupabase, admin, "nomination_rejected", id, { admin_note: admin_note?.trim() || null });
         return NextResponse.json({ ok: true, status: "rejected" });
     }

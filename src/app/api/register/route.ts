@@ -42,7 +42,7 @@ export async function POST(req: Request) {
     if (error) {
         const msg = error.message.includes("duplicate")
             ? "Bu kullanıcı adı zaten alınmış."
-            : "Profil oluşturulamadı: " + error.message;
+            : "Profil oluşturulamadı.";
         return NextResponse.json({ error: msg }, { status: 500 });
     }
 

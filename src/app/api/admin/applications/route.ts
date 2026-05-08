@@ -22,6 +22,6 @@ export async function PATCH(req: Request) {
         .update({ status, admin_note: admin_note?.trim() || null })
         .eq("id", id);
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
     return NextResponse.json({ ok: true });
 }

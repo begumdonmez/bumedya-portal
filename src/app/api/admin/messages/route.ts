@@ -11,7 +11,7 @@ export async function PATCH(req: Request) {
 
     const { error } = await createAdminClient()
         .from("messages").update({ read: true }).eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
     return NextResponse.json({ ok: true });
 }
 
@@ -25,6 +25,6 @@ export async function DELETE(req: Request) {
 
     const { error } = await createAdminClient()
         .from("messages").delete().eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
     return NextResponse.json({ ok: true });
 }

@@ -56,7 +56,7 @@ export async function PATCH(req: Request) {
         .select()
         .single();
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
 
     return NextResponse.json({ post: updated });
 }
@@ -100,7 +100,7 @@ export async function DELETE(req: Request) {
     }
 
     const { error } = await adminClient.from("posts").delete().eq("id", postId);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
 
     return NextResponse.json({ ok: true });
 }

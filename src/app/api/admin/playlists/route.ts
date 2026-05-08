@@ -17,7 +17,7 @@ export async function POST(req: Request) {
         .select()
         .single();
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
     return NextResponse.json({ ok: true, playlist: data });
 }
 
@@ -31,6 +31,6 @@ export async function DELETE(req: Request) {
 
     const { error } = await createAdminClient()
         .from("spotify_playlists").delete().eq("id", id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
     return NextResponse.json({ ok: true });
 }

@@ -69,15 +69,14 @@ export default function OnboardingPage() {
 
             const { error } = await supabase
                 .from("profiles")
-                .upsert({
-                    id: user.id,
-                    username: user.email!.split("@")[0],
+                .update({
                     role: selected,
                     updated_at: new Date().toISOString(),
-                }, { onConflict: "id" });
+                })
+                .eq("id", user.id);
 
             if (error) {
-                toast.error("Rol kaydedilemedi: " + error.message, { id: toastId });
+                toast.error("Rol kaydedilemedi. Tekrar dene.", { id: toastId });
                 setLoading(false);
                 return;
             }

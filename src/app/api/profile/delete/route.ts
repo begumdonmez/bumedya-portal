@@ -9,7 +9,7 @@ export async function DELETE() {
 
     const admin = createAdminClient();
     const { error } = await admin.auth.admin.deleteUser(user.id);
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error) return NextResponse.json({ error: "Sunucu hatası." }, { status: 500 });
 
     return NextResponse.json({ ok: true });
 }
