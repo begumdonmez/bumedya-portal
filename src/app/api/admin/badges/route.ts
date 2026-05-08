@@ -2,8 +2,14 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-// Sadece "authorized" rozeti olan adminler değiştirebilir (admin dahil)
 const ELEVATED_BADGES = new Set(["admin", "authorized"]);
+
+// Admin tarafından atanabilecek tüm geçerli rozetler
+const VALID_BADGES = new Set([
+    "admin", "authorized",
+    "editor", "artist", "writer", "verified", "founder", "sosyal_kelebek",
+    "seri_izleyici", "kitap_kurdu", "plak_kafasi",
+]);
 
 export async function PATCH(request: Request) {
     const cookieStore = await cookies();
@@ -21,7 +27,7 @@ export async function PATCH(request: Request) {
 
     const [{ data: { user } }, body] = await Promise.all([
         userClient.auth.getUser(),
-        request.json() as Promise<{ userId: string; badges: string[]; addedBadge?: string; username?: string }>,
+        request.json() as Promise<{ userId: string; badges: string[]; username?: string }>,
     ]);
 
     if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
@@ -36,22 +42,23 @@ export async function PATCH(request: Request) {
         return Response.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const { userId, badges, addedBadge, username } = body;
+    const { userId, badges, username } = body;
 
     if (!userId || !Array.isArray(badges)) {
         return Response.json({ error: "Bad Request" }, { status: 400 });
     }
 
-    const isAuthorized = me.badges.includes("authorized");
+    // Gelen rozet listesini whitelist'e göre filtrele — geçersiz değerleri at
+    const filteredBadges = badges.filter(b => VALID_BADGES.has(b));
 
-    // Kendi rozetlerini değiştirmeye çalışıyorsa: sadece authorized izinli
+    const isAuthorized = (me.badges as string[]).includes("authorized");
+
     if (userId === user.id && !isAuthorized) {
         return Response.json({ error: "Kendi rozetlerini bu yolla değiştiremezsin." }, { status: 403 });
     }
 
     const adminClient = createAdminClient();
 
-    // Hedef kullanıcının mevcut rozetlerini çek
     const { data: target } = await adminClient
         .from("profiles")
         .select("badges")
@@ -62,18 +69,13 @@ export async function PATCH(request: Request) {
 
     const currentBadges: string[] = target.badges ?? [];
 
-    // Sunucu tarafında güvenli rozet listesi oluştur:
-    // - ELEVATED (admin, authorized): sadece "authorized" admin değiştirebilir
-    // - Diğerleri: tüm adminler değiştirebilir
-    const elevatedFromReq = badges.filter(b => ELEVATED_BADGES.has(b));
-    const regularFromReq  = badges.filter(b => !ELEVATED_BADGES.has(b));
+    const elevatedFromReq = filteredBadges.filter(b => ELEVATED_BADGES.has(b));
+    const regularFromReq  = filteredBadges.filter(b => !ELEVATED_BADGES.has(b));
 
     let elevatedFinal: string[];
     if (isAuthorized) {
-        // Authorized admin, admin ve authorized rozetlerini değiştirebilir
         elevatedFinal = elevatedFromReq;
     } else {
-        // Normal admin elevated rozetlere dokunamaz — mevcut halini koru
         elevatedFinal = currentBadges.filter(b => ELEVATED_BADGES.has(b));
         const tryingToAddElevated = elevatedFromReq.some(b => !elevatedFinal.includes(b));
         if (tryingToAddElevated) {
@@ -90,7 +92,10 @@ export async function PATCH(request: Request) {
 
     if (error) return Response.json({ error: error.message }, { status: 500 });
 
-    // Admin log'una yaz
+    // Sunucu tarafında hangi rozet eklendi/kaldırıldı hesapla — client'a güvenme
+    const added   = safeBadges.filter(b => !currentBadges.includes(b));
+    const removed = currentBadges.filter(b => !safeBadges.includes(b));
+
     try {
         await adminClient.from("admin_logs").insert({
             admin_id: user.id,
@@ -99,23 +104,29 @@ export async function PATCH(request: Request) {
             target_id: userId,
             target_type: "profile",
             details: {
-                username,
+                username: username ?? null,
                 badges_before: currentBadges,
                 badges_after: safeBadges,
-                added_badge: addedBadge ?? null,
+                added,
+                removed,
             },
         });
     } catch { /* log tablosu yoksa sessizce geç */ }
 
-    // Aktivite kaydı — elevated (admin/authorized) rozetler hariç
-    if (addedBadge && !ELEVATED_BADGES.has(addedBadge) && username) {
+    // Aktivite kaydı — eklenen rozetler için (elevated hariç)
+    const nonElevatedAdded = added.filter(b => !ELEVATED_BADGES.has(b));
+    if (nonElevatedAdded.length > 0 && username) {
         try {
-            await adminClient.from("activities").insert({
-                user_id: userId,
-                username,
-                type: "badge_earned",
-                payload: { badge: addedBadge },
-            });
+            await Promise.all(
+                nonElevatedAdded.map(badge =>
+                    adminClient.from("activities").insert({
+                        user_id: userId,
+                        username,
+                        type: "badge_earned",
+                        payload: { badge },
+                    })
+                )
+            );
         } catch { /* sessizce geç */ }
     }
 

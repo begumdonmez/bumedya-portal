@@ -1,19 +1,7 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getAdminUser } from "@/lib/adminGuard";
 
-// Admin guard — kullanıcı + username döndürür
-async function getAdminUser() {
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return null;
-    const { data: profile } = await supabase
-        .from("profiles").select("badges, username").eq("id", user.id).single();
-    if (!profile?.badges?.includes("admin")) return null;
-    return { id: user.id, username: profile.username as string };
-}
-
-// Log yaz — başarısız olsa da ana işlemi engellemez
 async function writeLog(
     adminSupabase: ReturnType<typeof createAdminClient>,
     admin: { id: string; username: string },
@@ -35,8 +23,6 @@ async function writeLog(
 
 const VALID_CATEGORIES = new Set(["film", "dizi", "kitap", "sarki"]);
 
-// PATCH /api/admin/nominations
-// action: "approve" | "reject" | "edit"
 export async function PATCH(req: Request) {
     const [admin, body] = await Promise.all([getAdminUser(), req.json()]);
     if (!admin) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -49,10 +35,10 @@ export async function PATCH(req: Request) {
 
     const adminSupabase = createAdminClient();
 
-    // Nomination'ın gerçekten var olup olmadığını doğrula
     const { data: nomCheck } = await adminSupabase
         .from("weekly_nominations").select("id, title").eq("id", id).single();
     if (!nomCheck) return NextResponse.json({ error: "Öneri bulunamadı." }, { status: 404 });
+
     const now = new Date().toISOString();
 
     if (action === "edit") {
