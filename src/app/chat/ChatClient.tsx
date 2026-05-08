@@ -77,9 +77,10 @@ function userColor(username: string) {
     return USER_COLORS[hash % USER_COLORS.length];
 }
 
-export default function ChatClient({ userId, username, initialMessages }: {
+export default function ChatClient({ userId, username, isAdmin, initialMessages }: {
     userId: string;
     username: string;
+    isAdmin: boolean;
     initialMessages: Message[];
 }) {
     const [activeRoom, setActiveRoom] = useState("genel");
@@ -115,7 +116,7 @@ export default function ChatClient({ userId, username, initialMessages }: {
 
     useEffect(() => {
         const supabase = createClient();
-        supabase.from("profiles").select("id, username").then(({ data }) => {
+        supabase.from("profiles").select("id, username").limit(500).then(({ data }) => {
             setUsersMap(new Map((data ?? []).map((p) => [p.username, p.id])));
         });
     }, []);
@@ -212,13 +213,13 @@ export default function ChatClient({ userId, username, initialMessages }: {
         const { error } = await supabase.from("messages").insert({ room_id: activeRoom, user_id: userId, username, content });
         if (error) {
             setInput(content);
-            toast.error("Gönderilemedi: " + error.message);
+            toast.error("Mesaj gönderilemedi.");
             setSending(false);
             return;
         }
         await supabase.from("activities").insert({ user_id: userId, username, type: "lounge_join", payload: {} });
 
-        const hasAll = /@all\b/.test(content);
+        const hasAll = isAdmin && /@all\b/.test(content);
         if (hasAll) {
             const everyone = [...usersMap.entries()]
                 .filter(([u]) => u !== username)

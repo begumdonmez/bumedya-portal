@@ -15,11 +15,12 @@ export default async function ChatPage() {
     if (!user) redirect("/login");
 
     const [{ data: profile }, { data: messages }] = await Promise.all([
-        supabase.from("profiles").select("username").eq("id", user.id).single(),
+        supabase.from("profiles").select("username, badges").eq("id", user.id).single(),
         supabase.from("messages").select("id, room_id, user_id, username, content, created_at").order("created_at", { ascending: true }).limit(200),
     ]);
 
     const username = profile?.username ?? user.email?.split("@")[0] ?? "anonim";
+    const isAdmin = (profile?.badges as string[] ?? []).includes("admin");
 
     return (
         <div className="aurora-bg flex flex-col" style={{ height: "100dvh" }}>
@@ -48,6 +49,7 @@ export default async function ChatPage() {
                 <ChatClient
                     userId={user.id}
                     username={username}
+                    isAdmin={isAdmin}
                     initialMessages={messages ?? []}
                 />
             </div>

@@ -51,7 +51,9 @@ export default async function HomePage() {
         supabase.rpc("get_profile_stats"),
         supabase.from("activities").select("id, username, type, payload, created_at").order("created_at", { ascending: false }).limit(8),
         supabase.from("spotify_playlists").select("id, name, spotify_id, description").order("created_at", { ascending: true }),
-        supabase.from("events").select("id, username, title, address, lat, lng, event_date, ref_url, approved").order("event_date", { ascending: true }).limit(100),
+        supabase.from("events").select("id, username, title, address, lat, lng, event_date, ref_url, approved")
+            .gte("event_date", new Date().toISOString().split("T")[0])
+            .order("event_date", { ascending: true }).limit(20),
         supabase.from("announcements").select("id, user_id, username, content, created_at").order("created_at", { ascending: false }).limit(10),
     ]);
 
@@ -217,11 +219,7 @@ export default async function HomePage() {
                         </div>
                         {/* Etkinlik listesi — tarihe göre yakından uzağa */}
                         <div className="flex flex-col gap-2 mt-3">
-                            {(events ?? [])
-                                .filter(e => e.event_date >= new Date().toISOString().split("T")[0])
-                                .sort((a, b) => a.event_date.localeCompare(b.event_date))
-                                .slice(0, 10)
-                                .map(ev => {
+                            {(events ?? []).slice(0, 10).map(ev => {
                                     const today = new Date().toISOString().split("T")[0];
                                     const isToday = ev.event_date === today;
                                     const thisMonth = today.slice(0, 7);
@@ -253,7 +251,7 @@ export default async function HomePage() {
                                         </div>
                                     );
                                 })}
-                            {(events ?? []).filter(e => e.event_date >= new Date().toISOString().split("T")[0]).length === 0 && (
+                            {(events ?? []).length === 0 && (
                                 <p className="text-xs text-center py-2" style={{ color: "var(--text-4)" }}>Yaklaşan etkinlik yok</p>
                             )}
                         </div>

@@ -659,6 +659,8 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
     const [hasMore, setHasMore] = useState(initialPosts.length === PAGE_SIZE);
     const [loadingMore, setLoadingMore] = useState(false);
     const sentinelRef = useRef<HTMLDivElement>(null);
+    const postsRef = useRef(initialPosts);
+    postsRef.current = posts;
 
     const buildLikesMap = (data: { post_id: string; user_id: string }[]) => {
         const map = new Map<string, { count: number; liked: boolean }>();
@@ -696,7 +698,7 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
         if (loadingMore || !hasMore) return;
         setLoadingMore(true);
         const supabase = createClient();
-        const oldest = posts[posts.length - 1]?.created_at;
+        const oldest = postsRef.current[postsRef.current.length - 1]?.created_at;
 
         const postsQuery = supabase
             .from("posts")
@@ -724,7 +726,7 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
         setPosts((prev) => [...prev, ...(newPosts as Post[])]);
         if (newPosts.length < PAGE_SIZE) setHasMore(false);
         setLoadingMore(false);
-    }, [loadingMore, hasMore, posts, userId]);
+    }, [loadingMore, hasMore, userId]);
 
     useEffect(() => {
         const el = sentinelRef.current;
