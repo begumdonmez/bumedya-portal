@@ -242,20 +242,15 @@ function RegisterForm() {
             }
 
             if (authData.user) {
-                // 3. profiles tablosuna kayıt
-                const { error: profileError } = await supabase
-                    .from("profiles")
-                    .insert([{
-                        id: authData.user.id,
-                        username: parsed.data.username,
-                        role: "member",
-                    }]);
-
-                if (profileError) {
-                    const msg = profileError.message.includes("duplicate")
-                        ? "Bu kullanıcı adı zaten alınmış. Başka bir tane dene."
-                        : "Profil oluşturulamadı: " + profileError.message;
-                    toast.error(msg, { id: toastId });
+                // 3. profiles tablosuna kayıt — admin client (RLS bypass) için server route
+                const profileRes = await fetch("/api/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ userId: authData.user.id, username: parsed.data.username }),
+                });
+                if (!profileRes.ok) {
+                    const json = await profileRes.json().catch(() => ({}));
+                    toast.error(json.error ?? "Profil oluşturulamadı.", { id: toastId });
                     setFormState("idle");
                     return;
                 }

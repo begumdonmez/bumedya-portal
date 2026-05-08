@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Award, ChevronLeft, ChevronRight, Eye, Tv, BookOpen, Headphones, MessageCircle } from "lucide-react";
 import type { ElementType } from "react";
@@ -108,6 +108,10 @@ export default function ProfilPage() {
     const [editing, setEditing]       = useState(false);
     const [saving,  setSaving]        = useState(false);
     const [signingOut, setSigningOut] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [deleteConfirm, setDeleteConfirm] = useState("");
+    const [deleting, setDeleting] = useState(false);
+    const deleteInputRef = useRef<HTMLInputElement>(null);
     const [editUsername,    setEditUsername]    = useState("");
     const [editBio,         setEditBio]         = useState("");
     const [editDisplayName, setEditDisplayName] = useState("");
@@ -199,6 +203,23 @@ export default function ProfilPage() {
         if (!res.ok) { toast.error(json.error ?? "Rozet güncellenemedi."); return; }
         setProfile({ ...profile, badges: json.badges });
         toast.success(json.added ? "Rozet eklendi!" : "Rozet kaldırıldı.");
+    };
+
+    const handleDeleteAccount = async () => {
+        if (!profile || deleteConfirm !== profile.username) return;
+        setDeleting(true);
+        const res = await fetch("/api/profile/delete", { method: "DELETE" });
+        if (!res.ok) {
+            const json = await res.json().catch(() => ({}));
+            toast.error(json.error ?? "Hesap silinemedi.");
+            setDeleting(false);
+            return;
+        }
+        const supabase = createClient();
+        await supabase.auth.signOut();
+        toast.success("Hesabın silindi.");
+        router.push("/");
+        router.refresh();
     };
 
     const handleSignOut = async () => {
@@ -501,7 +522,102 @@ export default function ProfilPage() {
                     supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
                 />
 
+                {/* ── TEHLİKE BÖLGESİ ── */}
+                <div className="card rounded-3xl p-6" style={{ borderColor: "rgba(239,68,68,0.2)" }}>
+                    <p className="text-[10px] tracking-widest uppercase mb-1" style={{ color: "rgba(239,68,68,0.5)" }}>
+                        Tehlike Bölgesi
+                    </p>
+                    <p className="text-xs mb-4" style={{ color: "var(--text-5)" }}>
+                        Bu işlemler geri alınamaz.
+                    </p>
+                    <button
+                        onClick={() => { setShowDeleteModal(true); setDeleteConfirm(""); setTimeout(() => deleteInputRef.current?.focus(), 80); }}
+                        className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-medium transition-all duration-300"
+                        style={{ color: "rgba(239,68,68,0.8)", border: "1px solid rgba(239,68,68,0.2)", background: "rgba(239,68,68,0.06)" }}>
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
+                            <path d="M2 3h9M5 3V2h3v1M3.5 3l.5 8h5l.5-8" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                        Hesabı Sil
+                    </button>
+                </div>
+
             </div>
+
+            {/* ── SİLME ONAY MODALI ── */}
+            {showDeleteModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                     style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }}
+                     onClick={(e) => { if (e.target === e.currentTarget) setShowDeleteModal(false); }}>
+                    <div className="relative w-full max-w-sm rounded-3xl overflow-hidden"
+                         style={{ background: "rgba(18,10,30,0.95)", border: "1px solid rgba(239,68,68,0.25)", boxShadow: "0 32px 80px rgba(0,0,0,0.6)" }}>
+                        <div className="h-[1px] w-full" style={{ background: "linear-gradient(90deg, transparent, rgba(239,68,68,0.5) 40%, rgba(239,68,68,0.3) 60%, transparent)" }} />
+                        <div className="p-6 flex flex-col gap-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-2xl flex items-center justify-center shrink-0"
+                                     style={{ background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.25)" }}>
+                                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                        <path d="M9 2L16.5 15H1.5L9 2Z" stroke="rgba(239,68,68,0.9)" strokeWidth="1.4" strokeLinejoin="round"/>
+                                        <path d="M9 7v4" stroke="rgba(239,68,68,0.9)" strokeWidth="1.4" strokeLinecap="round"/>
+                                        <circle cx="9" cy="13" r="0.8" fill="rgba(239,68,68,0.9)"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h2 className="text-base font-bold" style={{ color: "#E0F2FE" }}>Hesabı Sil</h2>
+                                    <p className="text-xs" style={{ color: "var(--text-4)" }}>Bu işlem geri alınamaz.</p>
+                                </div>
+                            </div>
+
+                            <p className="text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>
+                                Profilin, postların ve tüm veriler kalıcı olarak silinecek.
+                                Devam etmek için kullanıcı adını yaz:
+                            </p>
+
+                            <div className="flex flex-col gap-1.5">
+                                <p className="text-[11px] font-medium tracking-wider" style={{ color: "rgba(239,68,68,0.7)" }}>
+                                    @{profile.username}
+                                </p>
+                                <input
+                                    ref={deleteInputRef}
+                                    type="text"
+                                    value={deleteConfirm}
+                                    onChange={e => setDeleteConfirm(e.target.value)}
+                                    onKeyDown={e => { if (e.key === "Enter" && deleteConfirm === profile.username) handleDeleteAccount(); }}
+                                    placeholder={profile.username}
+                                    className="w-full rounded-xl px-4 py-3 text-sm outline-none"
+                                    style={{
+                                        background: "rgba(239,68,68,0.05)",
+                                        border: `1px solid ${deleteConfirm === profile.username ? "rgba(239,68,68,0.5)" : "rgba(239,68,68,0.15)"}`,
+                                        color: "#E0F2FE",
+                                    }}
+                                />
+                            </div>
+
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={handleDeleteAccount}
+                                    disabled={deleteConfirm !== profile.username || deleting}
+                                    className="flex-1 py-3 rounded-xl text-sm font-bold transition-all duration-300 disabled:cursor-not-allowed"
+                                    style={{
+                                        background: deleteConfirm === profile.username && !deleting ? "rgba(239,68,68,0.85)" : "rgba(239,68,68,0.2)",
+                                        color: deleteConfirm === profile.username && !deleting ? "#fff" : "rgba(239,68,68,0.4)",
+                                        boxShadow: deleteConfirm === profile.username && !deleting ? "0 4px 16px rgba(239,68,68,0.3)" : "none",
+                                    }}>
+                                    {deleting
+                                        ? <span className="flex items-center justify-center gap-2"><span className="w-4 h-4 rounded-full border-2 border-red-300/30 border-t-red-300 animate-spin" />Siliniyor...</span>
+                                        : "Hesabı Kalıcı Olarak Sil"}
+                                </button>
+                                <button
+                                    onClick={() => setShowDeleteModal(false)}
+                                    disabled={deleting}
+                                    className="px-5 py-3 rounded-xl text-sm transition-all duration-300"
+                                    style={{ color: "var(--text-3)", border: "1px solid var(--border-2)", background: "var(--bg-3)" }}>
+                                    İptal
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
