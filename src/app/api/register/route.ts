@@ -30,6 +30,8 @@ export async function POST(req: Request) {
     }
 
     if (existing) {
+        // Trigger tarafından oluşturulmuş profilde username yanlış olabilir — her zaman düzelt
+        await admin.from("profiles").update({ username: safeUsername }).eq("id", userId);
         return NextResponse.json({ ok: true });
     }
 

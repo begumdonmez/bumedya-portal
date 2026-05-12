@@ -217,16 +217,24 @@ export default function ManifestClient({
         hasMoved.current = false;
     };
 
-    const handleTouchMove = (e: React.TouchEvent) => {
-        if (!drag.current.active) return;
-        const t = e.touches[0];
-        const dx = t.clientX - drag.current.startX;
-        const dy = t.clientY - drag.current.startY;
-        if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved.current = true;
-        setPan(clampPan(drag.current.panX + dx, drag.current.panY + dy));
-    };
-
     const handleTouchEnd = () => { drag.current.active = false; };
+
+    // Non-passive touchmove: Safari'de sayfa scroll'unu engeller
+    useEffect(() => {
+        const el = outerRef.current;
+        if (!el) return;
+        const onTouchMove = (e: TouchEvent) => {
+            if (!drag.current.active) return;
+            e.preventDefault();
+            const t = e.touches[0];
+            const dx = t.clientX - drag.current.startX;
+            const dy = t.clientY - drag.current.startY;
+            if (Math.abs(dx) > 3 || Math.abs(dy) > 3) hasMoved.current = true;
+            setPan(clampPan(drag.current.panX + dx, drag.current.panY + dy));
+        };
+        el.addEventListener("touchmove", onTouchMove, { passive: false });
+        return () => el.removeEventListener("touchmove", onTouchMove);
+    }, [clampPan]);
 
     const handleBoardClick = useCallback(async (e: React.MouseEvent) => {
         if (!selectedColor || !canvasRef.current || editingId) return;
@@ -376,6 +384,7 @@ export default function ManifestClient({
                     className="relative flex-1 overflow-hidden select-none"
                     style={{
                         cursor,
+                        touchAction: "none",
                         background: "#04061a",
                         backgroundImage: [
                             `radial-gradient(ellipse at 15% 60%, rgba(109,40,217,0.2) 0%, transparent 50%)`,
@@ -386,7 +395,6 @@ export default function ManifestClient({
                     }}
                     onMouseDown={handleMouseDown}
                     onTouchStart={handleTouchStart}
-                    onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
                     onClick={handleBoardClick}>
 
