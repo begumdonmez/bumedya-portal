@@ -7,12 +7,12 @@ export const metadata: Metadata = { title: "Arşiv" };
 
 export default async function ArsivPage() {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) redirect("/login");
 
-    // Profil + eserler + istatistikler (view: GROUP BY SQL'de) → hepsi paralel
-    const [{ data: profile }, { data: items }, { data: stats }] = await Promise.all([
-        supabase.from("profiles").select("username, badges").eq("id", user.id).single(),
+    const [{ data: { user } }, { data: profile }, { data: items }, { data: stats }] = await Promise.all([
+        supabase.auth.getUser(),
+        supabase.from("profiles").select("username, badges").eq("id", session.user.id).single(),
         supabase
             .from("archive_items")
             .select("id, category, title, description, year, creator, created_by, created_at")
@@ -22,6 +22,7 @@ export default async function ArsivPage() {
         supabase.from("archive_item_stats").select("item_id, avg_rating, total_ratings"),
     ]);
 
+    if (!user) redirect("/login");
     const username = profile?.username ?? "";
     const isAdmin = (profile?.badges as string[] ?? []).includes("admin");
 

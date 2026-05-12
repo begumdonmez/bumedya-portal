@@ -8,16 +8,18 @@ export const metadata: Metadata = { title: "Etkinlikler" };
 
 export default async function EtkinliklerPage() {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) redirect("/login");
 
-    const [{ data: profile }, { data: events }] = await Promise.all([
-        supabase.from("profiles").select("username, badges").eq("id", user.id).single(),
+    const [{ data: { user } }, { data: profile }, { data: events }] = await Promise.all([
+        supabase.auth.getUser(),
+        supabase.from("profiles").select("username, badges").eq("id", session.user.id).single(),
         supabase.from("events")
             .select("id, user_id, username, title, address, lat, lng, event_date, event_time, ref_url, approved")
             .order("event_date", { ascending: true }),
     ]);
 
+    if (!user) redirect("/login");
     const isAdmin = (profile?.badges as string[] ?? []).includes("admin");
     const username = profile?.username ?? user.email?.split("@")[0] ?? "";
 

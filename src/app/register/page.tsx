@@ -229,15 +229,24 @@ function RegisterForm() {
             });
 
             if (authError) {
+                const msg = authError.message.toLowerCase();
                 toast.error(
-                    authError.message.includes("already registered")
+                    msg.includes("already registered") || msg.includes("already exists") || msg.includes("email") && msg.includes("taken")
                         ? "Bu e-posta adresi zaten kayıtlı."
-                        : authError.message.includes("Password")
+                        : msg.includes("password")
                             ? "Şifre güvenlik gereksinimlerini karşılamıyor."
                             : "Bir hata oluştu. Tekrar dene.",
                     { id: toastId }
                 );
                 setFormState("idle");
+                return;
+            }
+
+            // Mevcut email — success ekranı göster (email enumeration önlemi)
+            // Supabase bu durumda da ilgili adrese bilgilendirme maili gönderir
+            if (authData.user?.identities?.length === 0) {
+                toast.dismiss(toastId);
+                setFormState("success");
                 return;
             }
 

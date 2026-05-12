@@ -35,11 +35,12 @@ const MANIFESTO_LINES = [
 
 export default async function HomePage() {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) redirect("/login");
 
-    // Profil + tüm widget verileri tek seferde paralel
+    // getUser (güvenlik) + tüm widget verileri tam paralel
     const [
+        { data: { user } },
         { data: profile },
         { data: statsData },
         { data: activities },
@@ -47,7 +48,8 @@ export default async function HomePage() {
         { data: events },
         { data: announcements },
     ] = await Promise.all([
-        supabase.from("profiles").select("username, badges").eq("id", user.id).single(),
+        supabase.auth.getUser(),
+        supabase.from("profiles").select("username, badges").eq("id", session.user.id).single(),
         supabase.rpc("get_profile_stats"),
         supabase.from("activities").select("id, username, type, payload, created_at").order("created_at", { ascending: false }).limit(8),
         supabase.from("spotify_playlists").select("id, name, spotify_id, description").order("created_at", { ascending: true }),
@@ -57,6 +59,7 @@ export default async function HomePage() {
         supabase.from("announcements").select("id, user_id, username, content, created_at").order("created_at", { ascending: false }).limit(10),
     ]);
 
+    if (!user) redirect("/login");
     const username = profile?.username ?? user.email?.split("@")[0] ?? "";
     const isAdmin = (profile?.badges as string[] ?? []).includes("admin");
 

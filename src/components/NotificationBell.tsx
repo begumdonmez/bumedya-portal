@@ -95,14 +95,12 @@ export default function NotificationBell({ userId }: { userId: string }) {
             ), { duration: 5000 });
         };
 
-        // filter parametresi yerine callback'te filtrele — daha güvenilir
         const channel = supabase
             .channel(`notifications-${userId}`)
             .on("postgres_changes",
-                { event: "INSERT", schema: "public", table: "notifications" },
+                { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
                 (payload) => {
                     const n = payload.new as Notification;
-                    if (n.user_id !== userId) return; // başkasının bildirimi
                     setNotifications((prev) => prev.some((x) => x.id === n.id) ? prev : [n, ...prev]);
                     showToast(n);
                 }

@@ -16,47 +16,42 @@ function getWeekStart(): string {
 
 export default async function YildizlarPage() {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) redirect("/login");
 
     const weekStart = getWeekStart();
 
-    // Profil + nomination listesi + kullanıcının oyları → hepsi paralel
-    const [{ data: profile }, { data: nominations }, { data: myVotes }] = await Promise.all([
-        supabase.from("profiles").select("username, badges").eq("id", user.id).single(),
-        supabase
-            .from("weekly_nominations")
+    // getUser + profil + nominations + kullanıcının oyları + bu haftanın tüm oyları → tam paralel
+    const [{ data: { user } }, { data: profile }, { data: nominations }, { data: myVotes }, { data: allVotes }] = await Promise.all([
+        supabase.auth.getUser(),
+        supabase.from("profiles").select("username, badges").eq("id", session.user.id).single(),
+        supabase.from("weekly_nominations")
             .select("id, category, title, description, submitted_by, created_at")
             .eq("week_start", weekStart)
             .eq("status", "approved")
             .order("created_at", { ascending: true }),
-        supabase
-            .from("weekly_votes")
+        supabase.from("weekly_votes").select("nomination_id").eq("user_id", session.user.id),
+        // nomination ID'lerini beklemeden bu haftanın tüm oylarını çek
+        supabase.from("weekly_votes")
             .select("nomination_id")
-            .eq("user_id", user.id),
+            .gte("created_at", weekStart),
     ]);
 
-    if (!profile) redirect("/login");
+    if (!user || !profile) redirect("/login");
 
     const username = profile.username ?? "";
     const isAdmin = (profile.badges as string[] ?? []).includes("admin");
 
-    // Oy sayıları: sadece bu haftanın nomination'larına ait oylar
     const nominationIds = (nominations ?? []).map(n => n.id);
-    const { data: allVotes } = nominationIds.length > 0
-        ? await supabase
-              .from("weekly_votes")
-              .select("nomination_id")
-              .in("nomination_id", nominationIds)
-        : { data: [] };
+    const nominationIdSet = new Set(nominationIds);
 
     const voteCounts: Record<string, number> = {};
     for (const v of allVotes ?? []) {
-        voteCounts[v.nomination_id] = (voteCounts[v.nomination_id] ?? 0) + 1;
+        if (nominationIdSet.has(v.nomination_id)) {
+            voteCounts[v.nomination_id] = (voteCounts[v.nomination_id] ?? 0) + 1;
+        }
     }
 
-    // Kullanıcının bu haftaki oy verdikleri (myVotes sadece bu haftanın nomination'larıyla filtrele)
-    const nominationIdSet = new Set(nominationIds);
     const myVoteIds = (myVotes ?? [])
         .map(v => v.nomination_id)
         .filter(id => nominationIdSet.has(id));

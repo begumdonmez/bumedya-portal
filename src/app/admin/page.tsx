@@ -3,25 +3,20 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import AdminClient from "./AdminClient";
 
-/* ─── Server guard — sadece admin badge'li girer ────────────── */
 export default async function AdminPage() {
     const supabase = await createClient();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) redirect("/login");
 
-    const { data: { user } } = await supabase.auth.getUser();
+    // getUser (güvenlik) + profil kontrolü paralel
+    const [{ data: { user } }, { data: me }] = await Promise.all([
+        supabase.auth.getUser(),
+        supabase.from("profiles").select("badges").eq("id", session.user.id).single(),
+    ]);
+
     if (!user) redirect("/login");
-
-    // Mevcut kullanıcının profilini çek
-    const { data: me } = await supabase
-        .from("profiles")
-        .select("badges")
-        .eq("id", user.id)
-        .single();
-
-    // Admin değilse ana sayfaya at
     if (!me?.badges?.includes("admin")) redirect("/");
 
-    // Nominations için service role client kullanıyoruz — RLS'i bypass eder,
-    // yoksa admins kendi dışındaki kullanıcıların önerilerini göremez.
     const adminSupabase = createAdminClient();
 
     const [{ data: profiles }, { data: messages }, { data: applications }, { data: nominations }, { data: logs }] = await Promise.all([

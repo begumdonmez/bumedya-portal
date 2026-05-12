@@ -388,42 +388,50 @@ function UploadModal({ onClose, onPost, userId, username }: {
     const [file, setFile] = useState<File | null>(null);
     const [preview, setPreview] = useState<string | null>(null);
     const [linkUrl, setLinkUrl] = useState("");
+    const [isDragging, setIsDragging] = useState(false);
     const [loading, setLoading] = useState(false);
     const fileRef = useRef<HTMLInputElement>(null);
 
     const needsFile = category === "resimler" || category === "editler";
     const isVideo = category === "editler";
-    const limitMb = isVideo ? 25 : 5;
+    const limitBytes = isVideo ? 25 * 1024 * 1024 : 500 * 1024; // video 25 MB, görsel 500 KB
+    const limitLabel = isVideo ? "25 MB" : "500 KB";
 
     const handleFile = (f: File | null) => {
         if (!f) return;
-        if (f.size > limitMb * 1024 * 1024) {
-            toast.error(`Dosya ${limitMb} MB'dan küçük olmalı.`);
+        if (f.size > limitBytes) {
+            toast.error(`Dosya ${limitLabel}'dan küçük olmalı.`);
             return;
         }
         setFile(f);
         setPreview(URL.createObjectURL(f));
     };
 
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+        const f = e.dataTransfer.files[0];
+        if (f) handleFile(f);
+    };
+
     const handleSubmit = async () => {
         if (needsFile && !file && !linkUrl.trim()) {
-            toast.error("Dosya seç veya link ekle.");
+            toast.error("Dosya seç, sürükle veya YouTube linki ekle.");
             return;
         }
-        if (!needsFile && !content.trim()) { toast.error("İçerik yaz."); return; }
+        if (!needsFile && !content.trim() && !linkUrl.trim()) { toast.error("İçerik yaz veya YouTube linki ekle."); return; }
 
         setLoading(true);
         const supabase = createClient();
         let storage_path: string | null = null;
 
         if (file) {
-            // İzin verilen uzantılar — güvenlik için whitelist
             const ALLOWED_IMAGE_EXT = new Set(["jpg", "jpeg", "png", "gif", "webp", "avif"]);
             const ALLOWED_VIDEO_EXT = new Set(["mp4", "mov", "webm"]);
             const rawExt = file.name.split(".").pop()?.toLowerCase() ?? "";
             const allowed = isVideo ? ALLOWED_VIDEO_EXT : ALLOWED_IMAGE_EXT;
             if (!allowed.has(rawExt)) {
-                toast.error(`Desteklenmeyen dosya formatı. İzinliler: ${[...allowed].join(", ")}`);
+                toast.error(`Desteklenmeyen format. İzinliler: ${[...allowed].join(", ")}`);
                 setLoading(false); return;
             }
             const path = `${userId}/${Date.now()}.${rawExt}`;
@@ -432,7 +440,6 @@ function UploadModal({ onClose, onPost, userId, username }: {
             storage_path = path;
         }
 
-        // ref_url güvenlik kontrolü — sadece http/https kabul et
         const rawUrl = linkUrl.trim();
         let safeRefUrl: string | null = null;
         if (rawUrl) {
@@ -478,7 +485,8 @@ function UploadModal({ onClose, onPost, userId, username }: {
         onClose();
     };
 
-    const linkPreviewActive = needsFile && linkUrl.trim() && !preview;
+    const ytId = getYoutubeId(linkUrl);
+    const linkPreviewActive = linkUrl.trim() && !preview;
 
     const inputStyle = {
         background: "var(--bg-2)",
@@ -505,9 +513,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
 
                     {/* Kategori */}
                     <div>
-                        <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
-                            Kategori
-                        </p>
+                        <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>Kategori</p>
                         <div className="grid grid-cols-4 gap-2">
                             {CATEGORIES.map((c) => (
                                 <button key={c.id} onClick={() => { setCategory(c.id); setFile(null); setPreview(null); setLinkUrl(""); }}
@@ -524,81 +530,51 @@ function UploadModal({ onClose, onPost, userId, username }: {
                         </div>
                     </div>
 
-                    {/* Dosya yükleme */}
+                    {/* Dosya yükleme — drag & drop destekli */}
                     {needsFile && (
                         <div>
                             <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
-                                Dosya <span style={{ color: "var(--text-5)" }}>(maks. {limitMb} MB)</span>
+                                {isVideo ? "Video" : "Görsel"} <span style={{ color: "var(--text-5)" }}>(maks. {limitLabel} · jpg, jpeg, png, gif, webp)</span>
                             </p>
                             {preview ? (
                                 <div className="relative rounded-xl overflow-hidden">
                                     {isVideo ? (
                                         <video src={preview} controls className="w-full rounded-xl max-h-48 object-contain" />
                                     ) : (
+                                        // eslint-disable-next-line @next/next/no-img-element
                                         <img src={preview} alt="preview" className="w-full h-48 object-cover rounded-xl" />
                                     )}
                                     <button onClick={() => { setFile(null); setPreview(null); }}
-                                            className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs"
+                                            className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center"
                                             style={{ background: "var(--overlay)", color: "#fff" }}><X size={12} /></button>
                                 </div>
                             ) : (
-                                <button onClick={() => fileRef.current?.click()}
-                                        className="w-full h-32 rounded-xl flex flex-col items-center justify-center gap-2 transition-all duration-200"
-                                        style={{ border: "1.5px dashed var(--violet-border)", background: "var(--violet-bg)", color: "var(--violet-text)" }}>
-                                    <span className="text-2xl">+</span>
-                                    <span className="text-xs">Dosya seç</span>
-                                </button>
+                                <div
+                                    onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                                    onDragLeave={() => setIsDragging(false)}
+                                    onDrop={handleDrop}
+                                    onClick={() => fileRef.current?.click()}
+                                    className="w-full h-32 rounded-xl flex flex-col items-center justify-center gap-2 transition-all duration-200 cursor-pointer select-none"
+                                    style={{
+                                        border: `1.5px dashed ${isDragging ? "var(--violet)" : "var(--violet-border)"}`,
+                                        background: isDragging ? "rgba(124,58,237,0.12)" : "var(--violet-bg)",
+                                        color: "var(--violet-text)",
+                                        transform: isDragging ? "scale(1.01)" : "scale(1)",
+                                    }}>
+                                    <ImageIcon size={20} strokeWidth={1.5} style={{ opacity: 0.6 }} />
+                                    <span className="text-xs">{isDragging ? "Bırak!" : "Sürükle veya tıkla"}</span>
+                                    <span className="text-[10px]" style={{ color: "var(--text-5)" }}>jpg · jpeg · png · gif · webp</span>
+                                </div>
                             )}
                             <input ref={fileRef} type="file" accept={isVideo ? "video/*" : "image/*"} className="hidden"
                                    onChange={(e) => handleFile(e.target.files?.[0] ?? null)} />
                         </div>
                     )}
 
-                    {/* Link alanı */}
-                    {needsFile && (
-                        <div>
-                            <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "var(--text-4)" }}>
-                                Link <span style={{ color: "var(--text-5)" }}>(opsiyonel)</span>
-                            </p>
-                            <input
-                                value={linkUrl}
-                                onChange={(e) => setLinkUrl(e.target.value)}
-                                placeholder="https://..."
-                                className="w-full rounded-xl px-4 py-3 text-sm outline-none"
-                                style={inputStyle}
-                            />
-                            {linkPreviewActive && (
-                                <div className="mt-3 rounded-xl overflow-hidden">
-                                    {getYoutubeId(linkUrl) ? (
-                                        <div style={{ aspectRatio: "16/9" }}>
-                                            <iframe
-                                                src={`https://www.youtube.com/embed/${getYoutubeId(linkUrl)}`}
-                                                className="w-full h-full rounded-xl"
-                                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                allowFullScreen
-                                            />
-                                        </div>
-                                    ) : isImageUrl(linkUrl) ? (
-                                        // eslint-disable-next-line @next/next/no-img-element
-                                        <img src={linkUrl} alt="link önizleme" className="w-full h-48 object-cover rounded-xl" />
-                                    ) : (
-                                        <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs"
-                                             style={{ background: "var(--violet-bg)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
-                                            <ExternalLink size={12} />
-                                            <span className="truncate">{linkUrl}</span>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    )}
-
                     {/* Metin içeriği */}
                     {!needsFile && (
                         <div>
-                            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
-                                İçerik
-                            </p>
+                            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>İçerik</p>
                             <textarea
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
@@ -608,11 +584,46 @@ function UploadModal({ onClose, onPost, userId, username }: {
                                 className="w-full resize-none rounded-xl px-4 py-3 text-sm outline-none leading-relaxed"
                                 style={inputStyle}
                             />
-                            <p className="text-[10px] mt-1 text-right" style={{ color: "var(--text-4)" }}>
-                                {content.length}/2000
-                            </p>
+                            <p className="text-[10px] mt-1 text-right" style={{ color: "var(--text-4)" }}>{content.length}/2000</p>
                         </div>
                     )}
+
+                    {/* YouTube / Link — tüm kategorilerde */}
+                    <div>
+                        <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "var(--text-4)" }}>
+                            YouTube veya Link <span style={{ color: "var(--text-5)" }}>(opsiyonel)</span>
+                        </p>
+                        <input
+                            value={linkUrl}
+                            onChange={(e) => setLinkUrl(e.target.value)}
+                            placeholder="https://youtube.com/watch?v=... veya herhangi bir link"
+                            className="w-full rounded-xl px-4 py-3 text-sm outline-none"
+                            style={inputStyle}
+                        />
+                        {linkPreviewActive && (
+                            <div className="mt-3 rounded-xl overflow-hidden">
+                                {ytId ? (
+                                    <div style={{ aspectRatio: "16/9" }}>
+                                        <iframe
+                                            src={`https://www.youtube.com/embed/${ytId}`}
+                                            className="w-full h-full rounded-xl"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                            allowFullScreen
+                                        />
+                                    </div>
+                                ) : isImageUrl(linkUrl) ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
+                                    <img src={linkUrl} alt="link önizleme" className="w-full h-48 object-cover rounded-xl" />
+                                ) : linkUrl.trim() ? (
+                                    <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs"
+                                         style={{ background: "var(--violet-bg)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
+                                        <ExternalLink size={12} />
+                                        <span className="truncate">{linkUrl}</span>
+                                    </div>
+                                ) : null}
+                            </div>
+                        )}
+                    </div>
 
                     {/* Açıklama */}
                     <div>
@@ -748,14 +759,13 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
         setPosts((prev) => prev.map((p) => p.id === updated.id ? updated : p));
     }, []);
 
-    // Realtime — başkalarının yaptığı paylaşımları/silmeleri/güncellemeleri anlık yansıt
+    // Realtime — posts + beğeniler anlık
     useEffect(() => {
         const supabase = createClient();
         const channel = supabase
             .channel("posts-realtime")
             .on("postgres_changes", { event: "INSERT", schema: "public", table: "posts" }, (payload) => {
                 const newPost = payload.new as Post;
-                // Kendi paylaşımımızı handlePost zaten ekliyor, duplicate önle
                 setPosts((prev) => prev.some((p) => p.id === newPost.id) ? prev : [newPost, ...prev]);
             })
             .on("postgres_changes", { event: "DELETE", schema: "public", table: "posts" }, (payload) => {
@@ -764,9 +774,30 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
             .on("postgres_changes", { event: "UPDATE", schema: "public", table: "posts" }, (payload) => {
                 setPosts((prev) => prev.map((p) => p.id === (payload.new as Post).id ? payload.new as Post : p));
             })
+            // Başkasının beğenisini canlı yansıt (kendi optimistic update'i zaten yapılmış)
+            .on("postgres_changes", { event: "INSERT", schema: "public", table: "post_likes" }, (payload) => {
+                const { post_id, user_id } = payload.new as { post_id: string; user_id: string };
+                if (user_id === userId) return; // kendi beğenisi zaten optimistic
+                setLikesMap((prev) => {
+                    const next = new Map(prev);
+                    const cur = next.get(post_id) ?? { count: 0, liked: false };
+                    next.set(post_id, { count: cur.count + 1, liked: cur.liked });
+                    return next;
+                });
+            })
+            .on("postgres_changes", { event: "DELETE", schema: "public", table: "post_likes" }, (payload) => {
+                const { post_id, user_id } = payload.old as { post_id: string; user_id: string };
+                if (user_id === userId) return;
+                setLikesMap((prev) => {
+                    const next = new Map(prev);
+                    const cur = next.get(post_id) ?? { count: 0, liked: false };
+                    next.set(post_id, { count: Math.max(0, cur.count - 1), liked: cur.liked });
+                    return next;
+                });
+            })
             .subscribe();
         return () => { supabase.removeChannel(channel); };
-    }, []);
+    }, [userId]);
 
     return (
         <div className="aurora-bg relative min-h-screen flex flex-col">

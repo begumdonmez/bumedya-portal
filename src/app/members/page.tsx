@@ -11,13 +11,15 @@ export const metadata = { title: "Üyeler" };
 export default async function MembersPage() {
     const supabase = await createClient();
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) redirect("/login");
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) redirect("/login");
 
-    const [{ data: profile }, { data: profiles }] = await Promise.all([
-        supabase.from("profiles").select("username").eq("id", user.id).single(),
+    const [{ data: { user } }, { data: profile }, { data: profiles }] = await Promise.all([
+        supabase.auth.getUser(),
+        supabase.from("profiles").select("username").eq("id", session.user.id).single(),
         supabase.from("profiles").select("id, username, role, badges, bio, created_at").order("created_at", { ascending: false }).limit(200),
     ]);
+    if (!user) redirect("/login");
 
     const username = profile?.username ?? user.email?.split("@")[0] ?? "";
 

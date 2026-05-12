@@ -7,32 +7,26 @@ export const metadata: Metadata = { title: "Galeri" };
 
 export default async function GaleriPage() {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) redirect("/login");
+
+    const [{ data: { user } }, { data: profile }, { data: items }] = await Promise.all([
+        supabase.auth.getUser(),
+        supabase.from("profiles").select("username, role, badges").eq("id", session.user.id).single(),
+        supabase.from("gallery_items")
+            .select("id, user_id, username, title, storage_path, created_at, ref_url")
+            .order("created_at", { ascending: false }),
+    ]);
     if (!user) redirect("/login");
-
-    const { data: profile } = await supabase
-        .from("profiles")
-        .select("username, role, badges")
-        .eq("id", user.id)
-        .single();
-
-    const badges: string[] = (profile?.badges as string[]) ?? [];
-
-    const { data: items } = await supabase
-        .from("gallery_items")
-        .select("id, user_id, username, title, storage_path, created_at, ref_url")
-        .order("created_at", { ascending: false });
-
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 
     return (
         <GaleriClient
             userId={user.id}
             username={profile?.username ?? ""}
             role={profile?.role ?? "member"}
-            badges={badges}
+            badges={(profile?.badges as string[]) ?? []}
             items={items ?? []}
-            supabaseUrl={supabaseUrl}
+            supabaseUrl={process.env.NEXT_PUBLIC_SUPABASE_URL!}
         />
     );
 }
