@@ -217,8 +217,6 @@ export default function ChatClient({ userId, username, isAdmin, initialMessages 
             setSending(false);
             return;
         }
-        await supabase.from("activities").insert({ user_id: userId, username, type: "lounge_join", payload: {} });
-
         const hasAll = isAdmin && /@all\b/.test(content);
         if (hasAll) {
             const everyone = [...usersMap.entries()]
