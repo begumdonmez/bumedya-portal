@@ -1,14 +1,22 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = [
-    "/",
-    "/login",
-    "/register",
-    "/onboarding",
-    "/gizlilik",
-    "/auth/callback",
-    "/reset-password",
+// Yalnızca bu bölümler oturum ister. Listede olmayan adresler (bilinmeyenler dahil)
+// serbestçe geçer; böylece olmayan sayfalar girişe değil 404'e düşer.
+// Sayfalar ve API rotaları ayrıca kendi içinde de oturum/admin kontrolü yapar.
+const PROTECTED_PATHS = [
+    "/home",
+    "/akis",
+    "/yildizlar",
+    "/arsiv",
+    "/galeri",
+    "/members",
+    "/etkinlikler",
+    "/chat",
+    "/manifest",
+    "/basvuru",
+    "/profil",
+    "/admin",
 ];
 
 export async function proxy(request: NextRequest) {
@@ -42,11 +50,11 @@ export async function proxy(request: NextRequest) {
     const { data } = await supabase.auth.getClaims();
     const user = data?.claims?.sub ? data.claims : null;
 
-    const isPublic = PUBLIC_PATHS.some(
+    const isProtected = PROTECTED_PATHS.some(
         (p) => pathname === p || pathname.startsWith(p + "/")
     );
 
-    if (!user && !isPublic) {
+    if (!user && isProtected) {
         return NextResponse.redirect(new URL("/login", request.url));
     }
 

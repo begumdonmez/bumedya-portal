@@ -29,6 +29,14 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Kullanıcı bulunamadı." }, { status: 404 });
     }
 
+    // Bu uç nokta kayıt anında (e-posta doğrulanmadan, oturum yokken) çağrılır,
+    // bu yüzden oturum isteyemez. Başkasının kullanıcı adını değiştirmek için
+    // kullanılmasın diye yalnızca az önce açılmış hesaplara izin veriyoruz.
+    const createdAt = new Date(authUser.user.created_at).getTime();
+    if (Date.now() - createdAt > 15 * 60 * 1000) {
+        return NextResponse.json({ error: "Bu işlem yalnızca kayıt sırasında yapılabilir." }, { status: 403 });
+    }
+
     if (existing) {
         // Trigger tarafından oluşturulmuş profilde username yanlış olabilir — her zaman düzelt
         await admin.from("profiles").update({ username: safeUsername }).eq("id", userId);
