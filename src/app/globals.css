@@ -484,3 +484,48 @@ input:-webkit-autofill:focus {
 }
 .pill:hover { border-color: var(--text-3); }
 .pill[aria-pressed="true"] { background: var(--fg); color: var(--paper); border-color: var(--fg); }
+
+/* ── 404 oyuncağı ──────────────────────────────────────────── */
+@keyframes nf-bob {
+    0%, 100% { transform: translateY(0) rotate(-6deg); }
+    50%      { transform: translateY(-0.12em) rotate(8deg); }
+}
+@keyframes nf-spin { to { transform: rotate(360deg); } }
+@keyframes nf-fly-hit {
+    0%   { transform: translate(0, 0) scale(1); }
+    45%  { transform: translate(0.75em, -0.9em) scale(0.8); }
+    80%  { transform: translate(1.45em, -0.05em) scale(0.45); opacity: 1; }
+    81%  { opacity: 0; }
+    90%  { transform: translate(0, -1.5em) scale(1); opacity: 0; }
+    100% { transform: translate(0, 0) scale(1); opacity: 1; }
+}
+@keyframes nf-fly-miss {
+    0%   { transform: translate(0, 0); }
+    40%  { transform: translate(0.9em, -1em) rotate(200deg); }
+    65%  { transform: translate(1.9em, 0.05em) rotate(320deg); }
+    75%  { transform: translate(2.1em, -0.25em) rotate(380deg); }
+    85%  { transform: translate(2.3em, 0.05em) rotate(420deg); opacity: 1; }
+    90%  { opacity: 0; }
+    95%  { transform: translate(0, -1.5em); opacity: 0; }
+    100% { transform: translate(0, 0); opacity: 1; }
+}
+@keyframes nf-bin-hit {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-9deg); }
+    50% { transform: rotate(7deg); }
+    75% { transform: rotate(-3deg); }
+}
+@keyframes nf-excuse {
+    from { opacity: 0; transform: translateY(8px) rotate(-1deg); }
+    to   { opacity: 1; transform: none; }
+}
+@keyframes nf-tilt { 0%, 100% { transform: rotate(var(--r)); } 50% { transform: rotate(calc(var(--r) * -1)); } }
+
+.nf-bob      { animation: nf-bob 2.4s ease-in-out infinite; }
+.nf-spin     { animation: nf-spin 14s linear infinite; }
+.nf-fly-hit  { animation: nf-fly-hit 1.3s cubic-bezier(.3,.6,.4,1) both; }
+.nf-fly-miss { animation: nf-fly-miss 1.3s cubic-bezier(.3,.6,.4,1) both; }
+.nf-bin-hit  { animation: nf-bin-hit 0.5s ease 1s both; transform-origin: 50% 100%; }
+.nf-excuse   { animation: nf-excuse 0.5s ease both; }
+.nf-tilt-l   { display: inline-block; --r: -3deg; animation: nf-tilt 5s ease-in-out infinite; }
+.nf-tilt-r   { display: inline-block; --r: 4deg;  animation: nf-tilt 6s ease-in-out infinite; }
