@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import GaleriClient from "./GaleriClient";
+import GaleriClient, { GALLERY_PAGE_SIZE } from "./GaleriClient";
 
 export const metadata: Metadata = { title: "Galeri" };
 
@@ -15,7 +15,8 @@ export default async function GaleriPage() {
         supabase.from("profiles").select("username, role, badges").eq("id", session.user.id).single(),
         supabase.from("gallery_items")
             .select("id, user_id, username, title, storage_path, created_at, ref_url")
-            .order("created_at", { ascending: false }),
+            .order("created_at", { ascending: false })
+            .range(0, GALLERY_PAGE_SIZE - 1),
     ]);
     if (!user) redirect("/login");
 

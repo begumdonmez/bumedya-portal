@@ -1,12 +1,16 @@
 "use client";
 
-import { useState, useRef, useCallback, useEffect, useMemo } from "react";
+import { useState, useRef, useCallback } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Image as ImageIcon, X, ExternalLink, Link2 } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import PageHeader from "@/components/PageHeader";
+import { GalleryImage, YoutubeLite, compressImage } from "./media";
+
+export const GALLERY_PAGE_SIZE = 24;
+const GALLERY_COLUMNS = "id, user_id, username, title, storage_path, created_at, ref_url";
 
 interface GalleryItem {
     id: string;
@@ -67,11 +71,13 @@ function UploadModal({ onClose, onUploaded, userId, username }: {
         let storage_path = "";
 
         if (file) {
-            const ext = file.name.split(".").pop();
+            const upload = await compressImage(file);
+            const ext = upload.name.split(".").pop();
             const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+            // Dosya adı benzersiz → içerik değişmez, tarayıcı/CDN 1 yıl önbellekleyebilir
             const { error: uploadError } = await supabase.storage
                 .from("gallery")
-                .upload(path, file, { cacheControl: "3600", upsert: false });
+                .upload(path, upload, { cacheControl: "31536000", upsert: false, contentType: upload.type });
             if (uploadError) {
                 toast.error(`Yükleme hatası: ${uploadError.message}`);
                 setLoading(false);
@@ -233,29 +239,24 @@ export default function GaleriClient({
     supabaseUrl: string;
 }) {
     const [items, setItems] = useState(initialItems);
+    const [hasMore, setHasMore] = useState(initialItems.length === GALLERY_PAGE_SIZE);
+    const [loadingMore, setLoadingMore] = useState(false);
+
+    const loadMore = async () => {
+        setLoadingMore(true);
+        const { data, error } = await createClient()
+            .from("gallery_items")
+            .select(GALLERY_COLUMNS)
+            .order("created_at", { ascending: false })
+            .range(items.length, items.length + GALLERY_PAGE_SIZE - 1);
+        setLoadingMore(false);
+        if (error) { toast.error("Daha fazla eser yüklenemedi."); return; }
+        const next = (data ?? []) as GalleryItem[];
+        setItems(prev => [...prev, ...next.filter(n => !prev.some(p => p.id === n.id))]);
+        setHasMore(next.length === GALLERY_PAGE_SIZE);
+    };
     const [showModal, setShowModal] = useState(false);
     const [errorIds, setErrorIds] = useState<Set<string>>(new Set());
-    const [numCols, setNumCols] = useState(4);
-
-    useEffect(() => {
-        let timer: ReturnType<typeof setTimeout>;
-        const update = () => {
-            clearTimeout(timer);
-            timer = setTimeout(() => {
-                const w = window.innerWidth;
-                setNumCols(w < 640 ? 1 : w < 768 ? 2 : w < 1024 ? 3 : 4);
-            }, 150);
-        };
-        update();
-        window.addEventListener("resize", update);
-        return () => { window.removeEventListener("resize", update); clearTimeout(timer); };
-    }, []);
-
-    const masonryCols = useMemo(() => {
-        const cols: typeof items[] = Array.from({ length: numCols }, () => []);
-        items.forEach((item, i) => cols[i % numCols].push(item));
-        return cols;
-    }, [items, numCols]);
 
     const isAdmin = badges.includes("admin");
     const canUpload = isAdmin;
@@ -307,10 +308,8 @@ export default function GaleriClient({
                         )}
                     </div>
                 ) : (
-                    <div className="flex gap-3 items-start">
-                        {masonryCols.map((col, ci) => (
-                            <div key={ci} className="flex-1 flex flex-col gap-3 min-w-0">
-                                {col.map((item) => {
+                    <div className="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-3 [&>*]:mb-3 [&>*]:break-inside-avoid">
+                                {items.map((item) => {
                                     const hasFile = !!item.storage_path;
                                     const url = hasFile ? getPublicUrl(supabaseUrl, item.storage_path) : null;
                                     const hasError = errorIds.has(item.id);
@@ -320,14 +319,7 @@ export default function GaleriClient({
                                         return (
                                             <div key={item.id} className="card relative group rounded-2xl overflow-hidden">
                                                 {ytId ? (
-                                                    <div style={{ aspectRatio: "16/9" }}>
-                                                        <iframe
-                                                            src={`https://www.youtube.com/embed/${ytId}`}
-                                                            className="w-full h-full"
-                                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                            allowFullScreen
-                                                        />
-                                                    </div>
+                                                    <YoutubeLite id={ytId} title={item.title} />
                                                 ) : isImageUrl(item.ref_url) ? (
                                                     <a href={item.ref_url} target="_blank" rel="noopener noreferrer">
                                                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -390,22 +382,10 @@ export default function GaleriClient({
                                                 <>
                                                     {item.ref_url ? (
                                                         <a href={item.ref_url} target="_blank" rel="noopener noreferrer" className="block">
-                                                            {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                            <img loading="lazy" decoding="async"
-                                                                src={url}
-                                                                alt={item.title ?? "Galeri görseli"}
-                                                                className="w-full h-auto block"
-                                                                onError={() => setErrorIds((prev) => new Set(prev).add(item.id))}
-                                                            />
+                                                            <GalleryImage src={url} alt={item.title ?? "Galeri görseli"} onError={() => setErrorIds((prev) => new Set(prev).add(item.id))} />
                                                         </a>
                                                     ) : (
-                                                        /* eslint-disable-next-line @next/next/no-img-element */
-                                                        <img loading="lazy" decoding="async"
-                                                            src={url}
-                                                            alt={item.title ?? "Galeri görseli"}
-                                                            className="w-full h-auto block"
-                                                            onError={() => setErrorIds((prev) => new Set(prev).add(item.id))}
-                                                        />
+                                                        <GalleryImage src={url} alt={item.title ?? "Galeri görseli"} onError={() => setErrorIds((prev) => new Set(prev).add(item.id))} />
                                                     )}
                                                     <div className="absolute inset-0 flex flex-col justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                                                          style={{ background: "linear-gradient(to top, color-mix(in srgb, var(--surface-solid) 88%, transparent) 0%, transparent 60%)" }}>
@@ -444,8 +424,13 @@ export default function GaleriClient({
                                         </div>
                                     );
                                 })}
-                            </div>
-                        ))}
+                    </div>
+                )}
+                {hasMore && (
+                    <div className="flex justify-center mt-10">
+                        <button type="button" onClick={loadMore} disabled={loadingMore} className="btn-ghost">
+                            {loadingMore ? "Yükleniyor…" : "Daha fazla göster"}
+                        </button>
                     </div>
                 )}
             </div>

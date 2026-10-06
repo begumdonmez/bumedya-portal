@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Instrument_Sans, Geist_Mono } from "next/font/google";
+import { Fraunces, Instrument_Sans, Geist_Mono, Patrick_Hand } from "next/font/google";
 import { Toaster } from "sonner";
 import ScrollToTop from "@/components/ScrollToTop";
 import "./globals.css";
@@ -16,6 +16,15 @@ const instrumentSans = Instrument_Sans({
     subsets: ["latin", "latin-ext"],
     variable: "--font-body",
     display: "swap",
+});
+
+// Yalnızca Fanzin temasında kullanılır — diğer temalarda indirme yükü olmasın diye önceden yüklenmez
+const patrickHand = Patrick_Hand({
+    subsets: ["latin", "latin-ext"],
+    weight: "400",
+    variable: "--font-hand",
+    display: "swap",
+    preload: false,
 });
 
 const geistMono = Geist_Mono({
@@ -62,7 +71,7 @@ export const viewport: Viewport = {
     viewportFit: "cover",
 };
 
-const THEME_INIT = `try{var t=localStorage.getItem("bm-theme");if(t==="fanzin"||t==="gece")document.documentElement.dataset.theme=t}catch(e){}`;
+const THEME_INIT = `try{var t=localStorage.getItem("bm-theme");if(t==="kagit"||t==="gece"||t==="fanzin")document.documentElement.dataset.theme=t}catch(e){}`;
 
 /* ─── Root Layout ───────────────────────────────────────────── */
 export default function RootLayout({
@@ -73,7 +82,7 @@ export default function RootLayout({
     return (
         <html
             lang="tr"
-            className={`h-full ${fraunces.variable} ${instrumentSans.variable} ${geistMono.variable}`}
+            className={`h-full ${fraunces.variable} ${instrumentSans.variable} ${patrickHand.variable} ${geistMono.variable}`}
             suppressHydrationWarning
         >
         <head>

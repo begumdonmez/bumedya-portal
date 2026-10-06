@@ -1,21 +1,22 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import { Monitor, Moon, Sun } from "lucide-react";
+import { Monitor, Moon, Scissors, Sun } from "lucide-react";
 
-export type Theme = "fanzin" | "gece" | "sistem";
+export type Theme = "kagit" | "gece" | "fanzin" | "sistem";
 
 const OPTIONS: { value: Theme; label: string; Icon: typeof Sun }[] = [
-    { value: "fanzin", label: "Fanzin (açık)", Icon: Sun },
-    { value: "gece",   label: "Gece (koyu)",   Icon: Moon },
-    { value: "sistem", label: "Sistem",        Icon: Monitor },
+    { value: "kagit",  label: "Kâğıt (açık)",           Icon: Sun },
+    { value: "gece",   label: "Gece (koyu)",            Icon: Moon },
+    { value: "fanzin", label: "Fanzin (siyah-beyaz)",   Icon: Scissors },
+    { value: "sistem", label: "Sistem (açık/koyu)",     Icon: Monitor },
 ];
 
 const STORAGE_KEY = "bm-theme";
 
 function readTheme(): Theme {
     const t = document.documentElement.dataset.theme;
-    return t === "fanzin" || t === "gece" ? t : "sistem";
+    return t === "kagit" || t === "gece" || t === "fanzin" ? t : "sistem";
 }
 
 function subscribe(onChange: () => void) {

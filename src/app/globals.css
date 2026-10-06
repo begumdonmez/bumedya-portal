@@ -6,9 +6,10 @@
  * Tek kaynak: aşağıdaki ham palet değişkenleri (--paper, --fg, --accent …).
  * Bileşenler yalnızca bunları ya da türetilmiş tokenları (--text-*, --bg-*,
  * --border-*, --accent-*) kullanır. Tema, <html data-theme="…"> ile seçilir:
- *   fanzin  → açık, kâğıt
+ *   kagit   → açık, sıcak kâğıt
  *   gece    → koyu, sade
- *   (yok)   → sistem tercihine göre ikisinden biri
+ *   fanzin  → Kadraj tarzı: siyah-beyaz fotokopi, el yazısı, riso vurgular
+ *   (yok)   → sistem tercihine göre kâğıt ya da gece
  */
 
 @theme {
@@ -33,7 +34,7 @@
 /* ── Paletler ──────────────────────────────────────────────── */
 
 :root,
-:root[data-theme="fanzin"] {
+:root[data-theme="kagit"] {
     color-scheme: light;
     --paper:         #F7F1E6;
     --paper-2:       #EFE4D1;
@@ -52,7 +53,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="fanzin"]) {
+    :root:not([data-theme="kagit"]):not([data-theme="fanzin"]) {
         color-scheme: dark;
         --paper:         #16110E;
         --paper-2:       #1E1813;
@@ -333,7 +334,7 @@ input:-webkit-autofill:focus {
 }
 :root[data-theme="gece"] .paper-grain::before { mix-blend-mode: screen; opacity: 0.12; }
 @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="fanzin"]) .paper-grain::before { mix-blend-mode: screen; opacity: 0.12; }
+    :root:not([data-theme="kagit"]):not([data-theme="fanzin"]) .paper-grain::before { mix-blend-mode: screen; opacity: 0.12; }
 }
 
 /* ── Gezinme ───────────────────────────────────────────────── */
@@ -529,3 +530,107 @@ input:-webkit-autofill:focus {
 .nf-excuse   { animation: nf-excuse 0.5s ease both; }
 .nf-tilt-l   { display: inline-block; --r: -3deg; animation: nf-tilt 5s ease-in-out infinite; }
 .nf-tilt-r   { display: inline-block; --r: 4deg;  animation: nf-tilt 6s ease-in-out infinite; }
+
+/* ══ FANZİN TEMASI ════════════════════════════════════════════
+ * Kadraj'ın basılı hali: beyaz fotokopi kâğıdı, siyah mürekkep,
+ * el yazısı başlıklar, kalın çerçeveler, riso kırmızısı ve fosforlu sarı.
+ */
+:root[data-theme="fanzin"] {
+    color-scheme: light;
+    --paper:         #FBFAF6;
+    --paper-2:       #EFEDE6;
+    --surface-solid: #FFFFFF;
+    --fg:            #111111;
+    --accent:        #E4002B;
+    --accent-2:      #FFE14D;
+    --wine:          #111111;
+    --success:       #1F7A3F;
+    --danger:        #E4002B;
+    --warn:          #A86B00;
+    --pink:          #E2187A;
+    --info:          #1D4ED8;
+    --shade:         #111111;
+    --on-accent:     #FFFFFF;
+    --radius-card:   3px;
+}
+
+/* Raster noktalı fotokopi zemini */
+:root[data-theme="fanzin"] body {
+    background-color: var(--paper);
+    background-image: radial-gradient(color-mix(in srgb, var(--fg) 9%, transparent) 1px, transparent 1.2px);
+    background-size: 14px 14px;
+}
+:root[data-theme="fanzin"] .paper-grain::before { opacity: 0.55; }
+
+/* El yazısı başlıklar */
+:root[data-theme="fanzin"] :is(h1, h2, h3, .font-display) {
+    font-family: var(--font-hand), var(--font-display);
+    font-style: normal;
+    letter-spacing: 0;
+}
+:root[data-theme="fanzin"] :is(h1, h2, h3, .font-display) em { font-style: normal; }
+
+/* Kesip yapıştırılmış kartlar */
+:root[data-theme="fanzin"] :is(.card, .glass, .glass-strong) {
+    border: 2px solid var(--fg);
+    border-radius: 3px;
+    box-shadow: 4px 4px 0 var(--fg);
+}
+:root[data-theme="fanzin"] .card:hover { border-color: var(--fg); box-shadow: 6px 6px 0 var(--fg); transform: translate(-1px, -1px); }
+:root[data-theme="fanzin"] :is(.card-accent, .card-violet) {
+    background: var(--accent-2);
+    border: 2px solid var(--fg);
+    border-radius: 3px;
+    box-shadow: 4px 4px 0 var(--fg);
+    position: relative;
+}
+/* Bant parçası */
+:root[data-theme="fanzin"] :is(.card-accent, .card-violet)::after {
+    content: '';
+    position: absolute;
+    top: -12px; left: 50%;
+    width: 90px; height: 22px;
+    translate: -50% 0;
+    rotate: -3deg;
+    background: color-mix(in srgb, var(--paper-2) 75%, transparent);
+    border: 1px dashed color-mix(in srgb, var(--fg) 25%, transparent);
+}
+
+/* Butonlar: siyah mürekkep, sert gölge */
+:root[data-theme="fanzin"] .btn-primary {
+    background: var(--fg);
+    border: 2px solid var(--fg);
+    color: var(--paper);
+    border-radius: 3px;
+    box-shadow: 3px 3px 0 var(--accent);
+}
+:root[data-theme="fanzin"] .btn-primary:hover { box-shadow: 5px 5px 0 var(--accent); }
+:root[data-theme="fanzin"] .btn-ghost {
+    border: 2px solid var(--fg);
+    color: var(--fg);
+    border-radius: 3px;
+}
+:root[data-theme="fanzin"] :is(.input-field, .form-input) {
+    border: 2px solid var(--fg);
+    border-radius: 3px;
+}
+:root[data-theme="fanzin"] :is(.input-field, .form-input):focus { box-shadow: 3px 3px 0 var(--accent); }
+:root[data-theme="fanzin"] .pill { border: 2px solid var(--fg); color: var(--fg); }
+
+/* Fosforlu kalem gerçekten sarı */
+:root[data-theme="fanzin"] .marker {
+    background-image: linear-gradient(transparent 55%, var(--accent-2) 55%, var(--accent-2) 92%, transparent 92%);
+}
+:root[data-theme="fanzin"] .sticker { background: var(--accent-2); }
+
+/* Şerit: siyah bant, beyaz el yazısı */
+:root[data-theme="fanzin"] .marquee { background: var(--fg); color: var(--paper); border-color: var(--fg); }
+
+/* Üst çubuk: fotokopi kesiği gibi kalın alt çizgi */
+:root[data-theme="fanzin"] .nav-backdrop { background: var(--paper); border-bottom: 2px solid var(--fg); }
+
+:root[data-theme="fanzin"] .label-caps { color: var(--fg); }
+:root[data-theme="fanzin"] ::selection { background: var(--accent-2); color: var(--fg); }
+
+/* Logo da fotokopiden çıkmış gibi */
+:root[data-theme="fanzin"] img[src*="logo"] { filter: grayscale(1) contrast(1.35); }
