@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
+import PageHeader from "@/components/PageHeader";
 
 export const metadata: Metadata = { title: "Gizlilik Politikası" };
 
@@ -78,7 +79,6 @@ Haklarınızı kullanmak için: bumedyailetisim@gmail.com adresine e-posta gönd
 export default function GizlilikPage() {
     return (
         <main className="relative w-full min-h-screen">
-            <div aria-hidden className="fixed inset-0 dot-grid opacity-[0.2] pointer-events-none" style={{ zIndex: 0 }} />
 
             {/* Navbar */}
             <SiteHeader back={{ href: "/", label: "Ana Sayfa" }} minimal />
@@ -86,27 +86,23 @@ export default function GizlilikPage() {
             <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pt-28 pb-20">
 
                 {/* Başlık */}
-                <div className="mb-10">
-                    <p className="label-caps mb-3">Yasal</p>
-                    <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-gradient-white mb-3">
-                        Gizlilik Politikası
-                    </h1>
-                    <p className="text-xs" style={{ color: "var(--text-4)" }}>
-                        Son güncelleme: Mayıs 2026 · KVKK (6698 Sayılı Kanun) uyumlu
-                    </p>
-                </div>
+                <PageHeader eyebrow="Yasal" title="Gizlilik politikası"
+                            description="Son güncelleme: Mayıs 2026 · KVKK (6698 sayılı Kanun) uyumlu" />
 
                 {/* Bölümler */}
-                <div className="flex flex-col gap-4">
-                    {SECTIONS.map((s) => (
-                        <div key={s.title} className="card p-5 sm:p-6">
-                            <h2 className="text-sm font-semibold mb-3" style={{ color: "var(--text-2)" }}>
-                                {s.title}
+                <div className="flex flex-col">
+                    {SECTIONS.map((s, i) => (
+                        <section key={s.title} className="grid sm:grid-cols-[3rem_1fr] gap-x-4 py-6" style={{ borderTop: i ? "1px solid var(--border-2)" : undefined }}>
+                            <span className="font-display italic text-xl" style={{ color: "var(--accent)" }}>{String(i + 1).padStart(2, "0")}</span>
+                            <div>
+                            <h2 className="font-display text-xl font-medium mb-2" style={{ color: "var(--text-1)" }}>
+                                {s.title.replace(/^\d+\.\s*/, "")}
                             </h2>
-                            <p className="text-xs leading-relaxed whitespace-pre-line" style={{ color: "var(--text-3)" }}>
+                            <p className="text-[15px] leading-relaxed whitespace-pre-line" style={{ color: "var(--text-3)" }}>
                                 {s.content}
                             </p>
-                        </div>
+                            </div>
+                        </section>
                     ))}
                 </div>
 
