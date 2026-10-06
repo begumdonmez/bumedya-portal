@@ -533,7 +533,7 @@ export default function ProfilClient({ initialProfile, initialPosts }: { initial
                                     className="flex-1 py-3 rounded-xl text-sm font-bold transition-all duration-300 disabled:cursor-not-allowed"
                                     style={{
                                         background: deleteConfirm === profile.username && !deleting ? "color-mix(in srgb, var(--danger) 85%, transparent)" : "color-mix(in srgb, var(--danger) 20%, transparent)",
-                                        color: deleteConfirm === profile.username && !deleting ? "#fff" : "color-mix(in srgb, var(--danger) 40%, transparent)",
+                                        color: deleteConfirm === profile.username && !deleting ? "var(--on-accent)" : "color-mix(in srgb, var(--danger) 40%, transparent)",
                                         boxShadow: deleteConfirm === profile.username && !deleting ? "0 4px 16px color-mix(in srgb, var(--danger) 30%, transparent)" : "none",
                                     }}>
                                     {deleting

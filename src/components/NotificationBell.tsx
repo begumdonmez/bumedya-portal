@@ -136,7 +136,7 @@ export default function NotificationBell({ userId }: { userId: string }) {
                 <Bell size={16} style={{ color: "var(--text-3)" }} />
                 {unreadCount > 0 && (
                     <span className="absolute -top-1 -right-1 min-w-[16px] h-4 rounded-full text-[11px] font-bold flex items-center justify-center px-1"
-                          style={{ background: "color-mix(in srgb, var(--danger) 90%, transparent)", color: "#fff" }}>
+                          style={{ background: "color-mix(in srgb, var(--danger) 90%, transparent)", color: "var(--on-accent)" }}>
                         {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                 )}

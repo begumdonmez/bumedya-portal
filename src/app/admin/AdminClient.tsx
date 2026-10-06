@@ -941,7 +941,7 @@ export default function AdminClient({ userId, username, profiles: initialProfile
                             {label}
                             {badge != null && badge > 0 && (
                                 <span className="w-4 h-4 rounded-full text-[11px] flex items-center justify-center font-bold"
-                                      style={{ background: "color-mix(in srgb, var(--danger) 80%, transparent)", color: "#fff" }}>{badge}</span>
+                                      style={{ background: "color-mix(in srgb, var(--danger) 80%, transparent)", color: "var(--on-accent)" }}>{badge}</span>
                             )}
                         </button>
                     ))}

@@ -8,9 +8,7 @@ import { Image as ImageIcon, X, ExternalLink, Link2 } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import PageHeader from "@/components/PageHeader";
 import { GalleryImage, YoutubeLite, compressImage } from "./media";
-
-export const GALLERY_PAGE_SIZE = 24;
-const GALLERY_COLUMNS = "id, user_id, username, title, storage_path, created_at, ref_url";
+import { GALLERY_COLUMNS, GALLERY_PAGE_SIZE } from "./config";
 
 interface GalleryItem {
     id: string;
@@ -144,7 +142,7 @@ function UploadModal({ onClose, onUploaded, userId, username }: {
                                 <img loading="lazy" decoding="async" src={preview} alt="preview" className="w-full h-48 object-cover rounded-xl" />
                                 <button onClick={() => { setFile(null); setPreview(null); }}
                                         className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs"
-                                        style={{ background: "var(--overlay)", color: "#fff" }}><X size={12} /></button>
+                                        style={{ background: "var(--overlay)", color: "var(--on-accent)" }}><X size={12} /></button>
                             </div>
                         ) : (
                             <button onClick={() => fileRef.current?.click()}
@@ -212,7 +210,7 @@ function UploadModal({ onClose, onUploaded, userId, username }: {
 
                     <button onClick={handleSubmit} disabled={loading}
                             className="w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-40"
-                            style={{ background: "color-mix(in srgb, var(--accent) 80%, transparent)", color: "#fff", border: "1px solid color-mix(in srgb, var(--accent) 50%, transparent)" }}>
+                            style={{ background: "color-mix(in srgb, var(--accent) 80%, transparent)", color: "var(--on-accent)", border: "1px solid color-mix(in srgb, var(--accent) 50%, transparent)" }}>
                         {loading ? (
                             <span className="inline-block w-4 h-4 rounded-full border-2 border-[color-mix(in_srgb,var(--fg)_30%,transparent)] border-t-[var(--on-accent)] animate-spin" />
                         ) : "Ekle"}

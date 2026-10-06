@@ -102,107 +102,30 @@ function RatingPicker({ current, color, border, bg, onRate }: {
 }
 
 /* ── Medya hero görseli ──────────────────────────────────────── */
+/** Arşiv kaydının büyük bilet görünümü — liste sayfasındaki koçan kartın dikey hali. */
 function MediaHero({ item, cat }: { item: ArchiveItem; cat: typeof CAT_CONFIG[Category] }) {
     const Icon = cat.icon;
-    const c = item.category;
-
-    if (c === "film") return (
-        <div style={{
-            width: 140, height: 200, display: "flex", overflow: "hidden",
-            borderRadius: "3px 8px 8px 3px",
-            border: `1px solid ${cat.border}`,
-            boxShadow: "6px 8px 32px color-mix(in srgb, var(--shade) 70%, transparent)",
-            background: "linear-gradient(160deg, #0d0b22 0%, #160e38 100%)",
-            flexShrink: 0,
-        }}>
-            <div style={{ width: 18, flexShrink: 0, background: "color-mix(in srgb, var(--accent) 50%, transparent)", borderRight: "1px solid color-mix(in srgb, var(--accent) 25%, transparent)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ writingMode: "vertical-rl", transform: "rotate(180deg)", fontSize: 8, color: "color-mix(in srgb, var(--fg) 70%, transparent)", fontWeight: 700, maxHeight: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</span>
-            </div>
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: "10px 10px 8px" }}>
-                <div style={{ flex: 1, borderRadius: 4, background: cat.bg, border: `1px solid ${cat.border}`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 10 }}>
-                    <Icon size={40} style={{ color: cat.color, opacity: 0.5 }} />
-                </div>
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <div style={{ width: 24, height: 24, borderRadius: "50%", background: "conic-gradient(from 0deg, #555, #bbb 15%, #777 30%, #ccc 45%, #666 60%, #bbb 75%, #555 90%, #aaa 100%)", border: "2px solid #2a2a2a", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#111" }} />
-                    </div>
-                    <span style={{ fontSize: 8, color: "color-mix(in srgb, var(--fg) 40%, transparent)" }}>DVD</span>
-                </div>
-            </div>
-        </div>
-    );
-
-    if (c === "dizi") return (
-        <div style={{
-            width: 200, height: 130, flexShrink: 0, borderRadius: 8,
-            border: `1px solid ${cat.border}`,
-            boxShadow: "6px 8px 32px color-mix(in srgb, var(--shade) 70%, transparent)",
-            background: "linear-gradient(160deg, #0a0a14 0%, #111622 100%)",
-            padding: "10px 12px", display: "flex", flexDirection: "column", gap: 8,
-        }}>
-            <div style={{ background: cat.bg, border: `1px solid ${cat.border}`, borderRadius: 4, padding: "5px 8px" }}>
-                <p style={{ fontSize: 10, fontWeight: 700, color: cat.color, margin: 0 }}>{item.title}</p>
-                {item.creator && <p style={{ fontSize: 8, color: "color-mix(in srgb, var(--fg) 30%, transparent)", margin: "2px 0 0" }}>{item.creator}</p>}
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 0, marginTop: "auto" }}>
-                {/* Reels */}
-                {[0, 1].map(i => (
-                    <div key={i} style={{ width: 38, height: 38, borderRadius: "50%", background: "#1c1c1c", border: "2px solid #2a2a2a", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
-                        <div style={{ position: "absolute", inset: 3, borderRadius: "50%", border: "1px solid #333" }} />
-                        <div style={{ width: 12, height: 12, borderRadius: "50%", background: "#222", border: "1px solid #3a3a3a" }} />
-                        {[0, 60, 120].map(deg => (
-                            <div key={deg} style={{ position: "absolute", width: 1, height: 9, background: "#333", top: "50%", left: "50%", transformOrigin: "top center", transform: `translateX(-50%) rotate(${deg}deg)` }} />
-                        ))}
-                    </div>
-                )).reduce((acc, el, i) => i === 0 ? [el, <div key="tape" style={{ flex: 1, height: 16, background: "#080808", borderRadius: 2, border: "1px solid #222", margin: "0 4px" }} />] : [...acc, el], [] as React.ReactNode[])}
-            </div>
-        </div>
-    );
-
-    if (c === "kitap") return (
-        <div style={{
-            width: 130, height: 200, display: "flex", overflow: "hidden",
-            borderRadius: "3px 8px 8px 3px",
-            border: `1px solid ${cat.border}`,
-            boxShadow: "-3px 3px 12px color-mix(in srgb, var(--shade) 40%, transparent), 6px 8px 32px color-mix(in srgb, var(--shade) 70%, transparent)",
-            background: "linear-gradient(160deg, #051a10 0%, #0a2218 100%)",
-            flexShrink: 0,
-        }}>
-            <div style={{ width: 20, flexShrink: 0, background: "color-mix(in srgb, var(--success) 45%, transparent)", borderRight: "1px solid color-mix(in srgb, var(--success) 20%, transparent)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ writingMode: "vertical-rl", transform: "rotate(180deg)", fontSize: 8, color: "color-mix(in srgb, var(--fg) 80%, transparent)", fontWeight: 700, maxHeight: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</span>
-            </div>
-            <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: "10px 10px 8px" }}>
-                <div style={{ flex: 1, borderRadius: 4, background: cat.bg, border: `1px solid ${cat.border}`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8 }}>
-                    <Icon size={36} style={{ color: cat.color, opacity: 0.4 }} />
-                </div>
-                <p style={{ fontSize: 8, fontWeight: 700, color: "color-mix(in srgb, var(--fg) 80%, transparent)", margin: 0, lineHeight: 1.3 }}>{item.title}</p>
-                {item.creator && <p style={{ fontSize: 7.5, color: "color-mix(in srgb, var(--success) 60%, transparent)", margin: "2px 0 0", fontStyle: "italic" }}>{item.creator}</p>}
-            </div>
-        </div>
-    );
-
-    // Plak
     return (
-        <div style={{
-            width: 160, height: 160, flexShrink: 0, borderRadius: "50%",
-            boxShadow: "0 8px 36px color-mix(in srgb, var(--shade) 80%, transparent)",
-            background: "conic-gradient(from 0deg, #111 0deg, #1a1a1a 3deg, #111 6deg, #181818 9deg, #111 12deg, #1a1a1a 15deg, #111 18deg, #191919 21deg, #111 24deg, #1a1a1a 27deg, #111 30deg, #181818 33deg, #111 36deg, #1a1a1a 39deg, #111 42deg, #191919 45deg, #111 48deg, #1a1a1a 51deg, #111 54deg, #181818 57deg, #111 60deg, #1a1a1a 180deg, #111 183deg, #1a1a1a 186deg, #111 360deg)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-        }}>
-            <div style={{
-                width: 56, height: 56, borderRadius: "50%",
-                background: "linear-gradient(135deg, color-mix(in srgb, var(--pink) 30%, transparent), color-mix(in srgb, var(--pink) 8%, transparent))",
-                border: "1px solid color-mix(in srgb, var(--pink) 40%, transparent)",
-                display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2,
-            }}>
-                <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#111", border: "1px solid #444" }} />
-                <p style={{ fontSize: 7, color: "color-mix(in srgb, var(--fg) 85%, transparent)", fontWeight: 700, textAlign: "center", lineHeight: 1.2, margin: 0, maxWidth: 42, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{item.title}</p>
+        <div className="card relative flex flex-col w-[150px] h-[210px] shrink-0 overflow-hidden -rotate-2">
+            <div className="flex items-center justify-between px-3 py-2" style={{ background: cat.bg, borderBottom: "2px dashed var(--border-1)" }}>
+                <Icon size={14} style={{ color: cat.color }} />
+                <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.2em]" style={{ color: cat.color }}>{cat.label}</span>
             </div>
+            <div className="flex-1 flex items-center justify-center">
+                <span className="font-display text-7xl leading-none" style={{ color: "var(--text-1)" }}>
+                    {item.title.trim().charAt(0).toLocaleUpperCase("tr-TR")}
+                </span>
+            </div>
+            <div className="px-3 pb-2.5 flex items-center justify-between font-mono text-[10px]" style={{ color: "var(--text-4)" }}>
+                <span>BUMEDYA ARŞİVİ</span>
+                <span>{item.year ?? "—"}</span>
+            </div>
+            <span aria-hidden className="absolute -left-[7px] top-[34px] w-3 h-3 rounded-full" style={{ background: "var(--paper)", border: "1px solid var(--border-1)" }} />
+            <span aria-hidden className="absolute -right-[7px] top-[34px] w-3 h-3 rounded-full" style={{ background: "var(--paper)", border: "1px solid var(--border-1)" }} />
         </div>
     );
 }
 
-/* ── Ana bileşen ─────────────────────────────────────────────── */
 export default function DetailClient({ userId, username, isAdmin, item, comments: initialComments, avgRating: initialAvg, totalRatings: initialTotal, myRating: initialMyRating }: Props) {
     const cat = CAT_CONFIG[item.category];
     const Icon = cat.icon;
@@ -311,12 +234,11 @@ export default function DetailClient({ userId, username, isAdmin, item, comments
 
     return (
         <div className="relative min-h-screen w-full overflow-hidden">
-            <div aria-hidden className="fixed inset-0 dot-grid opacity-[0.3] pointer-events-none" style={{ zIndex: 0 }} />
 
             {/* Navbar */}
             <SiteHeader userId={userId} username={username} back={{ href: "/arsiv", label: "Arşiv" }} />
 
-            <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 pt-24 pb-20">
+            <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-8 pt-24 sm:pt-28 pb-20">
 
                 {/* Hero */}
                 <div className="flex gap-6 sm:gap-8 items-end mb-8 flex-wrap sm:flex-nowrap">

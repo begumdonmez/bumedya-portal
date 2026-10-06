@@ -113,7 +113,13 @@
     --accent-border: color-mix(in srgb, var(--accent) 35%, transparent);
 
     --overlay: color-mix(in srgb, var(--shade) 55%, transparent);
+
+    /* Manifest tahtası: kâğıtta yeşil kara tahta, gecede kömür, fanzinde mantar pano */
+    --board: #2E3B34;
 }
+:root[data-theme="gece"] { --board: #0F0D0B; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="kagit"]):not([data-theme="fanzin"]) { --board: #0F0D0B; } }
+:root[data-theme="fanzin"] { --board: #C9A574; }
 
 /* ── Temel ─────────────────────────────────────────────────── */
 

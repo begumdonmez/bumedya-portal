@@ -334,7 +334,7 @@ export default function ChatClient({ userId, username, isAdmin, initialMessages 
                                     )}
                                     {unreadCount > 0 && (
                                         <span className="min-w-[18px] h-[18px] rounded-full text-[11px] font-bold flex items-center justify-center px-1"
-                                              style={{ background: "color-mix(in srgb, var(--accent) 80%, transparent)", color: "#fff" }}>
+                                              style={{ background: "color-mix(in srgb, var(--accent) 80%, transparent)", color: "var(--on-accent)" }}>
                                             {unreadCount > 9 ? "9+" : unreadCount}
                                         </span>
                                     )}
@@ -370,7 +370,7 @@ export default function ChatClient({ userId, username, isAdmin, initialMessages 
                                             {u.username[0].toUpperCase()}
                                         </div>
                                         <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 rounded-full"
-                                              style={{ background: "color-mix(in srgb, var(--success) 90%, transparent)", border: "1.5px solid #06091a" }} />
+                                              style={{ background: "color-mix(in srgb, var(--success) 90%, transparent)", border: "1.5px solid var(--paper)" }} />
                                     </div>
                                     <div className="min-w-0">
                                         <p className="text-xs truncate" style={{ color: "var(--text-2)" }}>@{u.username}</p>

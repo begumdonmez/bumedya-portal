@@ -127,7 +127,7 @@ export default function BasvuruForm({
 
                             <button onClick={handleSubmit} disabled={submitting}
                                     className="w-full py-3.5 rounded-2xl text-sm font-semibold transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
-                                    style={{ background: "color-mix(in srgb, var(--accent) 40%, transparent)", color: "#fff", border: "1px solid color-mix(in srgb, var(--accent) 40%, transparent)" }}>
+                                    style={{ background: "color-mix(in srgb, var(--accent) 40%, transparent)", color: "var(--on-accent)", border: "1px solid color-mix(in srgb, var(--accent) 40%, transparent)" }}>
                                 {submitting
                                     ? <><span className="w-4 h-4 rounded-full border-2 border-[color-mix(in_srgb,var(--fg)_30%,transparent)] border-t-[var(--on-accent)] animate-spin" /> Gönderiliyor...</>
                                     : <><Check size={15} /> Başvuruyu Gönder</>}

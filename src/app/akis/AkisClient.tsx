@@ -364,7 +364,7 @@ function EditModal({ post, onClose, onSave }: {
                     {/* Kaydet */}
                     <button onClick={handleSave} disabled={loading}
                             className="w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-40"
-                            style={{ background: "color-mix(in srgb, var(--accent) 80%, transparent)", color: "#fff", border: "1px solid color-mix(in srgb, var(--accent) 50%, transparent)" }}>
+                            style={{ background: "color-mix(in srgb, var(--accent) 80%, transparent)", color: "var(--on-accent)", border: "1px solid color-mix(in srgb, var(--accent) 50%, transparent)" }}>
                         {loading ? (
                             <span className="inline-block w-4 h-4 rounded-full border-2 border-[color-mix(in_srgb,var(--fg)_30%,transparent)] border-t-[var(--on-accent)] animate-spin" />
                         ) : "Kaydet"}
@@ -545,7 +545,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                                     )}
                                     <button onClick={() => { setFile(null); setPreview(null); }}
                                             className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center"
-                                            style={{ background: "var(--overlay)", color: "#fff" }}><X size={12} /></button>
+                                            style={{ background: "var(--overlay)", color: "var(--on-accent)" }}><X size={12} /></button>
                                 </div>
                             ) : (
                                 <div
@@ -642,7 +642,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                     {/* Gönder */}
                     <button onClick={handleSubmit} disabled={loading}
                             className="w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-40"
-                            style={{ background: "color-mix(in srgb, var(--accent) 80%, transparent)", color: "#fff", border: "1px solid color-mix(in srgb, var(--accent) 50%, transparent)" }}>
+                            style={{ background: "color-mix(in srgb, var(--accent) 80%, transparent)", color: "var(--on-accent)", border: "1px solid color-mix(in srgb, var(--accent) 50%, transparent)" }}>
                         {loading ? (
                             <span className="inline-block w-4 h-4 rounded-full border-2 border-[color-mix(in_srgb,var(--fg)_30%,transparent)] border-t-[var(--on-accent)] animate-spin" />
                         ) : "Yayınla"}

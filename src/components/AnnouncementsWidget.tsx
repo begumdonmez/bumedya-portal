@@ -104,7 +104,7 @@ export default function AnnouncementsWidget({
                         type="submit"
                         disabled={loading || !content.trim()}
                         className="self-end text-xs px-3 py-1.5 rounded-lg font-medium transition-all duration-200 disabled:opacity-40"
-                        style={{ background: "var(--accent)", color: "#fff" }}>
+                        style={{ background: "var(--accent)", color: "var(--on-accent)" }}>
                         {loading ? "Yayınlanıyor..." : "Yayınla"}
                     </button>
                 </form>

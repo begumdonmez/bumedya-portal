@@ -285,7 +285,7 @@ export default function ManifestClient({
             left: "env(safe-area-inset-left, 0px)",
             right: "env(safe-area-inset-right, 0px)",
             bottom: "env(safe-area-inset-bottom, 0px)",
-            background: "#04061a",
+            background: "var(--board)",
         }}>
 
             {/* Navbar */}
@@ -361,7 +361,7 @@ export default function ManifestClient({
                     style={{
                         cursor,
                         touchAction: "none",
-                        background: "#04061a",
+                        background: "var(--board)",
                         backgroundImage: [
                             `radial-gradient(ellipse at 15% 60%, color-mix(in srgb, var(--accent) 20%, transparent) 0%, transparent 50%)`,
                             `radial-gradient(ellipse at 82% 22%, color-mix(in srgb, var(--info) 14%, transparent) 0%, transparent 44%)`,
