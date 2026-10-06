@@ -5,10 +5,8 @@ import Link from "next/link";
 import { Film, Tv, BookOpen, Music, Star, Plus, X, Loader2, ChevronRight, ChevronLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import NavbarBackdrop from "@/components/NavbarBackdrop";
-import HomeNavLinks from "@/components/HomeNavLinks";
-import NotificationBell from "@/components/NotificationBell";
 import SiteHeader from "@/components/SiteHeader";
+import PageHeader from "@/components/PageHeader";
 
 /* ── Tipler ──────────────────────────────────────────────────── */
 type Category = "film" | "dizi" | "kitap" | "sarki";
@@ -601,37 +599,28 @@ export default function ArsivClient({ userId, username, isAdmin, items: initialI
             {/* Navbar */}
             <SiteHeader userId={userId} username={username} />
 
-            <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-20">
+            <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 pt-24 sm:pt-28 pb-20">
 
-                {/* Başlık */}
-                <div className="flex flex-col items-center text-center pt-4 pb-8 gap-2">
-                    <span className="label-caps">Bumedya Arşivi</span>
-                    <p className="text-xs" style={{ color: "var(--text-4)" }}>
-                        Topluluğun önerdiği filmler, diziler, kitaplar ve şarkılar
-                    </p>
-                </div>
+                <PageHeader eyebrow="Raf raf" title="Arşiv"
+                            description="Topluluğun önerdiği filmler, diziler, kitaplar ve şarkılar."
+                            actions={isAdmin ? <AddItemForm onAdd={item => setItems(prev => [item, ...prev])} /> : undefined} />
 
                 {/* Filtre + Admin butonu */}
                 <div className="flex items-center justify-between mb-6 gap-3 flex-wrap">
                     <div className="flex gap-2 flex-wrap">
-                        <button onClick={() => setActiveFilter("tumü")}
-                                className="px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
-                                style={{ background: activeFilter === "tumü" ? "var(--accent-bg-md)" : "var(--bg-2)", border: `1px solid ${activeFilter === "tumü" ? "var(--accent-border)" : "var(--border-3)"}`, color: activeFilter === "tumü" ? "var(--accent-text)" : "var(--text-3)" }}>
+                        <button onClick={() => setActiveFilter("tumü")} className="pill" aria-pressed={activeFilter === "tumü"}>
                             Tümü
                         </button>
                         {categories.map(cat => {
                             const c = CAT_CONFIG[cat];
                             const Icon = c.icon;
                             return (
-                                <button key={cat} onClick={() => setActiveFilter(cat)}
-                                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
-                                        style={{ background: activeFilter === cat ? c.bg : "var(--bg-2)", border: `1px solid ${activeFilter === cat ? c.border : "var(--border-3)"}`, color: activeFilter === cat ? c.color : "var(--text-3)" }}>
-                                    <Icon size={11} /> {c.label}
+                                <button key={cat} onClick={() => setActiveFilter(cat)} className="pill" aria-pressed={activeFilter === cat}>
+                                    <Icon size={13} /> {c.label}
                                 </button>
                             );
                         })}
                     </div>
-                    {isAdmin && <AddItemForm onAdd={item => setItems(prev => [item, ...prev])} />}
                 </div>
 
                 {/* İçerik */}

@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import Link from "next/link";
 import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles } from "lucide-react";
 import type { ElementType } from "react";
+import PageHeader from "@/components/PageHeader";
 
 interface Profile {
     id: string;
@@ -35,12 +36,8 @@ export default function UyelerClient({ profiles }: { profiles: Profile[] }) {
     }), [profiles, search, filter]);
 
     return (
-        <div className="relative z-10 max-w-4xl mx-auto w-full px-4 sm:px-6 py-10 flex flex-col gap-6">
-
-            <div>
-                <h1 className="text-2xl font-bold tracking-tight mb-1" style={{ color: "var(--text-1)" }}>Üyeler</h1>
-                <p className="text-sm" style={{ color: "color-mix(in srgb, var(--fg) 35%, transparent)" }}>{profiles.length} kişi bu topluluğa katıldı</p>
-            </div>
+        <div className="relative z-10 max-w-5xl mx-auto w-full px-4 sm:px-8 pt-8 pb-16 flex flex-col gap-6">
+            <PageHeader eyebrow="Topluluk" title="Üyeler" description={`${profiles.length} kişi bu topluluğa katıldı.`} className="!mb-0" />
 
             {/* Arama + Filtre */}
             <div className="flex flex-col sm:flex-row gap-3">
@@ -61,12 +58,7 @@ export default function UyelerClient({ profiles }: { profiles: Profile[] }) {
                         { id: "creator", label: "Üretici"  },
                     ] as const).map((f) => (
                         <button key={f.id} onClick={() => setFilter(f.id)}
-                                className="px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
-                                style={{
-                                    background: filter === f.id ? "color-mix(in srgb, var(--accent) 14%, transparent)" : "color-mix(in srgb, var(--fg) 3%, transparent)",
-                                    border: `1px solid ${filter === f.id ? "color-mix(in srgb, var(--accent) 35%, transparent)" : "color-mix(in srgb, var(--fg) 8%, transparent)"}`,
-                                    color: filter === f.id ? "color-mix(in srgb, var(--accent) 95%, transparent)" : "color-mix(in srgb, var(--fg) 35%, transparent)",
-                                }}>
+                                className="pill" aria-pressed={filter === f.id}>
                             {f.label}
                         </button>
                     ))}
@@ -81,9 +73,7 @@ export default function UyelerClient({ profiles }: { profiles: Profile[] }) {
                         const joinDate = new Date(profile.created_at).toLocaleDateString("tr-TR", { year: "numeric", month: "short" });
                         return (
                             <Link key={profile.id} href={`/profil/${profile.username}`}
-                                  className="card flex items-start gap-4 p-4 transition-all duration-200"
-                                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = "color-mix(in srgb, var(--accent) 28%, transparent)")}
-                                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = "color-mix(in srgb, var(--fg) 8%, transparent)")}>
+                                  className="card flex items-start gap-4 p-4 transition-colors hover:!border-[var(--accent-border)]">
 
                                 <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
                                      style={{

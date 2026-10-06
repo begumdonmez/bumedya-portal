@@ -1,16 +1,13 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { CalendarDays, MapPin, Plus, X, CheckCircle, ExternalLink, Trash2 } from "lucide-react";
 import EventMapClient from "@/components/EventMapClient";
 import type { EventItem } from "@/components/EventMap";
-import NavbarBackdrop from "@/components/NavbarBackdrop";
-import HomeNavLinks from "@/components/HomeNavLinks";
-import NotificationBell from "@/components/NotificationBell";
 import SiteHeader from "@/components/SiteHeader";
+import PageHeader from "@/components/PageHeader";
 
 async function geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
     try {
@@ -145,17 +142,11 @@ export default function EtkinliklerClient({
         <div className="relative min-h-screen flex flex-col">
 
             {/* Navbar */}
-            <SiteHeader userId={userId} username={username}
-                actions={<>
-                    <button onClick={() => setShowForm(true)}
-                            className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200"
-                            style={{ background: "var(--accent-bg-md)", border: "1px solid var(--accent-border)", color: "var(--accent-text)" }}>
-                        <Plus size={13} /> Etkinlik Ekle
-                    </button>
-                </>}
-            />
+            <SiteHeader userId={userId} username={username} />
 
-            <div className="relative z-10 max-w-5xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 flex flex-col gap-6">
+            <div className="relative z-10 max-w-6xl mx-auto w-full px-4 sm:px-8 pt-24 sm:pt-28 pb-10 flex flex-col gap-6">
+                <PageHeader eyebrow="Takvim" title="Etkinlikler" description="Buluşmalar, atölyeler ve topluluk etkinlikleri. Haritadan bak, takvimine ekle."
+                            actions={<><button onClick={() => setShowForm(true)} className="btn-primary"><Plus size={15} /> Etkinlik ekle</button></>} className="!mb-2" />
                 {/* Harita */}
                 <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--accent-bg-md)" }}>
                     <EventMapClient

@@ -21,9 +21,9 @@ export default function PageHeader({ eyebrow, title, description, actions, class
                     {title}
                 </h1>
                 {description && (
-                    <p className="mt-3 text-[15px] leading-relaxed max-w-xl" style={{ color: "var(--text-3)" }}>
+                    <div className="mt-3 text-[15px] leading-relaxed max-w-xl" style={{ color: "var(--text-3)" }}>
                         {description}
-                    </p>
+                    </div>
                 )}
             </div>
             {actions && <div className="flex items-center gap-2 shrink-0">{actions}</div>}

@@ -1,12 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
-import { ChevronLeft, Film, Tv, BookOpen, Music, Star, Send, Loader2, Trash2, Pencil, X, Check } from "lucide-react";
+import { Film, Tv, BookOpen, Music, Star, Send, Loader2, Trash2, Pencil, X, Check } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import NavbarBackdrop from "@/components/NavbarBackdrop";
-import NotificationBell from "@/components/NotificationBell";
 import SiteHeader from "@/components/SiteHeader";
 
 /* ── Tipler ──────────────────────────────────────────────────── */

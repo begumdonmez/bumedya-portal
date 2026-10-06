@@ -11,7 +11,7 @@ export default async function AdminPage() {
     // getUser (güvenlik) + profil kontrolü paralel
     const [{ data: { user } }, { data: me }] = await Promise.all([
         supabase.auth.getUser(),
-        supabase.from("profiles").select("badges").eq("id", session.user.id).single(),
+        supabase.from("profiles").select("badges, username").eq("id", session.user.id).single(),
     ]);
 
     if (!user) redirect("/login");
@@ -27,5 +27,5 @@ export default async function AdminPage() {
         adminSupabase.from("admin_logs").select("id, admin_username, action, target_id, target_type, details, created_at").order("created_at", { ascending: false }).limit(200),
     ]);
 
-    return <AdminClient profiles={profiles ?? []} myBadges={me?.badges ?? []} messages={messages ?? []} applications={applications ?? []} nominations={nominations ?? []} logs={logs ?? []} />;
+    return <AdminClient userId={user.id} username={me.username} profiles={profiles ?? []} myBadges={me?.badges ?? []} messages={messages ?? []} applications={applications ?? []} nominations={nominations ?? []} logs={logs ?? []} />;
 }

@@ -4,7 +4,6 @@ import React, { useState } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
-import { ChevronLeft } from "lucide-react";
 import AuthShell from "@/components/AuthShell";
 
 type State = "idle" | "loading" | "success";

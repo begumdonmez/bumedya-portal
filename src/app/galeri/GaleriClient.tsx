@@ -5,10 +5,8 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Image as ImageIcon, X, ExternalLink, Link2 } from "lucide-react";
-import NavbarBackdrop from "@/components/NavbarBackdrop";
-import HomeNavLinks from "@/components/HomeNavLinks";
-import NotificationBell from "@/components/NotificationBell";
 import SiteHeader from "@/components/SiteHeader";
+import PageHeader from "@/components/PageHeader";
 
 interface GalleryItem {
     id: string;
@@ -283,20 +281,12 @@ export default function GaleriClient({
         <div className="relative min-h-screen flex flex-col">
 
             {/* Navbar */}
-            <SiteHeader userId={userId} username={username}
-                actions={<>
-                    {canUpload && (
-                        <button onClick={() => setShowModal(true)}
-                                className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200"
-                                style={{ background: "var(--accent-bg-md)", border: "1px solid var(--accent-border)", color: "var(--accent-text)" }}>
-                            <span>+</span> Yükle
-                        </button>
-                    )}
-                </>}
-            />
+            <SiteHeader userId={userId} username={username} />
 
             {/* Grid */}
-            <div className="relative z-10 max-w-6xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10">
+            <div className="relative z-10 max-w-6xl mx-auto w-full px-4 sm:px-8 pt-24 sm:pt-28 pb-10">
+                <PageHeader eyebrow="Görsel bellek" title="Galeri" description="Etkinliklerden fotoğraflar, çizimler, tasarımlar."
+                            actions={<>{canUpload && <button onClick={() => setShowModal(true)} className="btn-primary">+ Yükle</button>}</>} className="!mb-2" />
                 {items.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-32 gap-4">
                         <ImageIcon size={36} className="opacity-10" />

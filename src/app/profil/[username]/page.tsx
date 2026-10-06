@@ -5,8 +5,9 @@ import type { Metadata } from "next";
 import ProfilPosts from "@/components/ProfilPosts";
 import type { Post } from "@/app/akis/AkisClient";
 import { SocialLinksDisplay, type SocialLinksData } from "@/components/SocialLinks";
-import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, ChevronRight } from "lucide-react";
 import type { ElementType } from "react";
+import SiteHeader from "@/components/SiteHeader";
 
 /* ─── Tip ───────────────────────────────────────────────────── */
 interface Profile {
@@ -75,12 +76,15 @@ export default async function PublicProfilePage(
 
     // Admin kontrolü: kendi profiliyse zaten badge'lerimiz var, ekstra sorgu gerekmez
     let isAdmin = false;
+    let viewerUsername: string | null = null;
     if (isOwnProfile) {
         isAdmin = (profile.badges as string[]).includes("admin");
+        viewerUsername = profile.username;
     } else if (user) {
         const { data: me } = await supabase
-            .from("profiles").select("badges").eq("id", user.id).single();
+            .from("profiles").select("badges, username").eq("id", user.id).single();
         isAdmin = me?.badges?.includes("admin") ?? false;
+        viewerUsername = me?.username ?? null;
     }
 
     const roleConf = ROLE_CONFIG[profile.role as keyof typeof ROLE_CONFIG] ?? ROLE_CONFIG.member;
@@ -92,36 +96,13 @@ export default async function PublicProfilePage(
         <div className="relative min-h-screen flex flex-col">
 
             {/* Navbar */}
-            <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b gap-3"
-                 style={{ borderColor: "var(--border-3)" }}>
-                <div className="flex items-center gap-3 shrink-0">
-                    <Link href="/home" className="flex items-center px-2 py-1 rounded-lg transition-all duration-200"
-                          style={{ color: "var(--text-4)" }}>
-                        <ChevronLeft size={15} />
-                    </Link>
-                    <Link href="/home" className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "color-mix(in srgb, var(--accent) 70%, transparent)" }}>.</span>
-                    </Link>
-                </div>
-
-                <div className="flex items-center gap-2 flex-wrap justify-end">
-                    {isAdmin && (
-                        <Link href="/admin"
-                              className="text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition-all duration-300 whitespace-nowrap"
-                              style={{ color: "color-mix(in srgb, var(--danger) 75%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 15%, transparent)", background: "color-mix(in srgb, var(--danger) 6%, transparent)" }}>
-                            <Zap size={11} strokeWidth={2} /> Admin
-                        </Link>
-                    )}
-                    {isOwnProfile && (
-                        <Link href="/profil"
-                              className="text-xs px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all duration-300 whitespace-nowrap"
-                              style={{ color: "var(--accent-text)", border: "1px solid var(--accent-border)", background: "var(--accent-bg)" }}>
-                            <span className="hidden sm:inline">Profilimi </span>Düzenle
-                        </Link>
-                    )}
-                </div>
-            </nav>
+            <SiteHeader userId={user?.id} username={viewerUsername}
+                actions={<>
+                    {isAdmin && <Link href="/admin" className="btn-ghost !py-1.5 !px-3"><Zap size={13} /> Admin</Link>}
+                    {isOwnProfile && <Link href="/profil" className="btn-ghost !py-1.5 !px-3">Düzenle</Link>}
+                </>}
+            />
+            <div aria-hidden className="h-16 shrink-0" />
 
             {/* İçerik */}
             <div className="relative z-10 max-w-2xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-12 flex flex-col gap-4">

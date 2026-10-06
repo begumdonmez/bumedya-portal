@@ -7,9 +7,6 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { Image as ImageIcon, PenLine, Clapperboard, Sparkles, X, ExternalLink, Heart, Pencil } from "lucide-react";
 import type { ElementType } from "react";
-import NavbarBackdrop from "@/components/NavbarBackdrop";
-import HomeNavLinks from "@/components/HomeNavLinks";
-import NotificationBell from "@/components/NotificationBell";
 import SiteHeader from "@/components/SiteHeader";
 import PageHeader from "@/components/PageHeader";
 
@@ -673,7 +670,7 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
     const [loadingMore, setLoadingMore] = useState(false);
     const sentinelRef = useRef<HTMLDivElement>(null);
     const postsRef = useRef(initialPosts);
-    postsRef.current = posts;
+    useEffect(() => { postsRef.current = posts; }, [posts]);
 
     const buildLikesMap = (data: { post_id: string; user_id: string }[]) => {
         const map = new Map<string, { count: number; liked: boolean }>();
@@ -689,7 +686,7 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
 
     const [likesMap, setLikesMap] = useState(() => buildLikesMap(initialLikesData));
     const likesMapRef = useRef(likesMap);
-    likesMapRef.current = likesMap;
+    useEffect(() => { likesMapRef.current = likesMap; }, [likesMap]);
 
     const handleLike = useCallback(async (postId: string) => {
         const cur = likesMapRef.current.get(postId) ?? { count: 0, liked: false };

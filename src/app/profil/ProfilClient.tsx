@@ -2,7 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Award, ChevronLeft, ChevronRight, Eye, Tv, BookOpen, Headphones, MessageCircle } from "lucide-react";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Award, ChevronRight, Eye, Tv, BookOpen, Headphones, MessageCircle } from "lucide-react";
 import type { ElementType } from "react";
 import Link from "next/link";
 import { toast } from "sonner";
@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import ProfilPosts from "@/components/ProfilPosts";
 import type { Post } from "@/app/akis/AkisClient";
 import { SocialLinksDisplay, SOCIAL_PLATFORMS, type SocialLinksData } from "@/components/SocialLinks";
+import SiteHeader from "@/components/SiteHeader";
 
 /* ─── Tipler ────────────────────────────────────────────────── */
 export interface Profile {
@@ -206,38 +207,17 @@ export default function ProfilClient({ initialProfile, initialPosts }: { initial
         <div className="relative min-h-screen flex flex-col">
 
             {/* Navbar */}
-            <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b gap-3"
-                 style={{ borderColor: "var(--border-3)" }}>
-                <div className="flex items-center gap-3 shrink-0">
-                    <Link href="/home" className="flex items-center px-2 py-1 rounded-lg transition-all duration-200"
-                          style={{ color: "var(--text-4)" }}>
-                        <ChevronLeft size={15} />
-                    </Link>
-                    <Link href="/home" className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "color-mix(in srgb, var(--accent) 70%, transparent)" }}>.</span>
-                    </Link>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap justify-end">
-                    {profile?.badges?.includes("admin") && (
-                        <button onClick={() => router.push("/admin")}
-                                className="flex items-center gap-1 text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition-all duration-300 whitespace-nowrap"
-                                style={{ color: "color-mix(in srgb, var(--danger) 75%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 15%, transparent)", background: "color-mix(in srgb, var(--danger) 6%, transparent)" }}>
-                            <Zap size={11} strokeWidth={2} /> Admin
-                        </button>
+            <SiteHeader userId={profile.id} username={profile.username}
+                actions={<>
+                    {profile.badges?.includes("admin") && (
+                        <Link href="/admin" className="btn-ghost !py-1.5 !px-3"><Zap size={13} /> Admin</Link>
                     )}
-                    <button onClick={handleSignOut} disabled={signingOut}
-                            className="flex items-center gap-1.5 text-xs px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all duration-300 disabled:opacity-50 whitespace-nowrap"
-                            style={{ color: "color-mix(in srgb, var(--danger) 75%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 20%, transparent)", background: "color-mix(in srgb, var(--danger) 6%, transparent)" }}>
-                        {signingOut
-                            ? <span className="w-3 h-3 rounded-full border border-[color-mix(in_srgb,var(--danger)_30%,transparent)] border-t-red-400 animate-spin" />
-                            : <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                                <path d="M5 2H2a1 1 0 00-1 1v7a1 1 0 001 1h3M9 9l3-3-3-3M12 6.5H5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>}
-                        <span className="hidden sm:inline">Çıkış Yap</span>
+                    <button onClick={handleSignOut} disabled={signingOut} className="btn-ghost !py-1.5 !px-3 !text-[var(--danger)]">
+                        {signingOut ? "Çıkılıyor…" : "Çıkış"}
                     </button>
-                </div>
-            </nav>
+                </>}
+            />
+            <div aria-hidden className="h-16 shrink-0" />
 
             <div className="relative z-10 flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-10 flex flex-col gap-4">
 

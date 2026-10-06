@@ -2,11 +2,12 @@
 
 import { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2, FileText, Check, Clock, Music2, Plus, Star, Film, Tv, BookOpen, Music, MessageCircle, Headphones, Edit2, ScrollText } from "lucide-react";
+import { Zap, Shield, Palette, PenLine, BadgeCheck, Sparkles, Layers, X, ChevronLeft, Inbox, Trash2, FileText, Check, Clock, Music2, Plus, Star, Film, Tv, BookOpen, Music, MessageCircle, Edit2, ScrollText } from "lucide-react";
 import { POSITIONS } from "@/app/basvuru/positions";
 import type { ElementType } from "react";
+import SiteHeader from "@/components/SiteHeader";
+import PageHeader from "@/components/PageHeader";
 
 /* ─── Tipler ────────────────────────────────────────────────── */
 interface Profile {
@@ -699,7 +700,7 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
                                     <div className="px-4 pb-3 pt-0">
                                         <p className="text-xs px-3 py-2 rounded-xl italic"
                                            style={{ background: "color-mix(in srgb, var(--danger) 6%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 15%, transparent)", color: "color-mix(in srgb, var(--danger) 70%, transparent)" }}>
-                                            "{nom.admin_note}"
+                                            “{nom.admin_note}”
                                         </p>
                                     </div>
                                 )}
@@ -801,7 +802,7 @@ function LogsTab({ logs }: { logs: AdminLog[] }) {
                             )}
                             {d?.admin_note && (
                                 <p className="text-xs italic truncate" style={{ color: "color-mix(in srgb, var(--danger) 65%, transparent)" }}>
-                                    "{d.admin_note}"
+                                    “{d.admin_note}”
                                 </p>
                             )}
                             <p className="text-[11px] mt-0.5" style={{ color: "var(--text-5)" }}>
@@ -819,7 +820,9 @@ function LogsTab({ logs }: { logs: AdminLog[] }) {
     );
 }
 
-export default function AdminClient({ profiles: initialProfiles, myBadges, messages: initialMessages, applications: initialApplications, nominations: initialNominations, logs: initialLogs }: {
+export default function AdminClient({ userId, username, profiles: initialProfiles, myBadges, messages: initialMessages, applications: initialApplications, nominations: initialNominations, logs: initialLogs }: {
+    userId: string;
+    username: string;
     profiles: Profile[];
     myBadges: string[];
     messages: Message[];
@@ -895,41 +898,25 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
         <div className="relative min-h-screen flex flex-col">
 
             {/* Navbar */}
-            <nav className="relative z-10 flex items-center justify-between px-6 py-5 border-b"
-                 style={{ borderColor: "var(--border-3)" }}>
-                <div className="flex items-center gap-3">
-                    <button onClick={() => router.push("/home")} className="text-xs px-2 py-1 rounded-lg transition-all duration-200"
-                            style={{ color: "var(--text-4)" }}
-                            onMouseEnter={(e) => (e.currentTarget.style.color = "var(--text-2)")}
-                            onMouseLeave={(e) => (e.currentTarget.style.color = "var(--text-4)")}>
-                        <ChevronLeft size={15} />
-                    </button>
-                    <button onClick={() => router.push("/home")} className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "color-mix(in srgb, var(--accent) 70%, transparent)" }}>.</span>
-                    </button>
-                    <span style={{ color: "var(--border-1)" }}>/</span>
-                    <span className="text-sm font-medium flex items-center gap-1.5"
-                          style={{ color: "color-mix(in srgb, var(--danger) 80%, transparent)" }}>
-                        <Zap size={14} strokeWidth={2} /> Admin
-                    </span>
-                </div>
-
-                <div className="hidden sm:flex items-center gap-3 text-xs flex-wrap" style={{ color: "var(--text-4)" }}>
-                    <span>{profiles.length} üye</span>
-                    <span style={{ color: "var(--border-1)" }}>·</span>
-                    <span>{viewerCount} izleyici</span>
-                    <span style={{ color: "var(--border-1)" }}>·</span>
-                    <span>{creatorCount} üretici</span>
-                    <span style={{ color: "var(--border-1)" }}>·</span>
-                    <span style={{ color: "color-mix(in srgb, var(--warn) 60%, transparent)" }}>{editorCount} editör</span>
-                    <span style={{ color: "var(--border-1)" }}>·</span>
-                    <span style={{ color: "color-mix(in srgb, var(--success) 60%, transparent)" }}>{writerCount} yazar</span>
-                    <span style={{ color: "var(--border-1)" }}>·</span>
-                    <span style={{ color: "color-mix(in srgb, var(--pink) 60%, transparent)" }}>{artistCount} sanatçı</span>
-                </div>
-                <span className="sm:hidden text-xs" style={{ color: "var(--text-4)" }}>{profiles.length} üye</span>
-            </nav>
+            <SiteHeader userId={userId} username={username} />
+            <div aria-hidden className="h-16 shrink-0" />
+            <div className="relative z-10 max-w-6xl w-full mx-auto px-4 sm:px-8 pt-8">
+                <PageHeader eyebrow="Yönetim" title="Admin paneli" className="!mb-0"
+        description={<span className="flex"><div className="flex items-center gap-3 text-xs flex-wrap" style={{ color: "var(--text-4)" }}>
+                            <span>{profiles.length} üye</span>
+                            <span style={{ color: "var(--border-1)" }}>·</span>
+                            <span>{viewerCount} izleyici</span>
+                            <span style={{ color: "var(--border-1)" }}>·</span>
+                            <span>{creatorCount} üretici</span>
+                            <span style={{ color: "var(--border-1)" }}>·</span>
+                            <span style={{ color: "color-mix(in srgb, var(--warn) 60%, transparent)" }}>{editorCount} editör</span>
+                            <span style={{ color: "var(--border-1)" }}>·</span>
+                            <span style={{ color: "color-mix(in srgb, var(--success) 60%, transparent)" }}>{writerCount} yazar</span>
+                            <span style={{ color: "var(--border-1)" }}>·</span>
+                            <span style={{ color: "color-mix(in srgb, var(--pink) 60%, transparent)" }}>{artistCount} sanatçı</span>
+                        </div>
+                        <span className="sm:hidden text-xs" style={{ color: "var(--text-4)" }}>{profiles.length} üye</span></span>} />
+            </div>
 
             {/* İçerik */}
             <div className="relative z-10 max-w-3xl mx-auto w-full px-6 py-10 flex flex-col gap-6">

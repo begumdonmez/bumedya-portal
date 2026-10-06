@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import NavbarBackdrop from "@/components/NavbarBackdrop";
 import SiteFooter from "@/components/SiteFooter";
 import SiteHeader from "@/components/SiteHeader";
 

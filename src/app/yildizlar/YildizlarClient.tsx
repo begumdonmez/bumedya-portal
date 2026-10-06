@@ -4,11 +4,8 @@ import { useState } from "react";
 import { Film, Tv, BookOpen, Music, Star, Plus, X, ChevronUp, Loader2 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
-import NavbarBackdrop from "@/components/NavbarBackdrop";
-import Link from "next/link";
-import HomeNavLinks from "@/components/HomeNavLinks";
-import NotificationBell from "@/components/NotificationBell";
 import SiteHeader from "@/components/SiteHeader";
+import PageHeader from "@/components/PageHeader";
 
 type Category = "film" | "dizi" | "kitap" | "sarki";
 
@@ -122,17 +119,9 @@ export default function YildizlarClient({ userId, username, isAdmin: _isAdmin, w
             {/* Navbar */}
             <SiteHeader userId={userId} username={username} />
 
-            <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pt-24 pb-16">
-
-                {/* Başlık */}
-                <div className="flex flex-col items-center text-center pt-4 pb-8 gap-2">
-                    <div className="flex items-center gap-2 mb-1">
-                        <Star size={16} style={{ color: "color-mix(in srgb, var(--warn) 80%, transparent)" }} />
-                        <span className="label-caps">Haftanın Yıldızları</span>
-                        <Star size={16} style={{ color: "color-mix(in srgb, var(--warn) 80%, transparent)" }} />
-                    </div>
-                    <p className="text-xs" style={{ color: "var(--text-4)" }}>{formatWeek(weekStart)}</p>
-                </div>
+            <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-8 pt-24 sm:pt-28 pb-16">
+                <PageHeader eyebrow={formatWeek(weekStart)} title={<>Haftanın <em className="italic marker">yıldızları</em></>}
+                            description="Her hafta bir film, dizi, kitap ve şarkı. Öner, oy ver, tartış." />
 
                 {/* Kategori tabları */}
                 <div className="flex gap-2 overflow-x-auto pb-1 mb-6" style={{ scrollbarWidth: "none" }}>

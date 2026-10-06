@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import AuthShell from "@/components/AuthShell";
@@ -15,6 +14,27 @@ function passwordStrength(pw: string): number {
 
 const strengthLabel = ["", "Zayıf", "Orta", "İyi", "Güçlü"];
 const strengthColor = ["", "color-mix(in srgb, var(--danger) 80%, transparent)", "color-mix(in srgb, var(--accent) 80%, transparent)", "color-mix(in srgb, var(--warn) 80%, transparent)", "color-mix(in srgb, var(--success) 80%, transparent)"];
+
+function EyeToggle({ show, onToggle }: { show: boolean; onToggle: () => void }) {
+    return (
+    <button type="button" onClick={onToggle} aria-label={show ? "Şifreyi gizle" : "Şifreyi göster"}
+            className="p-1 transition-colors duration-200"
+            style={{ color: "color-mix(in srgb, var(--fg) 30%, transparent)" }}>
+        {show ? (
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M2 8s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4Z" stroke="currentColor" strokeWidth="1.2" />
+                <circle cx="8" cy="8" r="1.5" stroke="currentColor" strokeWidth="1.2" />
+                <path d="M2 2l12 12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+            </svg>
+        ) : (
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M2 8s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4Z" stroke="currentColor" strokeWidth="1.2" />
+                <circle cx="8" cy="8" r="1.5" stroke="currentColor" strokeWidth="1.2" />
+            </svg>
+        )}
+    </button>
+    );
+}
 
 export default function ResetPasswordConfirmPage() {
     const router = useRouter();
@@ -56,24 +76,6 @@ export default function ResetPasswordConfirmPage() {
         router.push("/home");
     };
 
-    const EyeToggle = ({ show, onToggle }: { show: boolean; onToggle: () => void }) => (
-        <button type="button" onClick={onToggle}
-                className="p-1 transition-colors duration-200"
-                style={{ color: "color-mix(in srgb, var(--fg) 30%, transparent)" }}>
-            {show ? (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M2 8s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4Z" stroke="currentColor" strokeWidth="1.2" />
-                    <circle cx="8" cy="8" r="1.5" stroke="currentColor" strokeWidth="1.2" />
-                    <path d="M2 2l12 12" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-                </svg>
-            ) : (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M2 8s2.5-4 6-4 6 4 6 4-2.5 4-6 4-6-4-6-4Z" stroke="currentColor" strokeWidth="1.2" />
-                    <circle cx="8" cy="8" r="1.5" stroke="currentColor" strokeWidth="1.2" />
-                </svg>
-            )}
-        </button>
-    );
 
     return (
         <AuthShell title="Yeni şifre" description="Hesabın için yeni bir şifre belirle.">

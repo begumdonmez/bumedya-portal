@@ -1,10 +1,6 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import ChatClient from "./ChatClient";
-import NavbarBackdrop from "@/components/NavbarBackdrop";
-import HomeNavLinks from "@/components/HomeNavLinks";
-import NotificationBell from "@/components/NotificationBell";
 import SiteHeader from "@/components/SiteHeader";
 
 export const metadata = { title: "Lounge" };

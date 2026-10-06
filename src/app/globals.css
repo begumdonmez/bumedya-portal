@@ -467,3 +467,20 @@ input:-webkit-autofill:focus {
     transform: rotate(-4deg);
     box-shadow: 2px 2px 0 var(--fg);
 }
+
+/* ── Filtre hapı ───────────────────────────────────────────── */
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.45rem 0.9rem;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--text-2);
+    border: 1px solid var(--border-1);
+    background: transparent;
+    transition: background var(--duration-fast) ease, color var(--duration-fast) ease, border-color var(--duration-fast) ease;
+}
+.pill:hover { border-color: var(--text-3); }
+.pill[aria-pressed="true"] { background: var(--fg); color: var(--paper); border-color: var(--fg); }

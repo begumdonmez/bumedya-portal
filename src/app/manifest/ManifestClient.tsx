@@ -1,12 +1,10 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import { X, Plus, Compass } from "lucide-react";
-import HomeNavLinks from "@/components/HomeNavLinks";
-import NotificationBell from "@/components/NotificationBell";
+import SiteHeader from "@/components/SiteHeader";
 
 interface Note {
     id: string;
@@ -291,36 +289,14 @@ export default function ManifestClient({
         }}>
 
             {/* Navbar */}
-            <nav className="shrink-0 relative z-20 flex items-center justify-between px-4 sm:px-8 py-3.5 border-b"
-                 style={{ borderColor: "color-mix(in srgb, var(--accent) 15%, transparent)", background: "color-mix(in srgb, var(--surface-solid) 88%, transparent)" }}>
-                <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
-                    <span className="text-sm font-bold" style={{ color: "color-mix(in srgb, var(--fg) 55%, transparent)" }}>bumedya</span>
-                    <span className="text-sm font-bold transition-all duration-300"
-                          style={{ color: "color-mix(in srgb, var(--accent) 80%, transparent)" }}>.</span>
-                </Link>
-                <HomeNavLinks />
-                <div className="flex items-center gap-2 relative z-10">
-                    <p className="text-xs hidden lg:block" style={{ color: "color-mix(in srgb, var(--fg) 30%, transparent)" }}>
-                        {notes.length} not
-                    </p>
-                    <button
-                        onClick={centerCanvas}
-                        title="Merkeze git"
-                        className="p-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5"
-                        style={{ color: "color-mix(in srgb, var(--fg) 35%, transparent)", background: "color-mix(in srgb, var(--fg) 4%, transparent)", border: "1px solid color-mix(in srgb, var(--fg) 6%, transparent)" }}
-                        onMouseEnter={(e) => (e.currentTarget.style.color = "color-mix(in srgb, var(--fg) 80%, transparent)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.color = "color-mix(in srgb, var(--fg) 35%, transparent)")}>
-                        <Compass size={14} />
-                        <span className="text-[11px] hidden sm:inline">Merkez</span>
+            <SiteHeader userId={userId} username={username}
+                actions={
+                    <button onClick={centerCanvas} title="Merkeze git" className="btn-ghost !py-1.5 !px-3">
+                        <Compass size={14} /> <span className="hidden sm:inline">Merkez</span>
                     </button>
-                    <NotificationBell userId={userId} />
-                    <Link href="/profil"
-                          className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
-                          style={{ color: "color-mix(in srgb, var(--accent) 90%, transparent)", border: "1px solid color-mix(in srgb, var(--accent) 30%, transparent)", background: "color-mix(in srgb, var(--accent) 10%, transparent)" }}>
-                        @{username}
-                    </Link>
-                </div>
-            </nav>
+                }
+            />
+            <div aria-hidden className="h-16 shrink-0" />
 
             <div className="flex flex-1 overflow-hidden">
 

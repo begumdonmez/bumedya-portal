@@ -2,13 +2,10 @@
 
 import { useState } from "react";
 import dynamic from "next/dynamic";
-import Link from "next/link";
 import { ChevronRight, Check, Clock, X, Users, Award, GraduationCap, type LucideIcon } from "lucide-react";
 import { POSITIONS_BY_CATEGORY, type PositionId, type Position } from "./positions";
-import NavbarBackdrop from "@/components/NavbarBackdrop";
-import HomeNavLinks from "@/components/HomeNavLinks";
-import NotificationBell from "@/components/NotificationBell";
 import SiteHeader from "@/components/SiteHeader";
+import PageHeader from "@/components/PageHeader";
 
 const BasvuruForm = dynamic(() => import("./BasvuruForm"), { ssr: false, loading: () => null });
 
@@ -140,25 +137,11 @@ export default function BasvuruClient({
                 {/* Navbar */}
                 <SiteHeader userId={userId} username={username} />
 
-                <div className="relative z-10 max-w-3xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 flex flex-col gap-12">
+                <div className="relative z-10 max-w-3xl mx-auto w-full px-4 sm:px-8 pt-24 sm:pt-28 pb-16 flex flex-col gap-12">
 
-                    {/* Hero */}
-                    <div className="text-center flex flex-col items-center gap-4">
-                        <div className="glass flex items-center gap-2 px-4 py-2 rounded-full">
-                            <Users size={13} style={{ color: "var(--text-3)" }} />
-                            <span className="label-caps font-medium" style={{ color: "var(--text-3)" }}>
-                                Başvurular
-                            </span>
-                        </div>
-                        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight" style={{ color: "var(--text-1)" }}>
-                            Topluluğu Birlikte<br />
-                            <span className="text-gradient-violet">Şekillendirelim</span>
-                        </h1>
-                        <p className="text-sm leading-relaxed max-w-md" style={{ color: "var(--text-3)" }}>
-                            Bu formlar yeteneklerini ölçmek için değil, seni tanımak için.
-                            Bumedya'nın amacı deneyim kazandırmak — daha önce hiç yapmamış olman sorun değil.
-                        </p>
-                    </div>
+                    <PageHeader eyebrow="Başvurular" title={<>Topluluğu <em className="italic marker">birlikte</em> şekillendirelim</>}
+                                description="Bu formlar yeteneklerini ölçmek için değil, seni tanımak için. Daha önce hiç yapmamış olman sorun değil."
+                                className="!mb-0" />
 
                     {/* ── Yönetim Pozisyonları ── */}
                     <div className="flex flex-col gap-5">

@@ -1,10 +1,6 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import MembersClient from "./MembersClient";
-import NavbarBackdrop from "@/components/NavbarBackdrop";
-import HomeNavLinks from "@/components/HomeNavLinks";
-import NotificationBell from "@/components/NotificationBell";
 import SiteHeader from "@/components/SiteHeader";
 
 export const metadata = { title: "Üyeler" };
@@ -30,7 +26,7 @@ export default async function MembersPage() {
 
             <SiteHeader userId={user.id} username={username} />
 
-            <div className="pt-20">
+            <div className="pt-16 sm:pt-20">
                 <MembersClient profiles={profiles ?? []} />
             </div>
         </div>

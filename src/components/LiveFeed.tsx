@@ -36,7 +36,7 @@ const BADGE_CONFIG: Record<string, { label: string; icon: ElementType; color: st
 
 function BadgePill({ id }: { id: string }) {
     const conf = BADGE_CONFIG[id];
-    if (!conf) return <span style={{ color: "color-mix(in srgb, var(--fg) 60%, transparent)" }}>"{id}"</span>;
+    if (!conf) return <span style={{ color: "color-mix(in srgb, var(--fg) 60%, transparent)" }}>“{id}”</span>;
     const Icon = conf.icon;
     return (
         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold align-middle mx-0.5"
