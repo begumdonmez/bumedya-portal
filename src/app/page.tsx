@@ -127,6 +127,7 @@ export default async function LandingPage() {
     }
 
     const contents = [
+        { path: "/fanzin", label: "Fanzin", desc: "Kadraj — elden ele dolaşan üç kırımlı fanzinimizin tüm sayıları. Kapağa tıkla, içini oku." },
         { path: "/akis", label: "Akış", desc: "Kısa paylaşımlar, fikirler ve günlük üretimler. Metin ya da görsel paylaş, beğeni bırak." },
         ...PAGES.filter(p => p.path !== "/akis").map(p => ({ path: p.path, label: p.label, desc: p.desc })),
     ];

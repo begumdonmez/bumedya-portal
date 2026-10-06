@@ -7,16 +7,17 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 
 const PRIMARY = [
+    { href: "/fanzin",      label: "Fanzin"      },
     { href: "/akis",        label: "Akış"        },
     { href: "/arsiv",       label: "Arşiv"       },
     { href: "/galeri",      label: "Galeri"      },
     { href: "/etkinlikler", label: "Etkinlikler" },
     { href: "/chat",        label: "Lounge"      },
-    { href: "/members",     label: "Üyeler"      },
 ];
 
 const MORE = [
     { href: "/home",      label: "Pano"      },
+    { href: "/members",   label: "Üyeler"    },
     { href: "/yildizlar", label: "Yıldızlar" },
     { href: "/manifest",  label: "Manifest"  },
     { href: "/basvuru",   label: "Başvuru"   },
