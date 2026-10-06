@@ -21,11 +21,11 @@ interface Note {
 }
 
 const NOTE_STYLES: Record<string, { bg: string; shadow: string; text: string; muted: string; label: string }> = {
-    yellow: { bg: "#fef9c3", shadow: "rgba(202,138,4,0.25)",  text: "#713f12", muted: "#a16207", label: "Sarı"   },
-    pink:   { bg: "#fce7f3", shadow: "rgba(219,39,119,0.2)",  text: "#831843", muted: "#be185d", label: "Pembe"  },
-    blue:   { bg: "#dbeafe", shadow: "rgba(37,99,235,0.2)",   text: "#1e3a8a", muted: "#1d4ed8", label: "Mavi"   },
-    green:  { bg: "#dcfce7", shadow: "rgba(22,163,74,0.2)",   text: "#14532d", muted: "#15803d", label: "Yeşil"  },
-    purple: { bg: "#f3e8ff", shadow: "rgba(147,51,234,0.2)",  text: "#581c87", muted: "#7c3aed", label: "Mor"    },
+    yellow: { bg: "#fef9c3", shadow: "color-mix(in srgb, var(--warn) 25%, transparent)",  text: "#713f12", muted: "#a16207", label: "Sarı"   },
+    pink:   { bg: "#fce7f3", shadow: "color-mix(in srgb, var(--pink) 20%, transparent)",  text: "#831843", muted: "#be185d", label: "Pembe"  },
+    blue:   { bg: "#dbeafe", shadow: "color-mix(in srgb, var(--info) 20%, transparent)",   text: "#1e3a8a", muted: "#1d4ed8", label: "Mavi"   },
+    green:  { bg: "#dcfce7", shadow: "color-mix(in srgb, var(--success) 20%, transparent)",   text: "#14532d", muted: "#15803d", label: "Yeşil"  },
+    purple: { bg: "#f3e8ff", shadow: "color-mix(in srgb, var(--accent) 20%, transparent)",  text: "#581c87", muted: "var(--accent)", label: "Mor"    },
     white:  { bg: "#f8fafc", shadow: "rgba(100,116,139,0.2)", text: "#0f172a", muted: "#475569", label: "Beyaz"  },
 };
 
@@ -292,31 +292,31 @@ export default function ManifestClient({
 
             {/* Navbar */}
             <nav className="shrink-0 relative z-20 flex items-center justify-between px-4 sm:px-8 py-3.5 border-b"
-                 style={{ borderColor: "rgba(124,58,237,0.15)", background: "rgba(4,6,26,0.88)", backdropFilter: "blur(20px)" }}>
+                 style={{ borderColor: "color-mix(in srgb, var(--accent) 15%, transparent)", background: "color-mix(in srgb, var(--surface-solid) 88%, transparent)" }}>
                 <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
-                    <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.55)" }}>bumedya</span>
-                    <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(167,139,250,0.9)]"
-                          style={{ color: "rgba(167,139,250,0.8)" }}>.</span>
+                    <span className="text-sm font-bold" style={{ color: "color-mix(in srgb, var(--fg) 55%, transparent)" }}>bumedya</span>
+                    <span className="text-sm font-bold transition-all duration-300"
+                          style={{ color: "color-mix(in srgb, var(--accent) 80%, transparent)" }}>.</span>
                 </Link>
                 <HomeNavLinks />
                 <div className="flex items-center gap-2 relative z-10">
-                    <p className="text-xs hidden lg:block" style={{ color: "rgba(224,242,254,0.3)" }}>
+                    <p className="text-xs hidden lg:block" style={{ color: "color-mix(in srgb, var(--fg) 30%, transparent)" }}>
                         {notes.length} not
                     </p>
                     <button
                         onClick={centerCanvas}
                         title="Merkeze git"
                         className="p-1.5 rounded-lg transition-all duration-200 flex items-center gap-1.5"
-                        style={{ color: "rgba(224,242,254,0.35)", background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
-                        onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.8)")}
-                        onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(224,242,254,0.35)")}>
+                        style={{ color: "color-mix(in srgb, var(--fg) 35%, transparent)", background: "color-mix(in srgb, var(--fg) 4%, transparent)", border: "1px solid color-mix(in srgb, var(--fg) 6%, transparent)" }}
+                        onMouseEnter={(e) => (e.currentTarget.style.color = "color-mix(in srgb, var(--fg) 80%, transparent)")}
+                        onMouseLeave={(e) => (e.currentTarget.style.color = "color-mix(in srgb, var(--fg) 35%, transparent)")}>
                         <Compass size={14} />
-                        <span className="text-[10px] hidden sm:inline">Merkez</span>
+                        <span className="text-[11px] hidden sm:inline">Merkez</span>
                     </button>
                     <NotificationBell userId={userId} />
                     <Link href="/profil"
                           className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
-                          style={{ color: "rgba(167,139,250,0.9)", border: "1px solid rgba(124,58,237,0.3)", background: "rgba(124,58,237,0.1)" }}>
+                          style={{ color: "color-mix(in srgb, var(--accent) 90%, transparent)", border: "1px solid color-mix(in srgb, var(--accent) 30%, transparent)", background: "color-mix(in srgb, var(--accent) 10%, transparent)" }}>
                         @{username}
                     </Link>
                 </div>
@@ -326,10 +326,10 @@ export default function ManifestClient({
 
                 {/* Sidebar */}
                 <aside className="shrink-0 flex flex-col items-center gap-3 px-2.5 py-4 border-r z-10"
-                       style={{ borderColor: "rgba(124,58,237,0.12)", background: "rgba(4,6,26,0.75)", width: 52 }}>
+                       style={{ borderColor: "color-mix(in srgb, var(--accent) 12%, transparent)", background: "color-mix(in srgb, var(--surface-solid) 75%, transparent)", width: 52 }}>
 
-                    <p className="text-[9px] uppercase tracking-widest mb-1"
-                       style={{ color: "rgba(224,242,254,0.35)", writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
+                    <p className="text-[11px] uppercase tracking-widest mb-1"
+                       style={{ color: "color-mix(in srgb, var(--fg) 35%, transparent)", writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
                         Renk
                     </p>
                     {Object.entries(NOTE_STYLES).map(([id, style]) => {
@@ -348,9 +348,9 @@ export default function ManifestClient({
                         );
                     })}
 
-                    <div className="w-7 h-px my-1" style={{ background: "rgba(255,255,255,0.06)" }} />
-                    <p className="text-[9px] uppercase tracking-widest mb-1"
-                       style={{ color: "rgba(224,242,254,0.35)", writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
+                    <div className="w-7 h-px my-1" style={{ background: "color-mix(in srgb, var(--fg) 6%, transparent)" }} />
+                    <p className="text-[11px] uppercase tracking-widest mb-1"
+                       style={{ color: "color-mix(in srgb, var(--fg) 35%, transparent)", writingMode: "vertical-rl", transform: "rotate(180deg)" }}>
                         Şekil
                     </p>
                     {(Object.keys(NOTE_SHAPES) as ShapeId[]).map((id) => {
@@ -360,11 +360,11 @@ export default function ManifestClient({
                                     onClick={() => setSelectedShape(id)}
                                     className="w-8 h-8 rounded-xl flex items-center justify-center transition-all duration-150"
                                     style={{
-                                        background: active ? "rgba(124,58,237,0.18)" : "rgba(255,255,255,0.04)",
-                                        boxShadow: active ? "0 0 0 1.5px rgba(124,58,237,0.4)" : "none",
+                                        background: active ? "color-mix(in srgb, var(--accent) 18%, transparent)" : "color-mix(in srgb, var(--fg) 4%, transparent)",
+                                        boxShadow: active ? "0 0 0 1.5px color-mix(in srgb, var(--accent) 40%, transparent)" : "none",
                                         transform: active ? "scale(1.1)" : "scale(1)",
                                     }}>
-                                <ShapeIcon shape={id} color={active ? "rgba(167,139,250,0.9)" : "rgba(255,255,255,0.25)"} />
+                                <ShapeIcon shape={id} color={active ? "color-mix(in srgb, var(--accent) 90%, transparent)" : "color-mix(in srgb, var(--fg) 25%, transparent)"} />
                             </button>
                         );
                     })}
@@ -372,7 +372,7 @@ export default function ManifestClient({
                     {selectedColor && (
                         <button onClick={() => setSelectedColor(null)}
                                 className="mt-auto transition-opacity hover:opacity-80"
-                                style={{ color: "rgba(224,242,254,0.4)" }}>
+                                style={{ color: "color-mix(in srgb, var(--fg) 40%, transparent)" }}>
                             <X size={12} />
                         </button>
                     )}
@@ -387,10 +387,10 @@ export default function ManifestClient({
                         touchAction: "none",
                         background: "#04061a",
                         backgroundImage: [
-                            `radial-gradient(ellipse at 15% 60%, rgba(109,40,217,0.2) 0%, transparent 50%)`,
-                            `radial-gradient(ellipse at 82% 22%, rgba(37,99,235,0.14) 0%, transparent 44%)`,
-                            `radial-gradient(ellipse at 58% 88%, rgba(124,58,237,0.13) 0%, transparent 42%)`,
-                            `radial-gradient(ellipse at 40% 10%, rgba(236,72,153,0.07) 0%, transparent 35%)`,
+                            `radial-gradient(ellipse at 15% 60%, color-mix(in srgb, var(--accent) 20%, transparent) 0%, transparent 50%)`,
+                            `radial-gradient(ellipse at 82% 22%, color-mix(in srgb, var(--info) 14%, transparent) 0%, transparent 44%)`,
+                            `radial-gradient(ellipse at 58% 88%, color-mix(in srgb, var(--accent) 13%, transparent) 0%, transparent 42%)`,
+                            `radial-gradient(ellipse at 40% 10%, color-mix(in srgb, var(--pink) 7%, transparent) 0%, transparent 35%)`,
                         ].join(", "),
                     }}
                     onMouseDown={handleMouseDown}
@@ -438,8 +438,8 @@ export default function ManifestClient({
                             <div className="absolute pointer-events-none"
                                  style={{ left: "50%", top: "50%", transform: "translate(-50%, -50%)", textAlign: "center" }}>
                                 <p className="text-4xl font-bold tracking-tight mb-2"
-                                   style={{ color: "rgba(224,242,254,0.06)" }}>Hayalini bırak</p>
-                                <p className="text-sm" style={{ color: "rgba(224,242,254,0.12)" }}>
+                                   style={{ color: "color-mix(in srgb, var(--fg) 6%, transparent)" }}>Hayalini bırak</p>
+                                <p className="text-sm" style={{ color: "color-mix(in srgb, var(--fg) 12%, transparent)" }}>
                                     Sol taraftan renk ve şekil seç, tahtaya tıkla
                                 </p>
                             </div>
@@ -476,19 +476,19 @@ export default function ManifestClient({
                                          style={{
                                              width: shape.width, height: shape.height, minHeight: shape.minHeight,
                                              background: s.bg, borderRadius: shape.borderRadius, clipPath: shape.clipPath,
-                                             boxShadow: `2px 4px 16px ${s.shadow}, 0 1px 3px rgba(0,0,0,0.3)`,
+                                             boxShadow: `2px 4px 16px ${s.shadow}, 0 1px 3px color-mix(in srgb, var(--shade) 30%, transparent)`,
                                              padding: shape.padding,
                                          }}>
 
                                         {shape.showTape && (
                                             <div className="absolute -top-2.5 left-1/2 -translate-x-1/2 w-10 h-5 rounded-sm"
-                                                 style={{ background: "rgba(255,255,255,0.4)" }} />
+                                                 style={{ background: "color-mix(in srgb, var(--fg) 40%, transparent)" }} />
                                         )}
 
                                         {canDelete && (
                                             <button onClick={() => handleDelete(note.id)}
                                                     className="absolute w-4 h-4 rounded-full flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
-                                                    style={{ top: shape.deletePos?.top ?? 6, right: shape.deletePos?.right ?? 6, background: "rgba(0,0,0,0.15)", color: s.text }}>
+                                                    style={{ top: shape.deletePos?.top ?? 6, right: shape.deletePos?.right ?? 6, background: "color-mix(in srgb, var(--shade) 15%, transparent)", color: s.text }}>
                                                 <X size={9} />
                                             </button>
                                         )}
@@ -509,7 +509,7 @@ export default function ManifestClient({
                                             </p>
                                         )}
 
-                                        <p className="text-[9px] mt-2 font-medium text-center"
+                                        <p className="text-[11px] mt-2 font-medium text-center"
                                            style={{ color: s.muted, opacity: 0.7 }}>
                                             @{note.username}
                                         </p>
@@ -522,7 +522,7 @@ export default function ManifestClient({
                     {/* Placing hint */}
                     {selectedColor && (
                         <div className="absolute inset-0 flex items-end justify-center pb-8 pointer-events-none">
-                            <p className="text-sm animate-pulse" style={{ color: "rgba(224,242,254,0.4)" }}>
+                            <p className="text-sm animate-pulse" style={{ color: "color-mix(in srgb, var(--fg) 40%, transparent)" }}>
                                 Tıkladığın yere not bırak
                             </p>
                         </div>
@@ -531,7 +531,7 @@ export default function ManifestClient({
                     {/* Pan hint */}
                     {!selectedColor && notes.length > 0 && (
                         <div className="pointer-events-none" style={{ position: "absolute", bottom: 20, right: 20 }}>
-                            <p className="text-[10px] tracking-wider" style={{ color: "rgba(224,242,254,0.15)" }}>
+                            <p className="text-[11px] tracking-wider" style={{ color: "color-mix(in srgb, var(--fg) 15%, transparent)" }}>
                                 sürükle · keşfet
                             </p>
                         </div>

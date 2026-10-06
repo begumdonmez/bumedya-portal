@@ -37,7 +37,10 @@ export async function proxy(request: NextRequest) {
         }
     );
 
-    const { data: { user } } = await supabase.auth.getUser();
+    // getClaims, JWT'yi (asimetrik anahtarla) yerelde doğrular; her istekte
+    // Supabase Auth'a ağ çağrısı yapmaz. Oturum yenilemesi de burada olur.
+    const { data } = await supabase.auth.getClaims();
+    const user = data?.claims?.sub ? data.claims : null;
 
     const isPublic = PUBLIC_PATHS.some(
         (p) => pathname === p || pathname.startsWith(p + "/")

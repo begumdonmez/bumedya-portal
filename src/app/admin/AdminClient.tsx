@@ -22,21 +22,21 @@ type BadgeId = "authorized" | "admin" | "founder" | "verified" | "nakkas" | "kal
 
 const BADGES: { id: BadgeId; label: string; icon: ElementType; color: string; bg: string; border: string; authorizedOnly: boolean }[] = [
     /* ── Sistem ── */
-    { id: "authorized", label: "Authorized", icon: Layers,     color: "rgba(255,255,255,0.9)", bg: "rgba(255,255,255,0.06)", border: "rgba(255,255,255,0.2)",  authorizedOnly: true  },
-    { id: "admin",      label: "Admin",       icon: Zap,        color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.1)",   border: "rgba(239,68,68,0.3)",   authorizedOnly: true  },
-    { id: "founder",    label: "Kurucu",      icon: Sparkles,   color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)", border: "rgba(251,191,36,0.2)",  authorizedOnly: true  },
-    { id: "verified",   label: "Onaylı",      icon: BadgeCheck, color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.1)",  border: "rgba(59,130,246,0.3)",  authorizedOnly: false },
+    { id: "authorized", label: "Authorized", icon: Layers,     color: "color-mix(in srgb, var(--fg) 90%, transparent)", bg: "color-mix(in srgb, var(--fg) 6%, transparent)", border: "color-mix(in srgb, var(--fg) 20%, transparent)",  authorizedOnly: true  },
+    { id: "admin",      label: "Admin",       icon: Zap,        color: "color-mix(in srgb, var(--danger) 90%, transparent)",   bg: "color-mix(in srgb, var(--danger) 10%, transparent)",   border: "color-mix(in srgb, var(--danger) 30%, transparent)",   authorizedOnly: true  },
+    { id: "founder",    label: "Kurucu",      icon: Sparkles,   color: "color-mix(in srgb, var(--warn) 90%, transparent)",  bg: "color-mix(in srgb, var(--warn) 6%, transparent)", border: "color-mix(in srgb, var(--warn) 20%, transparent)",  authorizedOnly: true  },
+    { id: "verified",   label: "Onaylı",      icon: BadgeCheck, color: "color-mix(in srgb, var(--info) 90%, transparent)", bg: "color-mix(in srgb, var(--info) 10%, transparent)",  border: "color-mix(in srgb, var(--info) 30%, transparent)",  authorizedOnly: false },
     /* ── Kazanılan (form + onay) ── */
-    { id: "nakkas",     label: "Nakkaş",      icon: Palette,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.1)", border: "rgba(244,114,182,0.3)", authorizedOnly: false },
-    { id: "kalemsor",   label: "Kalemşor",    icon: PenLine,    color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.1)",  border: "rgba(52,211,153,0.3)",  authorizedOnly: false },
-    { id: "muretti",    label: "Mürettip",    icon: Shield,     color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.1)",  border: "rgba(251,191,36,0.3)",  authorizedOnly: false },
-    { id: "katkici",    label: "Katkıcı",     icon: BadgeCheck, color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)", border: "rgba(59,130,246,0.25)", authorizedOnly: false },
+    { id: "nakkas",     label: "Nakkaş",      icon: Palette,    color: "color-mix(in srgb, var(--pink) 90%, transparent)", bg: "color-mix(in srgb, var(--pink) 10%, transparent)", border: "color-mix(in srgb, var(--pink) 30%, transparent)", authorizedOnly: false },
+    { id: "kalemsor",   label: "Kalemşor",    icon: PenLine,    color: "color-mix(in srgb, var(--success) 90%, transparent)",  bg: "color-mix(in srgb, var(--success) 10%, transparent)",  border: "color-mix(in srgb, var(--success) 30%, transparent)",  authorizedOnly: false },
+    { id: "muretti",    label: "Mürettip",    icon: Shield,     color: "color-mix(in srgb, var(--warn) 90%, transparent)",  bg: "color-mix(in srgb, var(--warn) 10%, transparent)",  border: "color-mix(in srgb, var(--warn) 30%, transparent)",  authorizedOnly: false },
+    { id: "katkici",    label: "Katkıcı",     icon: BadgeCheck, color: "color-mix(in srgb, var(--info) 90%, transparent)", bg: "color-mix(in srgb, var(--info) 8%, transparent)", border: "color-mix(in srgb, var(--info) 25%, transparent)", authorizedOnly: false },
     /* ── İlgi alanı (serbest) ── */
-    { id: "cizer",          label: "Çizer",          icon: Palette,        color: "rgba(244,114,182,0.7)", bg: "rgba(244,114,182,0.06)", border: "rgba(244,114,182,0.2)", authorizedOnly: false },
-    { id: "yazar",          label: "Yazar",          icon: PenLine,        color: "rgba(52,211,153,0.7)",  bg: "rgba(52,211,153,0.06)",  border: "rgba(52,211,153,0.2)",  authorizedOnly: false },
-    { id: "editor",         label: "Editör",         icon: Shield,         color: "rgba(251,191,36,0.7)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)",  authorizedOnly: false },
+    { id: "cizer",          label: "Çizer",          icon: Palette,        color: "color-mix(in srgb, var(--pink) 70%, transparent)", bg: "color-mix(in srgb, var(--pink) 6%, transparent)", border: "color-mix(in srgb, var(--pink) 20%, transparent)", authorizedOnly: false },
+    { id: "yazar",          label: "Yazar",          icon: PenLine,        color: "color-mix(in srgb, var(--success) 70%, transparent)",  bg: "color-mix(in srgb, var(--success) 6%, transparent)",  border: "color-mix(in srgb, var(--success) 20%, transparent)",  authorizedOnly: false },
+    { id: "editor",         label: "Editör",         icon: Shield,         color: "color-mix(in srgb, var(--warn) 70%, transparent)",  bg: "color-mix(in srgb, var(--warn) 6%, transparent)",  border: "color-mix(in srgb, var(--warn) 20%, transparent)",  authorizedOnly: false },
     /* ── Sosyal ── */
-    { id: "sosyal_kelebek", label: "Sosyal Kelebek", icon: MessageCircle,  color: "rgba(251,146,60,0.9)",  bg: "rgba(251,146,60,0.08)",  border: "rgba(251,146,60,0.25)", authorizedOnly: false },
+    { id: "sosyal_kelebek", label: "Sosyal Kelebek", icon: MessageCircle,  color: "color-mix(in srgb, var(--accent-2) 90%, transparent)",  bg: "color-mix(in srgb, var(--accent-2) 8%, transparent)",  border: "color-mix(in srgb, var(--accent-2) 25%, transparent)", authorizedOnly: false },
 ];
 
 /* ─── Rozet pill bileşeni ───────────────────────────────────── */
@@ -44,7 +44,7 @@ function BadgePill({ id }: { id: string }) {
     const conf = BADGES.find((b) => b.id === id);
     if (!conf) return null;
     return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium"
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium"
               style={{ background: conf.bg, border: `1px solid ${conf.border}`, color: conf.color }}>
             <conf.icon size={10} strokeWidth={2} /> {conf.label}
         </span>
@@ -69,8 +69,8 @@ function UserRow({ profile, onBadgeToggle, isAuthorized }: {
                 {/* Avatar */}
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center text-sm font-bold shrink-0"
                      style={{
-                         background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(59,130,246,0.2))",
-                         border: "1px solid var(--violet-border)",
+                         background: "color-mix(in srgb, var(--accent) 15%, transparent)",
+                         border: "1px solid var(--accent-border)",
                          color: "var(--text-1)",
                      }}>
                     {profile.username[0].toUpperCase()}
@@ -82,11 +82,11 @@ function UserRow({ profile, onBadgeToggle, isAuthorized }: {
                         <span className="text-sm font-medium" style={{ color: "var(--text-1)" }}>
                             @{profile.username}
                         </span>
-                        <span className="text-[10px] px-2 py-0.5 rounded-full"
+                        <span className="text-[11px] px-2 py-0.5 rounded-full"
                               style={{
-                                  background: profile.role === "creator" ? "rgba(124,58,237,0.1)" : "rgba(59,130,246,0.08)",
-                                  border: `1px solid ${profile.role === "creator" ? "rgba(124,58,237,0.25)" : "rgba(59,130,246,0.2)"}`,
-                                  color: profile.role === "creator" ? "rgba(167,139,250,0.9)" : "rgba(147,197,253,0.8)",
+                                  background: profile.role === "creator" ? "color-mix(in srgb, var(--accent) 10%, transparent)" : "color-mix(in srgb, var(--info) 8%, transparent)",
+                                  border: `1px solid ${profile.role === "creator" ? "color-mix(in srgb, var(--accent) 25%, transparent)" : "color-mix(in srgb, var(--info) 20%, transparent)"}`,
+                                  color: profile.role === "creator" ? "color-mix(in srgb, var(--accent) 90%, transparent)" : "color-mix(in srgb, var(--info) 80%, transparent)",
                               }}>
                             {profile.role === "creator" ? "Üretici" : "İzleyici"}
                         </span>
@@ -113,7 +113,7 @@ function UserRow({ profile, onBadgeToggle, isAuthorized }: {
             {/* Rozet yönetimi — expand olunca açılır */}
             {expanded && (
                 <div className="px-5 pb-5 pt-1" style={{ borderTop: "1px solid var(--bg-2)" }}>
-                    <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
+                    <p className="label-caps mb-3" style={{ color: "var(--text-4)" }}>
                         Rozet Yönetimi
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -186,8 +186,8 @@ function MessagesTab({ messages, setMessages }: { messages: Message[]; setMessag
                 <div key={msg.id}
                      className="rounded-2xl p-4 flex flex-col gap-3 cursor-pointer transition-all duration-200"
                      style={{
-                         background: msg.read ? "var(--bg-3)" : "var(--violet-bg)",
-                         border: `1px solid ${msg.read ? "var(--border-2)" : "var(--violet-border)"}`,
+                         background: msg.read ? "var(--bg-3)" : "var(--accent-bg)",
+                         border: `1px solid ${msg.read ? "var(--border-2)" : "var(--accent-border)"}`,
                      }}
                      onClick={() => !msg.read && markRead(msg.id)}>
                     <div className="flex items-start justify-between gap-4">
@@ -195,18 +195,18 @@ function MessagesTab({ messages, setMessages }: { messages: Message[]; setMessag
                             <div className="flex items-center gap-2 mb-0.5">
                                 <p className="text-sm font-semibold" style={{ color: "var(--text-1)" }}>{msg.name}</p>
                                 {!msg.read && (
-                                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--violet)" }} />
+                                    <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "var(--accent)" }} />
                                 )}
                             </div>
                             <p className="text-xs" style={{ color: "var(--text-3)" }}>{msg.email}</p>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
-                            <p className="text-[10px]" style={{ color: "var(--text-4)" }}>
+                            <p className="text-[11px]" style={{ color: "var(--text-4)" }}>
                                 {new Date(msg.created_at).toLocaleDateString("tr-TR")}
                             </p>
                             <button onClick={(e) => { e.stopPropagation(); handleDelete(msg.id); }}
                                     className="p-1 rounded-lg hover:opacity-70 transition-opacity"
-                                    style={{ color: "rgba(239,68,68,0.5)" }}>
+                                    style={{ color: "color-mix(in srgb, var(--danger) 50%, transparent)" }}>
                                 <Trash2 size={13} />
                             </button>
                         </div>
@@ -301,21 +301,21 @@ function ApplicationsTab({ applications: initialApps }: { applications: Applicat
                                 <p className="text-xs" style={{ color: "var(--text-4)" }}>{typeInfo?.label} · {new Date(selected.created_at).toLocaleDateString("tr-TR")}</p>
                             </div>
                         </div>
-                        <span className={`text-xs px-3 py-1 rounded-full ${selected.status === "pending" ? "bg-amber-500/10 border-amber-500/25 text-amber-400" : selected.status === "approved" ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400" : "bg-red-500/10 border-red-500/25 text-red-400"} border`}>
+                        <span className={`text-xs px-3 py-1 rounded-full ${selected.status === "pending" ? "bg-[color-mix(in_srgb,var(--warn)_10%,transparent)] border-[color-mix(in_srgb,var(--warn)_25%,transparent)] text-[var(--warn)]" : selected.status === "approved" ? "bg-[color-mix(in_srgb,var(--success)_10%,transparent)] border-[color-mix(in_srgb,var(--success)_25%,transparent)] text-[var(--success)]" : "bg-[color-mix(in_srgb,var(--danger)_10%,transparent)] border-[color-mix(in_srgb,var(--danger)_25%,transparent)] text-[var(--danger)]"} border`}>
                             {selected.status === "pending" ? "Beklemede" : selected.status === "approved" ? "Onaylandı" : "Reddedildi"}
                         </span>
                     </div>
 
                     {Object.entries(selected.answers).map(([key, val]) => (
                         <div key={key} className="flex flex-col gap-1.5">
-                            <p className="text-[10px] font-semibold tracking-widest uppercase" style={{ color: "var(--text-4)" }}>{labels[key] ?? key}</p>
+                            <p className="text-[11px] font-semibold tracking-widest uppercase" style={{ color: "var(--text-4)" }}>{labels[key] ?? key}</p>
                             <p className="text-sm leading-relaxed px-3 py-2.5 rounded-xl" style={{ background: "var(--bg-2)", color: "var(--text-2)", border: "1px solid var(--border-3)" }}>{val}</p>
                         </div>
                     ))}
 
                     {selected.status === "pending" && (
                         <div className="flex flex-col gap-3 pt-2 border-t" style={{ borderColor: "var(--border-3)" }}>
-                            <p className="text-[10px] font-semibold tracking-widest uppercase" style={{ color: "var(--text-4)" }}>Admin Notu (opsiyonel)</p>
+                            <p className="text-[11px] font-semibold tracking-widest uppercase" style={{ color: "var(--text-4)" }}>Admin Notu (opsiyonel)</p>
                             <textarea value={note} onChange={e => setNote(e.target.value)} rows={2}
                                       placeholder="Onay/red sebebi, geri bildirim..."
                                       className="w-full resize-none rounded-xl px-4 py-2.5 text-sm outline-none"
@@ -323,12 +323,12 @@ function ApplicationsTab({ applications: initialApps }: { applications: Applicat
                             <div className="flex gap-3">
                                 <button onClick={() => handleDecision("approved")} disabled={processing}
                                         className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50"
-                                        style={{ background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.3)", color: "rgba(52,211,153,0.9)" }}>
+                                        style={{ background: "color-mix(in srgb, var(--success) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--success) 30%, transparent)", color: "color-mix(in srgb, var(--success) 90%, transparent)" }}>
                                     <Check size={14} /> Onayla
                                 </button>
                                 <button onClick={() => handleDecision("rejected")} disabled={processing}
                                         className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-50"
-                                        style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "rgba(239,68,68,0.8)" }}>
+                                        style={{ background: "color-mix(in srgb, var(--danger) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 25%, transparent)", color: "color-mix(in srgb, var(--danger) 80%, transparent)" }}>
                                     <X size={14} /> Reddet
                                 </button>
                             </div>
@@ -345,7 +345,7 @@ function ApplicationsTab({ applications: initialApps }: { applications: Applicat
                 {(["pending", "all", "approved", "rejected"] as const).map(s => (
                     <button key={s} onClick={() => setFilterStatus(s)}
                             className="px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200"
-                            style={{ background: filterStatus === s ? "rgba(124,58,237,0.2)" : "var(--bg-2)", border: `1px solid ${filterStatus === s ? "rgba(124,58,237,0.4)" : "var(--border-2)"}`, color: filterStatus === s ? "var(--violet-text)" : "var(--text-3)" }}>
+                            style={{ background: filterStatus === s ? "color-mix(in srgb, var(--accent) 20%, transparent)" : "var(--bg-2)", border: `1px solid ${filterStatus === s ? "color-mix(in srgb, var(--accent) 40%, transparent)" : "var(--border-2)"}`, color: filterStatus === s ? "var(--accent-text)" : "var(--text-3)" }}>
                         {s === "all" ? "Tümü" : s === "pending" ? `Bekleyen${pendingCount > 0 ? ` (${pendingCount})` : ""}` : s === "approved" ? "Onaylı" : "Reddedilen"}
                     </button>
                 ))}
@@ -363,7 +363,7 @@ function ApplicationsTab({ applications: initialApps }: { applications: Applicat
                         const Icon = pos?.icon;
                         return (
                             <button key={app.id} onClick={() => { setSelected(app); setNote(app.admin_note ?? ""); }}
-                                    className="card p-4 flex items-center gap-4 text-left w-full transition-all duration-150 hover:border-violet-500/20">
+                                    className="card p-4 flex items-center gap-4 text-left w-full transition-all duration-150 hover:border-[color-mix(in_srgb,var(--accent)_20%,transparent)]">
                                 <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                                      style={{ background: pos?.bg ?? "var(--bg-2)", border: `1px solid ${pos?.border ?? "var(--border-2)"}` }}>
                                     {Icon
@@ -374,7 +374,7 @@ function ApplicationsTab({ applications: initialApps }: { applications: Applicat
                                     <p className="text-sm font-medium" style={{ color: "var(--text-1)" }}>@{app.username}</p>
                                     <p className="text-xs" style={{ color: "var(--text-4)" }}>{typeInfo?.label} · {new Date(app.created_at).toLocaleDateString("tr-TR")}</p>
                                 </div>
-                                <span className={`shrink-0 text-xs px-2.5 py-1 rounded-full border ${app.status === "pending" ? "bg-amber-500/10 border-amber-500/25 text-amber-400" : app.status === "approved" ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400" : "bg-red-500/10 border-red-500/25 text-red-400"}`}>
+                                <span className={`shrink-0 text-xs px-2.5 py-1 rounded-full border ${app.status === "pending" ? "bg-[color-mix(in_srgb,var(--warn)_10%,transparent)] border-[color-mix(in_srgb,var(--warn)_25%,transparent)] text-[var(--warn)]" : app.status === "approved" ? "bg-[color-mix(in_srgb,var(--success)_10%,transparent)] border-[color-mix(in_srgb,var(--success)_25%,transparent)] text-[var(--success)]" : "bg-[color-mix(in_srgb,var(--danger)_10%,transparent)] border-[color-mix(in_srgb,var(--danger)_25%,transparent)] text-[var(--danger)]"}`}>
                                     {app.status === "pending" ? <Clock size={11} className="inline mr-1" /> : app.status === "approved" ? <Check size={11} className="inline mr-1" /> : <X size={11} className="inline mr-1" />}
                                     {app.status === "pending" ? "Bekliyor" : app.status === "approved" ? "Onaylı" : "Reddedildi"}
                                 </span>
@@ -489,13 +489,13 @@ function PlaylistsTab() {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium truncate" style={{ color: "var(--text-1)" }}>{pl.name}</p>
-                                <p className="text-[10px] truncate" style={{ color: "var(--text-4)" }}>
+                                <p className="text-[11px] truncate" style={{ color: "var(--text-4)" }}>
                                     {pl.description ?? pl.spotify_id}
                                 </p>
                             </div>
                             <button onClick={() => handleDelete(pl.id)}
                                     className="w-7 h-7 rounded-lg flex items-center justify-center transition-opacity hover:opacity-70 shrink-0"
-                                    style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "rgba(239,68,68,0.7)" }}>
+                                    style={{ background: "color-mix(in srgb, var(--danger) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 20%, transparent)", color: "color-mix(in srgb, var(--danger) 70%, transparent)" }}>
                                 <Trash2 size={12} />
                             </button>
                         </div>
@@ -531,10 +531,10 @@ interface AdminLog {
 }
 
 const CAT_CONFIG: Record<string, { label: string; icon: React.ElementType; color: string; bg: string; border: string }> = {
-    film:  { label: "Film",   icon: Film,     color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.25)"  },
-    dizi:  { label: "Dizi",   icon: Tv,       color: "rgba(96,165,250,0.9)",  bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.25)"  },
-    kitap: { label: "Kitap",  icon: BookOpen, color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.25)"  },
-    sarki: { label: "Şarkı",  icon: Music,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.25)" },
+    film:  { label: "Film",   icon: Film,     color: "color-mix(in srgb, var(--accent) 90%, transparent)", bg: "color-mix(in srgb, var(--accent) 8%, transparent)",  border: "color-mix(in srgb, var(--accent) 25%, transparent)"  },
+    dizi:  { label: "Dizi",   icon: Tv,       color: "color-mix(in srgb, var(--info) 90%, transparent)",  bg: "color-mix(in srgb, var(--info) 8%, transparent)",  border: "color-mix(in srgb, var(--info) 25%, transparent)"  },
+    kitap: { label: "Kitap",  icon: BookOpen, color: "color-mix(in srgb, var(--success) 90%, transparent)",  bg: "color-mix(in srgb, var(--success) 8%, transparent)",  border: "color-mix(in srgb, var(--success) 25%, transparent)"  },
+    sarki: { label: "Şarkı",  icon: Music,    color: "color-mix(in srgb, var(--pink) 90%, transparent)", bg: "color-mix(in srgb, var(--pink) 8%, transparent)", border: "color-mix(in srgb, var(--pink) 25%, transparent)" },
 };
 
 function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomination[] }) {
@@ -626,7 +626,7 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
                 {(["pending", "all", "approved", "rejected"] as const).map(s => (
                     <button key={s} onClick={() => setFilterStatus(s)}
                             className="px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-200"
-                            style={{ background: filterStatus === s ? "rgba(124,58,237,0.2)" : "var(--bg-2)", border: `1px solid ${filterStatus === s ? "rgba(124,58,237,0.4)" : "var(--border-2)"}`, color: filterStatus === s ? "var(--violet-text)" : "var(--text-3)" }}>
+                            style={{ background: filterStatus === s ? "color-mix(in srgb, var(--accent) 20%, transparent)" : "var(--bg-2)", border: `1px solid ${filterStatus === s ? "color-mix(in srgb, var(--accent) 40%, transparent)" : "var(--border-2)"}`, color: filterStatus === s ? "var(--accent-text)" : "var(--text-3)" }}>
                         {s === "all" ? "Tümü" : s === "pending" ? `Bekleyen${pendingCount > 0 ? ` (${pendingCount})` : ""}` : s === "approved" ? "Onaylı" : "Reddedilen"}
                     </button>
                 ))}
@@ -658,7 +658,7 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
                                         {nom.description && (
                                             <p className="text-xs truncate" style={{ color: "var(--text-4)" }}>{nom.description}</p>
                                         )}
-                                        <p className="text-[10px] mt-0.5" style={{ color: "var(--text-5)" }}>
+                                        <p className="text-[11px] mt-0.5" style={{ color: "var(--text-5)" }}>
                                             @{nom.submitted_by} · {cat.label} · {nom.week_start}
                                         </p>
                                     </div>
@@ -666,29 +666,29 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
                                         <div className="flex gap-1.5 shrink-0">
                                             <button onClick={() => isEditing ? setEditingId(null) : openEdit(nom)} disabled={busy}
                                                     className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-medium transition-all duration-200 disabled:opacity-50"
-                                                    style={{ background: isEditing ? "rgba(251,191,36,0.15)" : "var(--bg-2)", border: `1px solid ${isEditing ? "rgba(251,191,36,0.4)" : "var(--border-2)"}`, color: isEditing ? "rgba(251,191,36,0.9)" : "var(--text-3)" }}>
+                                                    style={{ background: isEditing ? "color-mix(in srgb, var(--warn) 15%, transparent)" : "var(--bg-2)", border: `1px solid ${isEditing ? "color-mix(in srgb, var(--warn) 40%, transparent)" : "var(--border-2)"}`, color: isEditing ? "color-mix(in srgb, var(--warn) 90%, transparent)" : "var(--text-3)" }}>
                                                 <Edit2 size={11} /> Düzenle
                                             </button>
                                             <button onClick={() => isRejecting ? setRejectingId(null) : openReject(nom.id)} disabled={busy}
                                                     className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50"
-                                                    style={{ background: isRejecting ? "rgba(239,68,68,0.15)" : "rgba(239,68,68,0.06)", border: `1px solid ${isRejecting ? "rgba(239,68,68,0.4)" : "rgba(239,68,68,0.2)"}`, color: "rgba(239,68,68,0.8)" }}>
+                                                    style={{ background: isRejecting ? "color-mix(in srgb, var(--danger) 15%, transparent)" : "color-mix(in srgb, var(--danger) 6%, transparent)", border: `1px solid ${isRejecting ? "color-mix(in srgb, var(--danger) 40%, transparent)" : "color-mix(in srgb, var(--danger) 20%, transparent)"}`, color: "color-mix(in srgb, var(--danger) 80%, transparent)" }}>
                                                 <X size={11} /> Reddet
                                             </button>
                                             <button onClick={() => handleApprove(nom.id)} disabled={busy}
                                                     className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50"
-                                                    style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)", color: "rgba(52,211,153,0.9)" }}>
-                                                {busy ? <span className="w-3 h-3 rounded-full border border-emerald-400/30 border-t-emerald-400 animate-spin" /> : <Check size={11} />}
+                                                    style={{ background: "color-mix(in srgb, var(--success) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--success) 30%, transparent)", color: "color-mix(in srgb, var(--success) 90%, transparent)" }}>
+                                                {busy ? <span className="w-3 h-3 rounded-full border border-[color-mix(in_srgb,var(--success)_30%,transparent)] border-t-emerald-400 animate-spin" /> : <Check size={11} />}
                                                 Onayla
                                             </button>
                                         </div>
                                     ) : (
                                         <div className="flex flex-col items-end gap-1 shrink-0">
-                                            <span className={`text-xs px-2.5 py-1 rounded-full border ${nom.status === "approved" ? "bg-emerald-500/10 border-emerald-500/25 text-emerald-400" : "bg-red-500/10 border-red-500/25 text-red-400"}`}>
+                                            <span className={`text-xs px-2.5 py-1 rounded-full border ${nom.status === "approved" ? "bg-[color-mix(in_srgb,var(--success)_10%,transparent)] border-[color-mix(in_srgb,var(--success)_25%,transparent)] text-[var(--success)]" : "bg-[color-mix(in_srgb,var(--danger)_10%,transparent)] border-[color-mix(in_srgb,var(--danger)_25%,transparent)] text-[var(--danger)]"}`}>
                                                 {nom.status === "approved" ? <Check size={11} className="inline mr-1" /> : <X size={11} className="inline mr-1" />}
                                                 {nom.status === "approved" ? "Onaylı" : "Reddedildi"}
                                             </span>
                                             {nom.reviewed_by && (
-                                                <span className="text-[10px]" style={{ color: "var(--text-5)" }}>@{nom.reviewed_by}</span>
+                                                <span className="text-[11px]" style={{ color: "var(--text-5)" }}>@{nom.reviewed_by}</span>
                                             )}
                                         </div>
                                     )}
@@ -698,7 +698,7 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
                                 {nom.status === "rejected" && nom.admin_note && (
                                     <div className="px-4 pb-3 pt-0">
                                         <p className="text-xs px-3 py-2 rounded-xl italic"
-                                           style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.15)", color: "rgba(239,68,68,0.7)" }}>
+                                           style={{ background: "color-mix(in srgb, var(--danger) 6%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 15%, transparent)", color: "color-mix(in srgb, var(--danger) 70%, transparent)" }}>
                                             "{nom.admin_note}"
                                         </p>
                                     </div>
@@ -706,8 +706,8 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
 
                                 {/* Düzenleme formu */}
                                 {isEditing && (
-                                    <div className="px-4 pb-4 pt-1 flex flex-col gap-2 border-t" style={{ borderColor: "rgba(251,191,36,0.15)", background: "rgba(251,191,36,0.03)" }}>
-                                        <p className="text-[10px] tracking-widest uppercase mt-1" style={{ color: "rgba(251,191,36,0.7)" }}>Düzenleme</p>
+                                    <div className="px-4 pb-4 pt-1 flex flex-col gap-2 border-t" style={{ borderColor: "color-mix(in srgb, var(--warn) 15%, transparent)", background: "color-mix(in srgb, var(--warn) 3%, transparent)" }}>
+                                        <p className="label-caps mt-1" style={{ color: "color-mix(in srgb, var(--warn) 70%, transparent)" }}>Düzenleme</p>
                                         <select value={editCat} onChange={e => setEditCat(e.target.value)}
                                                 className="rounded-xl px-3 py-2 text-xs outline-none"
                                                 style={{ background: "var(--bg-2)", border: "1px solid var(--border-2)", color: "var(--text-1)" }}>
@@ -724,8 +724,8 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
                                         <div className="flex gap-2 mt-1">
                                             <button onClick={() => handleEdit(nom.id)} disabled={busy}
                                                     className="flex items-center gap-1 px-4 py-1.5 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
-                                                    style={{ background: "rgba(251,191,36,0.15)", border: "1px solid rgba(251,191,36,0.4)", color: "rgba(251,191,36,0.9)" }}>
-                                                {busy ? <span className="w-3 h-3 rounded-full border border-yellow-400/30 border-t-yellow-400 animate-spin" /> : <Check size={11} />}
+                                                    style={{ background: "color-mix(in srgb, var(--warn) 15%, transparent)", border: "1px solid color-mix(in srgb, var(--warn) 40%, transparent)", color: "color-mix(in srgb, var(--warn) 90%, transparent)" }}>
+                                                {busy ? <span className="w-3 h-3 rounded-full border border-[color-mix(in_srgb,var(--warn)_30%,transparent)] border-t-yellow-400 animate-spin" /> : <Check size={11} />}
                                                 Kaydet
                                             </button>
                                             <button onClick={() => setEditingId(null)} className="px-4 py-1.5 rounded-xl text-xs transition-all"
@@ -738,18 +738,18 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
 
                                 {/* Ret nedeni formu */}
                                 {isRejecting && (
-                                    <div className="px-4 pb-4 pt-1 flex flex-col gap-2 border-t" style={{ borderColor: "rgba(239,68,68,0.15)", background: "rgba(239,68,68,0.03)" }}>
-                                        <p className="text-[10px] tracking-widest uppercase mt-1" style={{ color: "rgba(239,68,68,0.7)" }}>Ret Nedeni</p>
+                                    <div className="px-4 pb-4 pt-1 flex flex-col gap-2 border-t" style={{ borderColor: "color-mix(in srgb, var(--danger) 15%, transparent)", background: "color-mix(in srgb, var(--danger) 3%, transparent)" }}>
+                                        <p className="label-caps mt-1" style={{ color: "color-mix(in srgb, var(--danger) 70%, transparent)" }}>Ret Nedeni</p>
                                         <textarea value={rejectNote} onChange={e => setRejectNote(e.target.value)}
                                                   placeholder="Opsiyonel — örn. 'Bu içerik uygun değil.'"
                                                   rows={2} maxLength={300}
                                                   className="rounded-xl px-3 py-2 text-xs outline-none resize-none"
-                                                  style={{ background: "var(--bg-2)", border: "1px solid rgba(239,68,68,0.2)", color: "var(--text-1)" }} />
+                                                  style={{ background: "var(--bg-2)", border: "1px solid color-mix(in srgb, var(--danger) 20%, transparent)", color: "var(--text-1)" }} />
                                         <div className="flex gap-2 mt-1">
                                             <button onClick={() => handleReject(nom.id)} disabled={busy}
                                                     className="flex items-center gap-1 px-4 py-1.5 rounded-xl text-xs font-bold transition-all disabled:opacity-50"
-                                                    style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.35)", color: "rgba(239,68,68,0.9)" }}>
-                                                {busy ? <span className="w-3 h-3 rounded-full border border-red-400/30 border-t-red-400 animate-spin" /> : <X size={11} />}
+                                                    style={{ background: "color-mix(in srgb, var(--danger) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 35%, transparent)", color: "color-mix(in srgb, var(--danger) 90%, transparent)" }}>
+                                                {busy ? <span className="w-3 h-3 rounded-full border border-[color-mix(in_srgb,var(--danger)_30%,transparent)] border-t-red-400 animate-spin" /> : <X size={11} />}
                                                 Reddi Onayla
                                             </button>
                                             <button onClick={() => setRejectingId(null)} className="px-4 py-1.5 rounded-xl text-xs transition-all"
@@ -770,10 +770,10 @@ function NominationsTab({ nominations: initialNoms }: { nominations: WeeklyNomin
 
 /* ─── Log sekmesi ───────────────────────────────────────────── */
 const ACTION_LABELS: Record<string, { label: string; color: string }> = {
-    nomination_approved: { label: "Öneri Onaylandı",  color: "rgba(52,211,153,0.9)"  },
-    nomination_rejected: { label: "Öneri Reddedildi", color: "rgba(239,68,68,0.85)"  },
-    nomination_edited:   { label: "Öneri Düzenlendi", color: "rgba(251,191,36,0.9)"  },
-    badge_updated:       { label: "Rozet Güncellendi", color: "rgba(167,139,250,0.9)" },
+    nomination_approved: { label: "Öneri Onaylandı",  color: "color-mix(in srgb, var(--success) 90%, transparent)"  },
+    nomination_rejected: { label: "Öneri Reddedildi", color: "color-mix(in srgb, var(--danger) 85%, transparent)"  },
+    nomination_edited:   { label: "Öneri Düzenlendi", color: "color-mix(in srgb, var(--warn) 90%, transparent)"  },
+    badge_updated:       { label: "Rozet Güncellendi", color: "color-mix(in srgb, var(--accent) 90%, transparent)" },
 };
 
 function LogsTab({ logs }: { logs: AdminLog[] }) {
@@ -795,16 +795,16 @@ function LogsTab({ logs }: { logs: AdminLog[] }) {
                                 {d?.title ?? (d?.username ? `@${d.username}` : "—")}
                             </p>
                             {d?.added_badge && (
-                                <p className="text-xs truncate" style={{ color: "rgba(167,139,250,0.7)" }}>
+                                <p className="text-xs truncate" style={{ color: "color-mix(in srgb, var(--accent) 70%, transparent)" }}>
                                     +{d.added_badge}
                                 </p>
                             )}
                             {d?.admin_note && (
-                                <p className="text-xs italic truncate" style={{ color: "rgba(239,68,68,0.65)" }}>
+                                <p className="text-xs italic truncate" style={{ color: "color-mix(in srgb, var(--danger) 65%, transparent)" }}>
                                     "{d.admin_note}"
                                 </p>
                             )}
-                            <p className="text-[10px] mt-0.5" style={{ color: "var(--text-5)" }}>
+                            <p className="text-[11px] mt-0.5" style={{ color: "var(--text-5)" }}>
                                 @{log.admin_username} · {new Date(log.created_at).toLocaleString("tr-TR")}
                             </p>
                         </div>
@@ -892,9 +892,7 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
     const artistCount  = profiles.filter((p) => p.badges.includes("artist")).length;
 
     return (
-        <div className="aurora-bg relative min-h-screen flex flex-col">
-            <div aria-hidden className="aurora-layer" />
-            <div aria-hidden className="aurora-orb-pink" />
+        <div className="relative min-h-screen flex flex-col">
 
             {/* Navbar */}
             <nav className="relative z-10 flex items-center justify-between px-6 py-5 border-b"
@@ -908,11 +906,11 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                     </button>
                     <button onClick={() => router.push("/home")} className="flex items-baseline gap-0.5">
                         <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
+                        <span className="text-sm font-bold" style={{ color: "color-mix(in srgb, var(--accent) 70%, transparent)" }}>.</span>
                     </button>
                     <span style={{ color: "var(--border-1)" }}>/</span>
                     <span className="text-sm font-medium flex items-center gap-1.5"
-                          style={{ color: "rgba(239,68,68,0.8)" }}>
+                          style={{ color: "color-mix(in srgb, var(--danger) 80%, transparent)" }}>
                         <Zap size={14} strokeWidth={2} /> Admin
                     </span>
                 </div>
@@ -924,11 +922,11 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                     <span style={{ color: "var(--border-1)" }}>·</span>
                     <span>{creatorCount} üretici</span>
                     <span style={{ color: "var(--border-1)" }}>·</span>
-                    <span style={{ color: "rgba(251,191,36,0.6)" }}>{editorCount} editör</span>
+                    <span style={{ color: "color-mix(in srgb, var(--warn) 60%, transparent)" }}>{editorCount} editör</span>
                     <span style={{ color: "var(--border-1)" }}>·</span>
-                    <span style={{ color: "rgba(52,211,153,0.6)" }}>{writerCount} yazar</span>
+                    <span style={{ color: "color-mix(in srgb, var(--success) 60%, transparent)" }}>{writerCount} yazar</span>
                     <span style={{ color: "var(--border-1)" }}>·</span>
-                    <span style={{ color: "rgba(244,114,182,0.6)" }}>{artistCount} sanatçı</span>
+                    <span style={{ color: "color-mix(in srgb, var(--pink) 60%, transparent)" }}>{artistCount} sanatçı</span>
                 </div>
                 <span className="sm:hidden text-xs" style={{ color: "var(--text-4)" }}>{profiles.length} üye</span>
             </nav>
@@ -949,14 +947,14 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                         <button key={id} onClick={() => setTab(id)}
                                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200"
                                 style={{
-                                    background: tab === id ? "rgba(124,58,237,0.2)" : "var(--bg-2)",
-                                    border: `1px solid ${tab === id ? "rgba(124,58,237,0.4)" : "var(--border-2)"}`,
-                                    color: tab === id ? "var(--violet-text)" : "var(--text-3)",
+                                    background: tab === id ? "color-mix(in srgb, var(--accent) 20%, transparent)" : "var(--bg-2)",
+                                    border: `1px solid ${tab === id ? "color-mix(in srgb, var(--accent) 40%, transparent)" : "var(--border-2)"}`,
+                                    color: tab === id ? "var(--accent-text)" : "var(--text-3)",
                                 }}>
                             {label}
                             {badge != null && badge > 0 && (
-                                <span className="w-4 h-4 rounded-full text-[10px] flex items-center justify-center font-bold"
-                                      style={{ background: "rgba(239,68,68,0.8)", color: "#fff" }}>{badge}</span>
+                                <span className="w-4 h-4 rounded-full text-[11px] flex items-center justify-center font-bold"
+                                      style={{ background: "color-mix(in srgb, var(--danger) 80%, transparent)", color: "#fff" }}>{badge}</span>
                             )}
                         </button>
                     ))}
@@ -1021,9 +1019,9 @@ export default function AdminClient({ profiles: initialProfiles, myBadges, messa
                             <button key={f.id} onClick={() => setFilter(f.id)}
                                     className="px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
                                     style={{
-                                        background: filter === f.id ? "var(--violet-bg-md)" : "var(--bg-3)",
-                                        border: `1px solid ${filter === f.id ? "var(--violet-border)" : "var(--border-2)"}`,
-                                        color: filter === f.id ? "var(--violet-text)" : "var(--text-3)",
+                                        background: filter === f.id ? "var(--accent-bg-md)" : "var(--bg-3)",
+                                        border: `1px solid ${filter === f.id ? "var(--accent-border)" : "var(--border-2)"}`,
+                                        color: filter === f.id ? "var(--accent-text)" : "var(--text-3)",
                                     }}>
                                 {f.label}
                             </button>

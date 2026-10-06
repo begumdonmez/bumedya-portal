@@ -8,14 +8,15 @@ import NavbarBackdrop from "@/components/NavbarBackdrop";
 import Link from "next/link";
 import HomeNavLinks from "@/components/HomeNavLinks";
 import NotificationBell from "@/components/NotificationBell";
+import SiteHeader from "@/components/SiteHeader";
 
 type Category = "film" | "dizi" | "kitap" | "sarki";
 
 const CATEGORIES: { id: Category; label: string; icon: React.ElementType; color: string; bg: string; border: string }[] = [
-    { id: "film",  label: "Haftanın Filmi",  icon: Film,     color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.25)"  },
-    { id: "dizi",  label: "Haftanın Dizisi", icon: Tv,       color: "rgba(96,165,250,0.9)",  bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.25)"  },
-    { id: "kitap", label: "Haftanın Kitabı", icon: BookOpen, color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.25)"  },
-    { id: "sarki", label: "Haftanın Şarkısı",icon: Music,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.25)" },
+    { id: "film",  label: "Haftanın Filmi",  icon: Film,     color: "color-mix(in srgb, var(--accent) 90%, transparent)", bg: "color-mix(in srgb, var(--accent) 8%, transparent)",  border: "color-mix(in srgb, var(--accent) 25%, transparent)"  },
+    { id: "dizi",  label: "Haftanın Dizisi", icon: Tv,       color: "color-mix(in srgb, var(--info) 90%, transparent)",  bg: "color-mix(in srgb, var(--info) 8%, transparent)",  border: "color-mix(in srgb, var(--info) 25%, transparent)"  },
+    { id: "kitap", label: "Haftanın Kitabı", icon: BookOpen, color: "color-mix(in srgb, var(--success) 90%, transparent)",  bg: "color-mix(in srgb, var(--success) 8%, transparent)",  border: "color-mix(in srgb, var(--success) 25%, transparent)"  },
+    { id: "sarki", label: "Haftanın Şarkısı",icon: Music,    color: "color-mix(in srgb, var(--pink) 90%, transparent)", bg: "color-mix(in srgb, var(--pink) 8%, transparent)", border: "color-mix(in srgb, var(--pink) 25%, transparent)" },
 ];
 
 interface Nomination {
@@ -115,38 +116,20 @@ export default function YildizlarClient({ userId, username, isAdmin: _isAdmin, w
     };
 
     return (
-        <div className="aurora-bg relative min-h-screen w-full overflow-hidden">
-            <div aria-hidden className="aurora-layer" />
-            <div aria-hidden className="aurora-orb-pink" />
+        <div className="relative min-h-screen w-full overflow-hidden">
             <div aria-hidden className="fixed inset-0 dot-grid opacity-[0.3] pointer-events-none" style={{ zIndex: 0 }} />
 
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
-                <NavbarBackdrop />
-                <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
-                    <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                    <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
-                          style={{ color: "var(--violet)" }}>.</span>
-                </Link>
-                <HomeNavLinks />
-                <div className="relative z-10 flex items-center gap-2">
-                    <NotificationBell userId={userId} />
-                    <Link href="/profil"
-                          className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
-                          style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
-                        @{username}
-                    </Link>
-                </div>
-            </nav>
+            <SiteHeader userId={userId} username={username} />
 
             <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pt-24 pb-16">
 
                 {/* Başlık */}
                 <div className="flex flex-col items-center text-center pt-4 pb-8 gap-2">
                     <div className="flex items-center gap-2 mb-1">
-                        <Star size={16} style={{ color: "rgba(252,211,77,0.8)" }} />
+                        <Star size={16} style={{ color: "color-mix(in srgb, var(--warn) 80%, transparent)" }} />
                         <span className="label-caps">Haftanın Yıldızları</span>
-                        <Star size={16} style={{ color: "rgba(252,211,77,0.8)" }} />
+                        <Star size={16} style={{ color: "color-mix(in srgb, var(--warn) 80%, transparent)" }} />
                     </div>
                     <p className="text-xs" style={{ color: "var(--text-4)" }}>{formatWeek(weekStart)}</p>
                 </div>
@@ -250,7 +233,7 @@ export default function YildizlarClient({ userId, username, isAdmin: _isAdmin, w
                                                 {n.title}
                                             </p>
                                             {isFirst && (
-                                                <Star size={12} fill="currentColor" style={{ color: "rgba(252,211,77,0.8)", flexShrink: 0 }} />
+                                                <Star size={12} fill="currentColor" style={{ color: "color-mix(in srgb, var(--warn) 80%, transparent)", flexShrink: 0 }} />
                                             )}
                                         </div>
                                         {n.description && (
@@ -258,7 +241,7 @@ export default function YildizlarClient({ userId, username, isAdmin: _isAdmin, w
                                                 {n.description}
                                             </p>
                                         )}
-                                        <p className="text-[10px] mt-1" style={{ color: "var(--text-5)" }}>
+                                        <p className="text-[11px] mt-1" style={{ color: "var(--text-5)" }}>
                                             @{n.submitted_by} tarafından önerildi
                                         </p>
                                     </div>

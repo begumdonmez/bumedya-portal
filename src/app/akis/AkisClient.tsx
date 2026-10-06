@@ -10,6 +10,8 @@ import type { ElementType } from "react";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import HomeNavLinks from "@/components/HomeNavLinks";
 import NotificationBell from "@/components/NotificationBell";
+import SiteHeader from "@/components/SiteHeader";
+import PageHeader from "@/components/PageHeader";
 
 export interface Post {
     id: string;
@@ -26,10 +28,10 @@ export interface Post {
 type CategoryId = "resimler" | "yazilar" | "editler" | "diger";
 
 const CATEGORIES: { id: CategoryId; label: string; icon: ElementType; color: string; bg: string; border: string }[] = [
-    { id: "resimler", label: "Resimler", icon: ImageIcon,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.2)" },
-    { id: "yazilar",  label: "Yazılar",  icon: PenLine,      color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)"  },
-    { id: "editler",  label: "Editler",  icon: Clapperboard, color: "var(--violet-text)",    bg: "var(--violet-bg)",       border: "var(--violet-border)"  },
-    { id: "diger",    label: "Diğer",    icon: Sparkles,     color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"  },
+    { id: "resimler", label: "Resimler", icon: ImageIcon,    color: "color-mix(in srgb, var(--pink) 90%, transparent)", bg: "color-mix(in srgb, var(--pink) 8%, transparent)", border: "color-mix(in srgb, var(--pink) 20%, transparent)" },
+    { id: "yazilar",  label: "Yazılar",  icon: PenLine,      color: "color-mix(in srgb, var(--success) 90%, transparent)",  bg: "color-mix(in srgb, var(--success) 8%, transparent)",  border: "color-mix(in srgb, var(--success) 20%, transparent)"  },
+    { id: "editler",  label: "Editler",  icon: Clapperboard, color: "var(--accent-text)",    bg: "var(--accent-bg)",       border: "var(--accent-border)"  },
+    { id: "diger",    label: "Diğer",    icon: Sparkles,     color: "color-mix(in srgb, var(--info) 90%, transparent)", bg: "color-mix(in srgb, var(--info) 8%, transparent)",  border: "color-mix(in srgb, var(--info) 20%, transparent)"  },
 ];
 
 function timeAgo(dateStr: string) {
@@ -68,7 +70,7 @@ function LinkPreview({ url }: { url: string }) {
         return (
             <a href={url} target="_blank" rel="noopener noreferrer" className="block mx-4 mb-3 rounded-xl overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={url} alt="link önizleme" className="w-full h-auto object-cover rounded-xl" />
+                <img loading="lazy" decoding="async" src={url} alt="link önizleme" className="w-full h-auto object-cover rounded-xl" />
             </a>
         );
     }
@@ -76,7 +78,7 @@ function LinkPreview({ url }: { url: string }) {
         <div className="mx-4 mb-3">
             <a href={url} target="_blank" rel="noopener noreferrer"
                className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs transition-all duration-200"
-               style={{ background: "var(--violet-bg)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
+               style={{ background: "var(--accent-bg)", border: "1px solid var(--accent-border)", color: "var(--accent-text)" }}>
                 <ExternalLink size={12} />
                 <span className="truncate">{url}</span>
             </a>
@@ -88,7 +90,7 @@ function CategoryBadge({ id }: { id: string }) {
     const conf = CATEGORIES.find((c) => c.id === id);
     if (!conf) return null;
     return (
-        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium"
+        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium"
               style={{ background: conf.bg, border: `1px solid ${conf.border}`, color: conf.color }}>
             <conf.icon size={10} strokeWidth={2} /> {conf.label}
         </span>
@@ -130,7 +132,7 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
         <div className="relative mx-4 mb-3 rounded-xl overflow-hidden">
             {!imgLoaded && (
                 <div className="w-full h-48 animate-pulse rounded-xl"
-                     style={{ background: "var(--violet-bg)" }} />
+                     style={{ background: "var(--accent-bg)" }} />
             )}
             <Image
                 src={imageUrl}
@@ -154,8 +156,8 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
                     <Link href={`/profil/${post.username}`}>
                         <div className="w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold shrink-0"
                              style={{
-                                 background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(59,130,246,0.2))",
-                                 border: "1px solid var(--violet-border)",
+                                 background: "color-mix(in srgb, var(--accent) 15%, transparent)",
+                                 border: "1px solid var(--accent-border)",
                                  color: "var(--text-1)",
                              }}>
                             {post.username[0].toUpperCase()}
@@ -167,7 +169,7 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
                               style={{ color: "var(--text-1)" }}>
                             @{post.username}
                         </Link>
-                        <p className="text-[10px]" style={{ color: "var(--text-4)" }}>
+                        <p className="text-[11px]" style={{ color: "var(--text-4)" }}>
                             {timeAgo(post.created_at)}
                         </p>
                     </div>
@@ -177,16 +179,16 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
                     {isOwn && (
                         <div className="flex items-center gap-1">
                             <button onClick={() => onEdit(post)}
-                                    className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg transition-all duration-200"
-                                    style={{ color: "rgba(124,58,237,0.6)", border: "1px solid rgba(124,58,237,0.1)" }}
-                                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(124,58,237,0.08)")}
+                                    className="flex items-center gap-1 text-[11px] px-2 py-1 rounded-lg transition-all duration-200"
+                                    style={{ color: "color-mix(in srgb, var(--accent) 60%, transparent)", border: "1px solid color-mix(in srgb, var(--accent) 10%, transparent)" }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.background = "color-mix(in srgb, var(--accent) 8%, transparent)")}
                                     onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
                                 <Pencil size={10} /> Düzenle
                             </button>
                             <button onClick={handleDelete}
-                                    className="text-[10px] px-2 py-1 rounded-lg transition-all duration-200"
-                                    style={{ color: "rgba(239,68,68,0.6)", border: "1px solid rgba(239,68,68,0.1)" }}
-                                    onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(239,68,68,0.08)")}
+                                    className="text-[11px] px-2 py-1 rounded-lg transition-all duration-200"
+                                    style={{ color: "color-mix(in srgb, var(--danger) 60%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 10%, transparent)" }}
+                                    onMouseEnter={(e) => (e.currentTarget.style.background = "color-mix(in srgb, var(--danger) 8%, transparent)")}
                                     onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}>
                                 Sil
                             </button>
@@ -230,11 +232,11 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
                 <button
                     onClick={() => onLike(post.id)}
                     className="flex items-center gap-1.5 transition-all duration-200 group"
-                    style={{ color: likedByMe ? "rgba(244,114,182,0.9)" : "var(--text-4)" }}>
+                    style={{ color: likedByMe ? "color-mix(in srgb, var(--pink) 90%, transparent)" : "var(--text-4)" }}>
                     <Heart
                         size={15}
                         strokeWidth={2}
-                        fill={likedByMe ? "rgba(244,114,182,0.9)" : "none"}
+                        fill={likedByMe ? "color-mix(in srgb, var(--pink) 90%, transparent)" : "none"}
                         className="transition-transform duration-150 group-active:scale-90"
                     />
                     {likeCount > 0 && (
@@ -244,8 +246,8 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
 
                 {imageUrl && safeRefUrl && (
                     <a href={safeRefUrl} target="_blank" rel="noopener noreferrer"
-                       className="inline-flex items-center gap-1.5 text-[10px] transition-opacity hover:opacity-70"
-                       style={{ color: "var(--violet-text)" }}>
+                       className="inline-flex items-center gap-1.5 text-[11px] transition-opacity hover:opacity-70"
+                       style={{ color: "var(--accent-text)" }}>
                         <ExternalLink size={10} /> Linke git
                     </a>
                 )}
@@ -297,10 +299,10 @@ function EditModal({ post, onClose, onSave }: {
 
     return (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
-             style={{ background: "var(--overlay)", backdropFilter: "blur(8px)" }}
+             style={{ background: "var(--overlay)" }}
              onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div className="w-full max-w-lg rounded-3xl overflow-hidden"
-                 style={{ background: "rgba(20,30,58,0.92)", backdropFilter: "blur(32px)", WebkitBackdropFilter: "blur(32px)", border: "1px solid var(--border-1)" }}>
+            <div className="w-full max-w-lg rounded-2xl overflow-hidden"
+                 style={{ background: "color-mix(in srgb, var(--surface-solid) 92%, transparent)", border: "1px solid var(--border-1)" }}>
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-5 border-b"
@@ -315,7 +317,7 @@ function EditModal({ post, onClose, onSave }: {
                     {/* Metin içeriği — yazılar ve diger */}
                     {!needsFile && (
                         <div>
-                            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>İçerik</p>
+                            <p className="label-caps mb-3" style={{ color: "var(--text-4)" }}>İçerik</p>
                             <textarea
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
@@ -325,7 +327,7 @@ function EditModal({ post, onClose, onSave }: {
                                 className="w-full resize-none rounded-xl px-4 py-3 text-sm outline-none leading-relaxed"
                                 style={inputStyle}
                             />
-                            <p className="text-[10px] mt-1 text-right" style={{ color: "var(--text-4)" }}>
+                            <p className="text-[11px] mt-1 text-right" style={{ color: "var(--text-4)" }}>
                                 {content.length}/2000
                             </p>
                         </div>
@@ -334,7 +336,7 @@ function EditModal({ post, onClose, onSave }: {
                     {/* Link (resimler/editler için) */}
                     {needsFile && (
                         <div>
-                            <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "var(--text-4)" }}>
+                            <p className="label-caps mb-2" style={{ color: "var(--text-4)" }}>
                                 Link <span style={{ color: "var(--text-5)" }}>(opsiyonel)</span>
                             </p>
                             <input
@@ -349,7 +351,7 @@ function EditModal({ post, onClose, onSave }: {
 
                     {/* Açıklama */}
                     <div>
-                        <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
+                        <p className="label-caps mb-3" style={{ color: "var(--text-4)" }}>
                             Açıklama <span style={{ color: "var(--text-5)" }}>(opsiyonel)</span>
                         </p>
                         <input
@@ -365,9 +367,9 @@ function EditModal({ post, onClose, onSave }: {
                     {/* Kaydet */}
                     <button onClick={handleSave} disabled={loading}
                             className="w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-40"
-                            style={{ background: "rgba(124,58,237,0.8)", color: "#fff", border: "1px solid rgba(124,58,237,0.5)" }}>
+                            style={{ background: "color-mix(in srgb, var(--accent) 80%, transparent)", color: "#fff", border: "1px solid color-mix(in srgb, var(--accent) 50%, transparent)" }}>
                         {loading ? (
-                            <span className="inline-block w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                            <span className="inline-block w-4 h-4 rounded-full border-2 border-[color-mix(in_srgb,var(--fg)_30%,transparent)] border-t-[var(--on-accent)] animate-spin" />
                         ) : "Kaydet"}
                     </button>
                 </div>
@@ -496,10 +498,10 @@ function UploadModal({ onClose, onPost, userId, username }: {
 
     return (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
-             style={{ background: "var(--overlay)", backdropFilter: "blur(8px)" }}
+             style={{ background: "var(--overlay)" }}
              onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div className="w-full max-w-lg rounded-3xl overflow-hidden"
-                 style={{ background: "rgba(20,30,58,0.92)", backdropFilter: "blur(32px)", WebkitBackdropFilter: "blur(32px)", border: "1px solid var(--border-1)" }}>
+            <div className="w-full max-w-lg rounded-2xl overflow-hidden"
+                 style={{ background: "color-mix(in srgb, var(--surface-solid) 92%, transparent)", border: "1px solid var(--border-1)" }}>
 
                 {/* Header */}
                 <div className="flex items-center justify-between px-6 py-5 border-b"
@@ -513,7 +515,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
 
                     {/* Kategori */}
                     <div>
-                        <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>Kategori</p>
+                        <p className="label-caps mb-3" style={{ color: "var(--text-4)" }}>Kategori</p>
                         <div className="grid grid-cols-4 gap-2">
                             {CATEGORIES.map((c) => (
                                 <button key={c.id} onClick={() => { setCategory(c.id); setFile(null); setPreview(null); setLinkUrl(""); }}
@@ -533,7 +535,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                     {/* Dosya yükleme — drag & drop destekli */}
                     {needsFile && (
                         <div>
-                            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
+                            <p className="label-caps mb-3" style={{ color: "var(--text-4)" }}>
                                 {isVideo ? "Video" : "Görsel"} <span style={{ color: "var(--text-5)" }}>(maks. {limitLabel} · jpg, jpeg, png, gif, webp)</span>
                             </p>
                             {preview ? (
@@ -542,7 +544,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                                         <video src={preview} controls className="w-full rounded-xl max-h-48 object-contain" />
                                     ) : (
                                         // eslint-disable-next-line @next/next/no-img-element
-                                        <img src={preview} alt="preview" className="w-full h-48 object-cover rounded-xl" />
+                                        <img loading="lazy" decoding="async" src={preview} alt="preview" className="w-full h-48 object-cover rounded-xl" />
                                     )}
                                     <button onClick={() => { setFile(null); setPreview(null); }}
                                             className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center"
@@ -556,14 +558,14 @@ function UploadModal({ onClose, onPost, userId, username }: {
                                     onClick={() => fileRef.current?.click()}
                                     className="w-full h-32 rounded-xl flex flex-col items-center justify-center gap-2 transition-all duration-200 cursor-pointer select-none"
                                     style={{
-                                        border: `1.5px dashed ${isDragging ? "var(--violet)" : "var(--violet-border)"}`,
-                                        background: isDragging ? "rgba(124,58,237,0.12)" : "var(--violet-bg)",
-                                        color: "var(--violet-text)",
+                                        border: `1.5px dashed ${isDragging ? "var(--accent)" : "var(--accent-border)"}`,
+                                        background: isDragging ? "color-mix(in srgb, var(--accent) 12%, transparent)" : "var(--accent-bg)",
+                                        color: "var(--accent-text)",
                                         transform: isDragging ? "scale(1.01)" : "scale(1)",
                                     }}>
                                     <ImageIcon size={20} strokeWidth={1.5} style={{ opacity: 0.6 }} />
                                     <span className="text-xs">{isDragging ? "Bırak!" : "Sürükle veya tıkla"}</span>
-                                    <span className="text-[10px]" style={{ color: "var(--text-5)" }}>jpg · jpeg · png · gif · webp</span>
+                                    <span className="text-[11px]" style={{ color: "var(--text-5)" }}>jpg · jpeg · png · gif · webp</span>
                                 </div>
                             )}
                             <input ref={fileRef} type="file" accept={isVideo ? "video/*" : "image/*"} className="hidden"
@@ -574,7 +576,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
                     {/* Metin içeriği */}
                     {!needsFile && (
                         <div>
-                            <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>İçerik</p>
+                            <p className="label-caps mb-3" style={{ color: "var(--text-4)" }}>İçerik</p>
                             <textarea
                                 value={content}
                                 onChange={(e) => setContent(e.target.value)}
@@ -584,13 +586,13 @@ function UploadModal({ onClose, onPost, userId, username }: {
                                 className="w-full resize-none rounded-xl px-4 py-3 text-sm outline-none leading-relaxed"
                                 style={inputStyle}
                             />
-                            <p className="text-[10px] mt-1 text-right" style={{ color: "var(--text-4)" }}>{content.length}/2000</p>
+                            <p className="text-[11px] mt-1 text-right" style={{ color: "var(--text-4)" }}>{content.length}/2000</p>
                         </div>
                     )}
 
                     {/* YouTube / Link — tüm kategorilerde */}
                     <div>
-                        <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "var(--text-4)" }}>
+                        <p className="label-caps mb-2" style={{ color: "var(--text-4)" }}>
                             YouTube veya Link <span style={{ color: "var(--text-5)" }}>(opsiyonel)</span>
                         </p>
                         <input
@@ -613,10 +615,10 @@ function UploadModal({ onClose, onPost, userId, username }: {
                                     </div>
                                 ) : isImageUrl(linkUrl) ? (
                                     // eslint-disable-next-line @next/next/no-img-element
-                                    <img src={linkUrl} alt="link önizleme" className="w-full h-48 object-cover rounded-xl" />
+                                    <img loading="lazy" decoding="async" src={linkUrl} alt="link önizleme" className="w-full h-48 object-cover rounded-xl" />
                                 ) : linkUrl.trim() ? (
                                     <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs"
-                                         style={{ background: "var(--violet-bg)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
+                                         style={{ background: "var(--accent-bg)", border: "1px solid var(--accent-border)", color: "var(--accent-text)" }}>
                                         <ExternalLink size={12} />
                                         <span className="truncate">{linkUrl}</span>
                                     </div>
@@ -627,7 +629,7 @@ function UploadModal({ onClose, onPost, userId, username }: {
 
                     {/* Açıklama */}
                     <div>
-                        <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
+                        <p className="label-caps mb-3" style={{ color: "var(--text-4)" }}>
                             Açıklama <span style={{ color: "var(--text-5)" }}>(opsiyonel)</span>
                         </p>
                         <input
@@ -643,9 +645,9 @@ function UploadModal({ onClose, onPost, userId, username }: {
                     {/* Gönder */}
                     <button onClick={handleSubmit} disabled={loading}
                             className="w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-40"
-                            style={{ background: "rgba(124,58,237,0.8)", color: "#fff", border: "1px solid rgba(124,58,237,0.5)" }}>
+                            style={{ background: "color-mix(in srgb, var(--accent) 80%, transparent)", color: "#fff", border: "1px solid color-mix(in srgb, var(--accent) 50%, transparent)" }}>
                         {loading ? (
-                            <span className="inline-block w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                            <span className="inline-block w-4 h-4 rounded-full border-2 border-[color-mix(in_srgb,var(--fg)_30%,transparent)] border-t-[var(--on-accent)] animate-spin" />
                         ) : "Yayınla"}
                     </button>
                 </div>
@@ -800,45 +802,32 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
     }, [userId]);
 
     return (
-        <div className="aurora-bg relative min-h-screen flex flex-col">
-            <div aria-hidden className="aurora-layer" />
-            <div aria-hidden className="aurora-orb-pink" />
+        <div className="relative min-h-screen flex flex-col">
 
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
-                <NavbarBackdrop />
-                <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
-                    <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                    <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
-                          style={{ color: "var(--violet)" }}>.</span>
-                </Link>
-                <HomeNavLinks />
-                <div className="relative z-10 flex items-center gap-2">
-                    <button onClick={() => setShowModal(true)}
-                            className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
-                            style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
-                        <span className="text-sm leading-none">+</span> Paylaş
-                    </button>
-                    <NotificationBell userId={userId} />
-                    <Link href="/profil"
-                          className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
-                          style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
-                        @{username}
-                    </Link>
-                </div>
-            </nav>
+            <SiteHeader userId={userId} username={username} />
 
             {/* Feed */}
-            <div className="relative z-10 max-w-xl mx-auto w-full px-4 pt-24 pb-8 flex flex-col gap-4">
+            <div className="relative z-10 max-w-2xl mx-auto w-full px-4 sm:px-8 pt-24 sm:pt-28 pb-24 flex flex-col gap-4">
+                <PageHeader eyebrow="Topluluk" title="Akış"
+                            description="Kısa notlar, çizimler, yarım kalmış fikirler. Mükemmel olması gerekmiyor."
+                            className="!mb-4" />
+
+                {/* Hızlı paylaşım tetikleyici */}
+                <button type="button" onClick={() => setShowModal(true)}
+                        className="card flex items-center gap-3 p-3 pl-4 text-left transition-colors hover:border-[var(--accent-border)]">
+                    <span className="w-9 h-9 shrink-0 rounded-full flex items-center justify-center font-display text-lg"
+                          style={{ background: "var(--accent-2)", color: "var(--fg)" }}>
+                        {username.charAt(0).toUpperCase()}
+                    </span>
+                    <span className="flex-1 text-[15px]" style={{ color: "var(--text-4)" }}>Bugün ne ürettin, @{username}?</span>
+                    <span className="btn-primary !py-2 !px-4">Paylaş</span>
+                </button>
+
                 {posts.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-32 gap-4">
-                        <Sparkles size={36} className="opacity-10" />
-                        <p className="text-sm" style={{ color: "var(--text-4)" }}>Henüz paylaşım yok.</p>
-                        <button onClick={() => setShowModal(true)}
-                                className="mt-2 px-5 py-2.5 rounded-xl text-xs font-medium transition-all duration-200"
-                                style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
-                            İlk paylaşımı yap
-                        </button>
+                        <p className="font-display text-2xl italic" style={{ color: "var(--text-3)" }}>Sayfa henüz boş.</p>
+                        <button onClick={() => setShowModal(true)} className="btn-primary">İlk paylaşımı sen yap</button>
                     </div>
                 ) : (
                     <>
@@ -853,7 +842,7 @@ export default function AkisClient({ userId, username, badges, initialPosts, ini
                         })}
                         <div ref={sentinelRef} className="flex justify-center py-6">
                             {loadingMore && (
-                                <span className="w-5 h-5 rounded-full border-2 border-white/10 border-t-purple-500 animate-spin" />
+                                <span className="w-5 h-5 rounded-full border-2 border-[color-mix(in_srgb,var(--fg)_10%,transparent)] border-t-[var(--accent)] animate-spin" />
                             )}
                             {!hasMore && posts.length > 0 && (
                                 <p className="text-xs" style={{ color: "var(--text-5)" }}>Hepsi bu kadar.</p>

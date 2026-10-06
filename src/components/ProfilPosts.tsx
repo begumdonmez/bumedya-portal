@@ -17,10 +17,10 @@ const TABS = [
 type TabId = typeof TABS[number]["id"];
 
 const CATEGORY_COLORS: Record<string, { color: string; bg: string; border: string; icon: ElementType }> = {
-    resimler: { icon: ImageIcon,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.2)" },
-    yazilar:  { icon: PenLine,      color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)"  },
-    editler:  { icon: Clapperboard, color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.2)"  },
-    diger:    { icon: Sparkles,     color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"  },
+    resimler: { icon: ImageIcon,    color: "color-mix(in srgb, var(--pink) 90%, transparent)", bg: "color-mix(in srgb, var(--pink) 8%, transparent)", border: "color-mix(in srgb, var(--pink) 20%, transparent)" },
+    yazilar:  { icon: PenLine,      color: "color-mix(in srgb, var(--success) 90%, transparent)",  bg: "color-mix(in srgb, var(--success) 8%, transparent)",  border: "color-mix(in srgb, var(--success) 20%, transparent)"  },
+    editler:  { icon: Clapperboard, color: "color-mix(in srgb, var(--accent) 90%, transparent)", bg: "color-mix(in srgb, var(--accent) 8%, transparent)",  border: "color-mix(in srgb, var(--accent) 20%, transparent)"  },
+    diger:    { icon: Sparkles,     color: "color-mix(in srgb, var(--info) 90%, transparent)", bg: "color-mix(in srgb, var(--info) 8%, transparent)",  border: "color-mix(in srgb, var(--info) 20%, transparent)"  },
 };
 
 function timeAgo(dateStr: string) {
@@ -50,14 +50,14 @@ export default function ProfilPosts({ posts, supabaseUrl }: { posts: Post[]; sup
                         <button key={t.id} onClick={() => setTab(t.id)}
                                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium whitespace-nowrap transition-all duration-200"
                                 style={{
-                                    background: isActive ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.03)",
-                                    border: `1px solid ${isActive ? "rgba(124,58,237,0.35)" : "rgba(255,255,255,0.06)"}`,
-                                    color: isActive ? "rgba(167,139,250,0.9)" : "rgba(224,242,254,0.35)",
+                                    background: isActive ? "color-mix(in srgb, var(--accent) 15%, transparent)" : "color-mix(in srgb, var(--fg) 3%, transparent)",
+                                    border: `1px solid ${isActive ? "color-mix(in srgb, var(--accent) 35%, transparent)" : "color-mix(in srgb, var(--fg) 6%, transparent)"}`,
+                                    color: isActive ? "color-mix(in srgb, var(--accent) 90%, transparent)" : "color-mix(in srgb, var(--fg) 35%, transparent)",
                                 }}>
                             {t.label}
                             {count > 0 && (
-                                <span className="text-[10px] px-1.5 py-0.5 rounded-full"
-                                      style={{ background: isActive ? "rgba(124,58,237,0.25)" : "rgba(255,255,255,0.05)", color: isActive ? "rgba(167,139,250,0.9)" : "rgba(224,242,254,0.25)" }}>
+                                <span className="text-[11px] px-1.5 py-0.5 rounded-full"
+                                      style={{ background: isActive ? "color-mix(in srgb, var(--accent) 25%, transparent)" : "color-mix(in srgb, var(--fg) 5%, transparent)", color: isActive ? "color-mix(in srgb, var(--accent) 90%, transparent)" : "color-mix(in srgb, var(--fg) 25%, transparent)" }}>
                                     {count}
                                 </span>
                             )}
@@ -70,7 +70,7 @@ export default function ProfilPosts({ posts, supabaseUrl }: { posts: Post[]; sup
             {filtered.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-12 gap-2">
                     <Sparkles size={24} className="opacity-10" />
-                    <p className="text-xs" style={{ color: "rgba(224,242,254,0.2)" }}>Henüz paylaşım yok.</p>
+                    <p className="text-xs" style={{ color: "color-mix(in srgb, var(--fg) 20%, transparent)" }}>Henüz paylaşım yok.</p>
                 </div>
             ) : (
                 <div className="flex flex-col gap-3">
@@ -86,11 +86,11 @@ export default function ProfilPosts({ posts, supabaseUrl }: { posts: Post[]; sup
 
                                 {/* Kategori + tarih */}
                                 <div className="flex items-center justify-between px-4 pt-3 pb-2">
-                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium"
+                                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium"
                                           style={{ background: conf.bg, border: `1px solid ${conf.border}`, color: conf.color }}>
                                         <conf.icon size={10} strokeWidth={2} /> {post.category.charAt(0).toUpperCase() + post.category.slice(1)}
                                     </span>
-                                    <span className="text-[10px]" style={{ color: "rgba(224,242,254,0.2)" }}>
+                                    <span className="text-[11px]" style={{ color: "color-mix(in srgb, var(--fg) 20%, transparent)" }}>
                                         {timeAgo(post.created_at)}
                                     </span>
                                 </div>
@@ -100,7 +100,7 @@ export default function ProfilPosts({ posts, supabaseUrl }: { posts: Post[]; sup
                                     <div className="relative mx-4 mb-3 rounded-xl overflow-hidden">
                                         {!loaded && (
                                             <div className="w-full h-40 animate-pulse rounded-xl"
-                                                 style={{ background: "rgba(124,58,237,0.08)" }} />
+                                                 style={{ background: "color-mix(in srgb, var(--accent) 8%, transparent)" }} />
                                         )}
                                         <Image src={imageUrl} alt={post.description ?? "post"} width={600} height={400}
                                                className="w-full h-auto object-cover rounded-xl"
@@ -112,14 +112,14 @@ export default function ProfilPosts({ posts, supabaseUrl }: { posts: Post[]; sup
 
                                 {/* Yazı */}
                                 {post.content && (
-                                    <p className="px-4 pb-3 text-sm leading-relaxed" style={{ color: "rgba(224,242,254,0.8)" }}>
+                                    <p className="px-4 pb-3 text-sm leading-relaxed" style={{ color: "color-mix(in srgb, var(--fg) 80%, transparent)" }}>
                                         {post.content}
                                     </p>
                                 )}
 
                                 {/* Açıklama */}
                                 {post.description && (
-                                    <p className="px-4 pb-4 text-xs" style={{ color: "rgba(224,242,254,0.35)" }}>
+                                    <p className="px-4 pb-4 text-xs" style={{ color: "color-mix(in srgb, var(--fg) 35%, transparent)" }}>
                                         {post.description}
                                     </p>
                                 )}

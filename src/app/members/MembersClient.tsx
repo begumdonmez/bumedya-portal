@@ -15,12 +15,12 @@ interface Profile {
 }
 
 const BADGE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; icon: ElementType }> = {
-    admin:    { label: "Admin",   icon: Zap,        color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.08)",   border: "rgba(239,68,68,0.22)"   },
-    editor:   { label: "Editör",  icon: Shield,     color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.22)"  },
-    artist:   { label: "Çizer",   icon: Palette,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.22)" },
-    writer:   { label: "Yazar",   icon: PenLine,    color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.18)"  },
-    verified: { label: "Onaylı",  icon: BadgeCheck, color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.18)"  },
-    founder:  { label: "Kurucu",  icon: Sparkles,   color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.18)"  },
+    admin:    { label: "Admin",   icon: Zap,        color: "color-mix(in srgb, var(--danger) 90%, transparent)",   bg: "color-mix(in srgb, var(--danger) 8%, transparent)",   border: "color-mix(in srgb, var(--danger) 22%, transparent)"   },
+    editor:   { label: "Editör",  icon: Shield,     color: "color-mix(in srgb, var(--warn) 90%, transparent)",  bg: "color-mix(in srgb, var(--warn) 8%, transparent)",  border: "color-mix(in srgb, var(--warn) 22%, transparent)"  },
+    artist:   { label: "Çizer",   icon: Palette,    color: "color-mix(in srgb, var(--pink) 90%, transparent)", bg: "color-mix(in srgb, var(--pink) 8%, transparent)", border: "color-mix(in srgb, var(--pink) 22%, transparent)" },
+    writer:   { label: "Yazar",   icon: PenLine,    color: "color-mix(in srgb, var(--success) 90%, transparent)",  bg: "color-mix(in srgb, var(--success) 8%, transparent)",  border: "color-mix(in srgb, var(--success) 18%, transparent)"  },
+    verified: { label: "Onaylı",  icon: BadgeCheck, color: "color-mix(in srgb, var(--info) 90%, transparent)", bg: "color-mix(in srgb, var(--info) 8%, transparent)",  border: "color-mix(in srgb, var(--info) 18%, transparent)"  },
+    founder:  { label: "Kurucu",  icon: Sparkles,   color: "color-mix(in srgb, var(--warn) 90%, transparent)",  bg: "color-mix(in srgb, var(--warn) 6%, transparent)",  border: "color-mix(in srgb, var(--warn) 18%, transparent)"  },
 };
 
 export default function UyelerClient({ profiles }: { profiles: Profile[] }) {
@@ -38,15 +38,15 @@ export default function UyelerClient({ profiles }: { profiles: Profile[] }) {
         <div className="relative z-10 max-w-4xl mx-auto w-full px-4 sm:px-6 py-10 flex flex-col gap-6">
 
             <div>
-                <h1 className="text-2xl font-bold tracking-tight mb-1" style={{ color: "#F0F9FF" }}>Üyeler</h1>
-                <p className="text-sm" style={{ color: "rgba(240,249,255,0.35)" }}>{profiles.length} kişi bu topluluğa katıldı</p>
+                <h1 className="text-2xl font-bold tracking-tight mb-1" style={{ color: "var(--text-1)" }}>Üyeler</h1>
+                <p className="text-sm" style={{ color: "color-mix(in srgb, var(--fg) 35%, transparent)" }}>{profiles.length} kişi bu topluluğa katıldı</p>
             </div>
 
             {/* Arama + Filtre */}
             <div className="flex flex-col sm:flex-row gap-3">
                 <div className="flex-1 relative">
                     <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                         style={{ color: "rgba(240,249,255,0.22)" }} viewBox="0 0 16 16" fill="none">
+                         style={{ color: "color-mix(in srgb, var(--fg) 22%, transparent)" }} viewBox="0 0 16 16" fill="none">
                         <circle cx="7" cy="7" r="4.5" stroke="currentColor" strokeWidth="1.2"/>
                         <path d="M10.5 10.5L13 13" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
                     </svg>
@@ -63,9 +63,9 @@ export default function UyelerClient({ profiles }: { profiles: Profile[] }) {
                         <button key={f.id} onClick={() => setFilter(f.id)}
                                 className="px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
                                 style={{
-                                    background: filter === f.id ? "rgba(124,58,237,0.14)" : "rgba(255,255,255,0.03)",
-                                    border: `1px solid ${filter === f.id ? "rgba(124,58,237,0.35)" : "rgba(255,255,255,0.08)"}`,
-                                    color: filter === f.id ? "rgba(167,139,250,0.95)" : "rgba(240,249,255,0.35)",
+                                    background: filter === f.id ? "color-mix(in srgb, var(--accent) 14%, transparent)" : "color-mix(in srgb, var(--fg) 3%, transparent)",
+                                    border: `1px solid ${filter === f.id ? "color-mix(in srgb, var(--accent) 35%, transparent)" : "color-mix(in srgb, var(--fg) 8%, transparent)"}`,
+                                    color: filter === f.id ? "color-mix(in srgb, var(--accent) 95%, transparent)" : "color-mix(in srgb, var(--fg) 35%, transparent)",
                                 }}>
                             {f.label}
                         </button>
@@ -82,37 +82,37 @@ export default function UyelerClient({ profiles }: { profiles: Profile[] }) {
                         return (
                             <Link key={profile.id} href={`/profil/${profile.username}`}
                                   className="card flex items-start gap-4 p-4 transition-all duration-200"
-                                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(124,58,237,0.28)")}
-                                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)")}>
+                                  onMouseEnter={(e) => (e.currentTarget.style.borderColor = "color-mix(in srgb, var(--accent) 28%, transparent)")}
+                                  onMouseLeave={(e) => (e.currentTarget.style.borderColor = "color-mix(in srgb, var(--fg) 8%, transparent)")}>
 
                                 <div className="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm shrink-0"
                                      style={{
                                          background: isCreator
-                                             ? "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(167,139,250,0.18))"
-                                             : "linear-gradient(135deg, rgba(37,99,235,0.2), rgba(147,197,253,0.12))",
-                                         border: `1px solid ${isCreator ? "rgba(124,58,237,0.25)" : "rgba(59,130,246,0.2)"}`,
-                                         color: "#F0F9FF",
+                                             ? "linear-gradient(135deg, color-mix(in srgb, var(--accent) 30%, transparent), color-mix(in srgb, var(--accent) 18%, transparent))"
+                                             : "linear-gradient(135deg, color-mix(in srgb, var(--info) 20%, transparent), color-mix(in srgb, var(--info) 12%, transparent))",
+                                         border: `1px solid ${isCreator ? "color-mix(in srgb, var(--accent) 25%, transparent)" : "color-mix(in srgb, var(--info) 20%, transparent)"}`,
+                                         color: "var(--text-1)",
                                      }}>
                                     {profile.username[0].toUpperCase()}
                                 </div>
 
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 flex-wrap mb-1">
-                                        <span className="text-sm font-semibold" style={{ color: "#F0F9FF" }}>
+                                        <span className="text-sm font-semibold" style={{ color: "var(--text-1)" }}>
                                             @{profile.username}
                                         </span>
                                         <span className="chip"
                                               style={{
-                                                  background: isCreator ? "rgba(124,58,237,0.1)" : "rgba(37,99,235,0.08)",
-                                                  border: `1px solid ${isCreator ? "rgba(124,58,237,0.25)" : "rgba(59,130,246,0.18)"}`,
-                                                  color: isCreator ? "rgba(167,139,250,0.9)" : "rgba(147,197,253,0.8)",
+                                                  background: isCreator ? "color-mix(in srgb, var(--accent) 10%, transparent)" : "color-mix(in srgb, var(--info) 8%, transparent)",
+                                                  border: `1px solid ${isCreator ? "color-mix(in srgb, var(--accent) 25%, transparent)" : "color-mix(in srgb, var(--info) 18%, transparent)"}`,
+                                                  color: isCreator ? "color-mix(in srgb, var(--accent) 90%, transparent)" : "color-mix(in srgb, var(--info) 80%, transparent)",
                                               }}>
                                             {isCreator ? "Üretici" : "İzleyici"}
                                         </span>
                                     </div>
 
                                     {profile.bio && (
-                                        <p className="text-xs truncate" style={{ color: "rgba(240,249,255,0.38)" }}>{profile.bio}</p>
+                                        <p className="text-xs truncate" style={{ color: "color-mix(in srgb, var(--fg) 38%, transparent)" }}>{profile.bio}</p>
                                     )}
 
                                     {profile.badges.filter(b => b !== "authorized").length > 0 && (
@@ -131,7 +131,7 @@ export default function UyelerClient({ profiles }: { profiles: Profile[] }) {
                                         </div>
                                     )}
 
-                                    <p className="text-[10px] mt-2" style={{ color: "rgba(240,249,255,0.2)" }}>{joinDate}</p>
+                                    <p className="text-[11px] mt-2" style={{ color: "color-mix(in srgb, var(--fg) 20%, transparent)" }}>{joinDate}</p>
                                 </div>
                             </Link>
                         );
@@ -140,7 +140,7 @@ export default function UyelerClient({ profiles }: { profiles: Profile[] }) {
             ) : (
                 <div className="flex flex-col items-center justify-center py-20 gap-3">
                     <span className="text-3xl" style={{ opacity: 0.15 }}>🔍</span>
-                    <p className="text-sm" style={{ color: "rgba(240,249,255,0.25)" }}>Üye bulunamadı.</p>
+                    <p className="text-sm" style={{ color: "color-mix(in srgb, var(--fg) 25%, transparent)" }}>Üye bulunamadı.</p>
                 </div>
             )}
         </div>

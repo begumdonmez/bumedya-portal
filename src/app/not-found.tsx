@@ -2,14 +2,12 @@ import Link from "next/link";
 
 export default function NotFound() {
     return (
-        <div className="aurora-bg relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
-            <div aria-hidden className="aurora-layer" />
-            <div aria-hidden className="aurora-orb-pink" />
+        <div className="relative min-h-screen flex flex-col items-center justify-center px-6 overflow-hidden">
 
             <div className="relative z-10 flex flex-col items-center text-center gap-6 max-w-sm">
 
                 <div className="text-[120px] font-black leading-none select-none"
-                     style={{ color: "transparent", WebkitTextStroke: "2px rgba(124,58,237,0.4)" }}>
+                     style={{ color: "transparent", WebkitTextStroke: "2px color-mix(in srgb, var(--accent) 40%, transparent)" }}>
                     404
                 </div>
 
@@ -26,7 +24,7 @@ export default function NotFound() {
                 <div className="flex items-center gap-3 mt-2">
                     <Link href="/home"
                           className="px-5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200"
-                          style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
+                          style={{ background: "var(--accent-bg-md)", border: "1px solid var(--accent-border)", color: "var(--accent-text)" }}>
                         Ana Sayfaya Dön
                     </Link>
                     <Link href="/akis"
@@ -37,7 +35,7 @@ export default function NotFound() {
                 </div>
 
                 <p className="text-[11px]" style={{ color: "var(--text-5)" }}>
-                    bumedya<span style={{ color: "var(--violet)" }}>.</span> · sayfa bulunamadı
+                    bumedya<span style={{ color: "var(--accent)" }}>.</span> · sayfa bulunamadı
                 </p>
             </div>
         </div>

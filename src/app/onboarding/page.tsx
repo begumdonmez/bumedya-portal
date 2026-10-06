@@ -18,9 +18,9 @@ const ROLES = [
             </svg>
         ),
         perks: ["Galeriyi keşfet", "Etkinliklere katıl", "Yorum yap", "Favorile"],
-        color: "rgba(59,130,246,0.8)",
-        glow: "rgba(59,130,246,0.15)",
-        border: "rgba(59,130,246,0.3)",
+        color: "color-mix(in srgb, var(--info) 80%, transparent)",
+        glow: "color-mix(in srgb, var(--info) 15%, transparent)",
+        border: "color-mix(in srgb, var(--info) 30%, transparent)",
     },
     {
         id: "creator",
@@ -35,9 +35,9 @@ const ROLES = [
             </svg>
         ),
         perks: ["Çizim paylaş", "Yazı yayınla", "Stüdyo erişimi", "İstatistikler"],
-        color: "rgba(124,58,237,0.9)",
-        glow: "rgba(124,58,237,0.18)",
-        border: "rgba(124,58,237,0.4)",
+        color: "color-mix(in srgb, var(--accent) 90%, transparent)",
+        glow: "color-mix(in srgb, var(--accent) 18%, transparent)",
+        border: "color-mix(in srgb, var(--accent) 40%, transparent)",
     },
 ] as const;
 
@@ -99,10 +99,8 @@ export default function OnboardingPage() {
 
     return (
         <div
-            className="aurora-bg relative min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden"
+            className="relative min-h-screen flex flex-col items-center justify-center p-6 overflow-hidden"
         >
-            <div aria-hidden className="aurora-layer" />
-            <div aria-hidden className="aurora-orb-pink" />
 
             <div className="relative z-10 w-full max-w-2xl flex flex-col items-center" style={{ animation: "float-up 0.6s ease-out both" }}>
 
@@ -113,7 +111,7 @@ export default function OnboardingPage() {
                              style={{
                                  width: step === 2 ? "28px" : "8px",
                                  height: "8px",
-                                 background: step === 2 ? "#7C3AED" : step < 2 ? "rgba(124,58,237,0.4)" : "rgba(255,255,255,0.1)",
+                                 background: step === 2 ? "var(--accent)" : step < 2 ? "color-mix(in srgb, var(--accent) 40%, transparent)" : "color-mix(in srgb, var(--fg) 10%, transparent)",
                              }} />
                     ))}
                 </div>
@@ -121,16 +119,16 @@ export default function OnboardingPage() {
                 {/* Başlık */}
                 <div className="text-center mb-10">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-5"
-                         style={{ background: "rgba(124,58,237,0.1)", border: "1px solid rgba(124,58,237,0.2)" }}>
-                        <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
-                        <span className="text-xs tracking-widest uppercase" style={{ color: "rgba(167,139,250,0.8)" }}>
+                         style={{ background: "color-mix(in srgb, var(--accent) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--accent) 20%, transparent)" }}>
+                        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent)] animate-pulse" />
+                        <span className="text-xs tracking-widest uppercase" style={{ color: "color-mix(in srgb, var(--accent) 80%, transparent)" }}>
               Son bir adım
             </span>
                     </div>
-                    <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3" style={{ color: "#E0F2FE" }}>
+                    <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight mb-3" style={{ color: "var(--text-1)" }}>
                         Nasıl olmak istersin?
                     </h1>
-                    <p className="text-base" style={{ color: "rgba(224,242,254,0.45)" }}>
+                    <p className="text-base" style={{ color: "color-mix(in srgb, var(--fg) 45%, transparent)" }}>
                         Rolünü seçerek başla. İstersen sonradan değiştirebilirsin.
                     </p>
                 </div>
@@ -143,19 +141,19 @@ export default function OnboardingPage() {
                             <button
                                 key={role.id}
                                 onClick={() => setSelected(role.id)}
-                                className="relative text-left rounded-3xl p-6 transition-all duration-300 overflow-hidden group"
+                                className="relative text-left rounded-2xl p-6 transition-all duration-300 overflow-hidden group"
                                 style={{
-                                    background: isSelected ? role.glow : "rgba(255,255,255,0.03)",
-                                    border: `1px solid ${isSelected ? role.border : "rgba(255,255,255,0.07)"}`,
-                                    boxShadow: isSelected ? `0 0 40px ${role.glow}, inset 0 1px 0 rgba(255,255,255,0.08)` : "none",
+                                    background: isSelected ? role.glow : "color-mix(in srgb, var(--fg) 3%, transparent)",
+                                    border: `1px solid ${isSelected ? role.border : "color-mix(in srgb, var(--fg) 7%, transparent)"}`,
+                                    boxShadow: isSelected ? `0 0 40px ${role.glow}, inset 0 1px 0 color-mix(in srgb, var(--fg) 8%, transparent)` : "none",
                                     transform: isSelected ? "scale(1.02)" : "scale(1)",
                                 }}
                             >
                                 {/* Seçili işareti */}
                                 <div className="absolute top-4 right-4 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-300"
                                      style={{
-                                         background: isSelected ? role.color : "rgba(255,255,255,0.06)",
-                                         border: `1px solid ${isSelected ? "transparent" : "rgba(255,255,255,0.1)"}`,
+                                         background: isSelected ? role.color : "color-mix(in srgb, var(--fg) 6%, transparent)",
+                                         border: `1px solid ${isSelected ? "transparent" : "color-mix(in srgb, var(--fg) 10%, transparent)"}`,
                                      }}>
                                     {isSelected && (
                                         <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
@@ -167,9 +165,9 @@ export default function OnboardingPage() {
                                 {/* İkon */}
                                 <div className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-300"
                                      style={{
-                                         background: isSelected ? role.glow : "rgba(255,255,255,0.05)",
-                                         color: isSelected ? role.color : "rgba(224,242,254,0.4)",
-                                         border: `1px solid ${isSelected ? role.border : "rgba(255,255,255,0.06)"}`,
+                                         background: isSelected ? role.glow : "color-mix(in srgb, var(--fg) 5%, transparent)",
+                                         color: isSelected ? role.color : "color-mix(in srgb, var(--fg) 40%, transparent)",
+                                         border: `1px solid ${isSelected ? role.border : "color-mix(in srgb, var(--fg) 6%, transparent)"}`,
                                      }}>
                                     {role.icon}
                                 </div>
@@ -178,15 +176,15 @@ export default function OnboardingPage() {
                                 <div className="mb-3">
                                     <div className="flex items-baseline gap-2">
                                         <h2 className="text-lg font-bold tracking-tight transition-colors duration-300"
-                                            style={{ color: isSelected ? "#E0F2FE" : "rgba(224,242,254,0.7)" }}>
+                                            style={{ color: isSelected ? "var(--text-1)" : "color-mix(in srgb, var(--fg) 70%, transparent)" }}>
                                             {role.title}
                                         </h2>
-                                        <span className="text-[10px] tracking-widest uppercase font-medium"
-                                              style={{ color: isSelected ? role.color : "rgba(224,242,254,0.25)" }}>
+                                        <span className="label-caps font-medium"
+                                              style={{ color: isSelected ? role.color : "color-mix(in srgb, var(--fg) 25%, transparent)" }}>
                       {role.subtitle}
                     </span>
                                     </div>
-                                    <p className="text-sm mt-1.5 leading-relaxed" style={{ color: "rgba(224,242,254,0.45)" }}>
+                                    <p className="text-sm mt-1.5 leading-relaxed" style={{ color: "color-mix(in srgb, var(--fg) 45%, transparent)" }}>
                                         {role.description}
                                     </p>
                                 </div>
@@ -196,9 +194,9 @@ export default function OnboardingPage() {
                                     {role.perks.map((perk) => (
                                         <div key={perk} className="flex items-center gap-2">
                                             <div className="w-1 h-1 rounded-full shrink-0"
-                                                 style={{ background: isSelected ? role.color : "rgba(255,255,255,0.2)" }} />
+                                                 style={{ background: isSelected ? role.color : "color-mix(in srgb, var(--fg) 20%, transparent)" }} />
                                             <span className="text-xs"
-                                                  style={{ color: isSelected ? "rgba(224,242,254,0.65)" : "rgba(224,242,254,0.3)" }}>
+                                                  style={{ color: isSelected ? "color-mix(in srgb, var(--fg) 65%, transparent)" : "color-mix(in srgb, var(--fg) 30%, transparent)" }}>
                         {perk}
                       </span>
                                         </div>
@@ -206,8 +204,8 @@ export default function OnboardingPage() {
                                 </div>
 
                                 {!isSelected && (
-                                    <div className="absolute inset-0 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                                         style={{ background: "rgba(255,255,255,0.02)" }} />
+                                    <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                                         style={{ background: "color-mix(in srgb, var(--fg) 2%, transparent)" }} />
                                 )}
                             </button>
                         );
@@ -218,12 +216,7 @@ export default function OnboardingPage() {
                 <button
                     onClick={handleContinue}
                     disabled={!selected || loading}
-                    className="relative w-full max-w-xs py-4 rounded-2xl text-sm font-bold text-white transition-all duration-300 overflow-hidden disabled:cursor-not-allowed"
-                    style={{
-                        background: !selected ? "rgba(124,58,237,0.2)" : loading ? "rgba(124,58,237,0.5)" : "#7C3AED",
-                        boxShadow: selected && !loading ? "0 8px 24px rgba(124,58,237,0.4), 0 0 0 1px rgba(124,58,237,0.3)" : "none",
-                        color: !selected ? "rgba(255,255,255,0.3)" : "white",
-                    }}
+                    className="btn-primary relative w-full max-w-xs"
                 >
                     {selected && !loading && (
                         <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full hover:translate-x-full transition-transform duration-700" />
@@ -231,7 +224,7 @@ export default function OnboardingPage() {
                     <span className="relative z-10 flex items-center justify-center gap-2">
             {loading ? (
                 <>
-                    <span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                    <span className="w-4 h-4 rounded-full border-2 border-[color-mix(in_srgb,var(--fg)_30%,transparent)] border-t-[var(--on-accent)] animate-spin" />
                     Kaydediliyor...
                 </>
             ) : !selected ? (
@@ -247,7 +240,7 @@ export default function OnboardingPage() {
           </span>
                 </button>
 
-                <p className="mt-4 text-xs" style={{ color: "rgba(224,242,254,0.2)" }}>
+                <p className="mt-4 text-xs" style={{ color: "color-mix(in srgb, var(--fg) 20%, transparent)" }}>
                     Profil ayarlarından istediğin zaman değiştirebilirsin.
                 </p>
             </div>

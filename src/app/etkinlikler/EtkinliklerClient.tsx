@@ -10,6 +10,7 @@ import type { EventItem } from "@/components/EventMap";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import HomeNavLinks from "@/components/HomeNavLinks";
 import NotificationBell from "@/components/NotificationBell";
+import SiteHeader from "@/components/SiteHeader";
 
 async function geocodeAddress(address: string): Promise<{ lat: number; lng: number } | null> {
     try {
@@ -141,37 +142,22 @@ export default function EtkinliklerClient({
     const canDelete = (ev: EventItem) => isAdmin || ev.user_id === userId;
 
     return (
-        <div className="aurora-bg relative min-h-screen flex flex-col">
-            <div aria-hidden className="aurora-layer" />
-            <div aria-hidden className="aurora-orb-pink" />
+        <div className="relative min-h-screen flex flex-col">
 
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
-                <NavbarBackdrop />
-                <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
-                    <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                    <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
-                          style={{ color: "var(--violet)" }}>.</span>
-                </Link>
-                <HomeNavLinks />
-                <div className="relative z-10 flex items-center gap-2">
+            <SiteHeader userId={userId} username={username}
+                actions={<>
                     <button onClick={() => setShowForm(true)}
-                            className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
-                            style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
+                            className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200"
+                            style={{ background: "var(--accent-bg-md)", border: "1px solid var(--accent-border)", color: "var(--accent-text)" }}>
                         <Plus size={13} /> Etkinlik Ekle
                     </button>
-                    <NotificationBell userId={userId} />
-                    <Link href="/profil"
-                          className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
-                          style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
-                        @{username}
-                    </Link>
-                </div>
-            </nav>
+                </>}
+            />
 
             <div className="relative z-10 max-w-5xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 flex flex-col gap-6">
                 {/* Harita */}
-                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--violet-bg-md)" }}>
+                <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--accent-bg-md)" }}>
                     <EventMapClient
                         events={events}
                         height={260}
@@ -184,14 +170,14 @@ export default function EtkinliklerClient({
                 {/* Seçili etkinlik detayı */}
                 {selected && (
                     <div className="rounded-2xl p-5 flex flex-col gap-3 transition-all"
-                         style={{ background: "var(--violet-bg)", border: "1px solid var(--violet-border)" }}>
+                         style={{ background: "var(--accent-bg)", border: "1px solid var(--accent-border)" }}>
                         <div className="flex items-start justify-between gap-4">
                             <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-1 flex-wrap">
                                     <p className="text-base font-bold" style={{ color: "var(--text-1)" }}>{selected.title}</p>
                                     {selected.approved && (
-                                        <span className="flex items-center gap-1 text-[10px] px-2 py-0.5 rounded-full"
-                                              style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.3)", color: "rgba(52,211,153,0.9)" }}>
+                                        <span className="flex items-center gap-1 text-[11px] px-2 py-0.5 rounded-full"
+                                              style={{ background: "color-mix(in srgb, var(--success) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--success) 30%, transparent)", color: "color-mix(in srgb, var(--success) 90%, transparent)" }}>
                                             <CheckCircle size={10} /> Onaylı
                                         </span>
                                     )}
@@ -201,8 +187,8 @@ export default function EtkinliklerClient({
                                     <p className="text-sm" style={{ color: "var(--text-3)" }}>{selected.address}</p>
                                 </div>
                                 <div className="flex items-center gap-1.5">
-                                    <CalendarDays size={12} style={{ color: "var(--violet-text)", flexShrink: 0 }} />
-                                    <p className="text-sm" style={{ color: "var(--violet-text)" }}>
+                                    <CalendarDays size={12} style={{ color: "var(--accent-text)", flexShrink: 0 }} />
+                                    <p className="text-sm" style={{ color: "var(--accent-text)" }}>
                                         {formatDate(selected.event_date)}
                                         {selected.event_time ? ` · ${selected.event_time.slice(0, 5)}` : ""}
                                     </p>
@@ -220,7 +206,7 @@ export default function EtkinliklerClient({
                             {selected.ref_url && (
                                 <a href={selected.ref_url} target="_blank" rel="noopener noreferrer"
                                    className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl transition-all duration-200"
-                                   style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
+                                   style={{ background: "var(--accent-bg-md)", border: "1px solid var(--accent-border)", color: "var(--accent-text)" }}>
                                     <ExternalLink size={11} /> Detaylar
                                 </a>
                             )}
@@ -228,9 +214,9 @@ export default function EtkinliklerClient({
                                 <button onClick={() => handleApprove(selected)}
                                         className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl transition-all duration-200"
                                         style={{
-                                            background: selected.approved ? "rgba(52,211,153,0.08)" : "rgba(52,211,153,0.12)",
-                                            border: `1px solid ${selected.approved ? "rgba(52,211,153,0.2)" : "rgba(52,211,153,0.3)"}`,
-                                            color: "rgba(52,211,153,0.85)",
+                                            background: selected.approved ? "color-mix(in srgb, var(--success) 8%, transparent)" : "color-mix(in srgb, var(--success) 12%, transparent)",
+                                            border: `1px solid ${selected.approved ? "color-mix(in srgb, var(--success) 20%, transparent)" : "color-mix(in srgb, var(--success) 30%, transparent)"}`,
+                                            color: "color-mix(in srgb, var(--success) 85%, transparent)",
                                         }}>
                                     <CheckCircle size={11} />
                                     {selected.approved ? "Onayı Kaldır" : "Onayla"}
@@ -239,7 +225,7 @@ export default function EtkinliklerClient({
                             {canDelete(selected) && (
                                 <button onClick={() => handleDelete(selected)}
                                         className="flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-xl transition-all duration-200"
-                                        style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", color: "rgba(239,68,68,0.7)" }}>
+                                        style={{ background: "color-mix(in srgb, var(--danger) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 20%, transparent)", color: "color-mix(in srgb, var(--danger) 70%, transparent)" }}>
                                     <Trash2 size={11} /> Sil
                                 </button>
                             )}
@@ -251,9 +237,9 @@ export default function EtkinliklerClient({
                 {todayEvs.length > 0 && (
                     <section className="flex flex-col gap-3">
                         <div className="flex items-center gap-2">
-                            <p className="text-[10px] font-medium tracking-[0.15em] uppercase"
-                               style={{ color: "rgba(52,211,153,0.7)" }}>Bugün</p>
-                            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "rgba(52,211,153,0.8)" }} />
+                            <p className="text-[11px] font-medium tracking-[0.15em] uppercase"
+                               style={{ color: "color-mix(in srgb, var(--success) 70%, transparent)" }}>Bugün</p>
+                            <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "color-mix(in srgb, var(--success) 80%, transparent)" }} />
                         </div>
                         {todayEvs.map(ev => (
                             <EventCard key={ev.id} ev={ev} status="today" isAdmin={isAdmin} canDelete={canDelete(ev)}
@@ -267,8 +253,8 @@ export default function EtkinliklerClient({
                 {/* Yaklaşan — bu ay */}
                 {upcoming.length > 0 && (
                     <section className="flex flex-col gap-3">
-                        <p className="text-[10px] font-medium tracking-[0.15em] uppercase"
-                           style={{ color: "rgba(252,211,77,0.5)" }}>Yaklaşan Etkinlikler</p>
+                        <p className="text-[11px] font-medium tracking-[0.15em] uppercase"
+                           style={{ color: "color-mix(in srgb, var(--warn) 50%, transparent)" }}>Yaklaşan Etkinlikler</p>
                         {upcoming.map(ev => (
                             <EventCard key={ev.id} ev={ev} status="upcoming" isAdmin={isAdmin} canDelete={canDelete(ev)}
                                        selected={selected?.id === ev.id}
@@ -289,7 +275,7 @@ export default function EtkinliklerClient({
                 {/* İleride — bu aydan sonra */}
                 {future.length > 0 && (
                     <section className="flex flex-col gap-3">
-                        <p className="text-[10px] font-medium tracking-[0.15em] uppercase"
+                        <p className="text-[11px] font-medium tracking-[0.15em] uppercase"
                            style={{ color: "var(--text-4)" }}>İleride</p>
                         {future.map(ev => (
                             <EventCard key={ev.id} ev={ev} status="future" isAdmin={isAdmin} canDelete={canDelete(ev)}
@@ -303,7 +289,7 @@ export default function EtkinliklerClient({
                 {/* Geçmiş */}
                 {past.length > 0 && (
                     <section className="flex flex-col gap-3">
-                        <p className="text-[10px] font-medium tracking-[0.15em] uppercase"
+                        <p className="text-[11px] font-medium tracking-[0.15em] uppercase"
                            style={{ color: "var(--text-5)" }}>Geçmiş Etkinlikler</p>
                         {past.map(ev => (
                             <EventCard key={ev.id} ev={ev} status="past" isAdmin={isAdmin} canDelete={canDelete(ev)}
@@ -317,11 +303,11 @@ export default function EtkinliklerClient({
             {/* Form Modal */}
             {showForm && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
-                     style={{ background: "var(--overlay)", backdropFilter: "blur(8px)" }}
+                     style={{ background: "var(--overlay)" }}
                      onClick={(e) => e.target === e.currentTarget && setShowForm(false)}>
-                    <div className="relative w-full max-w-md rounded-3xl overflow-hidden"
-                         style={{ background: "rgba(15,20,50,0.97)", border: "1px solid var(--violet-border)", boxShadow: "0 24px 64px rgba(0,0,0,0.6)" }}>
-                        <div className="h-px w-full" style={{ background: "linear-gradient(90deg, transparent, rgba(124,58,237,0.6) 40%, rgba(167,139,250,0.4) 60%, transparent)" }} />
+                    <div className="relative w-full max-w-md rounded-2xl overflow-hidden"
+                         style={{ background: "color-mix(in srgb, var(--surface-solid) 97%, transparent)", border: "1px solid var(--accent-border)", boxShadow: "0 12px 32px color-mix(in srgb, var(--shade) 18%, transparent)" }}>
+                        <div className="h-px w-full" style={{ background: "color-mix(in srgb, var(--accent) 35%, transparent)" }} />
                         <div className="p-6">
                             <div className="flex items-center justify-between mb-6">
                                 <h2 className="text-base font-bold" style={{ color: "var(--text-1)" }}>Etkinlik Ekle</h2>
@@ -382,14 +368,13 @@ export default function EtkinliklerClient({
                                 </FormField>
 
                                 {formError && (
-                                    <p className="text-xs flex items-center gap-1" style={{ color: "rgba(239,68,68,0.8)" }}>
+                                    <p className="text-xs flex items-center gap-1" style={{ color: "color-mix(in srgb, var(--danger) 80%, transparent)" }}>
                                         ⚠ {formError}
                                     </p>
                                 )}
 
                                 <button type="submit" disabled={formLoading || geocoding}
-                                        className="w-full py-3 rounded-xl text-sm font-bold text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed mt-1"
-                                        style={{ background: "var(--violet)", boxShadow: "0 8px 24px rgba(124,58,237,0.35)" }}>
+                                        className="btn-primary w-full mt-1">
                                     {geocoding ? "Adres aranıyor..." : formLoading ? "Ekleniyor..." : "Etkinlik Ekle"}
                                 </button>
                             </form>
@@ -406,56 +391,55 @@ function FormField({ label, required, hint, children }: {
 }) {
     return (
         <div className="flex flex-col gap-1.5">
-            <label className="text-[10px] font-medium tracking-[0.15em] uppercase flex items-center gap-1"
-                   style={{ color: "var(--text-3)" }}>
+            <label className="field-label">
                 {label}
-                {required && <span style={{ color: "rgba(239,68,68,0.7)" }}>*</span>}
+                {required && <span style={{ color: "color-mix(in srgb, var(--danger) 70%, transparent)" }}>*</span>}
             </label>
             {children}
-            {hint && <p className="text-[10px]" style={{ color: "var(--text-4)" }}>{hint}</p>}
+            {hint && <p className="text-[11px]" style={{ color: "var(--text-4)" }}>{hint}</p>}
         </div>
     );
 }
 
 const STATUS_THEME = {
     today: {
-        cardBg:     "rgba(52,211,153,0.05)",
-        cardBorder: "rgba(52,211,153,0.25)",
-        badgeBg:    "rgba(52,211,153,0.12)",
-        badgeBorder:"rgba(52,211,153,0.3)",
-        dayColor:   "rgba(52,211,153,0.95)",
-        monthColor: "rgba(52,211,153,0.55)",
+        cardBg:     "color-mix(in srgb, var(--success) 5%, transparent)",
+        cardBorder: "color-mix(in srgb, var(--success) 25%, transparent)",
+        badgeBg:    "color-mix(in srgb, var(--success) 12%, transparent)",
+        badgeBorder:"color-mix(in srgb, var(--success) 30%, transparent)",
+        dayColor:   "color-mix(in srgb, var(--success) 95%, transparent)",
+        monthColor: "color-mix(in srgb, var(--success) 55%, transparent)",
         titleColor: "var(--text-1)",
         opacity:    1,
     },
     upcoming: {
-        cardBg:     "rgba(252,211,77,0.03)",
-        cardBorder: "rgba(252,211,77,0.15)",
-        badgeBg:    "rgba(252,211,77,0.08)",
-        badgeBorder:"rgba(252,211,77,0.2)",
-        dayColor:   "rgba(252,211,77,0.9)",
-        monthColor: "rgba(252,211,77,0.45)",
+        cardBg:     "color-mix(in srgb, var(--warn) 3%, transparent)",
+        cardBorder: "color-mix(in srgb, var(--warn) 15%, transparent)",
+        badgeBg:    "color-mix(in srgb, var(--warn) 8%, transparent)",
+        badgeBorder:"color-mix(in srgb, var(--warn) 20%, transparent)",
+        dayColor:   "color-mix(in srgb, var(--warn) 90%, transparent)",
+        monthColor: "color-mix(in srgb, var(--warn) 45%, transparent)",
         titleColor: "var(--text-1)",
         opacity:    1,
     },
     future: {
-        cardBg:     "rgba(255,255,255,0.03)",
-        cardBorder: "rgba(255,255,255,0.07)",
-        badgeBg:    "rgba(124,58,237,0.08)",
-        badgeBorder:"rgba(124,58,237,0.18)",
-        dayColor:   "rgba(167,139,250,0.7)",
-        monthColor: "rgba(167,139,250,0.4)",
+        cardBg:     "color-mix(in srgb, var(--fg) 3%, transparent)",
+        cardBorder: "color-mix(in srgb, var(--fg) 7%, transparent)",
+        badgeBg:    "color-mix(in srgb, var(--accent) 8%, transparent)",
+        badgeBorder:"color-mix(in srgb, var(--accent) 18%, transparent)",
+        dayColor:   "color-mix(in srgb, var(--accent) 70%, transparent)",
+        monthColor: "color-mix(in srgb, var(--accent) 40%, transparent)",
         titleColor: "var(--text-1)",
         opacity:    1,
     },
     past: {
-        cardBg:     "rgba(255,255,255,0.02)",
-        cardBorder: "rgba(255,255,255,0.05)",
-        badgeBg:    "rgba(255,255,255,0.04)",
-        badgeBorder:"rgba(255,255,255,0.08)",
-        dayColor:   "rgba(224,242,254,0.25)",
-        monthColor: "rgba(224,242,254,0.15)",
-        titleColor: "rgba(224,242,254,0.35)",
+        cardBg:     "color-mix(in srgb, var(--fg) 2%, transparent)",
+        cardBorder: "color-mix(in srgb, var(--fg) 5%, transparent)",
+        badgeBg:    "color-mix(in srgb, var(--fg) 4%, transparent)",
+        badgeBorder:"color-mix(in srgb, var(--fg) 8%, transparent)",
+        dayColor:   "color-mix(in srgb, var(--fg) 25%, transparent)",
+        monthColor: "color-mix(in srgb, var(--fg) 15%, transparent)",
+        titleColor: "color-mix(in srgb, var(--fg) 35%, transparent)",
         opacity:    0.55,
     },
 } as const;
@@ -476,19 +460,19 @@ function EventCard({ ev, status, isAdmin, canDelete, selected, onSelect, onAppro
              onClick={onSelect}
              style={{
                  opacity: t.opacity,
-                 background: selected ? "var(--violet-bg)" : t.cardBg,
-                 border: `1px solid ${selected ? "var(--violet-border)" : t.cardBorder}`,
+                 background: selected ? "var(--accent-bg)" : t.cardBg,
+                 border: `1px solid ${selected ? "var(--accent-border)" : t.cardBorder}`,
              }}>
             <div className="flex flex-col items-center justify-center rounded-xl px-3 py-2 shrink-0 min-w-[52px]"
                  style={{ background: t.badgeBg, border: `1px solid ${t.badgeBorder}` }}>
                 {status === "today" ? (
-                    <span className="text-[9px] font-bold uppercase tracking-widest" style={{ color: t.dayColor }}>bugün</span>
+                    <span className="text-[11px] font-bold uppercase tracking-widest" style={{ color: t.dayColor }}>bugün</span>
                 ) : (
                     <>
                         <span className="text-lg font-bold leading-none" style={{ color: t.dayColor }}>
                             {new Date(ev.event_date + "T00:00:00").getDate()}
                         </span>
-                        <span className="text-[9px] uppercase tracking-wider mt-0.5" style={{ color: t.monthColor }}>
+                        <span className="text-[11px] uppercase tracking-wider mt-0.5" style={{ color: t.monthColor }}>
                             {new Date(ev.event_date + "T00:00:00").toLocaleDateString("tr-TR", { month: "short" })}
                         </span>
                     </>
@@ -498,8 +482,8 @@ function EventCard({ ev, status, isAdmin, canDelete, selected, onSelect, onAppro
                 <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                     <p className="text-sm font-semibold" style={{ color: t.titleColor }}>{ev.title}</p>
                     {ev.approved && (
-                        <span className="flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full"
-                              style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.25)", color: "rgba(52,211,153,0.85)" }}>
+                        <span className="flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded-full"
+                              style={{ background: "color-mix(in srgb, var(--success) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--success) 25%, transparent)", color: "color-mix(in srgb, var(--success) 85%, transparent)" }}>
                             <CheckCircle size={9} /> Onaylı
                         </span>
                     )}
@@ -517,14 +501,14 @@ function EventCard({ ev, status, isAdmin, canDelete, selected, onSelect, onAppro
                 {ev.ref_url && (
                     <a href={ev.ref_url} target="_blank" rel="noopener noreferrer"
                        className="p-1.5 rounded-lg transition-opacity hover:opacity-70"
-                       style={{ color: "var(--violet-text)" }}>
+                       style={{ color: "var(--accent-text)" }}>
                         <ExternalLink size={13} />
                     </a>
                 )}
                 {isAdmin && (
                     <button onClick={() => onApprove(ev)}
                             className="p-1.5 rounded-lg transition-opacity hover:opacity-70"
-                            style={{ color: ev.approved ? "rgba(52,211,153,0.8)" : "var(--text-4)" }}
+                            style={{ color: ev.approved ? "color-mix(in srgb, var(--success) 80%, transparent)" : "var(--text-4)" }}
                             title={ev.approved ? "Onayı kaldır" : "Onayla"}>
                         <CheckCircle size={13} />
                     </button>
@@ -532,7 +516,7 @@ function EventCard({ ev, status, isAdmin, canDelete, selected, onSelect, onAppro
                 {canDelete && (
                     <button onClick={() => onDelete(ev)}
                             className="p-1.5 rounded-lg transition-opacity hover:opacity-70"
-                            style={{ color: "rgba(239,68,68,0.5)" }}
+                            style={{ color: "color-mix(in srgb, var(--danger) 50%, transparent)" }}
                             title="Sil">
                         <Trash2 size={13} />
                     </button>

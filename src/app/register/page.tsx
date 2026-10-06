@@ -6,7 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { registerSchema } from "@/lib/schemas";
-import type { ZodError } from "zod";
+import type { SchemaError as ZodError } from "@/lib/schemas";
+import AuthShell from "@/components/AuthShell";
 
 /* ─── Tip ──────────────────────────────────────────────────── */
 type FormState = "idle" | "loading" | "success";
@@ -38,10 +39,10 @@ function passwordStrength(pw: string): number {
 const strengthLabel = ["", "Zayıf", "Orta", "İyi", "Güçlü"];
 const strengthColor = [
     "",
-    "rgba(239,68,68,0.8)",
-    "rgba(124,58,237,0.8)",
-    "rgba(251,191,36,0.8)",
-    "rgba(52,211,153,0.8)",
+    "color-mix(in srgb, var(--danger) 80%, transparent)",
+    "color-mix(in srgb, var(--accent) 80%, transparent)",
+    "color-mix(in srgb, var(--warn) 80%, transparent)",
+    "color-mix(in srgb, var(--success) 80%, transparent)",
 ];
 
 /* ─── Field bileşeni ─────────────────────────────────────────── */
@@ -59,8 +60,7 @@ function Field({
         <div className="flex flex-col gap-1.5">
             <label
                 htmlFor={id}
-                className="text-[10px] font-medium tracking-[0.15em] uppercase transition-colors duration-200"
-                style={{ color: focused ? "var(--violet-text)" : "var(--text-3)" }}
+                className="field-label"
             >
                 {label}
             </label>
@@ -72,19 +72,19 @@ function Field({
                     onBlur={() => { setFocused(false); onBlur?.(); }}
                     placeholder={placeholder}
                     autoComplete={autoComplete}
-                    className="w-full rounded-xl px-4 py-3 text-sm placeholder:text-white/20 transition-all duration-300 outline-none"
+                    className="w-full rounded-xl px-4 py-3 text-sm placeholder:text-[color-mix(in_srgb,var(--fg)_20%,transparent)] transition-all duration-300 outline-none"
                     style={{
                         background: "var(--bg-2)",
                         color: "var(--text-1)",
                         border: `1px solid ${
                             error
-                                ? "rgba(239,68,68,0.5)"
+                                ? "color-mix(in srgb, var(--danger) 50%, transparent)"
                                 : focused
-                                    ? "rgba(124,58,237,0.65)"
+                                    ? "color-mix(in srgb, var(--accent) 65%, transparent)"
                                     : "var(--border-2)"
                         }`,
                         boxShadow: focused && !error
-                            ? "0 0 0 1px rgba(124,58,237,0.2), 0 0 20px rgba(124,58,237,0.1)"
+                            ? "0 0 0 1px color-mix(in srgb, var(--accent) 20%, transparent), 0 0 20px color-mix(in srgb, var(--accent) 10%, transparent)"
                             : "none",
                         paddingRight: suffix ? "3rem" : undefined,
                     }}
@@ -95,11 +95,11 @@ function Field({
             </div>
             <div className="min-h-[16px]">
                 {error ? (
-                    <p className="text-[11px] text-red-400/80 flex items-center gap-1">
+                    <p className="text-[11px] text-[color-mix(in_srgb,var(--danger)_80%,transparent)] flex items-center gap-1">
                         <span>⚠</span> {error}
                     </p>
                 ) : hint ? (
-                    <p className="text-[11px] text-white/25">{hint}</p>
+                    <p className="text-[11px] text-[color-mix(in_srgb,var(--fg)_25%,transparent)]">{hint}</p>
                 ) : null}
             </div>
         </div>
@@ -113,23 +113,22 @@ function SuccessScreen({ email }: { email: string }) {
             <div
                 className="w-20 h-20 rounded-full flex items-center justify-center relative"
                 style={{
-                    background: "rgba(124,58,237,0.12)",
-                    border: "1px solid rgba(124,58,237,0.3)",
-                    boxShadow: "0 0 40px rgba(124,58,237,0.2)",
+                    background: "color-mix(in srgb, var(--accent) 12%, transparent)",
+                    border: "1px solid color-mix(in srgb, var(--accent) 30%, transparent)",
                 }}
             >
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ color: "#A78BFA" }}>
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" style={{ color: "var(--accent)" }}>
                     <path d="M6 16l7 7 13-13" stroke="currentColor" strokeWidth="2.5"
                           strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
                 <div className="absolute inset-0 rounded-full animate-pulse"
-                     style={{ background: "rgba(124,58,237,0.08)" }} />
+                     style={{ background: "color-mix(in srgb, var(--accent) 8%, transparent)" }} />
             </div>
 
             <div>
-                <h3 className="text-xl font-bold text-white mb-2">E-postanı kontrol et!</h3>
+                <h3 className="btn-primary">E-postanı kontrol et!</h3>
                 <p className="text-sm leading-relaxed max-w-xs" style={{ color: "var(--text-3)" }}>
-                    <span style={{ color: "var(--violet-text)" }}>{email}</span> adresine
+                    <span style={{ color: "var(--accent-text)" }}>{email}</span> adresine
                     doğrulama linki gönderdik. Linke tıklayarak topluluğa katılabilirsin.
                 </p>
             </div>
@@ -140,9 +139,9 @@ function SuccessScreen({ email }: { email: string }) {
 
             <Link href="/"
                   className="text-sm transition-colors duration-300"
-                  style={{ color: "var(--violet-text)" }}
-                  onMouseEnter={e => (e.currentTarget.style.color = "var(--violet)")}
-                  onMouseLeave={e => (e.currentTarget.style.color = "var(--violet-text)")}
+                  style={{ color: "var(--accent-text)" }}
+                  onMouseEnter={e => (e.currentTarget.style.color = "var(--accent)")}
+                  onMouseLeave={e => (e.currentTarget.style.color = "var(--accent-text)")}
             >
                 Ana sayfaya dön →
             </Link>
@@ -275,57 +274,7 @@ function RegisterForm() {
     };
 
     return (
-        <div
-            className="aurora-bg relative min-h-screen flex items-center justify-center p-4 overflow-hidden"
-        >
-            <div aria-hidden className="aurora-layer" />
-            <div aria-hidden className="aurora-orb-pink" />
-            <div aria-hidden className="absolute inset-0 pointer-events-none opacity-[0.025]"
-                 style={{
-                     backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)",
-                     backgroundSize: "28px 28px",
-                 }} />
-
-            {/* Kart */}
-            <div className="relative z-10 w-full max-w-md" style={{ animation: "float-up 0.6s ease-out both" }}>
-                {/* Dış glow */}
-                <div aria-hidden className="absolute -inset-[1px] rounded-3xl pointer-events-none opacity-40"
-                     style={{
-                         background: "linear-gradient(135deg, rgba(124,58,237,0.3), transparent, rgba(59,130,246,0.1))",
-                         filter: "blur(2px)",
-                     }} />
-
-                <div
-                    className="relative rounded-3xl overflow-hidden"
-                    style={{
-                        background: "var(--bg-2)",
-                        backdropFilter: "blur(40px) saturate(180%)",
-                        WebkitBackdropFilter: "blur(40px) saturate(180%)",
-                        border: "1px solid var(--border-2)",
-                        boxShadow: "0 32px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.07)",
-                    }}
-                >
-                    {/* Üst dekoratif şerit */}
-                    <div className="h-[1px] w-full" style={{
-                        background: "linear-gradient(90deg, transparent, rgba(124,58,237,0.6) 40%, rgba(167,139,250,0.4) 60%, transparent)",
-                    }} />
-
-                    <div className="p-8">
-                        {/* Başlık */}
-                        <div className="mb-8">
-                            <Link href="/" className="inline-flex items-baseline gap-0.5 mb-6 group">
-                <span className="text-sm font-bold tracking-tight transition-colors duration-300"
-                      style={{ color: "var(--text-3)" }}>bumedya</span>
-                                <span className="text-sm font-bold transition-colors duration-300"
-                                      style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
-                            </Link>
-                            <h1 className="text-2xl font-extrabold tracking-tight mb-1" style={{ color: "var(--text-1)" }}>
-                                Topluluğa Katıl
-                            </h1>
-                            <p className="text-sm" style={{ color: "var(--text-3)" }}>
-                                Dijital fanzin dünyasında yerini al.
-                            </p>
-                        </div>
+        <AuthShell title="Topluluğa katıl" description="Dijital fanzin dünyasında yerini al.">
 
                         {/* Başarı */}
                         {isSuccess ? (
@@ -434,14 +383,7 @@ function RegisterForm() {
                                 {/* Submit */}
                                 <button
                                     type="submit" disabled={isLoading}
-                                    className="relative mt-2 w-full py-3.5 rounded-xl text-sm font-bold text-white
-                    transition-all duration-300 overflow-hidden disabled:cursor-not-allowed"
-                                    style={{
-                                        background: isLoading ? "rgba(124,58,237,0.5)" : "var(--violet)",
-                                        boxShadow: isLoading
-                                            ? "none"
-                                            : "0 8px 24px rgba(124,58,237,0.4), 0 0 0 1px rgba(124,58,237,0.3)",
-                                    }}
+                                    className="btn-primary relative mt-2 w-full"
                                 >
                                     {/* Shimmer */}
                                     {!isLoading && (
@@ -452,8 +394,8 @@ function RegisterForm() {
                                     <span className="relative z-10 flex items-center justify-center gap-2">
                     {isLoading ? (
                         <>
-                        <span className="w-4 h-4 rounded-full border-2 border-white/30
-                          border-t-white animate-spin" />
+                        <span className="w-4 h-4 rounded-full border-2 border-[color-mix(in_srgb,var(--fg)_30%,transparent)]
+                          border-t-[var(--on-accent)] animate-spin" />
                             Kayıt oluşturuluyor...
                         </>
                     ) : "Kayıt Ol"}
@@ -467,7 +409,7 @@ function RegisterForm() {
                                         Zaten hesabın var mı?{" "}
                                         <Link href="/login"
                                               className="transition-colors duration-300"
-                                              style={{ color: "var(--violet-text)" }}
+                                              style={{ color: "var(--accent-text)" }}
                                         >
                                             Giriş yap
                                         </Link>
@@ -475,9 +417,6 @@ function RegisterForm() {
                                 </div>
                             </form>
                         )}
-                    </div>
-                </div>
-            </div>
-        </div>
+        </AuthShell>
     );
 }

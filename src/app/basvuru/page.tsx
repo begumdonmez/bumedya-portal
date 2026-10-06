@@ -11,19 +11,15 @@ export default async function BasvuruPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect("/login");
 
-    const { data: profile } = await supabase
-        .from("profiles")
-        .select("username")
-        .eq("id", user.id)
-        .single();
+    const [{ data: profile }, { data: myApplications }] = await Promise.all([
+        supabase.from("profiles").select("username").eq("id", user.id).single(),
+        supabase.from("applications")
+            .select("id, type, status, created_at, admin_note")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false }),
+    ]);
 
     const username = profile?.username ?? user.email?.split("@")[0] ?? "";
-
-    const { data: myApplications } = await supabase
-        .from("applications")
-        .select("id, type, status, created_at, admin_note")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
 
     return (
         <BasvuruClient

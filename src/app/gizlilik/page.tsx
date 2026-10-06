@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import SiteFooter from "@/components/SiteFooter";
+import SiteHeader from "@/components/SiteHeader";
 
 export const metadata: Metadata = { title: "Gizlilik Politikası" };
 
@@ -78,23 +79,11 @@ Haklarınızı kullanmak için: bumedyailetisim@gmail.com adresine e-posta gönd
 
 export default function GizlilikPage() {
     return (
-        <main className="relative w-full aurora-bg min-h-screen">
-            <div aria-hidden className="aurora-layer" />
+        <main className="relative w-full min-h-screen">
             <div aria-hidden className="fixed inset-0 dot-grid opacity-[0.2] pointer-events-none" style={{ zIndex: 0 }} />
 
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
-                <NavbarBackdrop />
-                <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
-                    <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                    <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
-                          style={{ color: "var(--violet)" }}>.</span>
-                </Link>
-                <Link href="/" className="relative z-10 text-xs px-3 py-2 rounded-xl transition-all duration-200"
-                      style={{ color: "var(--text-3)", border: "1px solid var(--border-3)" }}>
-                    ← Ana Sayfa
-                </Link>
-            </nav>
+            <SiteHeader back={{ href: "/", label: "Ana Sayfa" }} minimal />
 
             <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 pt-28 pb-20">
 
@@ -125,12 +114,12 @@ export default function GizlilikPage() {
 
                 {/* İletişim */}
                 <div className="mt-6 rounded-2xl px-5 py-4 text-center"
-                     style={{ background: "rgba(124,58,237,0.06)", border: "1px solid rgba(124,58,237,0.15)" }}>
+                     style={{ background: "color-mix(in srgb, var(--accent) 6%, transparent)", border: "1px solid color-mix(in srgb, var(--accent) 15%, transparent)" }}>
                     <p className="text-xs" style={{ color: "var(--text-3)" }}>
                         Sorularınız için{" "}
                         <a href="mailto:bumedyailetisim@gmail.com"
                            className="font-medium transition-opacity hover:opacity-70"
-                           style={{ color: "var(--violet-text)" }}>
+                           style={{ color: "var(--accent-text)" }}>
                             bumedyailetisim@gmail.com
                         </a>
                     </p>

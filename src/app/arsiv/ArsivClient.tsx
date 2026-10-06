@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import HomeNavLinks from "@/components/HomeNavLinks";
 import NotificationBell from "@/components/NotificationBell";
+import SiteHeader from "@/components/SiteHeader";
 
 /* ── Tipler ──────────────────────────────────────────────────── */
 type Category = "film" | "dizi" | "kitap" | "sarki";
@@ -33,10 +34,10 @@ interface Props {
 
 /* ── Kategori konfigürasyonu ─────────────────────────────────── */
 const CAT_CONFIG = {
-    film:  { label: "Film",   icon: Film,     color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.3)"  },
-    dizi:  { label: "Dizi",   icon: Tv,       color: "rgba(96,165,250,0.9)",  bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.3)"  },
-    kitap: { label: "Kitap",  icon: BookOpen, color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.3)"  },
-    sarki: { label: "Şarkı",  icon: Music,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.3)" },
+    film:  { label: "Film",   icon: Film,     color: "color-mix(in srgb, var(--accent) 90%, transparent)", bg: "color-mix(in srgb, var(--accent) 8%, transparent)",  border: "color-mix(in srgb, var(--accent) 30%, transparent)"  },
+    dizi:  { label: "Dizi",   icon: Tv,       color: "color-mix(in srgb, var(--info) 90%, transparent)",  bg: "color-mix(in srgb, var(--info) 8%, transparent)",  border: "color-mix(in srgb, var(--info) 30%, transparent)"  },
+    kitap: { label: "Kitap",  icon: BookOpen, color: "color-mix(in srgb, var(--success) 90%, transparent)",  bg: "color-mix(in srgb, var(--success) 8%, transparent)",  border: "color-mix(in srgb, var(--success) 30%, transparent)"  },
+    sarki: { label: "Şarkı",  icon: Music,    color: "color-mix(in srgb, var(--pink) 90%, transparent)", bg: "color-mix(in srgb, var(--pink) 8%, transparent)", border: "color-mix(in srgb, var(--pink) 30%, transparent)" },
 } satisfies Record<Category, { label: string; icon: React.ElementType; color: string; bg: string; border: string }>;
 
 const CREATOR_LABEL: Record<Category, string> = {
@@ -61,7 +62,6 @@ const DvdCard = memo(function DvdCard({ item, avg }: { item: ArchiveItem; avg?: 
                 width: 7, height: 14, zIndex: 3, position: "relative",
                 background: "linear-gradient(180deg, #777 0%, #444 100%)",
                 borderRadius: "3px 3px 0 0",
-                boxShadow: "0 0 4px rgba(0,0,0,0.5)",
             }} />
 
             {/* Üst disk */}
@@ -69,26 +69,26 @@ const DvdCard = memo(function DvdCard({ item, avg }: { item: ArchiveItem; avg?: 
                 width: 90, height: 90, borderRadius: "50%", flexShrink: 0,
                 background: "conic-gradient(from 30deg, #c8c8c8 0deg, #f0f0f0 25deg, #b0b0b0 50deg, #e8e8e8 75deg, #c0c0c0 100deg, #ececec 130deg, #b8b8b8 160deg, #e0e0e0 190deg, #c4c4c4 220deg, #f0f0f0 250deg, #b8b8b8 280deg, #e4e4e4 310deg, #c8c8c8 340deg, #f0f0f0 360deg)",
                 border: "1px solid #aaa",
-                boxShadow: "0 3px 12px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.08)",
+                boxShadow: "0 3px 12px color-mix(in srgb, var(--shade) 60%, transparent), 0 0 0 1px color-mix(in srgb, var(--fg) 8%, transparent)",
                 position: "relative", zIndex: 2,
                 display: "flex", alignItems: "center", justifyContent: "center",
             }}>
                 {/* Merkez etiket */}
                 <div style={{
                     width: 38, height: 38, borderRadius: "50%",
-                    background: "linear-gradient(135deg, rgba(124,58,237,0.45), rgba(124,58,237,0.18))",
-                    border: "1px solid rgba(124,58,237,0.55)",
+                    background: "color-mix(in srgb, var(--accent) 22%, transparent)",
+                    border: "1px solid color-mix(in srgb, var(--accent) 55%, transparent)",
                     display: "flex", flexDirection: "column",
                     alignItems: "center", justifyContent: "center", gap: 2, padding: 4,
                 }}>
                     <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#1a1a1a", border: "1px solid #555" }} />
                     <p style={{
                         fontSize: 5.5, fontWeight: 700,
-                        color: "rgba(167,139,250,0.95)", textAlign: "center",
+                        color: "color-mix(in srgb, var(--accent) 95%, transparent)", textAlign: "center",
                         lineHeight: 1.2, margin: 0, maxWidth: 28,
                         overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
                     }}>{item.title}</p>
-                    {item.year && <p style={{ fontSize: 5, color: "rgba(255,255,255,0.35)", margin: 0 }}>{item.year}</p>}
+                    {item.year && <p style={{ fontSize: 5, color: "color-mix(in srgb, var(--fg) 35%, transparent)", margin: 0 }}>{item.year}</p>}
                 </div>
 
                 {/* Puan */}
@@ -97,8 +97,8 @@ const DvdCard = memo(function DvdCard({ item, avg }: { item: ArchiveItem; avg?: 
                         position: "absolute", bottom: 7,
                         display: "flex", alignItems: "center", gap: 2,
                     }}>
-                        <Star size={6} fill="rgba(252,211,77,0.9)" style={{ color: "rgba(252,211,77,0.9)" }} />
-                        <span style={{ fontSize: 7, color: "rgba(252,211,77,0.9)", fontWeight: 700 }}>{avg}</span>
+                        <Star size={6} fill="color-mix(in srgb, var(--warn) 90%, transparent)" style={{ color: "color-mix(in srgb, var(--warn) 90%, transparent)" }} />
+                        <span style={{ fontSize: 7, color: "color-mix(in srgb, var(--warn) 90%, transparent)", fontWeight: 700 }}>{avg}</span>
                     </div>
                 )}
             </div>
@@ -127,7 +127,7 @@ const DvdCard = memo(function DvdCard({ item, avg }: { item: ArchiveItem; avg?: 
             {/* Başlık */}
             <p style={{
                 fontSize: 8, fontWeight: 600, textAlign: "center",
-                color: "rgba(255,255,255,0.75)", marginTop: 7,
+                color: "color-mix(in srgb, var(--fg) 75%, transparent)", marginTop: 7,
                 maxWidth: 88, overflow: "hidden",
                 textOverflow: "ellipsis", whiteSpace: "nowrap",
             }}>{item.title}</p>
@@ -141,8 +141,8 @@ const VhsCard = memo(function VhsCard({ item, avg }: { item: ArchiveItem; avg?: 
         <div style={{
             width: 185, height: 120, flexShrink: 0,
             borderRadius: 6, cursor: "pointer",
-            border: "1px solid rgba(59,130,246,0.35)",
-            boxShadow: "4px 6px 22px rgba(0,0,0,0.55)",
+            border: "1px solid color-mix(in srgb, var(--info) 35%, transparent)",
+            boxShadow: "4px 6px 22px color-mix(in srgb, var(--shade) 55%, transparent)",
             background: "linear-gradient(160deg, #0a0a14 0%, #111622 100%)",
             padding: "8px 10px 8px",
             display: "flex", flexDirection: "column", gap: 6,
@@ -152,19 +152,19 @@ const VhsCard = memo(function VhsCard({ item, avg }: { item: ArchiveItem; avg?: 
         >
             {/* Etiket */}
             <div style={{
-                background: "rgba(59,130,246,0.12)",
-                border: "1px solid rgba(59,130,246,0.3)",
+                background: "color-mix(in srgb, var(--info) 12%, transparent)",
+                border: "1px solid color-mix(in srgb, var(--info) 30%, transparent)",
                 borderRadius: 3, padding: "4px 7px",
                 display: "flex", alignItems: "flex-start", justifyContent: "space-between",
             }}>
                 <div style={{ minWidth: 0 }}>
-                    <p style={{ fontSize: 9, fontWeight: 700, color: "rgba(147,197,253,0.95)", margin: 0, lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 120 }}>{item.title}</p>
-                    {item.creator && <p style={{ fontSize: 7.5, color: "rgba(147,197,253,0.45)", margin: "1px 0 0" }}>{item.creator}</p>}
+                    <p style={{ fontSize: 9, fontWeight: 700, color: "color-mix(in srgb, var(--info) 95%, transparent)", margin: 0, lineHeight: 1.2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 120 }}>{item.title}</p>
+                    {item.creator && <p style={{ fontSize: 7.5, color: "color-mix(in srgb, var(--info) 45%, transparent)", margin: "1px 0 0" }}>{item.creator}</p>}
                 </div>
                 {avg != null && (
                     <div style={{ display: "flex", alignItems: "center", gap: 2, flexShrink: 0 }}>
-                        <Star size={7} fill="rgba(252,211,77,0.9)" style={{ color: "rgba(252,211,77,0.9)" }} />
-                        <span style={{ fontSize: 8, color: "rgba(252,211,77,0.9)", fontWeight: 700 }}>{avg}</span>
+                        <Star size={7} fill="color-mix(in srgb, var(--warn) 90%, transparent)" style={{ color: "color-mix(in srgb, var(--warn) 90%, transparent)" }} />
+                        <span style={{ fontSize: 8, color: "color-mix(in srgb, var(--warn) 90%, transparent)", fontWeight: 700 }}>{avg}</span>
                     </div>
                 )}
             </div>
@@ -180,7 +180,7 @@ const VhsCard = memo(function VhsCard({ item, avg }: { item: ArchiveItem; avg?: 
                     display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                     <div style={{ width: "50%", height: 2, background: "#1a1a1a", borderRadius: 1 }} />
-                    {item.year && <span style={{ fontSize: 6.5, color: "rgba(255,255,255,0.15)", marginLeft: 4 }}>{item.year}</span>}
+                    {item.year && <span style={{ fontSize: 6.5, color: "color-mix(in srgb, var(--fg) 15%, transparent)", marginLeft: 4 }}>{item.year}</span>}
                 </div>
                 {/* Sağ makara */}
                 <Reel />
@@ -219,14 +219,14 @@ function Reel() {
 
 /* ── Kitap renk paleti (id'den deterministik renk) ───────────── */
 const BOOK_PALETTE = [
-    { grad: "linear-gradient(160deg, #c7d9f0 0%, #a8c4e8 100%)", accent: "rgba(59,100,180,0.8)",   stripe: "rgba(59,100,180,0.2)",  text: "rgba(30,58,120,0.95)"   },
-    { grad: "linear-gradient(160deg, #ddd0f5 0%, #c9b8ef 100%)", accent: "rgba(109,70,200,0.8)",   stripe: "rgba(109,70,200,0.2)",  text: "rgba(62,30,130,0.95)"   },
-    { grad: "linear-gradient(160deg, #b8ecd8 0%, #9de0c6 100%)", accent: "rgba(20,140,90,0.8)",    stripe: "rgba(20,140,90,0.2)",   text: "rgba(10,80,52,0.95)"    },
-    { grad: "linear-gradient(160deg, #f5c6d0 0%, #f0aab8 100%)", accent: "rgba(190,50,80,0.8)",    stripe: "rgba(190,50,80,0.2)",   text: "rgba(120,20,45,0.95)"   },
-    { grad: "linear-gradient(160deg, #faeab8 0%, #f5d98a 100%)", accent: "rgba(170,110,10,0.8)",   stripe: "rgba(170,110,10,0.2)",  text: "rgba(100,60,5,0.95)"    },
+    { grad: "linear-gradient(160deg, #c7d9f0 0%, #a8c4e8 100%)", accent: "color-mix(in srgb, var(--info) 80%, transparent)",   stripe: "color-mix(in srgb, var(--info) 20%, transparent)",  text: "color-mix(in srgb, var(--info) 95%, transparent)"   },
+    { grad: "linear-gradient(160deg, #ddd0f5 0%, #c9b8ef 100%)", accent: "color-mix(in srgb, var(--accent) 80%, transparent)",   stripe: "color-mix(in srgb, var(--accent) 20%, transparent)",  text: "color-mix(in srgb, var(--accent) 95%, transparent)"   },
+    { grad: "linear-gradient(160deg, #b8ecd8 0%, #9de0c6 100%)", accent: "color-mix(in srgb, var(--success) 80%, transparent)",    stripe: "color-mix(in srgb, var(--success) 20%, transparent)",   text: "color-mix(in srgb, var(--success) 95%, transparent)"    },
+    { grad: "linear-gradient(160deg, #f5c6d0 0%, #f0aab8 100%)", accent: "color-mix(in srgb, var(--danger) 80%, transparent)",    stripe: "color-mix(in srgb, var(--danger) 20%, transparent)",   text: "color-mix(in srgb, var(--danger) 95%, transparent)"   },
+    { grad: "linear-gradient(160deg, #faeab8 0%, #f5d98a 100%)", accent: "color-mix(in srgb, var(--warn) 80%, transparent)",   stripe: "color-mix(in srgb, var(--warn) 20%, transparent)",  text: "color-mix(in srgb, var(--warn) 95%, transparent)"    },
     { grad: "linear-gradient(160deg, #ceefc8 0%, #b5e6ae 100%)", accent: "rgba(40,120,40,0.8)",    stripe: "rgba(40,120,40,0.2)",   text: "rgba(20,70,20,0.95)"    },
-    { grad: "linear-gradient(160deg, #fad8b8 0%, #f5c49a 100%)", accent: "rgba(190,90,20,0.8)",    stripe: "rgba(190,90,20,0.2)",   text: "rgba(110,50,10,0.95)"   },
-    { grad: "linear-gradient(160deg, #b8eaf5 0%, #9addef 100%)", accent: "rgba(10,130,170,0.8)",   stripe: "rgba(10,130,170,0.2)",  text: "rgba(5,70,100,0.95)"    },
+    { grad: "linear-gradient(160deg, #fad8b8 0%, #f5c49a 100%)", accent: "color-mix(in srgb, var(--accent-2) 80%, transparent)",    stripe: "color-mix(in srgb, var(--accent-2) 20%, transparent)",   text: "color-mix(in srgb, var(--accent-2) 95%, transparent)"   },
+    { grad: "linear-gradient(160deg, #b8eaf5 0%, #9addef 100%)", accent: "color-mix(in srgb, var(--info) 80%, transparent)",   stripe: "color-mix(in srgb, var(--info) 20%, transparent)",  text: "color-mix(in srgb, var(--info) 95%, transparent)"    },
 ];
 
 function getBookColor(id: string) {
@@ -243,10 +243,10 @@ const BookCard = memo(function BookCard({ item, avg }: { item: ArchiveItem; avg?
             borderRadius: "3px 6px 6px 3px",
             background: col.grad,
             boxShadow: [
-                "4px 6px 20px rgba(0,0,0,0.7)",
-                "-3px 0 0 rgba(0,0,0,0.35)",          // sol kenar — sırt gölgesi
-                "inset 3px 0 6px rgba(0,0,0,0.4)",    // iç sırt
-                `inset 0 0 0 1px rgba(255,255,255,0.06)`,
+                "4px 6px 20px color-mix(in srgb, var(--shade) 70%, transparent)",
+                "-3px 0 0 color-mix(in srgb, var(--shade) 35%, transparent)",          // sol kenar — sırt gölgesi
+                "inset 3px 0 6px color-mix(in srgb, var(--shade) 40%, transparent)",    // iç sırt
+                `inset 0 0 0 1px color-mix(in srgb, var(--fg) 6%, transparent)`,
             ].join(", "),
             display: "flex", flexDirection: "column",
             cursor: "pointer", position: "relative", overflow: "hidden",
@@ -255,19 +255,19 @@ const BookCard = memo(function BookCard({ item, avg }: { item: ArchiveItem; avg?
             className="hover:-translate-y-2 group"
             onMouseEnter={(e) => {
                 (e.currentTarget as HTMLElement).style.boxShadow = [
-                    "8px 12px 32px rgba(0,0,0,0.8)",
-                    "-3px 0 0 rgba(0,0,0,0.35)",
-                    "inset 3px 0 6px rgba(0,0,0,0.4)",
-                    `inset 0 0 0 1px rgba(255,255,255,0.08)`,
+                    "8px 12px 32px color-mix(in srgb, var(--shade) 80%, transparent)",
+                    "-3px 0 0 color-mix(in srgb, var(--shade) 35%, transparent)",
+                    "inset 3px 0 6px color-mix(in srgb, var(--shade) 40%, transparent)",
+                    `inset 0 0 0 1px color-mix(in srgb, var(--fg) 8%, transparent)`,
                     `0 0 20px ${col.accent.replace("0.9", "0.15")}`,
                 ].join(", ");
             }}
             onMouseLeave={(e) => {
                 (e.currentTarget as HTMLElement).style.boxShadow = [
-                    "4px 6px 20px rgba(0,0,0,0.7)",
-                    "-3px 0 0 rgba(0,0,0,0.35)",
-                    "inset 3px 0 6px rgba(0,0,0,0.4)",
-                    `inset 0 0 0 1px rgba(255,255,255,0.06)`,
+                    "4px 6px 20px color-mix(in srgb, var(--shade) 70%, transparent)",
+                    "-3px 0 0 color-mix(in srgb, var(--shade) 35%, transparent)",
+                    "inset 3px 0 6px color-mix(in srgb, var(--shade) 40%, transparent)",
+                    `inset 0 0 0 1px color-mix(in srgb, var(--fg) 6%, transparent)`,
                 ].join(", ");
             }}
         >
@@ -295,7 +295,7 @@ const BookCard = memo(function BookCard({ item, avg }: { item: ArchiveItem; avg?
                 {/* Yazar */}
                 {item.creator && (
                     <p style={{
-                        fontSize: 7.5, color: "rgba(255,255,255,0.38)",
+                        fontSize: 7.5, color: "color-mix(in srgb, var(--fg) 38%, transparent)",
                         margin: 0, letterSpacing: 0.3, fontWeight: 500,
                         overflow: "hidden", whiteSpace: "nowrap",
                         textOverflow: "ellipsis", flexShrink: 0,
@@ -305,7 +305,7 @@ const BookCard = memo(function BookCard({ item, avg }: { item: ArchiveItem; avg?
 
             {/* Alt bar — puan */}
             <div style={{
-                height: 22, flexShrink: 0, background: "rgba(0,0,0,0.1)",
+                height: 22, flexShrink: 0, background: "color-mix(in srgb, var(--shade) 10%, transparent)",
                 borderTop: `1px solid ${col.stripe}`,
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 3,
             }}>
@@ -315,14 +315,14 @@ const BookCard = memo(function BookCard({ item, avg }: { item: ArchiveItem; avg?
                         <span style={{ fontSize: 9, color: col.accent, fontWeight: 700 }}>{avg}</span>
                     </>
                 ) : (
-                    <span style={{ fontSize: 7.5, color: "rgba(0,0,0,0.2)", letterSpacing: 0.5 }}>—</span>
+                    <span style={{ fontSize: 7.5, color: "color-mix(in srgb, var(--shade) 20%, transparent)", letterSpacing: 0.5 }}>—</span>
                 )}
             </div>
 
             {/* Sırt çizgisi */}
             <div style={{
                 position: "absolute", left: 0, top: 0, bottom: 0, width: 3,
-                background: "linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.15) 50%, rgba(0,0,0,0.1) 100%)",
+                background: "linear-gradient(180deg, color-mix(in srgb, var(--fg) 35%, transparent) 0%, color-mix(in srgb, var(--fg) 15%, transparent) 50%, color-mix(in srgb, var(--shade) 10%, transparent) 100%)",
             }} />
         </div>
     );
@@ -334,7 +334,7 @@ const VinylCard = memo(function VinylCard({ item, avg }: { item: ArchiveItem; av
         <div style={{
             width: 150, height: 150, flexShrink: 0,
             borderRadius: "50%", cursor: "pointer",
-            boxShadow: "0 6px 28px rgba(0,0,0,0.7), 0 0 0 1px rgba(244,114,182,0.2)",
+            boxShadow: "0 6px 28px color-mix(in srgb, var(--shade) 70%, transparent), 0 0 0 1px color-mix(in srgb, var(--pink) 20%, transparent)",
             position: "relative",
             background: `conic-gradient(from 0deg,
                 #111 0deg, #1a1a1a 3deg, #111 6deg, #181818 9deg, #111 12deg,
@@ -370,18 +370,18 @@ const VinylCard = memo(function VinylCard({ item, avg }: { item: ArchiveItem; av
             {/* Merkez etiket */}
             <div style={{
                 width: 52, height: 52, borderRadius: "50%",
-                background: "linear-gradient(135deg, rgba(244,114,182,0.25), rgba(244,114,182,0.08))",
-                border: "1px solid rgba(244,114,182,0.4)",
+                background: "linear-gradient(135deg, color-mix(in srgb, var(--pink) 25%, transparent), color-mix(in srgb, var(--pink) 8%, transparent))",
+                border: "1px solid color-mix(in srgb, var(--pink) 40%, transparent)",
                 display: "flex", flexDirection: "column",
                 alignItems: "center", justifyContent: "center",
                 gap: 1, padding: 4, position: "relative",
             }}>
                 <div style={{ width: 5, height: 5, borderRadius: "50%", background: "#111", border: "1px solid #444" }} />
-                <p style={{ fontSize: 6.5, color: "rgba(255,255,255,0.85)", fontWeight: 700, textAlign: "center", lineHeight: 1.2, margin: 0, maxWidth: 38, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{item.title}</p>
+                <p style={{ fontSize: 6.5, color: "color-mix(in srgb, var(--fg) 85%, transparent)", fontWeight: 700, textAlign: "center", lineHeight: 1.2, margin: 0, maxWidth: 38, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{item.title}</p>
                 {avg != null && (
                     <div style={{ display: "flex", alignItems: "center", gap: 1 }}>
-                        <Star size={5} fill="rgba(252,211,77,0.9)" style={{ color: "rgba(252,211,77,0.9)" }} />
-                        <span style={{ fontSize: 6, color: "rgba(252,211,77,0.9)", fontWeight: 700 }}>{avg}</span>
+                        <Star size={5} fill="color-mix(in srgb, var(--warn) 90%, transparent)" style={{ color: "color-mix(in srgb, var(--warn) 90%, transparent)" }} />
+                        <span style={{ fontSize: 6, color: "color-mix(in srgb, var(--warn) 90%, transparent)", fontWeight: 700 }}>{avg}</span>
                     </div>
                 )}
             </div>
@@ -415,9 +415,9 @@ function ShelfRow({ children }: { children: React.ReactNode }) {
         position: "absolute", top: "50%", transform: "translateY(-50%)",
         zIndex: 10, width: 28, height: 28, borderRadius: "50%",
         display: "flex", alignItems: "center", justifyContent: "center",
-        background: "rgba(20,30,58,0.92)", border: "1px solid rgba(124,58,237,0.3)",
-        color: "rgba(167,139,250,0.9)", cursor: "pointer",
-        boxShadow: "0 2px 12px rgba(0,0,0,0.4)",
+        background: "color-mix(in srgb, var(--surface-solid) 92%, transparent)", border: "1px solid color-mix(in srgb, var(--accent) 30%, transparent)",
+        color: "color-mix(in srgb, var(--accent) 90%, transparent)", cursor: "pointer",
+        boxShadow: "0 2px 12px color-mix(in srgb, var(--shade) 40%, transparent)",
         transition: "opacity 0.15s",
     };
 
@@ -470,8 +470,8 @@ const MediaCard = memo(function MediaCard({ item, avg }: { item: ArchiveItem; av
             {item.category === "sarki" && (
                 <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5 }}>
                     <VinylCard item={item} avg={avg} />
-                    <p style={{ fontSize: 8, fontWeight: 700, color: "rgba(244,114,182,0.8)", textAlign: "center", maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</p>
-                    {item.creator && <p style={{ fontSize: 7.5, color: "rgba(255,255,255,0.3)", margin: "-3px 0 0", textAlign: "center" }}>{item.creator}</p>}
+                    <p style={{ fontSize: 8, fontWeight: 700, color: "color-mix(in srgb, var(--pink) 80%, transparent)", textAlign: "center", maxWidth: 140, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</p>
+                    {item.creator && <p style={{ fontSize: 7.5, color: "color-mix(in srgb, var(--fg) 30%, transparent)", margin: "-3px 0 0", textAlign: "center" }}>{item.creator}</p>}
                 </div>
             )}
         </Link>
@@ -595,29 +595,11 @@ export default function ArsivClient({ userId, username, isAdmin, items: initialI
     const categories: Category[] = useMemo(() => ["film", "dizi", "kitap", "sarki"] as Category[], []);
 
     return (
-        <div className="aurora-bg relative min-h-screen w-full overflow-hidden">
-            <div aria-hidden className="aurora-layer" />
-            <div aria-hidden className="aurora-orb-pink" />
+        <div className="relative min-h-screen w-full overflow-hidden">
             <div aria-hidden className="fixed inset-0 dot-grid opacity-[0.3] pointer-events-none" style={{ zIndex: 0 }} />
 
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
-                <NavbarBackdrop />
-                <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
-                    <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                    <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
-                          style={{ color: "var(--violet)" }}>.</span>
-                </Link>
-                <HomeNavLinks />
-                <div className="relative z-10 flex items-center gap-2">
-                    <NotificationBell userId={userId} />
-                    <Link href="/profil"
-                          className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
-                          style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
-                        @{username}
-                    </Link>
-                </div>
-            </nav>
+            <SiteHeader userId={userId} username={username} />
 
             <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-24 pb-20">
 
@@ -634,7 +616,7 @@ export default function ArsivClient({ userId, username, isAdmin, items: initialI
                     <div className="flex gap-2 flex-wrap">
                         <button onClick={() => setActiveFilter("tumü")}
                                 className="px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
-                                style={{ background: activeFilter === "tumü" ? "var(--violet-bg-md)" : "var(--bg-2)", border: `1px solid ${activeFilter === "tumü" ? "var(--violet-border)" : "var(--border-3)"}`, color: activeFilter === "tumü" ? "var(--violet-text)" : "var(--text-3)" }}>
+                                style={{ background: activeFilter === "tumü" ? "var(--accent-bg-md)" : "var(--bg-2)", border: `1px solid ${activeFilter === "tumü" ? "var(--accent-border)" : "var(--border-3)"}`, color: activeFilter === "tumü" ? "var(--accent-text)" : "var(--text-3)" }}>
                             Tümü
                         </button>
                         {categories.map(cat => {
@@ -674,7 +656,7 @@ export default function ArsivClient({ userId, username, isAdmin, items: initialI
                                         ))}
                                     </ShelfRow>
                                     {/* Raf tahtası */}
-                                    <div style={{ height: 8, borderRadius: "0 0 4px 4px", background: "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)", border: "1px solid var(--border-3)", borderTop: "none", marginTop: -2 }} />
+                                    <div style={{ height: 8, borderRadius: "0 0 4px 4px", background: "linear-gradient(180deg, color-mix(in srgb, var(--fg) 4%, transparent) 0%, color-mix(in srgb, var(--fg) 1%, transparent) 100%)", border: "1px solid var(--border-3)", borderTop: "none", marginTop: -2 }} />
                                 </div>
                             );
                         })}
@@ -687,7 +669,7 @@ export default function ArsivClient({ userId, username, isAdmin, items: initialI
                                 <MediaCard key={item.id} item={item} avg={avgRatings[item.id]} />
                             ))}
                         </div>
-                        <div style={{ height: 8, borderRadius: "0 0 4px 4px", background: "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)", border: "1px solid var(--border-3)", borderTop: "none", marginTop: 16 }} />
+                        <div style={{ height: 8, borderRadius: "0 0 4px 4px", background: "linear-gradient(180deg, color-mix(in srgb, var(--fg) 4%, transparent) 0%, color-mix(in srgb, var(--fg) 1%, transparent) 100%)", border: "1px solid var(--border-3)", borderTop: "none", marginTop: 16 }} />
                     </div>
                 )}
 

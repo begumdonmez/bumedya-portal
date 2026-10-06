@@ -8,6 +8,7 @@ import { Image as ImageIcon, X, ExternalLink, Link2 } from "lucide-react";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import HomeNavLinks from "@/components/HomeNavLinks";
 import NotificationBell from "@/components/NotificationBell";
+import SiteHeader from "@/components/SiteHeader";
 
 interface GalleryItem {
     id: string;
@@ -115,10 +116,10 @@ function UploadModal({ onClose, onUploaded, userId, username }: {
 
     return (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
-             style={{ background: "var(--overlay)", backdropFilter: "blur(8px)" }}
+             style={{ background: "var(--overlay)" }}
              onClick={(e) => e.target === e.currentTarget && onClose()}>
-            <div className="w-full max-w-lg rounded-3xl overflow-hidden"
-                 style={{ background: "rgba(20,30,58,0.92)", backdropFilter: "blur(32px)", WebkitBackdropFilter: "blur(32px)", border: "1px solid var(--border-1)" }}>
+            <div className="w-full max-w-lg rounded-2xl overflow-hidden"
+                 style={{ background: "color-mix(in srgb, var(--surface-solid) 92%, transparent)", border: "1px solid var(--border-1)" }}>
 
                 <div className="flex items-center justify-between px-6 py-5 border-b"
                      style={{ borderColor: "var(--border-3)" }}>
@@ -131,12 +132,12 @@ function UploadModal({ onClose, onUploaded, userId, username }: {
 
                     {/* Dosya */}
                     <div>
-                        <p className="text-[10px] tracking-widest uppercase mb-3" style={{ color: "var(--text-4)" }}>
+                        <p className="label-caps mb-3" style={{ color: "var(--text-4)" }}>
                             Resim <span style={{ color: "var(--text-5)" }}>(maks. 5 MB)</span>
                         </p>
                         {preview ? (
                             <div className="relative rounded-xl overflow-hidden">
-                                <img src={preview} alt="preview" className="w-full h-48 object-cover rounded-xl" />
+                                <img loading="lazy" decoding="async" src={preview} alt="preview" className="w-full h-48 object-cover rounded-xl" />
                                 <button onClick={() => { setFile(null); setPreview(null); }}
                                         className="absolute top-2 right-2 w-6 h-6 rounded-full flex items-center justify-center text-xs"
                                         style={{ background: "var(--overlay)", color: "#fff" }}><X size={12} /></button>
@@ -144,7 +145,7 @@ function UploadModal({ onClose, onUploaded, userId, username }: {
                         ) : (
                             <button onClick={() => fileRef.current?.click()}
                                     className="w-full h-32 rounded-xl flex flex-col items-center justify-center gap-2 transition-all duration-200"
-                                    style={{ border: "1.5px dashed var(--violet-border)", background: "var(--violet-bg)", color: "var(--violet-text)" }}>
+                                    style={{ border: "1.5px dashed var(--accent-border)", background: "var(--accent-bg)", color: "var(--accent-text)" }}>
                                 <span className="text-2xl">+</span>
                                 <span className="text-xs">Resim seç</span>
                             </button>
@@ -155,7 +156,7 @@ function UploadModal({ onClose, onUploaded, userId, username }: {
 
                     {/* Link */}
                     <div>
-                        <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "var(--text-4)" }}>
+                        <p className="label-caps mb-2" style={{ color: "var(--text-4)" }}>
                             Link <span style={{ color: "var(--text-5)" }}>(opsiyonel)</span>
                         </p>
                         <input
@@ -178,10 +179,10 @@ function UploadModal({ onClose, onUploaded, userId, username }: {
                                     </div>
                                 ) : isImageUrl(linkUrl) ? (
                                     // eslint-disable-next-line @next/next/no-img-element
-                                    <img src={linkUrl} alt="link önizleme" className="w-full h-48 object-cover rounded-xl" />
+                                    <img loading="lazy" decoding="async" src={linkUrl} alt="link önizleme" className="w-full h-48 object-cover rounded-xl" />
                                 ) : (
                                     <div className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-xs"
-                                         style={{ background: "var(--violet-bg)", border: "1px solid var(--violet-bg-md)", color: "var(--violet-text)" }}>
+                                         style={{ background: "var(--accent-bg)", border: "1px solid var(--accent-bg-md)", color: "var(--accent-text)" }}>
                                         <ExternalLink size={12} />
                                         <span className="truncate">{linkUrl}</span>
                                     </div>
@@ -192,7 +193,7 @@ function UploadModal({ onClose, onUploaded, userId, username }: {
 
                     {/* Başlık */}
                     <div>
-                        <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "var(--text-4)" }}>
+                        <p className="label-caps mb-2" style={{ color: "var(--text-4)" }}>
                             Başlık <span style={{ color: "var(--text-5)" }}>(opsiyonel)</span>
                         </p>
                         <input
@@ -207,9 +208,9 @@ function UploadModal({ onClose, onUploaded, userId, username }: {
 
                     <button onClick={handleSubmit} disabled={loading}
                             className="w-full py-3 rounded-xl text-sm font-semibold transition-all duration-200 disabled:opacity-40"
-                            style={{ background: "rgba(124,58,237,0.8)", color: "#fff", border: "1px solid rgba(124,58,237,0.5)" }}>
+                            style={{ background: "color-mix(in srgb, var(--accent) 80%, transparent)", color: "#fff", border: "1px solid color-mix(in srgb, var(--accent) 50%, transparent)" }}>
                         {loading ? (
-                            <span className="inline-block w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                            <span className="inline-block w-4 h-4 rounded-full border-2 border-[color-mix(in_srgb,var(--fg)_30%,transparent)] border-t-[var(--on-accent)] animate-spin" />
                         ) : "Ekle"}
                     </button>
                 </div>
@@ -279,35 +280,20 @@ export default function GaleriClient({
     };
 
     return (
-        <div className="aurora-bg relative min-h-screen flex flex-col">
-            <div aria-hidden className="aurora-layer" />
-            <div aria-hidden className="aurora-orb-pink" />
+        <div className="relative min-h-screen flex flex-col">
 
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
-                <NavbarBackdrop />
-                <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
-                    <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                    <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
-                          style={{ color: "var(--violet)" }}>.</span>
-                </Link>
-                <HomeNavLinks />
-                <div className="relative z-10 flex items-center gap-2">
+            <SiteHeader userId={userId} username={username}
+                actions={<>
                     {canUpload && (
                         <button onClick={() => setShowModal(true)}
-                                className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all duration-200"
-                                style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
+                                className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all duration-200"
+                                style={{ background: "var(--accent-bg-md)", border: "1px solid var(--accent-border)", color: "var(--accent-text)" }}>
                             <span>+</span> Yükle
                         </button>
                     )}
-                    <NotificationBell userId={userId} />
-                    <Link href="/profil"
-                          className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
-                          style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
-                        @{username}
-                    </Link>
-                </div>
-            </nav>
+                </>}
+            />
 
             {/* Grid */}
             <div className="relative z-10 max-w-6xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10">
@@ -322,9 +308,9 @@ export default function GaleriClient({
                                 onClick={() => setShowModal(true)}
                                 className="mt-2 px-5 py-2.5 rounded-xl text-xs font-medium transition-all duration-200"
                                 style={{
-                                    background: "var(--violet-bg-md)",
-                                    border: "1px solid var(--violet-border)",
-                                    color: "var(--violet-text)",
+                                    background: "var(--accent-bg-md)",
+                                    border: "1px solid var(--accent-border)",
+                                    color: "var(--accent-text)",
                                 }}>
                                 Eser Ekle
                             </button>
@@ -355,12 +341,12 @@ export default function GaleriClient({
                                                 ) : isImageUrl(item.ref_url) ? (
                                                     <a href={item.ref_url} target="_blank" rel="noopener noreferrer">
                                                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                        <img src={item.ref_url} alt={item.title ?? "eser"} className="w-full h-auto block" />
+                                                        <img loading="lazy" decoding="async" src={item.ref_url} alt={item.title ?? "eser"} className="w-full h-auto block" />
                                                     </a>
                                                 ) : (
                                                     <a href={item.ref_url} target="_blank" rel="noopener noreferrer"
                                                        className="flex items-center gap-3 px-4 py-5 transition-all duration-200"
-                                                       style={{ color: "var(--violet-text)" }}>
+                                                       style={{ color: "var(--accent-text)" }}>
                                                         <Link2 size={20} className="shrink-0 opacity-50" />
                                                         <div className="min-w-0">
                                                             {item.title && <p className="text-xs font-medium mb-0.5" style={{ color: "var(--text-1)" }}>{item.title}</p>}
@@ -370,7 +356,7 @@ export default function GaleriClient({
                                                     </a>
                                                 )}
                                                 <div className="absolute inset-0 flex flex-col justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                                                     style={{ background: "linear-gradient(to top, rgba(15,25,50,0.88) 0%, transparent 60%)" }}>
+                                                     style={{ background: "linear-gradient(to top, color-mix(in srgb, var(--surface-solid) 88%, transparent) 0%, transparent 60%)" }}>
                                                     <div className="flex items-center justify-between">
                                                         <Link href={`/profil/${item.username}`}
                                                               className="text-[11px] font-medium"
@@ -379,8 +365,8 @@ export default function GaleriClient({
                                                         </Link>
                                                         {isAdmin && (
                                                             <button onClick={() => handleDelete(item)}
-                                                                    className="text-[10px] px-2 py-1 rounded-lg transition-all duration-200"
-                                                                    style={{ background: "rgba(239,68,68,0.15)", border: "1px solid rgba(239,68,68,0.2)", color: "rgba(239,68,68,0.8)" }}>
+                                                                    className="text-[11px] px-2 py-1 rounded-lg transition-all duration-200"
+                                                                    style={{ background: "color-mix(in srgb, var(--danger) 15%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 20%, transparent)", color: "color-mix(in srgb, var(--danger) 80%, transparent)" }}>
                                                                 Sil
                                                             </button>
                                                         )}
@@ -394,17 +380,17 @@ export default function GaleriClient({
                                         <div key={item.id} className="card relative group rounded-2xl overflow-hidden">
                                             {hasError ? (
                                                 <div className="flex flex-col items-center justify-center min-h-[140px] gap-2 py-8"
-                                                     style={{ background: "rgba(239,68,68,0.04)" }}>
+                                                     style={{ background: "color-mix(in srgb, var(--danger) 4%, transparent)" }}>
                                                     <X size={18} className="opacity-20" />
-                                                    <span className="text-[10px]" style={{ color: "var(--text-4)" }}>Yüklenemedi</span>
+                                                    <span className="text-[11px]" style={{ color: "var(--text-4)" }}>Yüklenemedi</span>
                                                     {isAdmin && (
                                                         <button
                                                             onClick={() => handleDelete(item)}
-                                                            className="mt-1 text-[10px] px-2 py-1 rounded-lg"
+                                                            className="mt-1 text-[11px] px-2 py-1 rounded-lg"
                                                             style={{
-                                                                background: "rgba(239,68,68,0.12)",
-                                                                border: "1px solid rgba(239,68,68,0.2)",
-                                                                color: "rgba(239,68,68,0.7)",
+                                                                background: "color-mix(in srgb, var(--danger) 12%, transparent)",
+                                                                border: "1px solid color-mix(in srgb, var(--danger) 20%, transparent)",
+                                                                color: "color-mix(in srgb, var(--danger) 70%, transparent)",
                                                             }}>
                                                             Sil
                                                         </button>
@@ -415,26 +401,24 @@ export default function GaleriClient({
                                                     {item.ref_url ? (
                                                         <a href={item.ref_url} target="_blank" rel="noopener noreferrer" className="block">
                                                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                            <img
+                                                            <img loading="lazy" decoding="async"
                                                                 src={url}
                                                                 alt={item.title ?? "Galeri görseli"}
                                                                 className="w-full h-auto block"
                                                                 onError={() => setErrorIds((prev) => new Set(prev).add(item.id))}
-                                                                loading="lazy"
                                                             />
                                                         </a>
                                                     ) : (
                                                         /* eslint-disable-next-line @next/next/no-img-element */
-                                                        <img
+                                                        <img loading="lazy" decoding="async"
                                                             src={url}
                                                             alt={item.title ?? "Galeri görseli"}
                                                             className="w-full h-auto block"
                                                             onError={() => setErrorIds((prev) => new Set(prev).add(item.id))}
-                                                            loading="lazy"
                                                         />
                                                     )}
                                                     <div className="absolute inset-0 flex flex-col justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                                                         style={{ background: "linear-gradient(to top, rgba(15,25,50,0.88) 0%, transparent 60%)" }}>
+                                                         style={{ background: "linear-gradient(to top, color-mix(in srgb, var(--surface-solid) 88%, transparent) 0%, transparent 60%)" }}>
                                                         <div className="flex items-center justify-between">
                                                             <Link href={`/profil/${item.username}`}
                                                                   className="text-[11px] font-medium"
@@ -444,8 +428,8 @@ export default function GaleriClient({
                                                             <div className="flex items-center gap-2">
                                                                 {item.ref_url && (
                                                                     <a href={item.ref_url} target="_blank" rel="noopener noreferrer"
-                                                                       className="text-[10px] px-2 py-1 rounded-lg"
-                                                                       style={{ background: "var(--violet-border)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}
+                                                                       className="text-[11px] px-2 py-1 rounded-lg"
+                                                                       style={{ background: "var(--accent-border)", border: "1px solid var(--accent-border)", color: "var(--accent-text)" }}
                                                                        onClick={(e) => e.stopPropagation()}>
                                                                         <ExternalLink size={10} />
                                                                     </a>
@@ -453,11 +437,11 @@ export default function GaleriClient({
                                                                 {isAdmin && (
                                                                     <button
                                                                         onClick={() => handleDelete(item)}
-                                                                        className="text-[10px] px-2 py-1 rounded-lg transition-all duration-200"
+                                                                        className="text-[11px] px-2 py-1 rounded-lg transition-all duration-200"
                                                                         style={{
-                                                                            background: "rgba(239,68,68,0.15)",
-                                                                            border: "1px solid rgba(239,68,68,0.2)",
-                                                                            color: "rgba(239,68,68,0.8)",
+                                                                            background: "color-mix(in srgb, var(--danger) 15%, transparent)",
+                                                                            border: "1px solid color-mix(in srgb, var(--danger) 20%, transparent)",
+                                                                            color: "color-mix(in srgb, var(--danger) 80%, transparent)",
                                                                         }}>
                                                                         Sil
                                                                     </button>

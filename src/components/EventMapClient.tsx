@@ -3,7 +3,10 @@
 import dynamic from "next/dynamic";
 import type { EventItem } from "./EventMap";
 
-const EventMap = dynamic(() => import("./EventMap"), { ssr: false });
+const EventMap = dynamic(() => import("./EventMap"), {
+    ssr: false,
+    loading: () => <div className="skeleton w-full h-full min-h-[160px]" />,
+});
 
 export default function EventMapClient({ events, height, zoom, onMarkerClick, selectedId }: {
     events: EventItem[];

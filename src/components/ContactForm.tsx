@@ -33,14 +33,14 @@ export default function ContactForm() {
         return (
             <div className="flex flex-col items-center justify-center gap-4 py-10 text-center">
                 <div className="w-14 h-14 rounded-full flex items-center justify-center"
-                     style={{ background: "rgba(124,58,237,0.12)", border: "1px solid rgba(124,58,237,0.3)" }}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: "#A78BFA" }}>
+                     style={{ background: "color-mix(in srgb, var(--accent) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--accent) 30%, transparent)" }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: "var(--accent)" }}>
                         <path d="M5 12l5 5L20 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                     </svg>
                 </div>
                 <div>
-                    <p className="font-semibold mb-1" style={{ color: "#E0F2FE" }}>Mesajın iletildi!</p>
-                    <p className="text-sm" style={{ color: "rgba(224,242,254,0.45)" }}>En kısa sürede dönüş yapacağız.</p>
+                    <p className="font-semibold mb-1" style={{ color: "var(--text-1)" }}>Mesajın iletildi!</p>
+                    <p className="text-sm" style={{ color: "color-mix(in srgb, var(--fg) 45%, transparent)" }}>En kısa sürede dönüş yapacağız.</p>
                 </div>
             </div>
         );
@@ -50,31 +50,30 @@ export default function ContactForm() {
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-medium tracking-[0.15em] uppercase" style={{ color: "rgba(224,242,254,0.4)" }}>
-                        İsim <span style={{ color: "rgba(239,68,68,0.7)" }}>*</span>
+                    <label htmlFor="cf-name" className="field-label">
+                        İsim <span style={{ color: "color-mix(in srgb, var(--danger) 70%, transparent)" }}>*</span>
                     </label>
                     <input type="text" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                           placeholder="Adın Soyadın" className="form-input" required />
+                           id="cf-name" autoComplete="name" placeholder="Adın Soyadın" className="form-input" required />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                    <label className="text-[10px] font-medium tracking-[0.15em] uppercase" style={{ color: "rgba(224,242,254,0.4)" }}>
-                        E-Posta <span style={{ color: "rgba(239,68,68,0.7)" }}>*</span>
+                    <label htmlFor="cf-email" className="field-label">
+                        E-posta <span style={{ color: "color-mix(in srgb, var(--danger) 70%, transparent)" }}>*</span>
                     </label>
                     <input type="email" value={form.email} onChange={e => setForm(f => ({ ...f, email: e.target.value }))}
-                           placeholder="mail@örnek.com" className="form-input" required />
+                           id="cf-email" autoComplete="email" placeholder="mail@örnek.com" className="form-input" required />
                 </div>
             </div>
             <div className="flex flex-col gap-1.5">
-                <label className="text-[10px] font-medium tracking-[0.15em] uppercase" style={{ color: "rgba(224,242,254,0.4)" }}>
-                    Mesaj <span style={{ color: "rgba(239,68,68,0.7)" }}>*</span>
+                <label htmlFor="cf-msg" className="field-label">
+                    Mesaj <span style={{ color: "color-mix(in srgb, var(--danger) 70%, transparent)" }}>*</span>
                 </label>
                 <textarea value={form.message} onChange={e => setForm(f => ({ ...f, message: e.target.value }))}
-                          placeholder="Merhaba, size ulaşmak istedim..." rows={4}
+                          id="cf-msg" placeholder="Merhaba, size ulaşmak istedim..." rows={4}
                           className="form-input resize-none" required />
             </div>
             <button type="submit" disabled={loading}
-                    className="self-end flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                    style={{ background: "#7C3AED", boxShadow: "0 8px 24px rgba(124,58,237,0.35)" }}>
+                    className="btn-primary self-end">
                 <Send size={14} />
                 {loading ? "Gönderiliyor..." : "Gönder"}
             </button>

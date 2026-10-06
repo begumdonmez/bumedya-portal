@@ -2,141 +2,163 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ChevronDown, Menu, X } from "lucide-react";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
 
-const LINKS = [
-    { href: "/home",        label: "Ana Sayfa"   },
-    { href: "/akis",        label: "Akış"         },
-    { href: "/yildizlar",   label: "Yıldızlar"    },
-    { href: "/arsiv",       label: "Arşiv"        },
-    { href: "/galeri",      label: "Galeri"       },
-    { href: "/members",     label: "Üyeler"       },
-    { href: "/etkinlikler", label: "Etkinlikler"  },
-    { href: "/chat",        label: "Lounge"       },
-    { href: "/manifest",    label: "Manifest"     },
-    { href: "/basvuru",     label: "Başvuru"      },
+const PRIMARY = [
+    { href: "/akis",        label: "Akış"        },
+    { href: "/arsiv",       label: "Arşiv"       },
+    { href: "/galeri",      label: "Galeri"      },
+    { href: "/etkinlikler", label: "Etkinlikler" },
+    { href: "/chat",        label: "Lounge"      },
+    { href: "/members",     label: "Üyeler"      },
 ];
+
+const MORE = [
+    { href: "/home",      label: "Pano"      },
+    { href: "/yildizlar", label: "Yıldızlar" },
+    { href: "/manifest",  label: "Manifest"  },
+    { href: "/basvuru",   label: "Başvuru"   },
+];
+
+const ALL = [...MORE.slice(0, 1), ...PRIMARY, ...MORE.slice(1)];
+
+function isActive(pathname: string, href: string) {
+    return pathname === href || pathname.startsWith(href + "/");
+}
 
 export default function HomeNavLinks() {
     const pathname = usePathname();
     const [open, setOpen] = useState(false);
+    const [moreOpen, setMoreOpen] = useState(false);
+    const moreRef = useRef<HTMLDivElement>(null);
 
-    // Route değişince kapat
-    useEffect(() => { setOpen(false); }, [pathname]);
+    // Sayfa değişince menüleri kapat (render sırasında, efekt yerine)
+    const [lastPath, setLastPath] = useState(pathname);
+    if (lastPath !== pathname) {
+        setLastPath(pathname);
+        setOpen(false);
+        setMoreOpen(false);
+    }
 
-    // Scroll lock
     useEffect(() => {
         document.body.style.overflow = open ? "hidden" : "";
         return () => { document.body.style.overflow = ""; };
     }, [open]);
 
+    useEffect(() => {
+        if (!moreOpen) return;
+        const close = (e: MouseEvent) => {
+            if (!moreRef.current?.contains(e.target as Node)) setMoreOpen(false);
+        };
+        const esc = (e: KeyboardEvent) => e.key === "Escape" && setMoreOpen(false);
+        document.addEventListener("mousedown", close);
+        document.addEventListener("keydown", esc);
+        return () => {
+            document.removeEventListener("mousedown", close);
+            document.removeEventListener("keydown", esc);
+        };
+    }, [moreOpen]);
+
+    const moreActive = MORE.some(l => isActive(pathname, l.href));
+
     return (
         <>
-            {/* Desktop nav */}
-            <div className="hidden md:flex items-center gap-6 lg:gap-8 relative z-10">
-                {LINKS.map(({ href, label }) => {
-                    const active = pathname === href;
+            {/* Masaüstü */}
+            <div className="hidden lg:flex items-center gap-1 relative z-10">
+                {PRIMARY.map(({ href, label }) => {
+                    const active = isActive(pathname, href);
                     return (
-                        <Link
-                            key={href}
-                            href={href}
-                            onClick={active ? () => window.scrollTo({ top: 0, behavior: "smooth" }) : undefined}
-                            className="text-xs tracking-widest uppercase font-medium transition-colors duration-200"
-                            style={{ color: active ? "rgba(240,249,255,0.95)" : "rgba(240,249,255,0.58)" }}
-                        >
+                        <Link key={href} href={href} aria-current={active ? "page" : undefined}
+                              className="relative px-3 py-2 text-sm font-medium transition-colors"
+                              style={{ color: active ? "var(--text-1)" : "var(--text-3)" }}>
                             {label}
+                            {active && (
+                                <span aria-hidden className="absolute left-3 right-3 -bottom-0.5 h-0.5 rounded-full"
+                                      style={{ background: "var(--accent)" }} />
+                            )}
                         </Link>
                     );
                 })}
+
+                <div ref={moreRef} className="relative">
+                    <button type="button" onClick={() => setMoreOpen(v => !v)}
+                            aria-expanded={moreOpen} aria-haspopup="menu"
+                            className="flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors"
+                            style={{ color: moreActive || moreOpen ? "var(--text-1)" : "var(--text-3)" }}>
+                        Daha <ChevronDown size={14} className={`transition-transform ${moreOpen ? "rotate-180" : ""}`} />
+                    </button>
+                    {moreOpen && (
+                        <div role="menu"
+                             className="absolute right-0 top-full mt-1 w-44 py-1.5 rounded-lg animate-float-up"
+                             style={{ background: "var(--surface-solid)", border: "1px solid var(--border-1)",
+                                      boxShadow: "0 8px 24px color-mix(in srgb, var(--shade) 12%, transparent)" }}>
+                            {MORE.map(({ href, label }) => (
+                                <Link key={href} href={href} role="menuitem"
+                                      className="block px-3.5 py-2 text-sm transition-colors hover:bg-[var(--bg-1)]"
+                                      style={{ color: isActive(pathname, href) ? "var(--accent)" : "var(--text-2)" }}>
+                                    {label}
+                                </Link>
+                            ))}
+                        </div>
+                    )}
+                </div>
             </div>
 
-            {/* Mobile hamburger button */}
-            <div className="md:hidden relative z-10">
-                <button
-                    onClick={() => setOpen((v) => !v)}
-                    className="flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200"
-                    style={{
-                        background: open ? "rgba(124,58,237,0.15)" : "rgba(255,255,255,0.04)",
-                        border: `1px solid ${open ? "rgba(124,58,237,0.35)" : "rgba(255,255,255,0.08)"}`,
-                        color: "rgba(240,249,255,0.7)",
-                    }}
-                    aria-label="Menüyü aç"
-                >
-                    {open ? <X size={16} /> : <Menu size={16} />}
-                </button>
-            </div>
+            {/* Mobil menü düğmesi */}
+            <button type="button" onClick={() => setOpen(v => !v)}
+                    className="lg:hidden relative z-10 flex items-center justify-center w-9 h-9 rounded-lg order-last"
+                    style={{ border: "1px solid var(--border-2)", color: "var(--text-2)" }}
+                    aria-label={open ? "Menüyü kapat" : "Menüyü aç"} aria-expanded={open}>
+                {open ? <X size={16} /> : <Menu size={16} />}
+            </button>
 
-            {/* Mobile overlay */}
             {open && (
-                <div
-                    className="md:hidden fixed inset-0 z-40"
-                    style={{ background: "rgba(4,6,26,0.6)", backdropFilter: "blur(4px)" }}
-                    onClick={() => setOpen(false)}
-                />
+                <div className="lg:hidden fixed inset-0 z-40" style={{ background: "var(--overlay)" }}
+                     onClick={() => setOpen(false)} />
             )}
 
-            {/* Mobile drawer */}
-            <div
-                className="md:hidden fixed top-0 right-0 bottom-0 z-50 flex flex-col"
-                style={{
-                    width: 260,
-                    background: "rgba(8,12,36,0.97)",
-                    backdropFilter: "blur(32px)",
-                    borderLeft: "1px solid rgba(124,58,237,0.15)",
-                    transform: open ? "translateX(0)" : "translateX(100%)",
-                    transition: "transform 0.28s cubic-bezier(0.4,0,0.2,1)",
-                }}
-            >
-                {/* Drawer header */}
-                <div className="flex items-center justify-between px-5 py-5 border-b"
-                     style={{ borderColor: "rgba(124,58,237,0.12)" }}>
-                    <div className="flex items-baseline gap-0.5">
-                        <span className="text-sm font-bold" style={{ color: "rgba(224,242,254,0.55)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.8)" }}>.</span>
-                    </div>
-                    <button
-                        onClick={() => setOpen(false)}
-                        className="w-8 h-8 rounded-xl flex items-center justify-center"
-                        style={{ color: "rgba(224,242,254,0.4)", background: "rgba(255,255,255,0.04)" }}
-                    >
-                        <X size={14} />
+            <aside aria-hidden={!open}
+                   className="lg:hidden fixed top-0 right-0 bottom-0 z-50 flex flex-col w-[min(280px,85vw)] safe-top"
+                   style={{
+                       background: "var(--paper)",
+                       borderLeft: "1px solid var(--border-2)",
+                       transform: open ? "translateX(0)" : "translateX(100%)",
+                       visibility: open ? "visible" : "hidden",
+                       transition: "transform 240ms cubic-bezier(0.4,0,0.2,1), visibility 240ms",
+                   }}>
+                <div className="flex items-center justify-between px-5 h-16" style={{ borderBottom: "1px solid var(--border-2)" }}>
+                    <span className="font-display font-semibold text-lg" style={{ color: "var(--text-1)" }}>
+                        bumedya<span style={{ color: "var(--accent)" }}>.</span>
+                    </span>
+                    <button type="button" onClick={() => setOpen(false)} aria-label="Menüyü kapat"
+                            className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ color: "var(--text-3)" }}>
+                        <X size={16} />
                     </button>
                 </div>
 
-                {/* Links */}
-                <nav className="flex-1 flex flex-col px-3 py-4 gap-1">
-                    {LINKS.map(({ href, label }) => {
-                        const active = pathname === href;
+                <nav className="flex-1 overflow-y-auto flex flex-col px-3 py-3">
+                    {ALL.map(({ href, label }) => {
+                        const active = isActive(pathname, href);
                         return (
-                            <Link
-                                key={href}
-                                href={href}
-                                onClick={active ? () => window.scrollTo({ top: 0, behavior: "smooth" }) : undefined}
-                                className="flex items-center gap-3 px-4 py-3.5 rounded-xl text-sm font-medium transition-all duration-150"
-                                style={{
-                                    color: active ? "rgba(167,139,250,0.95)" : "rgba(224,242,254,0.55)",
-                                    background: active ? "rgba(124,58,237,0.12)" : "transparent",
-                                    border: `1px solid ${active ? "rgba(124,58,237,0.25)" : "transparent"}`,
-                                }}
-                            >
-                                {active && (
-                                    <span className="w-1.5 h-1.5 rounded-full shrink-0"
-                                          style={{ background: "rgba(124,58,237,0.8)" }} />
-                                )}
+                            <Link key={href} href={href} aria-current={active ? "page" : undefined}
+                                  className="px-3 py-3 rounded-lg text-[15px] font-medium transition-colors"
+                                  style={{
+                                      color: active ? "var(--accent)" : "var(--text-2)",
+                                      background: active ? "var(--accent-bg)" : "transparent",
+                                  }}>
                                 {label}
                             </Link>
                         );
                     })}
                 </nav>
 
-                {/* Bottom decoration */}
-                <div className="px-5 py-5 border-t" style={{ borderColor: "rgba(124,58,237,0.08)" }}>
-                    <p className="text-[10px] tracking-widest uppercase" style={{ color: "rgba(224,242,254,0.2)" }}>
-                        Bumedya Portalı
-                    </p>
+                <div className="px-5 py-4 flex items-center justify-between safe-bottom" style={{ borderTop: "1px solid var(--border-2)" }}>
+                    <span className="label-caps">Tema</span>
+                    <ThemeSwitcher />
                 </div>
-            </div>
+            </aside>
         </>
     );
 }

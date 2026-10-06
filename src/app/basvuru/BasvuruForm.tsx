@@ -44,11 +44,11 @@ export default function BasvuruForm({
 
     return (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4"
-             style={{ background: "rgba(0,0,0,0.7)", backdropFilter: "blur(8px)" }}
+             style={{ background: "color-mix(in srgb, var(--shade) 70%, transparent)" }}
              onClick={(e) => e.target === e.currentTarget && onClose()}>
 
-            <div className="w-full max-w-lg rounded-3xl overflow-hidden flex flex-col"
-                 style={{ background: "rgba(12,18,42,0.97)", backdropFilter: "blur(32px)", border: "1px solid var(--border-1)", maxHeight: "90dvh" }}>
+            <div className="w-full max-w-lg rounded-2xl overflow-hidden flex flex-col"
+                 style={{ background: "color-mix(in srgb, var(--surface-solid) 97%, transparent)", border: "1px solid var(--border-1)", maxHeight: "90dvh" }}>
 
                 {/* Header */}
                 <div className="shrink-0 flex items-center justify-between px-5 py-4 border-b"
@@ -76,8 +76,8 @@ export default function BasvuruForm({
                     {submitted ? (
                         <div className="flex flex-col items-center text-center gap-4 py-8">
                             <div className="w-14 h-14 rounded-2xl flex items-center justify-center"
-                                 style={{ background: "rgba(52,211,153,0.1)", border: "1px solid rgba(52,211,153,0.25)" }}>
-                                <CheckCircle2 size={26} style={{ color: "rgba(52,211,153,0.9)" }} />
+                                 style={{ background: "color-mix(in srgb, var(--success) 10%, transparent)", border: "1px solid color-mix(in srgb, var(--success) 25%, transparent)" }}>
+                                <CheckCircle2 size={26} style={{ color: "color-mix(in srgb, var(--success) 90%, transparent)" }} />
                             </div>
                             <div>
                                 <p className="text-base font-bold mb-1" style={{ color: "var(--text-1)" }}>Başvurun Alındı!</p>
@@ -86,7 +86,7 @@ export default function BasvuruForm({
                                 </p>
                             </div>
                             <button onClick={onClose} className="px-5 py-2 rounded-xl text-sm font-medium"
-                                    style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
+                                    style={{ background: "var(--accent-bg-md)", border: "1px solid var(--accent-border)", color: "var(--accent-text)" }}>
                                 Kapat
                             </button>
                         </div>
@@ -94,9 +94,9 @@ export default function BasvuruForm({
                         <>
                             {hasPending && (
                                 <div className="flex items-start gap-2.5 px-3 py-2.5 rounded-xl"
-                                     style={{ background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.2)" }}>
-                                    <AlertCircle size={13} className="shrink-0 mt-0.5" style={{ color: "rgba(251,191,36,0.8)" }} />
-                                    <p className="text-xs" style={{ color: "rgba(251,191,36,0.8)" }}>
+                                     style={{ background: "color-mix(in srgb, var(--warn) 6%, transparent)", border: "1px solid color-mix(in srgb, var(--warn) 20%, transparent)" }}>
+                                    <AlertCircle size={13} className="shrink-0 mt-0.5" style={{ color: "color-mix(in srgb, var(--warn) 80%, transparent)" }} />
+                                    <p className="text-xs" style={{ color: "color-mix(in srgb, var(--warn) 80%, transparent)" }}>
                                         Bu pozisyon için bekleyen bir başvurun var.
                                     </p>
                                 </div>
@@ -127,9 +127,9 @@ export default function BasvuruForm({
 
                             <button onClick={handleSubmit} disabled={submitting}
                                     className="w-full py-3.5 rounded-2xl text-sm font-semibold transition-all duration-200 disabled:opacity-50 flex items-center justify-center gap-2"
-                                    style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.8), rgba(109,40,217,0.7))", color: "#fff", border: "1px solid rgba(124,58,237,0.4)" }}>
+                                    style={{ background: "color-mix(in srgb, var(--accent) 40%, transparent)", color: "#fff", border: "1px solid color-mix(in srgb, var(--accent) 40%, transparent)" }}>
                                 {submitting
-                                    ? <><span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> Gönderiliyor...</>
+                                    ? <><span className="w-4 h-4 rounded-full border-2 border-[color-mix(in_srgb,var(--fg)_30%,transparent)] border-t-[var(--on-accent)] animate-spin" /> Gönderiliyor...</>
                                     : <><Check size={15} /> Başvuruyu Gönder</>}
                             </button>
                         </>

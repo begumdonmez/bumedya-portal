@@ -66,17 +66,17 @@ export default function AnnouncementsWidget({
         <div className="flex flex-col h-full">
             <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                    <Megaphone size={13} style={{ color: "rgba(251,191,36,0.7)" }} />
+                    <Megaphone size={13} style={{ color: "color-mix(in srgb, var(--warn) 70%, transparent)" }} />
                     <p className="label-caps">Duyurular</p>
                 </div>
                 {isAdmin && (
                     <button
                         onClick={() => setShowForm(v => !v)}
-                        className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-lg transition-all duration-200"
+                        className="flex items-center gap-1 text-[11px] px-2 py-1 rounded-lg transition-all duration-200"
                         style={{
-                            background: showForm ? "rgba(124,58,237,0.2)" : "rgba(124,58,237,0.1)",
-                            border: "1px solid rgba(124,58,237,0.25)",
-                            color: "rgba(167,139,250,0.8)",
+                            background: showForm ? "color-mix(in srgb, var(--accent) 20%, transparent)" : "color-mix(in srgb, var(--accent) 10%, transparent)",
+                            border: "1px solid color-mix(in srgb, var(--accent) 25%, transparent)",
+                            color: "color-mix(in srgb, var(--accent) 80%, transparent)",
                         }}>
                         {showForm ? <X size={10} /> : <Plus size={10} />}
                         {showForm ? "İptal" : "Yeni"}
@@ -94,17 +94,17 @@ export default function AnnouncementsWidget({
                         rows={3}
                         className="w-full rounded-xl px-3 py-2.5 text-xs resize-none outline-none transition-all duration-200"
                         style={{
-                            background: "rgba(255,255,255,0.05)",
-                            color: "#E0F2FE",
-                            border: "1px solid rgba(124,58,237,0.3)",
-                            boxShadow: "0 0 0 1px rgba(124,58,237,0.1)",
+                            background: "color-mix(in srgb, var(--fg) 5%, transparent)",
+                            color: "var(--text-1)",
+                            border: "1px solid color-mix(in srgb, var(--accent) 30%, transparent)",
+                            boxShadow: "0 0 0 1px color-mix(in srgb, var(--accent) 10%, transparent)",
                         }}
                     />
                     <button
                         type="submit"
                         disabled={loading || !content.trim()}
                         className="self-end text-xs px-3 py-1.5 rounded-lg font-medium transition-all duration-200 disabled:opacity-40"
-                        style={{ background: "#7C3AED", color: "#fff" }}>
+                        style={{ background: "var(--accent)", color: "#fff" }}>
                         {loading ? "Yayınlanıyor..." : "Yayınla"}
                     </button>
                 </form>
@@ -115,29 +115,29 @@ export default function AnnouncementsWidget({
                 {items.length === 0 ? (
                     <div className="flex flex-col items-center justify-center flex-1 gap-2 py-8">
                         <Megaphone size={28} className="opacity-10" />
-                        <p className="text-xs" style={{ color: "rgba(240,249,255,0.2)" }}>Henüz duyuru yok.</p>
+                        <p className="text-xs" style={{ color: "color-mix(in srgb, var(--fg) 20%, transparent)" }}>Henüz duyuru yok.</p>
                     </div>
                 ) : (
                     items.map(item => (
                         <div key={item.id} className="group relative rounded-xl p-3"
-                             style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                             style={{ background: "color-mix(in srgb, var(--fg) 3%, transparent)", border: "1px solid color-mix(in srgb, var(--fg) 6%, transparent)" }}>
                             <div
                                 className="absolute left-0 top-3 bottom-3 w-[2px] rounded-full"
-                                style={{ background: "rgba(251,191,36,0.5)", marginLeft: "12px" }}
+                                style={{ background: "color-mix(in srgb, var(--warn) 50%, transparent)", marginLeft: "12px" }}
                             />
                             <div className="pl-3">
-                                <p className="text-xs leading-relaxed mb-2" style={{ color: "rgba(240,249,255,0.75)" }}>
+                                <p className="text-xs leading-relaxed mb-2" style={{ color: "color-mix(in srgb, var(--fg) 75%, transparent)" }}>
                                     {item.content}
                                 </p>
                                 <div className="flex items-center justify-between">
-                                    <p className="text-[10px]" style={{ color: "rgba(240,249,255,0.25)" }}>
+                                    <p className="text-[11px]" style={{ color: "color-mix(in srgb, var(--fg) 25%, transparent)" }}>
                                         @{item.username} · {relativeTime(item.created_at)}
                                     </p>
                                     {isAdmin && (
                                         <button
                                             onClick={() => handleDelete(item.id)}
                                             className="opacity-0 group-hover:opacity-100 transition-opacity p-0.5 rounded"
-                                            style={{ color: "rgba(239,68,68,0.5)" }}>
+                                            style={{ color: "color-mix(in srgb, var(--danger) 50%, transparent)" }}>
                                             <Trash2 size={11} />
                                         </button>
                                     )}

@@ -8,16 +8,17 @@ import { POSITIONS_BY_CATEGORY, type PositionId, type Position } from "./positio
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import HomeNavLinks from "@/components/HomeNavLinks";
 import NotificationBell from "@/components/NotificationBell";
+import SiteHeader from "@/components/SiteHeader";
 
 const BasvuruForm = dynamic(() => import("./BasvuruForm"), { ssr: false, loading: () => null });
 
 /* ── Durum chip'i ─────────────────────────────────────────── */
 function StatusChip({ status }: { status: string }) {
     if (status === "pending")
-        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs" style={{ background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.25)", color: "rgba(251,191,36,0.9)" }}><Clock size={11} /> Beklemede</span>;
+        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs" style={{ background: "color-mix(in srgb, var(--warn) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--warn) 25%, transparent)", color: "color-mix(in srgb, var(--warn) 90%, transparent)" }}><Clock size={11} /> Beklemede</span>;
     if (status === "approved")
-        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs" style={{ background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.25)", color: "rgba(52,211,153,0.9)" }}><Check size={11} /> Onaylandı</span>;
-    return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs" style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.25)", color: "rgba(239,68,68,0.9)" }}><X size={11} /> Reddedildi</span>;
+        return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs" style={{ background: "color-mix(in srgb, var(--success) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--success) 25%, transparent)", color: "color-mix(in srgb, var(--success) 90%, transparent)" }}><Check size={11} /> Onaylandı</span>;
+    return <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs" style={{ background: "color-mix(in srgb, var(--danger) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 25%, transparent)", color: "color-mix(in srgb, var(--danger) 90%, transparent)" }}><X size={11} /> Reddedildi</span>;
 }
 
 /* ── Pozisyon kartı ───────────────────────────────────────── */
@@ -56,7 +57,7 @@ function PositionCard({
             {pos.requirements.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                     {pos.requirements.map((r, i) => (
-                        <span key={i} className="text-[10px] px-2.5 py-1 rounded-full"
+                        <span key={i} className="text-[11px] px-2.5 py-1 rounded-full"
                               style={{ background: pos.bg, border: `1px solid ${pos.border}`, color: pos.color }}>
                             {r}
                         </span>
@@ -134,28 +135,10 @@ export default function BasvuruClient({
 
     return (
         <>
-            <div className="aurora-bg relative min-h-screen flex flex-col">
-                <div aria-hidden className="aurora-layer" />
-                <div aria-hidden className="aurora-orb-pink" />
+            <div className="relative min-h-screen flex flex-col">
 
                 {/* Navbar */}
-                <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
-                    <NavbarBackdrop />
-                    <Link href="/" className="group flex items-baseline gap-0.5 shrink-0 relative z-10">
-                        <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                        <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
-                              style={{ color: "var(--violet)" }}>.</span>
-                    </Link>
-                    <HomeNavLinks />
-                    <div className="relative z-10 flex items-center gap-2">
-                        <NotificationBell userId={userId} />
-                        <Link href="/profil"
-                              className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
-                              style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
-                            @{username}
-                        </Link>
-                    </div>
-                </nav>
+                <SiteHeader userId={userId} username={username} />
 
                 <div className="relative z-10 max-w-3xl mx-auto w-full px-4 sm:px-6 pt-24 pb-10 flex flex-col gap-12">
 
@@ -163,7 +146,7 @@ export default function BasvuruClient({
                     <div className="text-center flex flex-col items-center gap-4">
                         <div className="glass flex items-center gap-2 px-4 py-2 rounded-full">
                             <Users size={13} style={{ color: "var(--text-3)" }} />
-                            <span className="text-[11px] tracking-widest uppercase font-medium" style={{ color: "var(--text-3)" }}>
+                            <span className="label-caps font-medium" style={{ color: "var(--text-3)" }}>
                                 Başvurular
                             </span>
                         </div>
@@ -241,7 +224,7 @@ export default function BasvuruClient({
                                                 </div>
                                                 <div>
                                                     <p className="text-xs font-medium" style={{ color: "var(--text-2)" }}>{pos?.title ?? app.type}</p>
-                                                    <p className="text-[10px]" style={{ color: "var(--text-4)" }}>
+                                                    <p className="text-[11px]" style={{ color: "var(--text-4)" }}>
                                                         {new Date(app.created_at).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })}
                                                     </p>
                                                 </div>
@@ -266,7 +249,7 @@ export default function BasvuruClient({
                             ].map(({ step, label, desc }) => (
                                 <div key={step} className="flex items-center gap-4">
                                     <div className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold shrink-0"
-                                         style={{ background: "var(--violet-bg-md)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
+                                         style={{ background: "var(--accent-bg-md)", border: "1px solid var(--accent-border)", color: "var(--accent-text)" }}>
                                         {step}
                                     </div>
                                     <div>

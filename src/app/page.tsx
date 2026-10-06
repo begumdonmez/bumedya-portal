@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
@@ -7,6 +8,7 @@ import NotificationBell from "@/components/NotificationBell";
 import SetWelcomeCookie from "@/components/SetWelcomeCookie";
 import SiteFooter from "@/components/SiteFooter";
 import ContactSection from "@/components/ContactSection";
+import SiteHeader from "@/components/SiteHeader";
 
 export const metadata: Metadata = {
     title: "bumedya.",
@@ -23,22 +25,22 @@ const RULES = [
 
 const BADGES = [
     // — Sistem —
-    { label: "Onaylı", color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)",   desc: "Admin tarafından doğrulanmış üyelere verilir. Başvuruyla alınamaz." },
-    { label: "Kurucu",           color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)",   desc: "Topluluğun kurucu üyelerine özel rozettir. Başvuruyla alınamaz." },
-    { label: "Katkıcı",          color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.2)",   desc: "Topluluk projelerine aktif katkı sağlayan üyelere admin tarafından verilir." },
+    { label: "Onaylı", color: "color-mix(in srgb, var(--info) 90%, transparent)", bg: "color-mix(in srgb, var(--info) 8%, transparent)",  border: "color-mix(in srgb, var(--info) 20%, transparent)",   desc: "Admin tarafından doğrulanmış üyelere verilir. Başvuruyla alınamaz." },
+    { label: "Kurucu",           color: "color-mix(in srgb, var(--warn) 90%, transparent)",  bg: "color-mix(in srgb, var(--warn) 6%, transparent)",  border: "color-mix(in srgb, var(--warn) 20%, transparent)",   desc: "Topluluğun kurucu üyelerine özel rozettir. Başvuruyla alınamaz." },
+    { label: "Katkıcı",          color: "color-mix(in srgb, var(--accent) 90%, transparent)", bg: "color-mix(in srgb, var(--accent) 8%, transparent)",  border: "color-mix(in srgb, var(--accent) 20%, transparent)",   desc: "Topluluk projelerine aktif katkı sağlayan üyelere admin tarafından verilir." },
     // — Başvuruyla kazanılan —
-    { label: "Nakkaş",   color: "rgba(244,114,182,0.95)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.25)", desc: "Çizim, illüstrasyon veya görsel sanat alanında üretim yapan üyelere başvuru ile verilir." },
-    { label: "Kalemşor", color: "rgba(52,211,153,0.95)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)",   desc: "Yazı, şiir veya özgün metin üreten üyelere başvuru ile verilir." },
-    { label: "Mürettip", color: "rgba(251,191,36,0.95)",  bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.25)",  desc: "İçerikleri derleyip düzenleyen, editoryal katkı sağlayan üyelere başvuru ile verilir." },
+    { label: "Nakkaş",   color: "color-mix(in srgb, var(--pink) 95%, transparent)", bg: "color-mix(in srgb, var(--pink) 8%, transparent)", border: "color-mix(in srgb, var(--pink) 25%, transparent)", desc: "Çizim, illüstrasyon veya görsel sanat alanında üretim yapan üyelere başvuru ile verilir." },
+    { label: "Kalemşor", color: "color-mix(in srgb, var(--success) 95%, transparent)",  bg: "color-mix(in srgb, var(--success) 8%, transparent)",  border: "color-mix(in srgb, var(--success) 20%, transparent)",   desc: "Yazı, şiir veya özgün metin üreten üyelere başvuru ile verilir." },
+    { label: "Mürettip", color: "color-mix(in srgb, var(--warn) 95%, transparent)",  bg: "color-mix(in srgb, var(--warn) 8%, transparent)",  border: "color-mix(in srgb, var(--warn) 25%, transparent)",  desc: "İçerikleri derleyip düzenleyen, editoryal katkı sağlayan üyelere başvuru ile verilir." },
     // — İlgi alanı —
-    { label: "Çizer",  color: "rgba(244,114,182,0.7)", bg: "rgba(244,114,182,0.05)", border: "rgba(244,114,182,0.18)", desc: "Görsel sanat ve illüstrasyona ilgi duyan üyeleri gösterir." },
-    { label: "Yazar",  color: "rgba(52,211,153,0.7)",  bg: "rgba(52,211,153,0.05)",  border: "rgba(52,211,153,0.15)",  desc: "Yazı ve edebiyata ilgi duyan üyeleri gösterir." },
-    { label: "Editör", color: "rgba(251,191,36,0.7)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.18)",  desc: "Editoryal alana ilgi duyan üyeleri gösterir." },
+    { label: "Çizer",  color: "color-mix(in srgb, var(--pink) 70%, transparent)", bg: "color-mix(in srgb, var(--pink) 5%, transparent)", border: "color-mix(in srgb, var(--pink) 18%, transparent)", desc: "Görsel sanat ve illüstrasyona ilgi duyan üyeleri gösterir." },
+    { label: "Yazar",  color: "color-mix(in srgb, var(--success) 70%, transparent)",  bg: "color-mix(in srgb, var(--success) 5%, transparent)",  border: "color-mix(in srgb, var(--success) 15%, transparent)",  desc: "Yazı ve edebiyata ilgi duyan üyeleri gösterir." },
+    { label: "Editör", color: "color-mix(in srgb, var(--warn) 70%, transparent)",  bg: "color-mix(in srgb, var(--warn) 6%, transparent)",  border: "color-mix(in srgb, var(--warn) 18%, transparent)",  desc: "Editoryal alana ilgi duyan üyeleri gösterir." },
     // — Kullanıcı kendi alır —
-    { label: "Plak Kafası",    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.06)", border: "rgba(244,114,182,0.2)", desc: "Müziği yaşayıp nefes alanlar için. Profilden kendin alabilirsin." },
-    { label: "Seri İzleyici",  color: "rgba(96,165,250,0.9)",  bg: "rgba(59,130,246,0.06)",  border: "rgba(59,130,246,0.2)",  desc: "Film ve dizi tutkunları için. Profilden kendin alabilirsin." },
-    { label: "Kitap Kurdu",    color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.06)",  border: "rgba(52,211,153,0.2)",  desc: "Okumaktan yorulmayanlar için. Profilden kendin alabilirsin." },
-    { label: "Sosyal Kelebek", color: "rgba(251,146,60,0.9)",  bg: "rgba(251,146,60,0.06)",  border: "rgba(251,146,60,0.2)",  desc: "Aktif sohbete katkı sağlayan, topluluğu canlı tutan üyelere admin tarafından verilir." },
+    { label: "Plak Kafası",    color: "color-mix(in srgb, var(--pink) 90%, transparent)", bg: "color-mix(in srgb, var(--pink) 6%, transparent)", border: "color-mix(in srgb, var(--pink) 20%, transparent)", desc: "Müziği yaşayıp nefes alanlar için. Profilden kendin alabilirsin." },
+    { label: "Seri İzleyici",  color: "color-mix(in srgb, var(--info) 90%, transparent)",  bg: "color-mix(in srgb, var(--info) 6%, transparent)",  border: "color-mix(in srgb, var(--info) 20%, transparent)",  desc: "Film ve dizi tutkunları için. Profilden kendin alabilirsin." },
+    { label: "Kitap Kurdu",    color: "color-mix(in srgb, var(--success) 90%, transparent)",  bg: "color-mix(in srgb, var(--success) 6%, transparent)",  border: "color-mix(in srgb, var(--success) 20%, transparent)",  desc: "Okumaktan yorulmayanlar için. Profilden kendin alabilirsin." },
+    { label: "Sosyal Kelebek", color: "color-mix(in srgb, var(--accent-2) 90%, transparent)",  bg: "color-mix(in srgb, var(--accent-2) 6%, transparent)",  border: "color-mix(in srgb, var(--accent-2) 20%, transparent)",  desc: "Aktif sohbete katkı sağlayan, topluluğu canlı tutan üyelere admin tarafından verilir." },
 ];
 
 const PAGES = [
@@ -46,77 +48,70 @@ const PAGES = [
         path: "/galeri",
         label: "Galeri",
         desc: "Etkinliklerden fotoğraflar, çizimler, tasarımlar — topluluğun görsel belleği burada birikir. Yalnızca adminler içerik yükleyebilir.",
-        accent: "rgba(167,139,250,0.85)",
-        bg: "rgba(124,58,237,0.06)",
-        border: "rgba(124,58,237,0.18)",
+        accent: "color-mix(in srgb, var(--accent) 85%, transparent)",
+        bg: "color-mix(in srgb, var(--accent) 6%, transparent)",
+        border: "color-mix(in srgb, var(--accent) 18%, transparent)",
     },
     {
         path: "/akis",
         label: "Akış",
-        desc: "Topluluktan kısa paylaşımlar, fikirler ve günlük üretimler. Üyeler metin veya görsel paylaşabilir,un dev beğeni bırakabilir.",
-        accent: "rgba(96,165,250,0.85)",
-        bg: "rgba(59,130,246,0.06)",
-        border: "rgba(59,130,246,0.18)",
+        desc: "Topluluktan kısa paylaşımlar, fikirler ve günlük üretimler. Üyeler metin veya görsel paylaşabilir, beğeni bırakabilir.",
+        accent: "color-mix(in srgb, var(--info) 85%, transparent)",
+        bg: "color-mix(in srgb, var(--info) 6%, transparent)",
+        border: "color-mix(in srgb, var(--info) 18%, transparent)",
     },
     {
         path: "/etkinlikler",
         label: "Etkinlikler",
         desc: "Yaklaşan buluşmalar, workshoplar ve topluluk etkinlikleri. Haritadan konuma bak, takvime ekle, detaylara ulaş.",
-        accent: "rgba(52,211,153,0.85)",
-        bg: "rgba(52,211,153,0.06)",
-        border: "rgba(52,211,153,0.18)",
+        accent: "color-mix(in srgb, var(--success) 85%, transparent)",
+        bg: "color-mix(in srgb, var(--success) 6%, transparent)",
+        border: "color-mix(in srgb, var(--success) 18%, transparent)",
     },
     {
         path: "/chat",
         label: "Chat",
         desc: "Gerçek zamanlı topluluk sohbeti. Fikirlerini anlık paylaş, sorularını sor, diğer üyelerle tanış.",
-        accent: "rgba(251,191,36,0.85)",
-        bg: "rgba(251,191,36,0.06)",
-        border: "rgba(251,191,36,0.18)",
+        accent: "color-mix(in srgb, var(--warn) 85%, transparent)",
+        bg: "color-mix(in srgb, var(--warn) 6%, transparent)",
+        border: "color-mix(in srgb, var(--warn) 18%, transparent)",
     },
     {
         path: "/manifest",
         label: "Manifest",
         desc: "Ortak kara tahta. Hayalini, notunu veya bir söz bırak — renk seç, tahtaya tıkla. Topluluktan herkesin notu burada birikir.",
-        accent: "rgba(52,211,153,0.85)",
-        bg: "rgba(52,211,153,0.06)",
-        border: "rgba(52,211,153,0.18)",
+        accent: "color-mix(in srgb, var(--success) 85%, transparent)",
+        bg: "color-mix(in srgb, var(--success) 6%, transparent)",
+        border: "color-mix(in srgb, var(--success) 18%, transparent)",
     },
     {
         path: "/basvuru",
         label: "Başvuru",
         desc: "Yönetim kuruluna katıl, rozet başvurusu yap veya okulunda bir Bumedya kulübü aç. Formlar yeteneklerini ölçmek için değil, seni tanımak için.",
-        accent: "rgba(244,114,182,0.85)",
-        bg: "rgba(244,114,182,0.06)",
-        border: "rgba(244,114,182,0.18)",
+        accent: "color-mix(in srgb, var(--pink) 85%, transparent)",
+        bg: "color-mix(in srgb, var(--pink) 6%, transparent)",
+        border: "color-mix(in srgb, var(--pink) 18%, transparent)",
     },
     {
         path: "/yildizlar",
         label: "Yıldızlar",
         desc: "Her hafta topluluk bir film, dizi, kitap veya şarkı önerir; oylamayla haftanın yıldızları belirlenir. Oy ver, öneri sun, tartış.",
-        accent: "rgba(251,191,36,0.85)",
-        bg: "rgba(251,191,36,0.06)",
-        border: "rgba(251,191,36,0.18)",
+        accent: "color-mix(in srgb, var(--warn) 85%, transparent)",
+        bg: "color-mix(in srgb, var(--warn) 6%, transparent)",
+        border: "color-mix(in srgb, var(--warn) 18%, transparent)",
     },
     {
         path: "/arsiv",
         label: "Arşiv",
         desc: "Topluluğun beğendiği filmler, diziler, kitaplar ve şarkılar — raf raf sıralanmış. Puan ver, yorum yap, kendi keşiflerini ekle.",
-        accent: "rgba(96,165,250,0.85)",
-        bg: "rgba(59,130,246,0.06)",
-        border: "rgba(59,130,246,0.18)",
+        accent: "color-mix(in srgb, var(--info) 85%, transparent)",
+        bg: "color-mix(in srgb, var(--info) 6%, transparent)",
+        border: "color-mix(in srgb, var(--info) 18%, transparent)",
     },
 ];
 
 const CLUBS = [
     { uni: "Beykoz Üniversitesi", city: "İstanbul", active: true },
-];
-
-const PILLARS = [
-    { label: "Çiz", accent: "rgba(167,139,250,1)", desc: "Kağıt sınır koymaz, ekran da koymaz." },
-    { label: "Yaz", accent: "rgba(96,165,250,1)",  desc: "Kelimeler en keskin araçtır." },
-    { label: "Bağlan", accent: "rgba(244,114,182,1)", desc: "Yaratıcılar birbirini bulur burada." },
-    { label: "Büyü", accent: "rgba(252,211,77,1)",  desc: "Her paylaşım seni biraz daha ileriye taşır." },
 ];
 
 export default async function LandingPage() {
@@ -134,301 +129,221 @@ export default async function LandingPage() {
         username = profile?.username ?? user.email?.split("@")[0] ?? null;
     }
 
+    const contents = [
+        { path: "/akis", label: "Akış", desc: "Kısa paylaşımlar, fikirler ve günlük üretimler. Metin ya da görsel paylaş, beğeni bırak." },
+        ...PAGES.filter(p => p.path !== "/akis").map(p => ({ path: p.path, label: p.label, desc: p.desc })),
+    ];
+
     return (
-        <main className="relative w-full aurora-bg">
+        <main className="relative w-full">
             <SetWelcomeCookie />
+            <SiteHeader userId={user?.id} username={username} />
 
-            {/* Aurora layers — animated orbs + texture */}
-            <div aria-hidden className="aurora-layer" />
-            <div aria-hidden className="aurora-orb-pink" />
-            <div aria-hidden className="fixed inset-0 dot-grid opacity-[0.35] pointer-events-none" style={{ zIndex: 0 }} />
-
-            {/* NAVBAR */}
-            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
-                <NavbarBackdrop />
-                <Link href="/" className="group flex items-center gap-0.5 select-none shrink-0 relative z-10">
-                    <span className="text-lg font-bold tracking-tight" style={{ color: "var(--text-2)" }}>bumedya</span>
-                    <span className="text-lg font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_10px_rgba(124,58,237,0.9)]" style={{ color: "var(--violet)" }}>.</span>
-                </Link>
-                {user && <HomeNavLinks />}
-                <div className="flex items-center gap-2 shrink-0 relative z-10">
-                    {user ? (
-                        <>
-                            <NotificationBell userId={user.id} />
-                            <Link href="/profil"
-                                  className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
-                                  style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
-                                @{username}
-                            </Link>
-                        </>
-                    ) : (
-                        <>
-                            <Link href="/login" className="text-xs font-medium transition-colors duration-200 px-3 py-2"
-                                  style={{ color: "var(--text-3)" }}>Giriş</Link>
-                            <Link href="/register" className="btn-primary !py-2 !px-4 !text-xs">Katıl</Link>
-                        </>
-                    )}
-                </div>
-            </nav>
-
-            {/* HERO */}
-            <section className="relative z-10 flex flex-col items-center justify-center min-h-screen pt-20 px-4 sm:px-6 text-center">
-                <div className="glass flex items-center gap-2.5 px-4 py-2 rounded-full mb-10 animate-float-up" style={{ animationFillMode: "backwards" }}>
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                    <span className="text-[11px] tracking-widest uppercase font-medium" style={{ color: "var(--text-3)" }}>
-                        Topluluk aktif · {totalCount ?? 0} üye
+            {/* ── KAPAK ───────────────────────────────────────── */}
+            <section className="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 pt-28 sm:pt-32 pb-16 sm:pb-24">
+                <div className="flex items-center gap-3 label-caps mb-10 sm:mb-14 animate-float-up">
+                    <span>Sayı 01</span>
+                    <span aria-hidden className="h-px flex-1" style={{ background: "var(--border-1)" }} />
+                    <span className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full" style={{ background: "var(--success)" }} />
+                        {totalCount ?? 0} üye
                     </span>
                 </div>
 
-                <div className="animate-float-up delay-100 w-full" style={{ animationFillMode: "backwards" }}>
-                    <h1 className="font-bold tracking-tighter leading-none select-none"
-                        style={{ fontSize: "clamp(3rem,12vw,10rem)" }}>
-                        <span className="text-gradient-white">bumedya</span>
-                        <span style={{
-                            color: "#8B5CF6",
-                            textShadow: "0 0 50px rgba(124,58,237,0.7), 0 0 100px rgba(124,58,237,0.3)",
-                        }}>.</span>
-                    </h1>
-                    <p className="mt-3 text-xs sm:text-sm font-medium tracking-[0.4em] uppercase"
-                       style={{ color: "var(--text-4)" }}>
-                        Creative Digital Universe
-                    </p>
-                </div>
-
-                <p className="animate-float-up delay-200 mt-8 text-base sm:text-lg font-light leading-relaxed max-w-lg"
-                   style={{ color: "var(--text-3)", animationFillMode: "backwards" }}>
-                    Fikirlerin forma dönüştüğü, sınırların bulanıklaştığı yeni nesil dijital fanzin ve topluluk portalı.
-                </p>
-
-                <div className="animate-float-up delay-300 flex flex-col sm:flex-row gap-3 mt-10 w-full max-w-xs sm:max-w-none sm:w-auto"
-                     style={{ animationFillMode: "backwards" }}>
-                    {user ? (
-                        <Link href="/home" className="btn-primary flex items-center justify-center gap-2">
-                            Ana Sayfaya Git
-                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                                <path d="M3 7.5h9M8 3.5l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                        </Link>
-                    ) : (
-                        <Link href="/register" className="btn-primary flex items-center justify-center gap-2">
-                            Topluluğa Katıl
-                            <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-                                <path d="M3 7.5h9M8 3.5l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
-                            </svg>
-                        </Link>
-                    )}
-                    <a href="#kesfet" className="btn-ghost flex items-center justify-center">Keşfet</a>
-                </div>
-                
-            </section>
-
-            {/* PILLARS */}
-            <section id="kesfet" className="relative z-10 px-4 sm:px-6 py-20 sm:py-28 max-w-5xl mx-auto">
-                <div className="text-center mb-14">
-                    <p className="label-caps mb-4">Neden mi bumedya?</p>
-                    <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gradient-white mb-5">
-                        Çünkü burası Yaratıcıların dijital evi.
-                    </h2>
-                    <p className="text-base font-light leading-relaxed max-w-lg mx-auto"
-                       style={{ color: "var(--text-3)" }}>
-                        Çizen, yazan, üreten herkese açık. Burada önemli olan mükemel olmak değil, hayal etmek.
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {PILLARS.map((p) => (
-                        <div key={p.label} className="card group p-6 flex items-start gap-4">
-                            <span className="text-2xl font-bold shrink-0 transition-all duration-300"
-                                  style={{ color: p.accent, textShadow: `0 0 20px ${p.accent}40` }}>
-                                {p.label}
-                            </span>
-                            <p className="text-sm leading-relaxed pt-0.5" style={{ color: "var(--text-3)" }}>
-                                {p.desc}
-                            </p>
+                <div className="grid lg:grid-cols-[1.4fr_1fr] gap-10 lg:gap-16 items-center">
+                    <div className="animate-float-up delay-100">
+                        <h1 className="font-display font-medium leading-[0.95] tracking-tight"
+                            style={{ fontSize: "clamp(3.25rem, 9vw, 7.5rem)", color: "var(--text-1)" }}>
+                            Üret.<br />
+                            <em className="italic font-normal marker" style={{ color: "var(--accent)" }}>Paylaş.</em><br />
+                            Büyü.
+                        </h1>
+                        <p className="mt-8 text-lg sm:text-xl leading-relaxed max-w-xl" style={{ color: "var(--text-2)" }}>
+                            bumedya; çizen, yazan, çeken, düşünen herkesin buluştuğu bir dijital fanzin ve topluluk.
+                            Mükemmel olmak gerekmiyor — hayal etmek yeter.
+                        </p>
+                        <div className="flex flex-wrap items-center gap-3 mt-10">
+                            {user ? (
+                                <Link href="/home" className="btn-primary">Panoya git <span aria-hidden>→</span></Link>
+                            ) : (
+                                <Link href="/register" className="btn-primary">Topluluğa katıl <span aria-hidden>→</span></Link>
+                            )}
+                            <a href="#icindekiler" className="btn-ghost">İçinde ne var?</a>
                         </div>
-                    ))}
-                </div>
-            </section>
+                    </div>
 
-            {/* RULES */}
-            <section id="kurallar" className="relative z-10 px-4 sm:px-6 pb-24 max-w-5xl mx-auto">
-                <div className="text-center mb-12">
-                    <p className="label-caps mb-4">Topluluk Sözleşmesi</p>
-                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gradient-white">
-                        Huzurlu ve Saygılı Bir Topluluk İçin
-                    </h2>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {RULES.map((rule) => (
-                        <div key={rule.icon} className="card p-6">
-                            <p className="font-mono text-[10px] mb-3" style={{ color: "var(--violet-text)" }}>
-                                {rule.icon}
-                            </p>
-                            <h3 className="text-sm font-semibold mb-2" style={{ color: "var(--text-2)" }}>
-                                {rule.title}
-                            </h3>
-                            <p className="text-xs leading-relaxed" style={{ color: "var(--text-3)" }}>
-                                {rule.desc}
-                            </p>
-                        </div>
-                    ))}
-
-                    <div className="card card-violet p-6 flex flex-col justify-between">
-                        <div>
-                            <p className="text-sm font-semibold mb-2" style={{ color: "var(--text-2)" }}>
-                                Hazır mısın?
-                            </p>
-                            <p className="text-xs leading-relaxed mb-6" style={{ color: "var(--text-3)" }}>
-                                Topluluğa katıl, üretmeye başla.
-                            </p>
-                        </div>
-                        <Link href="/register" className="btn-primary !py-2.5 text-xs text-center flex items-center justify-center gap-1.5">
-                            Katıl
-                        </Link>
+                    <div className="relative hidden sm:flex justify-center lg:justify-end animate-float-up delay-200">
+                        <Image src="/logo.png" alt="" width={420} height={420} priority sizes="420px"
+                               className="w-[min(420px,80vw)] h-auto -rotate-3 transition-transform duration-500 hover:rotate-2" />
+                        <span className="sticker absolute top-6 right-0 lg:-right-2 text-sm">{totalCount ?? 0} üretici & meraklı</span>
                     </div>
                 </div>
             </section>
 
-            {/* HOW TO JOIN */}
-            <section className="relative z-10 px-4 sm:px-6 pb-24 max-w-5xl mx-auto">
-                <div className="text-center mb-12">
-                    <p className="label-caps mb-4">Nasıl Katılırsın?</p>
-                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gradient-white">
-                        Üç Adımda Topluluğa Gir
-                    </h2>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    {[
-                        { step: "01", title: "Kayıt Ol", desc: "Kullanıcı adını seç, e-posta adresinle hesap oluştur. Ücretsiz ve hızlı." },
-                        { step: "02", title: "Doğrula", desc: "Gelen kutuna düşen linke tıkla. Hesabın anında aktif olur." },
-                        { step: "03", title: "Üretmeye Başla", desc: "Akışa paylaşım yap, galeriye eser yükle, etkinliklere katıl." },
-                    ].map(({ step, title, desc }) => (
-                        <div key={step} className="card p-6 flex flex-col gap-3">
-                            <span className="font-mono text-xs" style={{ color: "rgba(167,139,250,0.8)" }}>{step}</span>
-                            <h3 className="text-base font-semibold" style={{ color: "var(--text-2)" }}>{title}</h3>
-                            <p className="text-xs leading-relaxed" style={{ color: "var(--text-3)" }}>{desc}</p>
-                        </div>
-                    ))}
+            {/* ── ŞERİT ───────────────────────────────────────── */}
+            <div aria-hidden className="marquee relative z-10 py-3 font-display text-2xl sm:text-3xl italic">
+                {[0, 1].map(k => (
+                    <div key={k} className="marquee__track">
+                        {["çiz", "yaz", "çek", "kaydet", "tartış", "oyla", "paylaş", "büyü"].map(w => (
+                            <span key={w} className="px-6 flex items-center gap-6">{w} <span className="not-italic text-xl">✳</span></span>
+                        ))}
+                    </div>
+                ))}
+            </div>
+
+            {/* ── İÇİNDEKİLER ─────────────────────────────────── */}
+            <section id="icindekiler" className="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 py-16 sm:py-24 scroll-mt-16">
+                <div className="grid lg:grid-cols-[1fr_2fr] gap-10 lg:gap-16">
+                    <div>
+                        <p className="label-caps mb-3">İçindekiler</p>
+                        <h2 className="font-display text-4xl sm:text-5xl font-medium leading-tight" style={{ color: "var(--text-1)" }}>
+                            Nerede ne var?
+                        </h2>
+                        <p className="mt-4 text-base leading-relaxed max-w-sm" style={{ color: "var(--text-3)" }}>
+                            İlk kez geliyorsan buradan başla. Her bölüm topluluğun farklı bir köşesi.
+                        </p>
+                    </div>
+                    <ol className="flex flex-col">
+                        {contents.map((c, i) => (
+                            <li key={c.path} style={{ borderTop: "1px solid var(--border-2)" }}>
+                                <Link href={c.path}
+                                      className="row-hover group grid grid-cols-[2.5rem_1fr_auto] gap-x-4 gap-y-1 py-5 items-baseline transition-colors">
+                                    <span className="font-mono text-xs" style={{ color: "var(--text-4)" }}>
+                                        {String(i + 1).padStart(2, "0")}
+                                    </span>
+                                    <span className="font-display text-xl sm:text-2xl font-medium group-hover:underline underline-offset-4 decoration-1"
+                                          style={{ color: "var(--text-1)", textDecorationColor: "var(--accent)" }}>
+                                        {c.label}
+                                    </span>
+                                    <span aria-hidden className="text-lg transition-transform group-hover:translate-x-1" style={{ color: "var(--accent)" }}>→</span>
+                                    <span />
+                                    <span className="col-span-2 text-sm leading-relaxed max-w-xl" style={{ color: "var(--text-3)" }}>{c.desc}</span>
+                                </Link>
+                            </li>
+                        ))}
+                    </ol>
                 </div>
             </section>
 
-            {/* CLUBS */}
-            <section className="relative z-10 px-4 sm:px-6 pb-24 max-w-5xl mx-auto">
-                <div className="text-center mb-10">
-                    <p className="label-caps mb-4">Kulüpler</p>
-                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gradient-white">
-                        Nerelerde Varız?
-                    </h2>
-                    <p className="text-sm mt-3 max-w-md mx-auto" style={{ color: "var(--text-3)" }}>
-                        Topluluğun üniversitelerdeki uzantıları. Yakında daha fazlası.
-                    </p>
+            {/* ── SÖZLEŞME + KATILIM ──────────────────────────── */}
+            <section id="kurallar" className="relative z-10 scroll-mt-16" style={{ background: "var(--paper-2)" }}>
+                <div className="max-w-6xl mx-auto px-4 sm:px-8 py-16 sm:py-24 grid lg:grid-cols-2 gap-14 lg:gap-20">
+                    <div>
+                        <p className="label-caps mb-3">Topluluk sözleşmesi</p>
+                        <h2 className="font-display text-3xl sm:text-4xl font-medium mb-8" style={{ color: "var(--text-1)" }}>
+                            Huzurlu ve saygılı bir alan için
+                        </h2>
+                        <ol className="flex flex-col gap-6">
+                            {RULES.map(rule => (
+                                <li key={rule.icon} className="grid grid-cols-[2.5rem_1fr] gap-4">
+                                    <span className="font-display text-2xl italic" style={{ color: "var(--accent)" }}>{rule.icon}</span>
+                                    <div>
+                                        <h3 className="font-sans text-base font-semibold mb-1" style={{ color: "var(--text-1)" }}>{rule.title}</h3>
+                                        <p className="text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>{rule.desc}</p>
+                                    </div>
+                                </li>
+                            ))}
+                        </ol>
+                    </div>
+
+                    <div className="flex flex-col gap-12">
+                        <div>
+                            <p className="label-caps mb-3">Nasıl katılırsın?</p>
+                            <h2 className="font-display text-3xl sm:text-4xl font-medium mb-8" style={{ color: "var(--text-1)" }}>
+                                Üç adım
+                            </h2>
+                            <ol className="flex flex-col">
+                                {[
+                                    { title: "Kayıt ol", desc: "Kullanıcı adını seç, e-postanla hesap oluştur. Ücretsiz." },
+                                    { title: "Doğrula", desc: "Gelen kutuna düşen bağlantıya tıkla, hesabın açılsın." },
+                                    { title: "Üretmeye başla", desc: "Akışa yaz, galeriye bak, etkinliklere katıl." },
+                                ].map((s, i) => (
+                                    <li key={s.title} className="flex gap-4 py-4" style={{ borderTop: "1px dashed var(--border-1)" }}>
+                                        <span className="w-7 h-7 shrink-0 rounded-full flex items-center justify-center text-sm font-semibold"
+                                              style={{ background: "var(--accent)", color: "var(--on-accent)" }}>{i + 1}</span>
+                                        <div>
+                                            <p className="font-semibold" style={{ color: "var(--text-1)" }}>{s.title}</p>
+                                            <p className="text-sm" style={{ color: "var(--text-3)" }}>{s.desc}</p>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ol>
+                            {!user && <Link href="/register" className="btn-primary mt-6">Hesap oluştur</Link>}
+                        </div>
+
+                        <div>
+                            <p className="label-caps mb-3">Kulüpler</p>
+                            <ul className="flex flex-col">
+                                {CLUBS.map(c => (
+                                    <li key={c.uni} className="flex items-center justify-between py-3" style={{ borderTop: "1px solid var(--border-2)" }}>
+                                        <span>
+                                            <span className="font-semibold" style={{ color: "var(--text-1)" }}>{c.uni}</span>
+                                            <span className="text-sm ml-2" style={{ color: "var(--text-4)" }}>{c.city}</span>
+                                        </span>
+                                        <span className="chip" style={{ color: "var(--success)", border: "1px solid color-mix(in srgb, var(--success) 35%, transparent)" }}>Aktif</span>
+                                    </li>
+                                ))}
+                                <li className="py-3" style={{ borderTop: "1px solid var(--border-2)" }}>
+                                    <Link href={user ? "/basvuru#kulup-ac" : "/register?next=%2Fbasvuru%23kulup-ac"}
+                                          className="text-sm font-medium underline underline-offset-4" style={{ color: "var(--accent)" }}>
+                                        Üniversiten burada yok mu? Kulüp açmak için başvur →
+                                    </Link>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
-                <div className="flex flex-wrap justify-center gap-3">
-                    {CLUBS.map((c) => (
-                        <div key={c.uni} className="card px-5 py-4 flex items-center gap-4">
-                            <div className="flex flex-col gap-0.5">
-                                <p className="text-sm font-semibold" style={{ color: "var(--text-2)" }}>{c.uni}</p>
-                                <p className="text-xs" style={{ color: "var(--text-4)" }}>{c.city}</p>
+            </section>
+
+            {/* ── ROZETLER + SSS ──────────────────────────────── */}
+            <section className="relative z-10 max-w-6xl mx-auto px-4 sm:px-8 py-16 sm:py-24 grid lg:grid-cols-2 gap-14 lg:gap-20">
+                <div>
+                    <p className="label-caps mb-3">Rozet sözlüğü</p>
+                    <h2 className="font-display text-3xl sm:text-4xl font-medium mb-3" style={{ color: "var(--text-1)" }}>
+                        Hangi rozet ne demek?
+                    </h2>
+                    <p className="text-sm mb-6" style={{ color: "var(--text-3)" }}>
+                        Bazıları başvuruyla, bazıları admin tarafından, bazıları ilgi alanına göre verilir.
+                    </p>
+                    <dl className="flex flex-col">
+                        {BADGES.map(b => (
+                            <div key={b.label} className="grid grid-cols-[8.5rem_1fr] gap-4 py-3 items-baseline"
+                                 style={{ borderTop: "1px solid var(--border-2)" }}>
+                                <dt>
+                                    <span className="chip" style={{ background: b.bg, border: `1px solid ${b.border}`, color: b.color }}>{b.label}</span>
+                                </dt>
+                                <dd className="text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>{b.desc}</dd>
                             </div>
-                            <span className="flex items-center gap-1.5 text-[10px] font-medium tracking-wider uppercase px-2.5 py-1 rounded-full"
-                                  style={{ background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.2)", color: "rgba(52,211,153,0.8)" }}>
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                                Aktif
-                            </span>
-                        </div>
-                    ))}
-                    <Link href={user ? "/basvuru#kulup-ac" : "/register?next=%2Fbasvuru%23kulup-ac"}
-                          className="card px-5 py-4 flex items-center gap-3 transition-all duration-200 hover:border-violet-500/30"
-                          style={{ opacity: 0.6 }}>
-                        <div className="flex flex-col gap-0.5">
-                            <p className="text-sm font-semibold" style={{ color: "var(--text-2)" }}>Üniversiten burada olabilir</p>
-                            <p className="text-xs" style={{ color: "var(--text-4)" }}>Kulüp açmak için başvur →</p>
-                        </div>
-                    </Link>
+                        ))}
+                    </dl>
                 </div>
-            </section>
 
-            {/* BADGES */}
-            <section className="relative z-10 px-4 sm:px-6 pb-24 max-w-5xl mx-auto">
-                <div className="text-center mb-12">
-                    <p className="label-caps mb-4">Rozetler</p>
-                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gradient-white">
-                        Hangi Rozet Ne Anlama Gelir?
+                <div>
+                    <p className="label-caps mb-3">SSS</p>
+                    <h2 className="font-display text-3xl sm:text-4xl font-medium mb-8" style={{ color: "var(--text-1)" }}>
+                        Sık sorulanlar
                     </h2>
-                    <p className="text-sm mt-3 max-w-md mx-auto" style={{ color: "var(--text-3)" }}>
-                        Bazı rozetler başvuruyla, bazıları admin tarafından, bazıları ise ilgi alanına göre verilir.
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                    {BADGES.map((b) => (
-                        <div key={b.label} className="card p-5 flex items-start gap-4">
-                            <span className="shrink-0 inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-medium tracking-wide mt-0.5"
-                                  style={{ background: b.bg, border: `1px solid ${b.border}`, color: b.color }}>
-                                {b.label}
-                            </span>
-                            <p className="text-xs leading-relaxed pt-1" style={{ color: "var(--text-3)" }}>
-                                {b.desc}
-                            </p>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            {/* PAGES */}
-            <section className="relative z-10 px-4 sm:px-6 pb-24 max-w-5xl mx-auto">
-                <div className="text-center mb-12">
-                    <p className="label-caps mb-4">Sayfalar</p>
-                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gradient-white">
-                        Nerede Ne Var?
-                    </h2>
-                    <p className="text-sm mt-3 max-w-md mx-auto" style={{ color: "var(--text-3)" }}>
-                        Platforma ilk adım atıyorsan, hangi sayfanın ne işe yaradığını öğren.
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {PAGES.map((p) => (
-                        <div key={p.path} className="card p-5 flex flex-col gap-3">
-                            <div className="flex items-center gap-2.5">
-                                <span className="text-[10px] font-mono px-2 py-0.5 rounded-md"
-                                      style={{ background: p.bg, border: `1px solid ${p.border}`, color: p.accent }}>
-                                    {p.path}
-                                </span>
-                                <span className="text-sm font-semibold" style={{ color: "var(--text-1)" }}>{p.label}</span>
-                            </div>
-                            <p className="text-xs leading-relaxed" style={{ color: "var(--text-3)" }}>{p.desc}</p>
-                        </div>
-                    ))}
+                    <div className="flex flex-col">
+                        {[
+                            { q: "Katılmak ücretsiz mi?", a: "Evet, tamamen ücretsiz. Kayıt ol, doğrula, kullanmaya başla." },
+                            { q: "İçerik paylaşmak için ne gerekiyor?", a: "Üye olman yeterli. Akışa herkes yazabilir; galeriye yüklemeyi yöneticiler yapar." },
+                            { q: "Rozet başvurusu yapabilir miyim?", a: "Nakkaş, Kalemşor ve Mürettip rozetleri için Başvuru sayfasından form doldurabilirsin. Kurucu ve Onaylı gibi sistem rozetlerini yalnızca yöneticiler verir." },
+                            { q: "Paylaştığım içerikler kime ait?", a: "Sana. Platforma yüklemen, içeriği başkasına devrettiğin anlamına gelmez." },
+                            { q: "Bir sorunum olursa?", a: "Discord sunucumuzdan ya da bumedyailetisim@gmail.com adresinden bize yaz." },
+                        ].map(({ q, a }) => (
+                            <details key={q} className="group py-4" style={{ borderTop: "1px solid var(--border-2)" }}>
+                                <summary className="flex items-center justify-between gap-4 cursor-pointer list-none font-semibold"
+                                         style={{ color: "var(--text-1)" }}>
+                                    {q}
+                                    <span aria-hidden className="text-xl transition-transform group-open:rotate-45" style={{ color: "var(--accent)" }}>+</span>
+                                </summary>
+                                <p className="mt-3 text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>{a}</p>
+                            </details>
+                        ))}
+                    </div>
                 </div>
             </section>
 
-            {/* FAQ */}
-            <section className="relative z-10 px-4 sm:px-6 pb-24 max-w-3xl mx-auto">
-                <div className="text-center mb-12">
-                    <p className="label-caps mb-4">SSS</p>
-                    <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-gradient-white">
-                        Sık Sorulan Sorular
-                    </h2>
-                </div>
-                <div className="flex flex-col gap-3">
-                    {[
-                        { q: "Platforma katılmak ücretsiz mi?", a: "Evet, tamamen ücretsiz. Kayıt ol, doğrula, kullanmaya başla." },
-                        { q: "İçerik yüklemek için üye olmam gerekiyor mu?", a: "Akışa ve galeriye içerik yükleyebilmek için platforma üye olman yeterli. Kayıt ol, doğrula ve paylaşmaya başla." },
-                        { q: "Rozet başvurusu yapabilir miyim?", a: "Bazı rozetler başvuruyla alınabilir. Nakkaş, Kalemşor ve Mürettip rozetleri için /başvuru sayfasından form doldurabilirsin. Kurucu ve Yetkilendirilmiş gibi sistem rozetleri ise yalnızca admin tarafından verilir." },
-                        { q: "Paylaştığım içerikler kime ait?", a: "Tüm içerikler sana aittir. Platforma yüklemen, içeriğin başkalarına devredildiği anlamına gelmez." },
-                        { q: "Bir sorunum olursa kime ulaşabilirim?", a: "Discord sunucumuzdan veya bumedyailetisim@gmail.com adresinden bize ulaşabilirsin." },
-                    ].map(({ q, a }) => (
-                        <div key={q} className="card p-5">
-                            <p className="text-sm font-medium mb-2" style={{ color: "var(--text-2)" }}>{q}</p>
-                            <p className="text-xs leading-relaxed" style={{ color: "var(--text-3)" }}>{a}</p>
-                        </div>
-                    ))}
-                </div>
-            </section>
-
-            {/* FOOTER */}
             <ContactSection />
             <SiteFooter />
         </main>

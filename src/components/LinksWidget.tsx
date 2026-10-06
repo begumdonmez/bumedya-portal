@@ -6,54 +6,54 @@ const LINKS = [
         label: "Linktree",
         sub: "linktr.ee/Bumedya",
         href: "https://linktr.ee/Bumedya",
-        color: "rgba(52,211,153,0.9)",
-        bg: "rgba(52,211,153,0.08)",
-        border: "rgba(52,211,153,0.2)",
+        color: "color-mix(in srgb, var(--success) 90%, transparent)",
+        bg: "color-mix(in srgb, var(--success) 8%, transparent)",
+        border: "color-mix(in srgb, var(--success) 20%, transparent)",
     },
     {
         icon: BookOpen,
         label: "Substack",
         sub: "Yazılar & Bülten",
         href: "https://tr.ee/8yqLkD1Pui",
-        color: "rgba(251,191,36,0.9)",
-        bg: "rgba(251,191,36,0.06)",
-        border: "rgba(251,191,36,0.2)",
+        color: "color-mix(in srgb, var(--warn) 90%, transparent)",
+        bg: "color-mix(in srgb, var(--warn) 6%, transparent)",
+        border: "color-mix(in srgb, var(--warn) 20%, transparent)",
     },
     {
         icon: Palette,
         label: "Behance",
         sub: "Portfolyo & Projeler",
         href: "https://tr.ee/KzNm63eLY-",
-        color: "rgba(167,139,250,0.9)",
-        bg: "rgba(124,58,237,0.08)",
-        border: "rgba(124,58,237,0.2)",
+        color: "color-mix(in srgb, var(--accent) 90%, transparent)",
+        bg: "color-mix(in srgb, var(--accent) 8%, transparent)",
+        border: "color-mix(in srgb, var(--accent) 20%, transparent)",
     },
     {
         icon: Link2,
         label: "Instagram",
         sub: "@bumedya",
         href: "https://tr.ee/P6nG2_pCeD",
-        color: "rgba(244,114,182,0.9)",
-        bg: "rgba(244,114,182,0.06)",
-        border: "rgba(244,114,182,0.18)",
+        color: "color-mix(in srgb, var(--pink) 90%, transparent)",
+        bg: "color-mix(in srgb, var(--pink) 6%, transparent)",
+        border: "color-mix(in srgb, var(--pink) 18%, transparent)",
     },
     {
         icon: PlayCircle,
         label: "YouTube",
         sub: "@BumedyaOfficial",
         href: "https://www.youtube.com/@BumedyaOfficial",
-        color: "rgba(255,80,80,0.9)",
-        bg: "rgba(255,0,0,0.06)",
-        border: "rgba(255,0,0,0.15)",
+        color: "color-mix(in srgb, var(--danger) 90%, transparent)",
+        bg: "color-mix(in srgb, var(--danger) 6%, transparent)",
+        border: "color-mix(in srgb, var(--danger) 15%, transparent)",
     },
     {
         icon: MessageCircle,
         label: "Discord",
         sub: "Sunucuya Katıl",
         href: "https://discord.gg/rpbQV6ra",
-        color: "rgba(129,140,248,0.9)",
-        bg: "rgba(99,102,241,0.08)",
-        border: "rgba(99,102,241,0.2)",
+        color: "color-mix(in srgb, var(--accent) 90%, transparent)",
+        bg: "color-mix(in srgb, var(--accent) 8%, transparent)",
+        border: "color-mix(in srgb, var(--accent) 20%, transparent)",
     },
     {
         icon: PlayCircle,
@@ -81,7 +81,7 @@ export default function LinksWidget() {
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-xs font-medium" style={{ color }}>{label}</p>
-                                <p className="text-[10px] truncate" style={{ color: "var(--text-4)" }}>{sub}</p>
+                                <p className="text-[11px] truncate" style={{ color: "var(--text-4)" }}>{sub}</p>
                             </div>
                             {href && <ExternalLink size={11} style={{ color: "var(--text-4)" }} />}
                         </div>

@@ -56,12 +56,11 @@ export default function NotificationBell({ userId }: { userId: string }) {
             const isAll = n.payload?.message?.includes("@all");
             toast.custom(() => (
                 <div style={{
-                    background: isAll ? "rgba(30,15,5,0.97)" : "rgba(15,10,35,0.97)",
-                    border: `1px solid ${isAll ? "rgba(252,211,77,0.25)" : "rgba(124,58,237,0.25)"}`,
+                    background: isAll ? "color-mix(in srgb, var(--surface-solid) 97%, transparent)" : "color-mix(in srgb, var(--surface-solid) 97%, transparent)",
+                    border: `1px solid ${isAll ? "color-mix(in srgb, var(--warn) 25%, transparent)" : "color-mix(in srgb, var(--accent) 25%, transparent)"}`,
                     borderRadius: 16,
                     padding: "12px 16px",
-                    backdropFilter: "blur(32px)",
-                    boxShadow: `0 8px 32px ${isAll ? "rgba(252,211,77,0.08)" : "rgba(124,58,237,0.12)"}, 0 2px 8px rgba(0,0,0,0.4)`,
+                    boxShadow: `0 8px 32px ${isAll ? "color-mix(in srgb, var(--warn) 8%, transparent)" : "color-mix(in srgb, var(--accent) 12%, transparent)"}, 0 2px 8px color-mix(in srgb, var(--shade) 40%, transparent)`,
                     display: "flex",
                     flexDirection: "column",
                     gap: 4,
@@ -71,23 +70,23 @@ export default function NotificationBell({ userId }: { userId: string }) {
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                         <span style={{
                             width: 8, height: 8, borderRadius: "50%", flexShrink: 0,
-                            background: isAll ? "rgba(252,211,77,0.9)" : "rgba(167,139,250,0.9)",
-                            boxShadow: `0 0 6px ${isAll ? "rgba(252,211,77,0.6)" : "rgba(167,139,250,0.6)"}`,
+                            background: isAll ? "color-mix(in srgb, var(--warn) 90%, transparent)" : "color-mix(in srgb, var(--accent) 90%, transparent)",
+                            boxShadow: `0 0 6px ${isAll ? "color-mix(in srgb, var(--warn) 60%, transparent)" : "color-mix(in srgb, var(--accent) 60%, transparent)"}`,
                         }} />
-                        <p style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,0.9)", margin: 0 }}>
+                        <p style={{ fontSize: 13, fontWeight: 600, color: "color-mix(in srgb, var(--fg) 90%, transparent)", margin: 0 }}>
                             {isAll
-                                ? <><span style={{ color: "rgba(252,211,77,0.95)" }}>@{n.from_username}</span> herkesi mention etti</>
-                                : <><span style={{ color: "rgba(167,139,250,0.95)" }}>@{n.from_username}</span> seni mention etti</>
+                                ? <><span style={{ color: "color-mix(in srgb, var(--warn) 95%, transparent)" }}>@{n.from_username}</span> herkesi mention etti</>
+                                : <><span style={{ color: "color-mix(in srgb, var(--accent) 95%, transparent)" }}>@{n.from_username}</span> seni mention etti</>
                             }
                         </p>
                     </div>
                     {room && (
-                        <p style={{ fontSize: 11, color: "rgba(255,255,255,0.35)", margin: 0, paddingLeft: 16 }}>
+                        <p style={{ fontSize: 11, color: "color-mix(in srgb, var(--fg) 35%, transparent)", margin: 0, paddingLeft: 16 }}>
                             #{room}
                         </p>
                     )}
                     {n.payload?.message && (
-                        <p style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", margin: 0, paddingLeft: 16, fontStyle: "italic" }}>
+                        <p style={{ fontSize: 12, color: "color-mix(in srgb, var(--fg) 50%, transparent)", margin: 0, paddingLeft: 16, fontStyle: "italic" }}>
                             &ldquo;{n.payload.message.slice(0, 80)}{n.payload.message.length > 80 ? "…" : ""}&rdquo;
                         </p>
                     )}
@@ -132,12 +131,12 @@ export default function NotificationBell({ userId }: { userId: string }) {
             <button
                 onClick={handleOpen}
                 className="relative flex items-center justify-center w-9 h-9 rounded-xl transition-all duration-200"
-                style={{ background: open ? "var(--violet-bg)" : "transparent", border: `1px solid ${open ? "var(--violet-border)" : "transparent"}` }}
+                style={{ background: open ? "var(--accent-bg)" : "transparent", border: `1px solid ${open ? "var(--accent-border)" : "transparent"}` }}
             >
                 <Bell size={16} style={{ color: "var(--text-3)" }} />
                 {unreadCount > 0 && (
-                    <span className="absolute -top-1 -right-1 min-w-[16px] h-4 rounded-full text-[10px] font-bold flex items-center justify-center px-1"
-                          style={{ background: "rgba(239,68,68,0.9)", color: "#fff" }}>
+                    <span className="absolute -top-1 -right-1 min-w-[16px] h-4 rounded-full text-[11px] font-bold flex items-center justify-center px-1"
+                          style={{ background: "color-mix(in srgb, var(--danger) 90%, transparent)", color: "#fff" }}>
                         {unreadCount > 9 ? "9+" : unreadCount}
                     </span>
                 )}
@@ -145,7 +144,7 @@ export default function NotificationBell({ userId }: { userId: string }) {
 
             {open && (
                 <div className="absolute right-0 top-11 w-80 rounded-2xl overflow-hidden shadow-2xl"
-                     style={{ background: "rgba(15,25,50,0.96)", backdropFilter: "blur(32px)", border: "1px solid var(--border-1)" }}>
+                     style={{ background: "color-mix(in srgb, var(--surface-solid) 96%, transparent)", border: "1px solid var(--border-1)" }}>
                     <div className="px-4 py-3 border-b" style={{ borderColor: "var(--border-3)" }}>
                         <p className="text-xs font-semibold" style={{ color: "var(--text-2)" }}>Bildirimler</p>
                     </div>
@@ -162,18 +161,18 @@ export default function NotificationBell({ userId }: { userId: string }) {
                                      className="flex flex-col gap-1 px-4 py-3 border-b transition-colors duration-150"
                                      style={{
                                          borderColor: "var(--border-3)",
-                                         background: n.read ? "transparent" : "rgba(124,58,237,0.05)",
+                                         background: n.read ? "transparent" : "color-mix(in srgb, var(--accent) 5%, transparent)",
                                      }}>
                                     <div className="flex items-center justify-between">
                                         <p className="text-xs font-medium" style={{ color: "var(--text-2)" }}>
-                                            <span style={{ color: "var(--violet-text)" }}>@{n.from_username}</span>
+                                            <span style={{ color: "var(--accent-text)" }}>@{n.from_username}</span>
                                             {" "}seni mention etti
                                             {n.payload?.room_id && (
                                                 <span style={{ color: "var(--text-4)" }}> · {ROOM_LABELS[n.payload.room_id] ?? n.payload.room_id}</span>
                                             )}
                                         </p>
                                         {!n.read && (
-                                            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "rgba(124,58,237,0.8)" }} />
+                                            <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: "color-mix(in srgb, var(--accent) 80%, transparent)" }} />
                                         )}
                                     </div>
                                     {n.payload?.message && (
@@ -181,7 +180,7 @@ export default function NotificationBell({ userId }: { userId: string }) {
                                             &ldquo;{n.payload.message.slice(0, 80)}{n.payload.message.length > 80 ? "…" : ""}&rdquo;
                                         </p>
                                     )}
-                                    <p className="text-[10px]" style={{ color: "var(--text-5)" }}>{timeAgo(n.created_at)}</p>
+                                    <p className="text-[11px]" style={{ color: "var(--text-5)" }}>{timeAgo(n.created_at)}</p>
                                 </div>
                             ))}
                         </div>

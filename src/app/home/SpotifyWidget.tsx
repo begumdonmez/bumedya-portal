@@ -79,7 +79,7 @@ export default function SpotifyWidget({ playlists }: { playlists: SpotifyPlaylis
                                             ))}
                                         </span>
                                         <span
-                                            className="text-[9px] tracking-widest uppercase font-semibold"
+                                            className="label-caps font-semibold"
                                             style={{ color: "rgba(29,185,84,0.8)" }}
                                         >
                                             Çalıyor
@@ -94,7 +94,7 @@ export default function SpotifyWidget({ playlists }: { playlists: SpotifyPlaylis
                                 </p>
                                 {pl.description && (
                                     <p
-                                        className="text-[10px] leading-snug line-clamp-1"
+                                        className="text-[11px] leading-snug line-clamp-1"
                                         style={{ color: active ? "rgba(29,185,84,0.6)" : "var(--text-4)" }}
                                     >
                                         {pl.description}

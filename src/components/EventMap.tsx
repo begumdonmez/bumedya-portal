@@ -12,15 +12,15 @@ function LeafletThemePatch() {
             .leaflet-container { border-radius: inherit !important; }
             .leaflet-container img { max-width: none !important; max-height: none !important; }
             .leaflet-tile { max-width: none !important; }
-            .leaflet-control-zoom { border: 1px solid rgba(124,58,237,0.3) !important; border-radius: 10px !important; overflow: hidden !important; box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important; }
-            .leaflet-control-zoom-in, .leaflet-control-zoom-out { background-color: rgba(15,20,50,0.92) !important; color: rgba(167,139,250,0.85) !important; width: 30px !important; height: 30px !important; line-height: 30px !important; }
-            .leaflet-control-zoom-in:hover, .leaflet-control-zoom-out:hover { background-color: rgba(124,58,237,0.25) !important; color: #fff !important; }
-            .leaflet-control-zoom-in { border-bottom: 1px solid rgba(124,58,237,0.2) !important; }
-            .leaflet-control-attribution { background: rgba(10,15,35,0.8) !important; color: rgba(224,242,254,0.3) !important; font-size: 10px !important; }
-            .leaflet-control-attribution a { color: rgba(167,139,250,0.55) !important; }
-            .leaflet-popup-content-wrapper { background: rgba(15,25,50,0.96) !important; border: 1px solid rgba(124,58,237,0.25) !important; border-radius: 14px !important; box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important; color: #E0F2FE !important; }
-            .leaflet-popup-tip { background: rgba(15,25,50,0.96) !important; }
-            .leaflet-popup-close-button { color: rgba(224,242,254,0.35) !important; }
+            .leaflet-control-zoom { border: 1px solid color-mix(in srgb, var(--accent) 30%, transparent) !important; border-radius: 10px !important; overflow: hidden !important; box-shadow: 0 4px 20px color-mix(in srgb, var(--shade) 50%, transparent) !important; }
+            .leaflet-control-zoom-in, .leaflet-control-zoom-out { background-color: color-mix(in srgb, var(--surface-solid) 92%, transparent) !important; color: color-mix(in srgb, var(--accent) 85%, transparent) !important; width: 30px !important; height: 30px !important; line-height: 30px !important; }
+            .leaflet-control-zoom-in:hover, .leaflet-control-zoom-out:hover { background-color: color-mix(in srgb, var(--accent) 25%, transparent) !important; color: #fff !important; }
+            .leaflet-control-zoom-in { border-bottom: 1px solid color-mix(in srgb, var(--accent) 20%, transparent) !important; }
+            .leaflet-control-attribution { background: color-mix(in srgb, var(--surface-solid) 80%, transparent) !important; color: color-mix(in srgb, var(--fg) 30%, transparent) !important; font-size: 10px !important; }
+            .leaflet-control-attribution a { color: color-mix(in srgb, var(--accent) 55%, transparent) !important; }
+            .leaflet-popup-content-wrapper { background: color-mix(in srgb, var(--surface-solid) 96%, transparent) !important; border: 1px solid color-mix(in srgb, var(--accent) 25%, transparent) !important; border-radius: 14px !important; box-shadow: 0 8px 32px color-mix(in srgb, var(--shade) 50%, transparent) !important; color: var(--text-1) !important; }
+            .leaflet-popup-tip { background: color-mix(in srgb, var(--surface-solid) 96%, transparent) !important; }
+            .leaflet-popup-close-button { color: color-mix(in srgb, var(--fg) 35%, transparent) !important; }
         `;
         document.head.appendChild(style);
         return () => { document.head.removeChild(style); };
@@ -52,7 +52,7 @@ function makeIcon(color: string, glow: string, size = 28) {
             </filter>
             <path d="M14 0C6.268 0 0 6.268 0 14c0 9.333 14 24 14 24S28 23.333 28 14C28 6.268 21.732 0 14 0z"
                 fill="${color}" filter="url(#glow)" style="filter:drop-shadow(0 2px 8px ${glow})"/>
-            <circle cx="14" cy="14" r="5.5" fill="rgba(255,255,255,0.9)"/>
+            <circle cx="14" cy="14" r="5.5" fill="color-mix(in srgb, var(--fg) 90%, transparent)"/>
         </svg>`;
     return L.divIcon({
         html: svg,
@@ -63,9 +63,9 @@ function makeIcon(color: string, glow: string, size = 28) {
     });
 }
 
-const regularIcon  = makeIcon("rgba(124,58,237,0.95)", "rgba(124,58,237,0.6)", 18);
-const approvedIcon = makeIcon("rgba(52,211,153,0.95)", "rgba(52,211,153,0.5)", 18);
-const selectedIcon = makeIcon("rgba(251,191,36,0.98)", "rgba(251,191,36,0.7)", 22);
+const regularIcon  = makeIcon("color-mix(in srgb, var(--accent) 95%, transparent)", "color-mix(in srgb, var(--accent) 60%, transparent)", 18);
+const approvedIcon = makeIcon("color-mix(in srgb, var(--success) 95%, transparent)", "color-mix(in srgb, var(--success) 50%, transparent)", 18);
+const selectedIcon = makeIcon("color-mix(in srgb, var(--warn) 98%, transparent)", "color-mix(in srgb, var(--warn) 70%, transparent)", 22);
 
 export default function EventMap({
     events,
@@ -111,9 +111,9 @@ export default function EventMap({
                         {!onMarkerClick && (
                             <Popup>
                                 <div style={{ minWidth: 160 }}>
-                                    <p style={{ fontWeight: 700, marginBottom: 4, color: "#E0F2FE", fontSize: 13 }}>{ev.title}</p>
-                                    <p style={{ fontSize: 11, color: "rgba(224,242,254,0.6)", marginBottom: 4 }}>{ev.address}</p>
-                                    <p style={{ fontSize: 11, color: "rgba(167,139,250,0.85)" }}>
+                                    <p style={{ fontWeight: 700, marginBottom: 4, color: "var(--text-1)", fontSize: 13 }}>{ev.title}</p>
+                                    <p style={{ fontSize: 11, color: "color-mix(in srgb, var(--fg) 60%, transparent)", marginBottom: 4 }}>{ev.address}</p>
+                                    <p style={{ fontSize: 11, color: "color-mix(in srgb, var(--accent) 85%, transparent)" }}>
                                         {new Date(ev.event_date + "T00:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })}
                                         {ev.event_time ? ` · ${ev.event_time.slice(0, 5)}` : ""}
                                     </p>
@@ -125,7 +125,7 @@ export default function EventMap({
                                         } catch { return null; }
                                         return (
                                             <a href={ev.ref_url} target="_blank" rel="noopener noreferrer"
-                                               style={{ fontSize: 11, color: "rgba(124,58,237,0.9)", textDecoration: "none", display: "block", marginTop: 6 }}>
+                                               style={{ fontSize: 11, color: "color-mix(in srgb, var(--accent) 90%, transparent)", textDecoration: "none", display: "block", marginTop: 6 }}>
                                                 Detaylar ›
                                             </a>
                                         );

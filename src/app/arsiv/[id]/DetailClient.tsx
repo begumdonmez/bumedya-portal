@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
 import NavbarBackdrop from "@/components/NavbarBackdrop";
 import NotificationBell from "@/components/NotificationBell";
+import SiteHeader from "@/components/SiteHeader";
 
 /* ── Tipler ──────────────────────────────────────────────────── */
 type Category = "film" | "dizi" | "kitap" | "sarki";
@@ -43,10 +44,10 @@ interface Props {
 
 /* ── Kategori konfigürasyonu ─────────────────────────────────── */
 const CAT_CONFIG: Record<Category, { label: string; icon: React.ElementType; color: string; bg: string; border: string }> = {
-    film:  { label: "Film",   icon: Film,     color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.3)"  },
-    dizi:  { label: "Dizi",   icon: Tv,       color: "rgba(96,165,250,0.9)",  bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.3)"  },
-    kitap: { label: "Kitap",  icon: BookOpen, color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.3)"  },
-    sarki: { label: "Şarkı",  icon: Music,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.3)" },
+    film:  { label: "Film",   icon: Film,     color: "color-mix(in srgb, var(--accent) 90%, transparent)", bg: "color-mix(in srgb, var(--accent) 8%, transparent)",  border: "color-mix(in srgb, var(--accent) 30%, transparent)"  },
+    dizi:  { label: "Dizi",   icon: Tv,       color: "color-mix(in srgb, var(--info) 90%, transparent)",  bg: "color-mix(in srgb, var(--info) 8%, transparent)",  border: "color-mix(in srgb, var(--info) 30%, transparent)"  },
+    kitap: { label: "Kitap",  icon: BookOpen, color: "color-mix(in srgb, var(--success) 90%, transparent)",  bg: "color-mix(in srgb, var(--success) 8%, transparent)",  border: "color-mix(in srgb, var(--success) 30%, transparent)"  },
+    sarki: { label: "Şarkı",  icon: Music,    color: "color-mix(in srgb, var(--pink) 90%, transparent)", bg: "color-mix(in srgb, var(--pink) 8%, transparent)", border: "color-mix(in srgb, var(--pink) 30%, transparent)" },
 };
 
 const CREATOR_LABEL: Record<Category, string> = {
@@ -80,8 +81,8 @@ function RatingPicker({ current, color, border, bg, onRate }: {
                         <Star
                             size={18}
                             style={{
-                                color: display != null && n <= display ? "rgba(252,211,77,0.9)" : "rgba(255,255,255,0.12)",
-                                fill: display != null && n <= display ? "rgba(252,211,77,0.9)" : "none",
+                                color: display != null && n <= display ? "color-mix(in srgb, var(--warn) 90%, transparent)" : "color-mix(in srgb, var(--fg) 12%, transparent)",
+                                fill: display != null && n <= display ? "color-mix(in srgb, var(--warn) 90%, transparent)" : "none",
                                 transition: "all 0.1s",
                                 transform: hovered === n ? "scale(1.2)" : "scale(1)",
                             }}
@@ -89,13 +90,13 @@ function RatingPicker({ current, color, border, bg, onRate }: {
                     </button>
                 ))}
                 {display != null && (
-                    <span className="ml-2 text-sm font-bold" style={{ color: "rgba(252,211,77,0.9)" }}>
-                        {display}<span className="text-xs font-normal" style={{ color: "rgba(255,255,255,0.3)" }}>/10</span>
+                    <span className="ml-2 text-sm font-bold" style={{ color: "color-mix(in srgb, var(--warn) 90%, transparent)" }}>
+                        {display}<span className="text-xs font-normal" style={{ color: "color-mix(in srgb, var(--fg) 30%, transparent)" }}>/10</span>
                     </span>
                 )}
             </div>
             {current != null && (
-                <p className="text-[10px]" style={{ color: "rgba(255,255,255,0.35)" }}>
+                <p className="text-[11px]" style={{ color: "color-mix(in srgb, var(--fg) 35%, transparent)" }}>
                     Yıldıza tekrar tıklayarak puanını güncelleyebilirsin.
                 </p>
             )}
@@ -113,12 +114,12 @@ function MediaHero({ item, cat }: { item: ArchiveItem; cat: typeof CAT_CONFIG[Ca
             width: 140, height: 200, display: "flex", overflow: "hidden",
             borderRadius: "3px 8px 8px 3px",
             border: `1px solid ${cat.border}`,
-            boxShadow: "6px 8px 32px rgba(0,0,0,0.7)",
+            boxShadow: "6px 8px 32px color-mix(in srgb, var(--shade) 70%, transparent)",
             background: "linear-gradient(160deg, #0d0b22 0%, #160e38 100%)",
             flexShrink: 0,
         }}>
-            <div style={{ width: 18, flexShrink: 0, background: "rgba(124,58,237,0.5)", borderRight: "1px solid rgba(124,58,237,0.25)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ writingMode: "vertical-rl", transform: "rotate(180deg)", fontSize: 8, color: "rgba(255,255,255,0.7)", fontWeight: 700, maxHeight: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</span>
+            <div style={{ width: 18, flexShrink: 0, background: "color-mix(in srgb, var(--accent) 50%, transparent)", borderRight: "1px solid color-mix(in srgb, var(--accent) 25%, transparent)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ writingMode: "vertical-rl", transform: "rotate(180deg)", fontSize: 8, color: "color-mix(in srgb, var(--fg) 70%, transparent)", fontWeight: 700, maxHeight: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</span>
             </div>
             <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: "10px 10px 8px" }}>
                 <div style={{ flex: 1, borderRadius: 4, background: cat.bg, border: `1px solid ${cat.border}`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 10 }}>
@@ -128,7 +129,7 @@ function MediaHero({ item, cat }: { item: ArchiveItem; cat: typeof CAT_CONFIG[Ca
                     <div style={{ width: 24, height: 24, borderRadius: "50%", background: "conic-gradient(from 0deg, #555, #bbb 15%, #777 30%, #ccc 45%, #666 60%, #bbb 75%, #555 90%, #aaa 100%)", border: "2px solid #2a2a2a", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#111" }} />
                     </div>
-                    <span style={{ fontSize: 8, color: "rgba(255,255,255,0.4)" }}>DVD</span>
+                    <span style={{ fontSize: 8, color: "color-mix(in srgb, var(--fg) 40%, transparent)" }}>DVD</span>
                 </div>
             </div>
         </div>
@@ -138,13 +139,13 @@ function MediaHero({ item, cat }: { item: ArchiveItem; cat: typeof CAT_CONFIG[Ca
         <div style={{
             width: 200, height: 130, flexShrink: 0, borderRadius: 8,
             border: `1px solid ${cat.border}`,
-            boxShadow: "6px 8px 32px rgba(0,0,0,0.7)",
+            boxShadow: "6px 8px 32px color-mix(in srgb, var(--shade) 70%, transparent)",
             background: "linear-gradient(160deg, #0a0a14 0%, #111622 100%)",
             padding: "10px 12px", display: "flex", flexDirection: "column", gap: 8,
         }}>
             <div style={{ background: cat.bg, border: `1px solid ${cat.border}`, borderRadius: 4, padding: "5px 8px" }}>
                 <p style={{ fontSize: 10, fontWeight: 700, color: cat.color, margin: 0 }}>{item.title}</p>
-                {item.creator && <p style={{ fontSize: 8, color: "rgba(255,255,255,0.3)", margin: "2px 0 0" }}>{item.creator}</p>}
+                {item.creator && <p style={{ fontSize: 8, color: "color-mix(in srgb, var(--fg) 30%, transparent)", margin: "2px 0 0" }}>{item.creator}</p>}
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 0, marginTop: "auto" }}>
                 {/* Reels */}
@@ -166,19 +167,19 @@ function MediaHero({ item, cat }: { item: ArchiveItem; cat: typeof CAT_CONFIG[Ca
             width: 130, height: 200, display: "flex", overflow: "hidden",
             borderRadius: "3px 8px 8px 3px",
             border: `1px solid ${cat.border}`,
-            boxShadow: "-3px 3px 12px rgba(0,0,0,0.4), 6px 8px 32px rgba(0,0,0,0.7)",
+            boxShadow: "-3px 3px 12px color-mix(in srgb, var(--shade) 40%, transparent), 6px 8px 32px color-mix(in srgb, var(--shade) 70%, transparent)",
             background: "linear-gradient(160deg, #051a10 0%, #0a2218 100%)",
             flexShrink: 0,
         }}>
-            <div style={{ width: 20, flexShrink: 0, background: "rgba(52,211,153,0.45)", borderRight: "1px solid rgba(52,211,153,0.2)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ writingMode: "vertical-rl", transform: "rotate(180deg)", fontSize: 8, color: "rgba(255,255,255,0.8)", fontWeight: 700, maxHeight: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</span>
+            <div style={{ width: 20, flexShrink: 0, background: "color-mix(in srgb, var(--success) 45%, transparent)", borderRight: "1px solid color-mix(in srgb, var(--success) 20%, transparent)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ writingMode: "vertical-rl", transform: "rotate(180deg)", fontSize: 8, color: "color-mix(in srgb, var(--fg) 80%, transparent)", fontWeight: 700, maxHeight: 160, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.title}</span>
             </div>
             <div style={{ flex: 1, display: "flex", flexDirection: "column", padding: "10px 10px 8px" }}>
                 <div style={{ flex: 1, borderRadius: 4, background: cat.bg, border: `1px solid ${cat.border}`, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 8 }}>
                     <Icon size={36} style={{ color: cat.color, opacity: 0.4 }} />
                 </div>
-                <p style={{ fontSize: 8, fontWeight: 700, color: "rgba(255,255,255,0.8)", margin: 0, lineHeight: 1.3 }}>{item.title}</p>
-                {item.creator && <p style={{ fontSize: 7.5, color: "rgba(52,211,153,0.6)", margin: "2px 0 0", fontStyle: "italic" }}>{item.creator}</p>}
+                <p style={{ fontSize: 8, fontWeight: 700, color: "color-mix(in srgb, var(--fg) 80%, transparent)", margin: 0, lineHeight: 1.3 }}>{item.title}</p>
+                {item.creator && <p style={{ fontSize: 7.5, color: "color-mix(in srgb, var(--success) 60%, transparent)", margin: "2px 0 0", fontStyle: "italic" }}>{item.creator}</p>}
             </div>
         </div>
     );
@@ -187,18 +188,18 @@ function MediaHero({ item, cat }: { item: ArchiveItem; cat: typeof CAT_CONFIG[Ca
     return (
         <div style={{
             width: 160, height: 160, flexShrink: 0, borderRadius: "50%",
-            boxShadow: "0 8px 36px rgba(0,0,0,0.8)",
+            boxShadow: "0 8px 36px color-mix(in srgb, var(--shade) 80%, transparent)",
             background: "conic-gradient(from 0deg, #111 0deg, #1a1a1a 3deg, #111 6deg, #181818 9deg, #111 12deg, #1a1a1a 15deg, #111 18deg, #191919 21deg, #111 24deg, #1a1a1a 27deg, #111 30deg, #181818 33deg, #111 36deg, #1a1a1a 39deg, #111 42deg, #191919 45deg, #111 48deg, #1a1a1a 51deg, #111 54deg, #181818 57deg, #111 60deg, #1a1a1a 180deg, #111 183deg, #1a1a1a 186deg, #111 360deg)",
             display: "flex", alignItems: "center", justifyContent: "center",
         }}>
             <div style={{
                 width: 56, height: 56, borderRadius: "50%",
-                background: "linear-gradient(135deg, rgba(244,114,182,0.3), rgba(244,114,182,0.08))",
-                border: "1px solid rgba(244,114,182,0.4)",
+                background: "linear-gradient(135deg, color-mix(in srgb, var(--pink) 30%, transparent), color-mix(in srgb, var(--pink) 8%, transparent))",
+                border: "1px solid color-mix(in srgb, var(--pink) 40%, transparent)",
                 display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 2,
             }}>
                 <div style={{ width: 6, height: 6, borderRadius: "50%", background: "#111", border: "1px solid #444" }} />
-                <p style={{ fontSize: 7, color: "rgba(255,255,255,0.85)", fontWeight: 700, textAlign: "center", lineHeight: 1.2, margin: 0, maxWidth: 42, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{item.title}</p>
+                <p style={{ fontSize: 7, color: "color-mix(in srgb, var(--fg) 85%, transparent)", fontWeight: 700, textAlign: "center", lineHeight: 1.2, margin: 0, maxWidth: 42, overflow: "hidden", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical" }}>{item.title}</p>
             </div>
         </div>
     );
@@ -312,31 +313,11 @@ export default function DetailClient({ userId, username, isAdmin, item, comments
     };
 
     return (
-        <div className="aurora-bg relative min-h-screen w-full overflow-hidden">
-            <div aria-hidden className="aurora-layer" />
-            <div aria-hidden className="aurora-orb-pink" />
+        <div className="relative min-h-screen w-full overflow-hidden">
             <div aria-hidden className="fixed inset-0 dot-grid opacity-[0.3] pointer-events-none" style={{ zIndex: 0 }} />
 
             {/* Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-4 sm:px-8 py-4">
-                <NavbarBackdrop />
-                <Link href="/arsiv" className="flex items-center gap-2 relative z-10"
-                      style={{ color: "var(--text-4)", fontSize: 12 }}>
-                    <ChevronLeft size={14} />
-                    <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                    <span className="text-sm font-bold" style={{ color: "var(--violet)" }}>.</span>
-                    <span style={{ color: "var(--border-1)" }}>/</span>
-                    <span style={{ color: "var(--text-3)" }}>Arşiv</span>
-                </Link>
-                <div className="relative z-10 flex items-center gap-2">
-                    <NotificationBell userId={userId} />
-                    <Link href="/profil"
-                          className="text-xs px-3 sm:px-4 py-2 rounded-xl transition-all duration-200 max-w-[80px] sm:max-w-none truncate"
-                          style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
-                        @{username}
-                    </Link>
-                </div>
-            </nav>
+            <SiteHeader userId={userId} username={username} back={{ href: "/arsiv", label: "Arşiv" }} />
 
             <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 pt-24 pb-20">
 
@@ -398,7 +379,7 @@ export default function DetailClient({ userId, username, isAdmin, item, comments
                                 <div className="flex gap-2">
                                     <button onClick={handleSaveEdit} disabled={saving || !editData.title.trim()}
                                             className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all duration-200 disabled:opacity-50"
-                                            style={{ background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.3)", color: "rgba(52,211,153,0.9)" }}>
+                                            style={{ background: "color-mix(in srgb, var(--success) 12%, transparent)", border: "1px solid color-mix(in srgb, var(--success) 30%, transparent)", color: "color-mix(in srgb, var(--success) 90%, transparent)" }}>
                                         {saving ? <Loader2 size={11} className="animate-spin" /> : <Check size={11} />}
                                         Kaydet
                                     </button>
@@ -437,8 +418,8 @@ export default function DetailClient({ userId, username, isAdmin, item, comments
                                     {avg != null ? (
                                         <>
                                             <div className="flex items-center gap-1.5">
-                                                <Star size={16} fill="rgba(252,211,77,0.9)" style={{ color: "rgba(252,211,77,0.9)" }} />
-                                                <span className="text-lg font-bold" style={{ color: "rgba(252,211,77,0.9)" }}>{avg}</span>
+                                                <Star size={16} fill="color-mix(in srgb, var(--warn) 90%, transparent)" style={{ color: "color-mix(in srgb, var(--warn) 90%, transparent)" }} />
+                                                <span className="text-lg font-bold" style={{ color: "color-mix(in srgb, var(--warn) 90%, transparent)" }}>{avg}</span>
                                                 <span className="text-xs" style={{ color: "var(--text-5)" }}>/ 10</span>
                                             </div>
                                             <span className="text-xs" style={{ color: "var(--text-5)" }}>{total} puan</span>
@@ -454,7 +435,7 @@ export default function DetailClient({ userId, username, isAdmin, item, comments
                                     </p>
                                 )}
 
-                                <p className="text-[10px]" style={{ color: "var(--text-5)" }}>
+                                <p className="text-[11px]" style={{ color: "var(--text-5)" }}>
                                     @{currentItem.created_by} tarafından eklendi
                                 </p>
                             </>
@@ -522,14 +503,14 @@ export default function DetailClient({ userId, username, isAdmin, item, comments
                                         <div className="flex items-center justify-between gap-2 mb-1">
                                             <div className="flex items-center gap-2">
                                                 <span className="text-xs font-semibold" style={{ color: "var(--text-2)" }}>@{c.username}</span>
-                                                <span className="text-[10px]" style={{ color: "var(--text-5)" }}>
+                                                <span className="text-[11px]" style={{ color: "var(--text-5)" }}>
                                                     {new Date(c.created_at).toLocaleDateString("tr-TR", { day: "numeric", month: "long" })}
                                                 </span>
                                             </div>
                                             {(isAdmin || c.user_id === userId) && (
                                                 <button onClick={() => handleDeleteComment(c.id)}
                                                         className="opacity-30 hover:opacity-70 transition-opacity"
-                                                        style={{ color: "rgba(239,68,68,0.8)" }}>
+                                                        style={{ color: "color-mix(in srgb, var(--danger) 80%, transparent)" }}>
                                                     <Trash2 size={11} />
                                                 </button>
                                             )}
@@ -547,7 +528,7 @@ export default function DetailClient({ userId, username, isAdmin, item, comments
                     <div className="mt-8 pt-6 border-t flex justify-end" style={{ borderColor: "var(--border-3)" }}>
                         <button onClick={handleDeleteItem}
                                 className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium transition-all duration-200"
-                                style={{ background: "rgba(239,68,68,0.06)", border: "1px solid rgba(239,68,68,0.2)", color: "rgba(239,68,68,0.6)" }}>
+                                style={{ background: "color-mix(in srgb, var(--danger) 6%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 20%, transparent)", color: "color-mix(in srgb, var(--danger) 60%, transparent)" }}>
                             <Trash2 size={12} /> Arşivden Kaldır
                         </button>
                     </div>

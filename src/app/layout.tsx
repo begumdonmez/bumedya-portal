@@ -1,19 +1,25 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, Geist_Mono } from "next/font/google";
+import { Fraunces, Instrument_Sans, Geist_Mono } from "next/font/google";
 import { Toaster } from "sonner";
 import ScrollToTop from "@/components/ScrollToTop";
 import "./globals.css";
 
 /* ─── Fontlar ───────────────────────────────────────────────── */
-const spaceGrotesk = Space_Grotesk({
-    subsets: ["latin"],
-    variable: "--font-space",
+const fraunces = Fraunces({
+    subsets: ["latin", "latin-ext"],
+    variable: "--font-serif",
     display: "swap",
-    weight: ["300", "400", "500", "600", "700"],
+    axes: ["opsz", "SOFT"],
+});
+
+const instrumentSans = Instrument_Sans({
+    subsets: ["latin", "latin-ext"],
+    variable: "--font-body",
+    display: "swap",
 });
 
 const geistMono = Geist_Mono({
-    subsets: ["latin"],
+    subsets: ["latin", "latin-ext"],
     variable: "--font-geist-mono",
     display: "swap",
 });
@@ -24,40 +30,39 @@ export const metadata: Metadata = {
         process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
     ),
     title: {
-        default: "bumedya. | Yaratıcı Dijital Evren",
+        default: "bumedya. — dijital fanzin ve topluluk",
         template: "%s | bumedya.",
     },
     description:
         "Fikirlerin forma dönüştüğü, sınırların bulanıklaştığı yeni nesil dijital fanzin ve topluluk portalı.",
     keywords: ["dijital fanzin", "yaratıcı topluluk", "sanat portalı", "bumedya"],
     authors: [{ name: "bumedya." }],
-    icons: { icon: "/logo.png" },
     openGraph: {
         type: "website",
         locale: "tr_TR",
         siteName: "bumedya.",
-        title: "bumedya. | Yaratıcı Dijital Evren",
+        title: "bumedya. — dijital fanzin ve topluluk",
         description:
             "Fikirlerin forma dönüştüğü, sınırların bulanıklaştığı yeni nesil dijital fanzin ve topluluk portalı.",
-        images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "bumedya." }],
     },
     twitter: {
         card: "summary_large_image",
-        title: "bumedya. | Yaratıcı Dijital Evren",
+        title: "bumedya. — dijital fanzin ve topluluk",
         description: "Fikirlerin forma dönüştüğü dijital fanzin ve topluluk portalı.",
-        images: ["/og-image.png"],
     },
     robots: { index: true, follow: true },
 };
 
 /* ─── Viewport ──────────────────────────────────────────────── */
 export const viewport: Viewport = {
-    themeColor: "#1A2744",
+    themeColor: "var(--paper)",
     colorScheme: "dark",
     width: "device-width",
     initialScale: 1,
     viewportFit: "cover",
 };
+
+const THEME_INIT = `try{var t=localStorage.getItem("bm-theme");if(t==="fanzin"||t==="gece")document.documentElement.dataset.theme=t}catch(e){}`;
 
 /* ─── Root Layout ───────────────────────────────────────────── */
 export default function RootLayout({
@@ -68,11 +73,14 @@ export default function RootLayout({
     return (
         <html
             lang="tr"
-            className={`h-full ${spaceGrotesk.variable} ${geistMono.variable}`}
+            className={`h-full ${fraunces.variable} ${instrumentSans.variable} ${geistMono.variable}`}
             suppressHydrationWarning
-            style={{ backgroundColor: "#1A2744" }}
         >
-        <body className="min-h-full flex flex-col antialiased">
+        <head>
+            {/* Tema, ilk boyamadan önce uygulanır — yanıp sönme olmaz */}
+            <script dangerouslySetInnerHTML={{ __html: THEME_INIT }} />
+        </head>
+        <body className="paper-grain min-h-full flex flex-col antialiased">
         <ScrollToTop />
         {children}
 
@@ -81,21 +89,12 @@ export default function RootLayout({
             expand={false}
             toastOptions={{
                 duration: 4000,
-                classNames: {
-                    toast: [
-                        "!bg-white/[0.06]",
-                        "!backdrop-blur-2xl",
-                        "!border",
-                        "!border-white/[0.08]",
-                        "!text-white",
-                        "!shadow-[0_8px_32px_rgba(0,0,0,0.5)]",
-                        "!rounded-2xl",
-                    ].join(" "),
-                    title: "!text-sm !font-medium !text-white/90",
-                    description: "!text-xs !text-white/50",
-                    success: "!border-emerald-500/25",
-                    error: "!border-red-500/25",
-                    info: "!border-purple-500/25",
+                style: {
+                    background: "var(--surface-solid)",
+                    color: "var(--text-1)",
+                    border: "1px solid var(--border-1)",
+                    borderRadius: "10px",
+                    fontFamily: "var(--font-sans)",
                 },
             }}
         />

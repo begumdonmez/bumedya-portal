@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
-import type { ZodError } from "zod";
+import type { SchemaError as ZodError } from "@/lib/schemas";
+import AuthShell from "@/components/AuthShell";
 
 interface FieldErrors { identifier?: string; password?: string }
 function parseZodErrors(err: ZodError): FieldErrors {
@@ -30,8 +31,7 @@ function Field({ id, label, type = "text", value, onChange, placeholder, error, 
     const [focused, setFocused] = useState(false);
     return (
         <div className="flex flex-col gap-1.5">
-            <label htmlFor={id} className="label-caps transition-colors duration-200"
-                   style={{ color: focused ? "var(--violet-text)" : "var(--text-3)" }}>
+            <label htmlFor={id} className="field-label">
                 {label}
             </label>
             <div className="relative">
@@ -44,15 +44,15 @@ function Field({ id, label, type = "text", value, onChange, placeholder, error, 
                     autoComplete={autoComplete}
                     className="input-field"
                     style={{
-                        borderColor: error ? "rgba(239,68,68,0.5)" : focused ? "rgba(124,58,237,0.6)" : "rgba(255,255,255,0.08)",
-                        boxShadow: focused && !error ? "0 0 0 3px rgba(124,58,237,0.1), 0 0 20px rgba(124,58,237,0.07)" : "none",
+                        borderColor: error ? "color-mix(in srgb, var(--danger) 50%, transparent)" : focused ? "color-mix(in srgb, var(--accent) 60%, transparent)" : "color-mix(in srgb, var(--fg) 8%, transparent)",
+                        boxShadow: focused && !error ? "0 0 0 3px color-mix(in srgb, var(--accent) 10%, transparent), 0 0 20px color-mix(in srgb, var(--accent) 7%, transparent)" : "none",
                         paddingRight: suffix ? "3rem" : undefined,
                     }}
                 />
                 {suffix && <div className="absolute right-3 top-1/2 -translate-y-1/2">{suffix}</div>}
             </div>
             <div className="min-h-[18px]">
-                {error && <p className="text-[11px] flex items-center gap-1" style={{ color: "rgba(239,68,68,0.8)" }}>⚠ {error}</p>}
+                {error && <p className="text-[11px] flex items-center gap-1" style={{ color: "color-mix(in srgb, var(--danger) 80%, transparent)" }}>⚠ {error}</p>}
             </div>
         </div>
     );
@@ -144,7 +144,7 @@ function LoginForm() {
         {/* Auth callback hata banner'ı */}
         {callbackError && CALLBACK_ERROR_MESSAGES[callbackError] && (
             <div className="mb-5 flex items-start gap-2.5 px-4 py-3 rounded-2xl text-xs leading-relaxed"
-                 style={{ background: "rgba(251,146,60,0.08)", border: "1px solid rgba(251,146,60,0.25)", color: "rgba(251,191,36,0.85)" }}>
+                 style={{ background: "color-mix(in srgb, var(--accent-2) 8%, transparent)", border: "1px solid color-mix(in srgb, var(--accent-2) 25%, transparent)", color: "color-mix(in srgb, var(--warn) 85%, transparent)" }}>
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className="shrink-0 mt-0.5">
                     <path d="M7 1.5L12.5 11H1.5L7 1.5Z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
                     <path d="M7 5.5v2.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
@@ -184,14 +184,14 @@ function LoginForm() {
 
             <div className="flex justify-end -mt-1 mb-3">
                 <Link href="/reset-password" className="text-xs transition-colors duration-200"
-                      style={{ color: "var(--violet-text)" }}>
+                      style={{ color: "var(--accent-text)" }}>
                     Şifremi unuttum
                 </Link>
             </div>
 
             <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                 {loading ? (
-                    <><span className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" /> Giriş yapılıyor...</>
+                    <><span className="w-4 h-4 rounded-full border-2 border-[color-mix(in_srgb,var(--fg)_30%,transparent)] border-t-[var(--on-accent)] animate-spin" /> Giriş yapılıyor...</>
                 ) : "Giriş Yap"}
             </button>
 
@@ -199,7 +199,7 @@ function LoginForm() {
                 <p className="text-xs" style={{ color: "var(--text-4)" }}>
                     Hesabın yok mu?{" "}
                     <Link href="/register" className="transition-colors duration-200"
-                          style={{ color: "var(--violet-text)" }}>
+                          style={{ color: "var(--accent-text)" }}>
                         Kayıt ol
                     </Link>
                 </p>
@@ -211,50 +211,16 @@ function LoginForm() {
 
 export default function LoginPage() {
     return (
-        <div className="aurora-bg relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
-            <div aria-hidden className="aurora-layer" />
-            <div aria-hidden className="aurora-orb-pink" />
-
-            <div className="relative z-10 w-full max-w-md animate-float-up">
-                {/* Glow ring behind card */}
-                <div aria-hidden className="absolute -inset-px rounded-3xl pointer-events-none"
-                     style={{
-                         background: "linear-gradient(135deg, rgba(124,58,237,0.35) 0%, transparent 50%, rgba(37,99,235,0.15) 100%)",
-                         filter: "blur(1px)", opacity: 0.7,
-                     }} />
-
-                <div className="relative card rounded-3xl overflow-hidden" style={{ backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)" }}>
-                    {/* Top stripe */}
-                    <div className="h-px w-full" style={{
-                        background: "linear-gradient(90deg, transparent, rgba(124,58,237,0.6) 35%, rgba(167,139,250,0.4) 65%, transparent)",
-                    }} />
-
-                    <div className="p-8">
-                        <div className="mb-8">
-                            <Link href="/" className="inline-flex items-baseline gap-0.5 mb-7 group">
-                                <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                                <span className="text-sm font-bold transition-all duration-300 group-hover:drop-shadow-[0_0_8px_rgba(124,58,237,0.9)]"
-                                      style={{ color: "var(--violet)" }}>.</span>
-                            </Link>
-                            <h1 className="text-2xl font-bold tracking-tight mb-1.5" style={{ color: "var(--text-1)" }}>
-                                Tekrar Hoş Geldin
-                            </h1>
-                            <p className="text-sm" style={{ color: "var(--text-3)" }}>
-                                Dijital evrenine giriş yap.
-                            </p>
-                        </div>
+        <AuthShell title="Tekrar hoş geldin" description="Kaldığın yerden devam et.">
 
 
                         <Suspense fallback={
                             <div className="flex items-center justify-center py-8">
-                                <span className="w-6 h-6 rounded-full border-2 border-white/20 border-t-white/60 animate-spin" />
+                                <span className="w-6 h-6 rounded-full border-2 border-[color-mix(in_srgb,var(--fg)_20%,transparent)] border-t-[var(--on-accent)] animate-spin" />
                             </div>
                         }>
                             <LoginForm />
                         </Suspense>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </AuthShell>
     );
 }

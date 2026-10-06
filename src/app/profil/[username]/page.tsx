@@ -33,17 +33,17 @@ export async function generateMetadata(
 
 /* ─── Rozet konfigürasyonu ──────────────────────────────────── */
 const BADGE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string; icon: ElementType }> = {
-    admin:    { label: "Admin",   icon: Zap,        color: "rgba(239,68,68,0.9)",   bg: "rgba(239,68,68,0.08)",   border: "rgba(239,68,68,0.25)"   },
-    editor:   { label: "Editör",  icon: Shield,     color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.08)",  border: "rgba(251,191,36,0.25)"  },
-    artist:   { label: "Sanatçı", icon: Palette,    color: "rgba(244,114,182,0.9)", bg: "rgba(244,114,182,0.08)", border: "rgba(244,114,182,0.25)" },
-    writer:   { label: "Yazar",   icon: PenLine,    color: "rgba(52,211,153,0.9)",  bg: "rgba(52,211,153,0.08)",  border: "rgba(52,211,153,0.2)"   },
-    verified: { label: "Onaylı",  icon: BadgeCheck, color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"   },
-    founder:  { label: "Kurucu",  icon: Sparkles,   color: "rgba(251,191,36,0.9)",  bg: "rgba(251,191,36,0.06)",  border: "rgba(251,191,36,0.2)"   },
+    admin:    { label: "Admin",   icon: Zap,        color: "color-mix(in srgb, var(--danger) 90%, transparent)",   bg: "color-mix(in srgb, var(--danger) 8%, transparent)",   border: "color-mix(in srgb, var(--danger) 25%, transparent)"   },
+    editor:   { label: "Editör",  icon: Shield,     color: "color-mix(in srgb, var(--warn) 90%, transparent)",  bg: "color-mix(in srgb, var(--warn) 8%, transparent)",  border: "color-mix(in srgb, var(--warn) 25%, transparent)"  },
+    artist:   { label: "Sanatçı", icon: Palette,    color: "color-mix(in srgb, var(--pink) 90%, transparent)", bg: "color-mix(in srgb, var(--pink) 8%, transparent)", border: "color-mix(in srgb, var(--pink) 25%, transparent)" },
+    writer:   { label: "Yazar",   icon: PenLine,    color: "color-mix(in srgb, var(--success) 90%, transparent)",  bg: "color-mix(in srgb, var(--success) 8%, transparent)",  border: "color-mix(in srgb, var(--success) 20%, transparent)"   },
+    verified: { label: "Onaylı",  icon: BadgeCheck, color: "color-mix(in srgb, var(--info) 90%, transparent)", bg: "color-mix(in srgb, var(--info) 8%, transparent)",  border: "color-mix(in srgb, var(--info) 20%, transparent)"   },
+    founder:  { label: "Kurucu",  icon: Sparkles,   color: "color-mix(in srgb, var(--warn) 90%, transparent)",  bg: "color-mix(in srgb, var(--warn) 6%, transparent)",  border: "color-mix(in srgb, var(--warn) 20%, transparent)"   },
 };
 
 const ROLE_CONFIG = {
-    member:  { label: "İzleyici", sublabel: "Member",  color: "rgba(147,197,253,0.9)", bg: "rgba(59,130,246,0.08)",  border: "rgba(59,130,246,0.2)"  },
-    creator: { label: "Üretici",  sublabel: "Creator", color: "rgba(167,139,250,0.9)", bg: "rgba(124,58,237,0.08)",  border: "rgba(124,58,237,0.25)" },
+    member:  { label: "İzleyici", sublabel: "Member",  color: "color-mix(in srgb, var(--info) 90%, transparent)", bg: "color-mix(in srgb, var(--info) 8%, transparent)",  border: "color-mix(in srgb, var(--info) 20%, transparent)"  },
+    creator: { label: "Üretici",  sublabel: "Creator", color: "color-mix(in srgb, var(--accent) 90%, transparent)", bg: "color-mix(in srgb, var(--accent) 8%, transparent)",  border: "color-mix(in srgb, var(--accent) 25%, transparent)" },
 };
 
 /* ─── Sayfa ─────────────────────────────────────────────────── */
@@ -89,9 +89,7 @@ export default async function PublicProfilePage(
     });
 
     return (
-        <div className="aurora-bg relative min-h-screen flex flex-col">
-            <div aria-hidden className="aurora-layer" />
-            <div aria-hidden className="aurora-orb-pink" />
+        <div className="relative min-h-screen flex flex-col">
 
             {/* Navbar */}
             <nav className="relative z-10 flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b gap-3"
@@ -103,7 +101,7 @@ export default async function PublicProfilePage(
                     </Link>
                     <Link href="/home" className="flex items-baseline gap-0.5">
                         <span className="text-sm font-bold" style={{ color: "var(--text-3)" }}>bumedya</span>
-                        <span className="text-sm font-bold" style={{ color: "rgba(124,58,237,0.7)" }}>.</span>
+                        <span className="text-sm font-bold" style={{ color: "color-mix(in srgb, var(--accent) 70%, transparent)" }}>.</span>
                     </Link>
                 </div>
 
@@ -111,14 +109,14 @@ export default async function PublicProfilePage(
                     {isAdmin && (
                         <Link href="/admin"
                               className="text-xs px-2.5 sm:px-3 py-1.5 sm:py-2 rounded-xl transition-all duration-300 whitespace-nowrap"
-                              style={{ color: "rgba(239,68,68,0.75)", border: "1px solid rgba(239,68,68,0.15)", background: "rgba(239,68,68,0.06)" }}>
+                              style={{ color: "color-mix(in srgb, var(--danger) 75%, transparent)", border: "1px solid color-mix(in srgb, var(--danger) 15%, transparent)", background: "color-mix(in srgb, var(--danger) 6%, transparent)" }}>
                             <Zap size={11} strokeWidth={2} /> Admin
                         </Link>
                     )}
                     {isOwnProfile && (
                         <Link href="/profil"
                               className="text-xs px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl transition-all duration-300 whitespace-nowrap"
-                              style={{ color: "var(--violet-text)", border: "1px solid var(--violet-border)", background: "var(--violet-bg)" }}>
+                              style={{ color: "var(--accent-text)", border: "1px solid var(--accent-border)", background: "var(--accent-bg)" }}>
                             <span className="hidden sm:inline">Profilimi </span>Düzenle
                         </Link>
                     )}
@@ -129,18 +127,17 @@ export default async function PublicProfilePage(
             <div className="relative z-10 max-w-2xl mx-auto w-full px-4 sm:px-6 py-6 sm:py-12 flex flex-col gap-4">
 
                 {/* Ana kart */}
-                <div className="card rounded-3xl p-4 sm:p-8" style={{ backdropFilter: "blur(40px)", WebkitBackdropFilter: "blur(40px)" }}>
+                <div className="card rounded-2xl p-4 sm:p-8" style={{ }}>
                     <div className="h-[1px] -mt-4 sm:-mt-8 mb-4 sm:mb-8"
-                         style={{ marginLeft: "-1rem", width: "calc(100% + 2rem)", background: "linear-gradient(90deg, transparent, rgba(124,58,237,0.5) 40%, rgba(167,139,250,0.3) 60%, transparent)" }} />
+                         style={{ marginLeft: "-1rem", width: "calc(100% + 2rem)", background: "color-mix(in srgb, var(--accent) 35%, transparent)" }} />
 
                     {/* Avatar + bilgiler */}
                     <div className="flex items-start gap-5 mb-6">
                         {/* Avatar */}
                         <div className="w-[72px] h-[72px] rounded-2xl flex items-center justify-center font-bold text-2xl select-none shrink-0"
                              style={{
-                                 background: "linear-gradient(135deg, rgba(124,58,237,0.4), rgba(59,130,246,0.3))",
-                                 border: "1px solid var(--violet-border)",
-                                 boxShadow: "0 0 24px rgba(124,58,237,0.15)",
+                                 background: "color-mix(in srgb, var(--accent) 20%, transparent)",
+                                 border: "1px solid var(--accent-border)",
                                  color: "var(--text-1)",
                              }}>
                             {profile.username[0].toUpperCase()}
@@ -160,11 +157,11 @@ export default async function PublicProfilePage(
                             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full"
                                  style={{ background: roleConf.bg, border: `1px solid ${roleConf.border}` }}>
                                 <span className="w-1.5 h-1.5 rounded-full" style={{ background: roleConf.color }} />
-                                <span className="text-[10px] font-medium tracking-widest uppercase" style={{ color: roleConf.color }}>
+                                <span className="label-caps" style={{ color: roleConf.color }}>
                                     {roleConf.label}
                                 </span>
-                                <span className="text-[10px]" style={{ color: "var(--text-4)" }}>·</span>
-                                <span className="text-[10px]" style={{ color: "var(--text-4)" }}>{roleConf.sublabel}</span>
+                                <span className="text-[11px]" style={{ color: "var(--text-4)" }}>·</span>
+                                <span className="text-[11px]" style={{ color: "var(--text-4)" }}>{roleConf.sublabel}</span>
                             </div>
 
                             {/* Kazanılmış rozetler */}
@@ -175,7 +172,7 @@ export default async function PublicProfilePage(
                                         const conf = BADGE_CONFIG[b];
                                         if (!conf) return null;
                                         return (
-                                            <span key={b} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium"
+                                            <span key={b} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium"
                                                   style={{ background: conf.bg, border: `1px solid ${conf.border}`, color: conf.color }}>
                                                 <conf.icon size={10} strokeWidth={2} /> {conf.label}
                                             </span>
@@ -188,7 +185,7 @@ export default async function PublicProfilePage(
 
                     {/* Bio */}
                     <div className="mb-6">
-                        <p className="text-[10px] tracking-widest uppercase mb-2" style={{ color: "var(--text-4)" }}>Bio</p>
+                        <p className="label-caps mb-2" style={{ color: "var(--text-4)" }}>Bio</p>
                         <p className="text-sm leading-relaxed" style={{ color: profile.bio ? "var(--text-2)" : "var(--text-4)" }}>
                             {profile.bio || "Henüz bir bio eklenmedi."}
                         </p>
@@ -197,7 +194,7 @@ export default async function PublicProfilePage(
 
                     {/* Katılım */}
                     <div className="pt-5" style={{ borderTop: "1px solid var(--border-3)" }}>
-                        <p className="text-[10px] tracking-widest uppercase mb-1" style={{ color: "var(--text-4)" }}>Katılım</p>
+                        <p className="label-caps mb-1" style={{ color: "var(--text-4)" }}>Katılım</p>
                         <p className="text-sm" style={{ color: "var(--text-2)" }}>{joinDate}</p>
                     </div>
                 </div>
@@ -206,7 +203,7 @@ export default async function PublicProfilePage(
                 {isOwnProfile && (
                     <Link href="/profil"
                           className="flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-medium transition-all duration-300"
-                          style={{ background: "var(--violet-bg)", border: "1px solid var(--violet-border)", color: "var(--violet-text)" }}>
+                          style={{ background: "var(--accent-bg)", border: "1px solid var(--accent-border)", color: "var(--accent-text)" }}>
                         Profilimi Düzenle <ChevronRight size={13} />
                     </Link>
                 )}
