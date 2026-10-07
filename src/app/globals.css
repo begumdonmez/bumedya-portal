@@ -733,7 +733,7 @@ input:-webkit-autofill:focus {
 .medal-spin:hover .medal, .medal:hover { animation: spin-slow 0.9s cubic-bezier(.34,1.3,.64,1) 1; }
 
 /* Uçan çizimler */
-.doodle-sky { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.doodle-sky { position: absolute; top: 0; left: 0; right: 0; height: 0; z-index: 0; pointer-events: none; }
 .doodle-lane { position: absolute; left: 0; right: 0; height: 0; }
 .doodle { position: absolute; left: 0; color: var(--fg); opacity: 0.28; animation-timing-function: linear; animation-fill-mode: both; }
 :root[data-theme="fanzin"] .doodle { opacity: 0.4; }

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 /**
  * Arka planda ara sıra ekranı boydan boya geçen el çizimi karakterler.
+ * Ekrana değil sayfaya sabittir: kullanıcı kaydırırsa çizim yerinde kalır, onunla gelmez.
  * Ekranda aynı anda en fazla bir çizim olur; sekme gizliyken ya da
  * hareket azaltma tercihinde hiç başlamaz. İçerik tıklamalarını engellemez.
  */
@@ -116,7 +117,8 @@ export default function DoodleSky() {
                 setFlight({
                     key: ++n, doodle: d,
                     path: PATHS[Math.floor(Math.random() * PATHS.length)],
-                    top: 12 + Math.random() * 62,
+                    // Kalkış anında görünen alanın içinden bir yükseklik — sayfaya sabit (px)
+                    top: window.scrollY + window.innerHeight * (0.12 + Math.random() * 0.62),
                     dur,
                     flip: Math.random() < 0.4,
                 });
@@ -135,7 +137,7 @@ export default function DoodleSky() {
     return (
         <div aria-hidden className="doodle-sky">
             {/* Şerit aynalanınca çizim hem sağdan sola gider hem de o yöne bakar */}
-            <div key={flight.key} className="doodle-lane" style={{ top: `${flight.top}vh`, scale: flight.flip ? "-1 1" : "1 1" }}>
+            <div key={flight.key} className="doodle-lane" style={{ top: `${flight.top}px`, scale: flight.flip ? "-1 1" : "1 1" }}>
                 <div className={`doodle ${flight.path}`} style={{ animationDuration: `${flight.dur}s` }}>
                     <div className="doodle-bob"><Doodle /></div>
                 </div>

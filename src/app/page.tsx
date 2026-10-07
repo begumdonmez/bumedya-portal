@@ -7,7 +7,8 @@ import SetWelcomeCookie from "@/components/SetWelcomeCookie";
 import SiteFooter from "@/components/SiteFooter";
 import ContactSection from "@/components/ContactSection";
 import SiteHeader from "@/components/SiteHeader";
-import { LivelyWords, MarkerDraw, ScrambleText } from "@/components/motion/Text";
+import { LivelyWords, MarkerDraw } from "@/components/motion/Text";
+import HeroTitle from "@/components/motion/HeroTitle";
 
 export const metadata: Metadata = {
     title: "bumedya.",
@@ -167,9 +168,11 @@ export default async function LandingPage() {
                     <div className="animate-float-up delay-100">
                         <h1 className="font-display font-medium leading-[0.95] tracking-tight"
                             style={{ fontSize: "clamp(3.25rem, 9vw, 7.5rem)", color: "var(--text-1)" }}>
-                            <ScrambleText text="Üret." /><br />
-                            <em className="italic font-normal marker" style={{ color: "var(--accent)" }}>Paylaş.</em><br />
-                            <ScrambleText text="Büyü." every={5200} />
+                            <HeroTitle lines={[
+                                { text: "Üret." },
+                                { text: "Paylaş.", className: "italic font-normal", style: { color: "var(--accent)" }, marker: true },
+                                { text: "Büyü." },
+                            ]} />
                         </h1>
                         <p className="mt-8 text-lg sm:text-xl leading-relaxed max-w-xl" style={{ color: "var(--text-2)" }}>
                             <LivelyWords text="bumedya; çizen, yazan, çeken, düşünen herkesin buluştuğu bir dijital fanzin ve topluluk. Mükemmel olmak gerekmiyor — hayal etmek yeter." />

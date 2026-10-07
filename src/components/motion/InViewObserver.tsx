@@ -40,7 +40,33 @@ export default function InViewObserver() {
         });
         mo.observe(document.body, { childList: true, subtree: true });
 
-        return () => { io.disconnect(); mo.disconnect(); cancelAnimationFrame(raf); };
+        // Boşta kalınca (9 sn etkileşim yok) görünen fosforlu kelimeler yeniden çizilir
+        let idle: ReturnType<typeof setTimeout>;
+        const redraw = () => {
+            if (!document.hidden) {
+                const marks = [...document.querySelectorAll<HTMLElement>(".marker-draw.in-view")].filter(el => {
+                    const r = el.getBoundingClientRect();
+                    return r.bottom > 0 && r.top < innerHeight;
+                });
+                marks.forEach((el, i) => {
+                    el.style.transitionDuration = "0ms";
+                    el.classList.remove("in-view");
+                    void el.offsetWidth; // yeniden akış: geçişi sıfırla
+                    el.style.transitionDuration = "";
+                    setTimeout(() => el.classList.add("in-view"), 120 + i * 260);
+                });
+            }
+            idle = setTimeout(redraw, 9000);
+        };
+        const wake = () => { clearTimeout(idle); idle = setTimeout(redraw, 9000); };
+        const events = ["pointermove", "keydown", "scroll", "touchstart"] as const;
+        events.forEach(ev => window.addEventListener(ev, wake, { passive: true }));
+        wake();
+
+        return () => {
+            io.disconnect(); mo.disconnect(); cancelAnimationFrame(raf); clearTimeout(idle);
+            events.forEach(ev => window.removeEventListener(ev, wake));
+        };
     }, [pathname]);
 
     return null;

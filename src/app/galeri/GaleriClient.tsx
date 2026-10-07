@@ -9,6 +9,7 @@ import SiteHeader from "@/components/SiteHeader";
 import PageHeader from "@/components/PageHeader";
 import { GalleryImage, Lightbox, YoutubeLite, compressImage } from "./media";
 import { GALLERY_COLUMNS, GALLERY_PAGE_SIZE } from "./config";
+import Videos, { type GalleryVideo } from "./Videos";
 import { sfx } from "@/lib/sfx";
 
 interface GalleryItem {
@@ -229,6 +230,8 @@ export default function GaleriClient({
     badges,
     items: initialItems,
     supabaseUrl,
+    videos,
+    pendingVideos,
 }: {
     userId: string;
     username: string;
@@ -236,8 +239,11 @@ export default function GaleriClient({
     badges: string[];
     items: GalleryItem[];
     supabaseUrl: string;
+    videos: GalleryVideo[];
+    pendingVideos: GalleryVideo[];
 }) {
     const [items, setItems] = useState(initialItems);
+    const [tab, setTab] = useState<"foto" | "video">("foto");
     const [hasMore, setHasMore] = useState(initialItems.length === GALLERY_PAGE_SIZE);
     const [viewer, setViewer] = useState<number | null>(null);
     const [loadingMore, setLoadingMore] = useState(false);
@@ -294,9 +300,23 @@ export default function GaleriClient({
 
             {/* Grid */}
             <div className="relative z-10 max-w-6xl mx-auto w-full px-4 sm:px-8 pt-24 sm:pt-28 pb-10">
-                <PageHeader eyebrow="Görsel bellek" title="Galeri" description="Etkinliklerden fotoğraflar, çizimler, tasarımlar."
-                            actions={<>{canUpload && <button onClick={() => setShowModal(true)} className="btn-primary">+ Yükle</button>}</>} className="!mb-2" />
-                {items.length === 0 ? (
+                <PageHeader eyebrow="Görsel bellek" title="Galeri" description="Etkinliklerden fotoğraflar, çizimler, tasarımlar ve kamera arkası videoları."
+                            actions={<>{canUpload && tab === "foto" && <button onClick={() => setShowModal(true)} className="btn-primary">+ Yükle</button>}</>} className="!mb-2" />
+
+                <div role="tablist" aria-label="Galeri bölümleri" className="flex gap-2 mb-6">
+                    <button type="button" role="tab" aria-selected={tab === "foto"} aria-pressed={tab === "foto"} className="pill" onClick={() => setTab("foto")}>
+                        Fotoğraflar
+                    </button>
+                    <button type="button" role="tab" aria-selected={tab === "video"} aria-pressed={tab === "video"} className="pill" onClick={() => setTab("video")}>
+                        Videolar {pendingVideos.length > 0 && isAdmin && (
+                            <span className="ml-1 px-1.5 rounded-full text-[11px] font-bold" style={{ background: "var(--accent)", color: "var(--on-accent)" }}>{pendingVideos.length}</span>
+                        )}
+                    </button>
+                </div>
+
+                {tab === "video" ? (
+                    <Videos isAdmin={isAdmin} initialApproved={videos} initialPending={pendingVideos} />
+                ) : items.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-32 gap-4">
                         <ImageIcon size={36} className="opacity-10" />
                         <p className="text-sm" style={{ color: "var(--text-4)" }}>
@@ -428,7 +448,7 @@ export default function GaleriClient({
                                 })}
                     </div>
                 )}
-                {hasMore && (
+                {tab === "foto" && hasMore && (
                     <div className="flex justify-center mt-10">
                         <button type="button" onClick={loadMore} disabled={loadingMore} className="btn-ghost">
                             {loadingMore ? "Yükleniyor…" : "Daha fazla göster"}
