@@ -37,7 +37,8 @@ export default function BadgeMedal({ label, color, shape, size = 40 }: {
     const c = 22;
 
     return (
-        <svg viewBox="0 0 44 44" width={size} height={size} aria-hidden className="shrink-0 overflow-visible">
+        <svg viewBox="0 0 44 44" width={size} height={size} aria-hidden className="medal shrink-0 overflow-visible"
+             style={{ ["--md" as string]: `${-(label.length % 7) * 0.6}s` }}>
             {shape === "star" && (
                 <>
                     {/* İki kat ışınlı nişan yıldızı */}

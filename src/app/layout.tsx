@@ -3,6 +3,8 @@ import { Fraunces, Instrument_Sans, Geist_Mono, Patrick_Hand } from "next/font/g
 import { Toaster } from "sonner";
 import ScrollToTop from "@/components/ScrollToTop";
 import SoundLayer from "@/components/SoundLayer";
+import InViewObserver from "@/components/motion/InViewObserver";
+import DoodleSky from "@/components/motion/DoodleSky";
 import "./globals.css";
 
 /* ─── Fontlar ───────────────────────────────────────────────── */
@@ -94,6 +96,8 @@ export default function RootLayout({
         <body className="paper-grain min-h-full flex flex-col antialiased">
         <ScrollToTop />
         <SoundLayer />
+        <InViewObserver />
+        <DoodleSky />
         {children}
 
         <Toaster

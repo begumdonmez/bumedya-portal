@@ -88,7 +88,7 @@ export default function OnboardingPage() {
                 { id: toastId }
             );
 
-            router.push("/");
+            router.push("/home");
             router.refresh();
 
         } catch {

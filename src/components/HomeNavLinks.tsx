@@ -8,23 +8,23 @@ import ThemeSwitcher from "@/components/ThemeSwitcher";
 import SoundToggle from "@/components/SoundToggle";
 
 const PRIMARY = [
+    { href: "/home",        label: "Pano"        },
     { href: "/fanzin",      label: "Fanzin"      },
     { href: "/akis",        label: "Akış"        },
     { href: "/arsiv",       label: "Arşiv"       },
     { href: "/galeri",      label: "Galeri"      },
     { href: "/etkinlikler", label: "Etkinlikler" },
-    { href: "/chat",        label: "Lounge"      },
 ];
 
 const MORE = [
-    { href: "/home",      label: "Pano"      },
+    { href: "/chat",      label: "Lounge"    },
     { href: "/members",   label: "Üyeler"    },
     { href: "/yildizlar", label: "Yıldızlar" },
     { href: "/manifest",  label: "Manifest"  },
     { href: "/basvuru",   label: "Başvuru"   },
 ];
 
-const ALL = [...MORE.slice(0, 1), ...PRIMARY, ...MORE.slice(1)];
+const ALL = [...PRIMARY, ...MORE];
 
 function isActive(pathname: string, href: string) {
     return pathname === href || pathname.startsWith(href + "/");

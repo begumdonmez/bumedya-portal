@@ -66,7 +66,7 @@ const CALLBACK_ERROR_MESSAGES: Record<string, string> = {
 function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const redirectTo = searchParams.get("redirectTo") ?? "/";
+    const redirectTo = searchParams.get("redirectTo") ?? "/home";
     const callbackError = searchParams.get("error");
     const formId = useId();
 

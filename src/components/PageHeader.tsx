@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { LivelyWords, ScrambleText } from "@/components/motion/Text";
 
 interface Props {
     eyebrow?: ReactNode;
@@ -18,11 +19,11 @@ export default function PageHeader({ eyebrow, title, description, actions, class
                 {eyebrow && <p className="label-caps mb-2">{eyebrow}</p>}
                 <h1 className="font-display font-medium leading-[1.05] tracking-tight"
                     style={{ fontSize: "clamp(2rem, 5vw, 3.25rem)", color: "var(--text-1)" }}>
-                    {title}
+                    {typeof title === "string" ? <ScrambleText text={title} every={5000} /> : title}
                 </h1>
                 {description && (
                     <div className="mt-3 text-[15px] leading-relaxed max-w-xl" style={{ color: "var(--text-3)" }}>
-                        {description}
+                        {typeof description === "string" ? <LivelyWords text={description} /> : description}
                     </div>
                 )}
             </div>

@@ -31,7 +31,7 @@ export default function SiteHeader({ userId, username, actions, back, minimal }:
                     <ChevronLeft size={16} /> {back.label}
                 </Link>
             ) : (
-                <Wordmark />
+                <Wordmark href={userId ? "/home" : "/"} />
             )}
 
             {!minimal && <HomeNavLinks />}

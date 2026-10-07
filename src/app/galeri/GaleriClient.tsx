@@ -273,6 +273,8 @@ export default function GaleriClient({
 
     const handleDelete = async (item: GalleryItem) => {
         if (!isAdmin) return;
+        const name = item.title ? `“${item.title}”` : "Bu eser";
+        if (!window.confirm(`${name} galeriden kalıcı olarak silinecek. Emin misin?`)) return;
         const supabase = createClient();
 
         if (item.storage_path) {

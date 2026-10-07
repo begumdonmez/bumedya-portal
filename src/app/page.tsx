@@ -7,6 +7,7 @@ import SetWelcomeCookie from "@/components/SetWelcomeCookie";
 import SiteFooter from "@/components/SiteFooter";
 import ContactSection from "@/components/ContactSection";
 import SiteHeader from "@/components/SiteHeader";
+import { LivelyWords, MarkerDraw, ScrambleText } from "@/components/motion/Text";
 
 export const metadata: Metadata = {
     title: "bumedya.",
@@ -166,13 +167,12 @@ export default async function LandingPage() {
                     <div className="animate-float-up delay-100">
                         <h1 className="font-display font-medium leading-[0.95] tracking-tight"
                             style={{ fontSize: "clamp(3.25rem, 9vw, 7.5rem)", color: "var(--text-1)" }}>
-                            Üret.<br />
+                            <ScrambleText text="Üret." /><br />
                             <em className="italic font-normal marker" style={{ color: "var(--accent)" }}>Paylaş.</em><br />
-                            Büyü.
+                            <ScrambleText text="Büyü." every={5200} />
                         </h1>
                         <p className="mt-8 text-lg sm:text-xl leading-relaxed max-w-xl" style={{ color: "var(--text-2)" }}>
-                            bumedya; çizen, yazan, çeken, düşünen herkesin buluştuğu bir dijital fanzin ve topluluk.
-                            Mükemmel olmak gerekmiyor — hayal etmek yeter.
+                            <LivelyWords text="bumedya; çizen, yazan, çeken, düşünen herkesin buluştuğu bir dijital fanzin ve topluluk. Mükemmel olmak gerekmiyor — hayal etmek yeter." />
                         </p>
                         <div className="flex flex-wrap items-center gap-3 mt-10">
                             {user ? (
@@ -209,7 +209,7 @@ export default async function LandingPage() {
                     <div>
                         <p className="label-caps mb-3">İçindekiler</p>
                         <h2 className="font-display text-4xl sm:text-5xl font-medium leading-tight" style={{ color: "var(--text-1)" }}>
-                            Nerede ne var?
+                            Nerede <MarkerDraw>ne var?</MarkerDraw>
                         </h2>
                         <p className="mt-4 text-base leading-relaxed max-w-sm" style={{ color: "var(--text-3)" }}>
                             İlk kez geliyorsan buradan başla. Her bölüm topluluğun farklı bir köşesi.
@@ -243,7 +243,7 @@ export default async function LandingPage() {
                     <div>
                         <p className="label-caps mb-3">Topluluk sözleşmesi</p>
                         <h2 className="font-display text-3xl sm:text-4xl font-medium mb-8" style={{ color: "var(--text-1)" }}>
-                            Huzurlu ve saygılı bir alan için
+                            Huzurlu ve <MarkerDraw>saygılı</MarkerDraw> bir alan için
                         </h2>
                         <ol className="flex flex-col gap-6">
                             {RULES.map(rule => (
@@ -262,7 +262,7 @@ export default async function LandingPage() {
                         <div>
                             <p className="label-caps mb-3">Nasıl katılırsın?</p>
                             <h2 className="font-display text-3xl sm:text-4xl font-medium mb-8" style={{ color: "var(--text-1)" }}>
-                                Üç adım
+                                <MarkerDraw delay={150}>Üç adım</MarkerDraw>
                             </h2>
                             <ol className="flex flex-col">
                                 {[
@@ -322,7 +322,7 @@ export default async function LandingPage() {
                 <div>
                     <p className="label-caps mb-3">Rozet sözlüğü</p>
                     <h2 className="font-display text-3xl sm:text-4xl font-medium mb-3" style={{ color: "var(--text-1)" }}>
-                        Hangi rozet ne demek?
+                        Hangi rozet <MarkerDraw>ne demek?</MarkerDraw>
                     </h2>
                     <p className="text-sm mb-6" style={{ color: "var(--text-3)" }}>
                         Bazıları başvuruyla, bazıları admin tarafından, bazıları ilgi alanına göre verilir.
@@ -339,7 +339,7 @@ export default async function LandingPage() {
                                     {g.items.map(b => (
                                         <div key={b.label} className="grid grid-cols-[2.5rem_7.5rem_1fr] gap-x-3 py-3 items-center"
                                              style={{ borderTop: "1px solid var(--border-2)" }}>
-                                            <BadgeMedal label={b.label} color={b.color} shape={g.shape} size={38} />
+                                            <span data-anim className="medal-spin inline-flex"><BadgeMedal label={b.label} color={b.color} shape={g.shape} size={38} /></span>
                                             <dt>
                                                 <span className="chip" style={{ background: b.bg, border: `1px solid ${b.border}`, color: b.color }}>{b.label}</span>
                                             </dt>
@@ -355,7 +355,7 @@ export default async function LandingPage() {
                 <div>
                     <p className="label-caps mb-3">SSS</p>
                     <h2 className="font-display text-3xl sm:text-4xl font-medium mb-8" style={{ color: "var(--text-1)" }}>
-                        Sık sorulanlar
+                        Sık <MarkerDraw delay={150}>sorulanlar</MarkerDraw>
                     </h2>
                     <div className="flex flex-col">
                         {[
