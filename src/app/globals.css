@@ -745,3 +745,52 @@ input:-webkit-autofill:focus {
 .doodle-path-a { animation-name: doodle-path-a; }
 .doodle-path-b { animation-name: doodle-path-b; }
 .doodle-path-c { animation-name: doodle-path-c; }
+
+/* ══ HOVER KATMANI ═════════════════════════════════════════════
+ * Yalnızca gerçek fare/izleme dörtgeni olan cihazlarda (dokunmatikte yapışkan hover olmasın).
+ */
+@media (hover: hover) and (pointer: fine) {
+    /* Menü linkleri: alttan soldan sağa çizgi; aktif sayfada sabit */
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        left: 0.75rem; right: 0.75rem; bottom: 0.15rem;
+        height: 2px;
+        border-radius: 2px;
+        background: var(--accent);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 220ms cubic-bezier(.45,.05,.35,1);
+    }
+    .nav-link:hover { color: var(--text-1) !important; }
+    .nav-link:hover::after { transform: scaleX(1); }
+
+    /* Tıklanabilir kartlar kalkar */
+    :is(a.card, button.card, a .card):hover {
+        transform: translateY(-3px);
+        border-color: var(--border-1);
+        box-shadow: 0 10px 24px color-mix(in srgb, var(--shade) 12%, transparent);
+    }
+    :root[data-theme="fanzin"] :is(a.card, button.card, a .card):hover {
+        transform: translate(-2px, -3px);
+        box-shadow: 6px 7px 0 var(--fg);
+    }
+
+    /* Butonlar hafifçe yükselir */
+    .btn-ghost:hover { transform: translateY(-1px); }
+    .pill:hover { background: var(--bg-1); border-color: var(--text-2); }
+
+    /* Sade ikon butonları (çerçeveli kare butonlar, zil, ses, menü…) */
+    button:where([aria-label]):not(.btn-primary):not(.pill):not(.card):hover { background-color: var(--bg-1); }
+
+    /* Menü içindeki öğeler */
+    [role="menuitem"]:hover { background: var(--bg-1); padding-left: 1.1rem; }
+
+    /* Metin içi linkler (buton/kart/menü olmayanlar) */
+    main p a:not([class*="btn"]):hover,
+    main li a:not([class*="btn"]):not(.card):not(.row-hover):hover { text-decoration: underline; text-underline-offset: 4px; }
+
+    /* Etiketler ve rozet çipleri */
+    .chip { transition: transform 160ms ease; }
+    a:hover > .chip, .chip:hover { transform: translateY(-1px) rotate(-2deg); }
+}

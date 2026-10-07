@@ -7,16 +7,19 @@ import { ChevronDown, Menu, X } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import SoundToggle from "@/components/SoundToggle";
 
-const PRIMARY = [
+// highlight: dikkat çekmesi istenen sekme — vurgu renginde ve yanında nokta ile görünür
+type NavItem = { href: string; label: string; highlight?: boolean };
+
+const PRIMARY: NavItem[] = [
     { href: "/home",        label: "Pano"        },
-    { href: "/fanzin",      label: "Fanzin"      },
+    { href: "/fanzin",      label: "Fanzin", highlight: true },
     { href: "/akis",        label: "Akış"        },
     { href: "/arsiv",       label: "Arşiv"       },
     { href: "/galeri",      label: "Galeri"      },
     { href: "/etkinlikler", label: "Etkinlikler" },
 ];
 
-const MORE = [
+const MORE: NavItem[] = [
     { href: "/chat",      label: "Lounge"    },
     { href: "/members",   label: "Üyeler"    },
     { href: "/yildizlar", label: "Yıldızlar" },
@@ -69,17 +72,17 @@ export default function HomeNavLinks() {
         <>
             {/* Masaüstü */}
             <div className="hidden lg:flex items-center gap-1 relative z-10">
-                {PRIMARY.map(({ href, label }) => {
+                {PRIMARY.map(({ href, label, highlight }) => {
                     const active = isActive(pathname, href);
                     return (
                         <Link key={href} href={href} aria-current={active ? "page" : undefined}
-                              className="relative px-3 py-2 text-sm font-medium transition-colors"
-                              style={{ color: active ? "var(--text-1)" : "var(--text-3)" }}>
+                              className="nav-link relative px-3 py-2 text-sm font-medium transition-colors"
+                              style={{ color: highlight ? "var(--accent)" : active ? "var(--text-1)" : "var(--text-3)", fontWeight: highlight ? 700 : undefined }}>
                             {label}
-                            {active && (
-                                <span aria-hidden className="absolute left-3 right-3 -bottom-0.5 h-0.5 rounded-full"
-                                      style={{ background: "var(--accent)" }} />
+                            {highlight && !active && (
+                                <span aria-hidden className="absolute top-1.5 right-1 w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "var(--accent)" }} />
                             )}
+
                         </Link>
                     );
                 })}
@@ -87,7 +90,7 @@ export default function HomeNavLinks() {
                 <div ref={moreRef} className="relative">
                     <button type="button" onClick={() => setMoreOpen(v => !v)}
                             aria-expanded={moreOpen} aria-haspopup="menu"
-                            className="flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors"
+                            className="nav-link relative flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors"
                             style={{ color: moreActive || moreOpen ? "var(--text-1)" : "var(--text-3)" }}>
                         Daha <ChevronDown size={14} className={`transition-transform ${moreOpen ? "rotate-180" : ""}`} />
                     </button>
@@ -141,13 +144,14 @@ export default function HomeNavLinks() {
                 </div>
 
                 <nav className="flex-1 overflow-y-auto flex flex-col px-3 py-3">
-                    {ALL.map(({ href, label }) => {
+                    {ALL.map(({ href, label, highlight }) => {
                         const active = isActive(pathname, href);
                         return (
                             <Link key={href} href={href} aria-current={active ? "page" : undefined}
                                   className="px-3 py-3 rounded-lg text-[15px] font-medium transition-colors"
                                   style={{
-                                      color: active ? "var(--accent)" : "var(--text-2)",
+                                      color: active || highlight ? "var(--accent)" : "var(--text-2)",
+                                      fontWeight: highlight ? 700 : undefined,
                                       background: active ? "var(--accent-bg)" : "transparent",
                                   }}>
                                 {label}
