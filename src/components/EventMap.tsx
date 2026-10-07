@@ -95,8 +95,9 @@ export default function EventMap({
             zoomControl={true}
         >
             <TileLayer
-                url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-                attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+                // CARTO artık anahtarsız karolara "API KEY REQUIRED" filigranı basıyor; OSM anahtar istemez
+                url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> katkıcıları'
                 maxZoom={19}
             />
             {events.map((ev) => {

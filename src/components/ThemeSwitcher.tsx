@@ -30,13 +30,13 @@ function applyTheme(theme: Theme) {
     if (theme === "sistem") delete root.dataset.theme;
     else root.dataset.theme = theme;
     try {
-        if (theme === "sistem") localStorage.removeItem(STORAGE_KEY);
-        else localStorage.setItem(STORAGE_KEY, theme);
+        // "sistem" de açıkça saklanır; yoksa bir sonraki açılışta varsayılan Fanzin'e döner
+        localStorage.setItem(STORAGE_KEY, theme);
     } catch { /* gizli mod vb. — tema yine de bu sekmede uygulanır */ }
 }
 
 export default function ThemeSwitcher({ className = "" }: { className?: string }) {
-    const theme = useSyncExternalStore(subscribe, readTheme, () => "sistem" as Theme);
+    const theme = useSyncExternalStore(subscribe, readTheme, () => "fanzin" as Theme);
 
     return (
         <div role="radiogroup" aria-label="Tema"

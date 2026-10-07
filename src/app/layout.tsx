@@ -71,7 +71,8 @@ export const viewport: Viewport = {
     viewportFit: "cover",
 };
 
-const THEME_INIT = `try{var t=localStorage.getItem("bm-theme");if(t==="kagit"||t==="gece"||t==="fanzin")document.documentElement.dataset.theme=t}catch(e){}`;
+// Varsayılan tema Fanzin; kullanıcı başka bir tema (ya da "sistem") seçtiyse o hatırlanır
+const THEME_INIT = `(function(){var t="fanzin";try{t=localStorage.getItem("bm-theme")||"fanzin"}catch(e){}if(t==="kagit"||t==="gece"||t==="fanzin")document.documentElement.dataset.theme=t})()`;
 
 /* ─── Root Layout ───────────────────────────────────────────── */
 export default function RootLayout({

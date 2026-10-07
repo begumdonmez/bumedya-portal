@@ -7,7 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Image as ImageIcon, X, ExternalLink, Link2 } from "lucide-react";
 import SiteHeader from "@/components/SiteHeader";
 import PageHeader from "@/components/PageHeader";
-import { GalleryImage, YoutubeLite, compressImage } from "./media";
+import { GalleryImage, Lightbox, YoutubeLite, compressImage } from "./media";
 import { GALLERY_COLUMNS, GALLERY_PAGE_SIZE } from "./config";
 
 interface GalleryItem {
@@ -238,6 +238,7 @@ export default function GaleriClient({
 }) {
     const [items, setItems] = useState(initialItems);
     const [hasMore, setHasMore] = useState(initialItems.length === GALLERY_PAGE_SIZE);
+    const [viewer, setViewer] = useState<number | null>(null);
     const [loadingMore, setLoadingMore] = useState(false);
 
     const loadMore = async () => {
@@ -255,6 +256,12 @@ export default function GaleriClient({
     };
     const [showModal, setShowModal] = useState(false);
     const [errorIds, setErrorIds] = useState<Set<string>>(new Set());
+    // Görüntüleyicide gezilebilen görseller: yalnızca dosyası olan ve hatasız yüklenenler
+    const viewable = items.filter(i => i.storage_path && !errorIds.has(i.id));
+    const lightboxImages = viewable.map(i => ({
+        src: getPublicUrl(supabaseUrl, i.storage_path), alt: i.title ?? "Galeri görseli", href: i.ref_url, author: i.username,
+    }));
+    const openViewer = (id: string) => setViewer(viewable.findIndex(v => v.id === id));
 
     const isAdmin = badges.includes("admin");
     const canUpload = isAdmin;
@@ -378,13 +385,7 @@ export default function GaleriClient({
                                                 </div>
                                             ) : url ? (
                                                 <>
-                                                    {item.ref_url ? (
-                                                        <a href={item.ref_url} target="_blank" rel="noopener noreferrer" className="block">
-                                                            <GalleryImage src={url} alt={item.title ?? "Galeri görseli"} onError={() => setErrorIds((prev) => new Set(prev).add(item.id))} />
-                                                        </a>
-                                                    ) : (
-                                                        <GalleryImage src={url} alt={item.title ?? "Galeri görseli"} onError={() => setErrorIds((prev) => new Set(prev).add(item.id))} />
-                                                    )}
+                                                    <GalleryImage src={url} alt={item.title ?? "Galeri görseli"} onOpen={() => openViewer(item.id)} onError={() => setErrorIds((prev) => new Set(prev).add(item.id))} />
                                                     <div className="absolute inset-0 flex flex-col justify-end p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
                                                          style={{ background: "linear-gradient(to top, color-mix(in srgb, var(--surface-solid) 88%, transparent) 0%, transparent 60%)" }}>
                                                         <div className="flex items-center justify-between">
@@ -432,6 +433,10 @@ export default function GaleriClient({
                     </div>
                 )}
             </div>
+
+            {viewer !== null && viewer >= 0 && (
+                <Lightbox images={lightboxImages} index={viewer} onClose={() => setViewer(null)} onIndex={setViewer} />
+            )}
 
             {showModal && (
                 <UploadModal

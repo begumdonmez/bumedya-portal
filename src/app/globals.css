@@ -622,6 +622,24 @@ input:-webkit-autofill:focus {
 }
 :root[data-theme="fanzin"] :is(.input-field, .form-input):focus { box-shadow: 3px 3px 0 var(--accent); }
 :root[data-theme="fanzin"] .pill { border: 2px solid var(--fg); color: var(--fg); }
+/* Seçili hap: siyah dolgu yerine fosforlu kalemle üstü karalanmış gibi */
+:root[data-theme="fanzin"] .pill[aria-pressed="true"] {
+    color: var(--fg);
+    font-weight: 700;
+    background-color: transparent;
+    background-image:
+        linear-gradient(100deg,
+            transparent 4%,
+            color-mix(in srgb, var(--accent-2) 85%, transparent) 7%,
+            var(--accent-2) 50%,
+            color-mix(in srgb, var(--accent-2) 80%, transparent) 93%,
+            transparent 97%);
+    background-size: 100% 62%;
+    background-position: 50% 58%;
+    background-repeat: no-repeat;
+    box-shadow: 2px 2px 0 var(--fg);
+    rotate: -1.5deg;
+}
 
 /* Fosforlu kalem gerçekten sarı */
 :root[data-theme="fanzin"] .marker {
@@ -640,3 +658,23 @@ input:-webkit-autofill:focus {
 
 /* Logo da fotokopiden çıkmış gibi */
 :root[data-theme="fanzin"] img[src*="logo"] { filter: grayscale(1) contrast(1.35); }
+
+/* ── Basma geri bildirimi ──────────────────────────────────────
+ * Basınca içeri çöker, bırakınca esnek eğriyle (hafif taşma) geri seker.
+ * Tüm tıklanabilir öğelere uygulanır; hareket azaltma tercihinde global kural kapatır.
+ */
+:where(button, [role="button"], .btn-primary, .btn-ghost, .pill, summary, a.card) {
+    transition-property: transform, box-shadow, background-color, color, border-color;
+    transition-duration: 160ms;
+    transition-timing-function: cubic-bezier(.34, 1.56, .64, 1);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+}
+:where(button, [role="button"], .pill, summary):active:not(:disabled) {
+    transform: scale(0.94);
+    transition-duration: 60ms;
+}
+:where(a.card, button.card):active { transform: scale(0.98) !important; transition-duration: 60ms; }
+.btn-primary:active:not(:disabled) { transform: translate(2px, 2px) scale(0.97); box-shadow: 0 0 0 var(--fg); }
+.btn-ghost:active:not(:disabled)   { transform: scale(0.95); background: var(--bg-1); }
+:root[data-theme="fanzin"] .btn-primary:active:not(:disabled) { box-shadow: 0 0 0 var(--accent); }
