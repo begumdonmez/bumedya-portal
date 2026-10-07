@@ -45,17 +45,20 @@ export async function proxy(request: NextRequest) {
         }
     );
 
-    // getClaims, JWT'yi (asimetrik anahtarla) yerelde doğrular; her istekte
-    // Supabase Auth'a ağ çağrısı yapmaz. Oturum yenilemesi de burada olur.
-    const { data } = await supabase.auth.getClaims();
-    const user = data?.claims?.sub ? data.claims : null;
+    // Not: getClaims denendi; bu projede JWT doğrulaması proxy'de başarısız olup
+    // girişten sonra tekrar girişe yönlendirme döngüsüne yol açtı. getUser güvenilir.
+    // Oturum yenilemesi (cookie güncelleme) de bu çağrıyla olur.
+    const { data: { user } } = await supabase.auth.getUser();
 
     const isProtected = PROTECTED_PATHS.some(
         (p) => pathname === p || pathname.startsWith(p + "/")
     );
 
     if (!user && isProtected) {
-        return NextResponse.redirect(new URL("/login", request.url));
+        const redirect = NextResponse.redirect(new URL("/login", request.url));
+        // Supabase'in bu istekte yazdığı/temizlediği oturum çerezlerini yönlendirmeye de taşı
+        response.cookies.getAll().forEach(c => redirect.cookies.set(c));
+        return redirect;
     }
 
     return response;
