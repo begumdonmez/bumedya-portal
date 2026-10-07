@@ -635,10 +635,17 @@ input:-webkit-autofill:focus {
             color-mix(in srgb, var(--accent-2) 80%, transparent) 93%,
             transparent 97%);
     background-size: 100% 62%;
-    background-position: 50% 58%;
+    background-position: 0% 58%;
     background-repeat: no-repeat;
     box-shadow: 2px 2px 0 var(--fg);
     rotate: -1.5deg;
+    /* Seçilince kalem soldan sağa çekilir */
+    animation: highlighter-draw 420ms cubic-bezier(.45, .05, .35, 1) both;
+}
+@keyframes highlighter-draw {
+    0%   { background-size: 0% 62%; }
+    70%  { background-size: 92% 62%; }
+    100% { background-size: 100% 62%; }
 }
 
 /* Fosforlu kalem gerçekten sarı */

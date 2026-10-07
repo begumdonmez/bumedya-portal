@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { Fraunces, Instrument_Sans, Geist_Mono, Patrick_Hand } from "next/font/google";
 import { Toaster } from "sonner";
 import ScrollToTop from "@/components/ScrollToTop";
+import SoundLayer from "@/components/SoundLayer";
 import "./globals.css";
 
 /* ─── Fontlar ───────────────────────────────────────────────── */
@@ -92,6 +93,7 @@ export default function RootLayout({
         </head>
         <body className="paper-grain min-h-full flex flex-col antialiased">
         <ScrollToTop />
+        <SoundLayer />
         {children}
 
         <Toaster

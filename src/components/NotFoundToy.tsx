@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { sfx } from "@/lib/sfx";
 
 const EXCUSES = [
     "Sayfayı kedi yedi. Kedi pişman değil.",
@@ -30,6 +31,8 @@ export default function NotFoundToy() {
         // Her üç atıştan biri girer — fanzin ekibi basketbolda pek iyi değil
         const hit = Math.random() < 0.34;
         setFlying(hit ? "hit" : "miss");
+        sfx.whoosh();
+        setTimeout(() => (hit ? sfx.thunk() : sfx.bounce()), hit ? 1000 : 820);
         setThrows(n => n + 1);
         if (hit) setScore(n => n + 1);
         setTimeout(() => setFlying(null), 1300);
@@ -47,7 +50,7 @@ export default function NotFoundToy() {
                  style={{ fontSize: "clamp(7rem, 22vw, 14rem)", color: "var(--text-1)" }}>
                 <span className="nf-tilt-l">4</span>
 
-                <button type="button" onClick={toss} aria-label="Kâğıt topu çöpe at"
+                <button type="button" onClick={toss} aria-label="Kâğıt topu çöpe at" data-sfx="none"
                         className={`relative mx-[0.04em] w-[0.72em] h-[0.72em] mb-[0.08em] cursor-pointer ${flying ? `nf-fly-${flying}` : "nf-bob"}`}>
                     <svg viewBox="0 0 100 100" className="w-full h-full nf-spin" aria-hidden>
                         <path d="M50 4 L66 10 L80 8 L90 24 L96 40 L92 56 L97 70 L86 84 L70 92 L54 96 L38 93 L22 88 L12 74 L4 58 L8 42 L5 26 L18 14 L34 7 Z"

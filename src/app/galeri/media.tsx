@@ -18,7 +18,7 @@ export function GalleryImage({ src, alt, onError, onOpen }: { src: string; alt: 
     );
     if (!onOpen) return img;
     return (
-        <button type="button" onClick={onOpen} aria-label={`Büyüt: ${alt}`} className="block w-full cursor-zoom-in">
+        <button type="button" onClick={onOpen} aria-label={`Büyüt: ${alt}`} data-sfx="none" className="block w-full cursor-zoom-in">
             {img}
         </button>
     );
@@ -100,7 +100,7 @@ export function Lightbox({ images, index, onClose, onIndex }: {
 
     if (!img) return null;
     return (
-        <div role="dialog" aria-modal="true" aria-label="Görsel görüntüleyici"
+        <div role="dialog" aria-modal="true" aria-label="Görsel görüntüleyici" data-sfx="none"
              className="fixed inset-0 z-[100] flex flex-col" style={{ background: "color-mix(in srgb, #000 92%, transparent)" }}
              onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
             <div className="flex items-center justify-between gap-3 px-4 py-3 text-white/80 text-sm">

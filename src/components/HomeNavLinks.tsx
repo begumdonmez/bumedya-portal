@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Menu, X } from "lucide-react";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import SoundToggle from "@/components/SoundToggle";
 
 const PRIMARY = [
     { href: "/fanzin",      label: "Fanzin"      },
@@ -156,8 +157,8 @@ export default function HomeNavLinks() {
                 </nav>
 
                 <div className="px-5 py-4 flex items-center justify-between safe-bottom" style={{ borderTop: "1px solid var(--border-2)" }}>
-                    <span className="label-caps">Tema</span>
-                    <ThemeSwitcher />
+                    <span className="label-caps">Tema & ses</span>
+                    <span className="flex items-center gap-2"><ThemeSwitcher /><SoundToggle /></span>
                 </div>
             </aside>
         </>

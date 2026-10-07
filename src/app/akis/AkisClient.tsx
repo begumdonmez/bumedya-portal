@@ -9,6 +9,7 @@ import { Image as ImageIcon, PenLine, Clapperboard, Sparkles, X, ExternalLink, H
 import type { ElementType } from "react";
 import SiteHeader from "@/components/SiteHeader";
 import PageHeader from "@/components/PageHeader";
+import { sfx } from "@/lib/sfx";
 
 export interface Post {
     id: string;
@@ -227,7 +228,8 @@ const PostCard = memo(function PostCard({ post, supabaseUrl, userId, likeCount, 
             {/* Footer — beğeni + link */}
             <div className="flex items-center justify-between px-4 pb-4 pt-1">
                 <button
-                    onClick={() => onLike(post.id)}
+                    data-sfx="none"
+                    onClick={() => { if (!likedByMe) sfx.pop(); onLike(post.id); }}
                     className="flex items-center gap-1.5 transition-all duration-200 group"
                     style={{ color: likedByMe ? "color-mix(in srgb, var(--pink) 90%, transparent)" : "var(--text-4)" }}>
                     <Heart

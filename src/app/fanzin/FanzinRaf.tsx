@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
 import type { Fanzin } from "@/data/fanzinler";
+import { sfx } from "@/lib/sfx";
 
 const TILTS = ["-2deg", "1.5deg", "-1deg", "2.5deg", "-2.5deg", "1deg"];
 
@@ -12,7 +13,7 @@ export default function FanzinRaf({ fanzinler }: { fanzinler: Fanzin[] }) {
     const [yuz, setYuz] = useState(0);
     const dialogRef = useRef<HTMLDialogElement>(null);
 
-    const show = (i: number) => { setOpen(i); setYuz(0); };
+    const show = (i: number) => { sfx.paper(); setOpen(i); setYuz(0); };
     const close = useCallback(() => setOpen(null), []);
 
     useEffect(() => {
@@ -26,6 +27,7 @@ export default function FanzinRaf({ fanzinler }: { fanzinler: Fanzin[] }) {
 
     const step = useCallback((dir: 1 | -1) => {
         if (!current) return;
+        sfx.pageTurn();
         setYuz(y => (y + dir + current.yuzler.length) % current.yuzler.length);
     }, [current]);
 
@@ -44,7 +46,7 @@ export default function FanzinRaf({ fanzinler }: { fanzinler: Fanzin[] }) {
             <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-12">
                 {fanzinler.map((f, i) => (
                     <li key={f.slug}>
-                        <button type="button" onClick={() => show(i)}
+                        <button type="button" onClick={() => show(i)} data-sfx="none"
                                 className="group block w-full text-left"
                                 aria-label={`${f.baslik} ${f.sayi} — ${f.tema} sayısını aç`}>
                             <div className="relative aspect-[667/1414] rounded-[4px] overflow-hidden transition-transform duration-300 ease-out group-hover:-translate-y-2 group-hover:rotate-0"
@@ -100,12 +102,12 @@ export default function FanzinRaf({ fanzinler }: { fanzinler: Fanzin[] }) {
                             </div>
                             {current.yuzler.length > 1 && (
                                 <>
-                                    <button type="button" onClick={() => step(-1)} aria-label="Önceki yüz"
+                                    <button type="button" onClick={() => step(-1)} aria-label="Önceki yüz" data-sfx="none"
                                             className="absolute left-3 sm:left-8 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center"
                                             style={{ background: "var(--fg)", color: "var(--paper)" }}>
                                         <ChevronLeft size={18} />
                                     </button>
-                                    <button type="button" onClick={() => step(1)} aria-label="Sonraki yüz"
+                                    <button type="button" onClick={() => step(1)} aria-label="Sonraki yüz" data-sfx="none"
                                             className="absolute right-3 sm:right-8 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center"
                                             style={{ background: "var(--fg)", color: "var(--paper)" }}>
                                         <ChevronRight size={18} />
@@ -116,7 +118,8 @@ export default function FanzinRaf({ fanzinler }: { fanzinler: Fanzin[] }) {
 
                         <footer className="flex flex-wrap items-center justify-center gap-2 px-4 pb-4">
                             {current.yuzler.map((y, i) => (
-                                <button key={y.src} type="button" className="pill" aria-pressed={yuz === i} onClick={() => setYuz(i)}>
+                                <button key={y.src} type="button" className="pill" data-sfx="none" aria-pressed={yuz === i}
+                                        onClick={() => { if (yuz !== i) sfx.pageTurn(); setYuz(i); }}>
                                     {y.etiket}
                                 </button>
                             ))}

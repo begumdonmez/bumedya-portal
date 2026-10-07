@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import BadgeMedal, { type MedalShape } from "@/components/BadgeMedal";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import SetWelcomeCookie from "@/components/SetWelcomeCookie";
@@ -40,11 +41,11 @@ const BADGES = [
     { label: "Sosyal Kelebek", color: "color-mix(in srgb, var(--accent-2) 90%, transparent)",  bg: "color-mix(in srgb, var(--accent-2) 6%, transparent)",  border: "color-mix(in srgb, var(--accent-2) 20%, transparent)",  desc: "Aktif sohbete katkı sağlayan, topluluğu canlı tutan üyelere admin tarafından verilir." },
 ];
 
-const BADGE_GROUPS = [
-    { title: "Sistem",               note: "Yöneticiler verir, başvuruyla alınmaz.",         items: BADGES.slice(0, 3) },
-    { title: "Başvuruyla kazanılan", note: "Başvuru sayfasından form doldurarak alınır.",     items: BADGES.slice(3, 6) },
-    { title: "İlgi alanı",           note: "Hangi alana ilgi duyduğunu gösterir.",           items: BADGES.slice(6, 9) },
-    { title: "Profilden kendin al",  note: "Profil ayarlarından dilediğin zaman eklersin.",   items: BADGES.slice(9) },
+const BADGE_GROUPS: { title: string; note: string; shape: MedalShape; items: typeof BADGES }[] = [
+    { title: "Sistem",               note: "Yöneticiler verir, başvuruyla alınmaz.",       shape: "star",    items: BADGES.slice(0, 3) },
+    { title: "Başvuruyla kazanılan", note: "Başvuru sayfasından form doldurarak alınır.",   shape: "rosette", items: BADGES.slice(3, 6) },
+    { title: "İlgi alanı",           note: "Hangi alana ilgi duyduğunu gösterir.",         shape: "coin",    items: BADGES.slice(6, 9) },
+    { title: "Profilden kendin al",  note: "Profil ayarlarından dilediğin zaman eklersin.", shape: "shield",  items: BADGES.slice(9) },
 ];
 
 const PAGES = [
@@ -115,7 +116,13 @@ const PAGES = [
 ];
 
 const CLUBS = [
-    { uni: "Beykoz Üniversitesi", city: "İstanbul", active: true },
+    {
+        uni: "Beykoz Üniversitesi", city: "İstanbul", active: true,
+        socials: [
+            { label: "Instagram", handle: "@bu_medya",        href: "https://www.instagram.com/bu_medya/" },
+            { label: "YouTube",   handle: "@BumedyaOfficial", href: "https://www.youtube.com/@BumedyaOfficial" },
+        ],
+    },
 ];
 
 export default async function LandingPage() {
@@ -280,12 +287,22 @@ export default async function LandingPage() {
                             <p className="label-caps mb-3">Kulüpler</p>
                             <ul className="flex flex-col">
                                 {CLUBS.map(c => (
-                                    <li key={c.uni} className="flex items-center justify-between py-3" style={{ borderTop: "1px solid var(--border-2)" }}>
-                                        <span>
-                                            <span className="font-semibold" style={{ color: "var(--text-1)" }}>{c.uni}</span>
-                                            <span className="text-sm ml-2" style={{ color: "var(--text-4)" }}>{c.city}</span>
-                                        </span>
-                                        <span className="chip" style={{ color: "var(--success)", border: "1px solid color-mix(in srgb, var(--success) 35%, transparent)" }}>Aktif</span>
+                                    <li key={c.uni} className="py-3" style={{ borderTop: "1px solid var(--border-2)" }}>
+                                        <div className="flex items-center justify-between">
+                                            <span>
+                                                <span className="font-semibold" style={{ color: "var(--text-1)" }}>{c.uni}</span>
+                                                <span className="text-sm ml-2" style={{ color: "var(--text-4)" }}>{c.city}</span>
+                                            </span>
+                                            <span className="chip" style={{ color: "var(--success)", border: "1px solid color-mix(in srgb, var(--success) 35%, transparent)" }}>Aktif</span>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2 mt-2.5">
+                                            {c.socials.map(so => (
+                                                <a key={so.href} href={so.href} target="_blank" rel="noopener noreferrer"
+                                                   className="btn-ghost !py-1.5 !px-3 !text-[13px]">
+                                                    {so.label} <span style={{ color: "var(--text-4)" }}>{so.handle}</span> ↗
+                                                </a>
+                                            ))}
+                                        </div>
                                     </li>
                                 ))}
                                 <li className="py-3" style={{ borderTop: "1px solid var(--border-2)" }}>
@@ -320,8 +337,9 @@ export default async function LandingPage() {
                                 <p className="text-xs mt-2 mb-1" style={{ color: "var(--text-4)" }}>{g.note}</p>
                                 <dl className="flex flex-col">
                                     {g.items.map(b => (
-                                        <div key={b.label} className="grid grid-cols-[8.5rem_1fr] gap-4 py-3 items-baseline"
+                                        <div key={b.label} className="grid grid-cols-[2.5rem_7.5rem_1fr] gap-x-3 py-3 items-center"
                                              style={{ borderTop: "1px solid var(--border-2)" }}>
+                                            <BadgeMedal label={b.label} color={b.color} shape={g.shape} size={38} />
                                             <dt>
                                                 <span className="chip" style={{ background: b.bg, border: `1px solid ${b.border}`, color: b.color }}>{b.label}</span>
                                             </dt>

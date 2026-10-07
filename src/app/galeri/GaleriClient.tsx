@@ -9,6 +9,7 @@ import SiteHeader from "@/components/SiteHeader";
 import PageHeader from "@/components/PageHeader";
 import { GalleryImage, Lightbox, YoutubeLite, compressImage } from "./media";
 import { GALLERY_COLUMNS, GALLERY_PAGE_SIZE } from "./config";
+import { sfx } from "@/lib/sfx";
 
 interface GalleryItem {
     id: string;
@@ -261,7 +262,7 @@ export default function GaleriClient({
     const lightboxImages = viewable.map(i => ({
         src: getPublicUrl(supabaseUrl, i.storage_path), alt: i.title ?? "Galeri görseli", href: i.ref_url, author: i.username,
     }));
-    const openViewer = (id: string) => setViewer(viewable.findIndex(v => v.id === id));
+    const openViewer = (id: string) => { sfx.paper(); setViewer(viewable.findIndex(v => v.id === id)); };
 
     const isAdmin = badges.includes("admin");
     const canUpload = isAdmin;
@@ -435,7 +436,7 @@ export default function GaleriClient({
             </div>
 
             {viewer !== null && viewer >= 0 && (
-                <Lightbox images={lightboxImages} index={viewer} onClose={() => setViewer(null)} onIndex={setViewer} />
+                <Lightbox images={lightboxImages} index={viewer} onClose={() => setViewer(null)} onIndex={i => { sfx.pageTurn(); setViewer(i); }} />
             )}
 
             {showModal && (

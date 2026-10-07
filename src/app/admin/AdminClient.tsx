@@ -902,6 +902,7 @@ export default function AdminClient({ userId, username, profiles: initialProfile
             <div aria-hidden className="h-16 shrink-0" />
             <div className="relative z-10 max-w-6xl w-full mx-auto px-4 sm:px-8 pt-8">
                 <PageHeader eyebrow="Yönetim" title="Admin paneli" className="!mb-0"
+        actions={<a href="/404-test-sayfasi" target="_blank" rel="noopener noreferrer" className="btn-ghost">404&apos;ü test et ↗</a>}
         description={<span className="flex"><div className="flex items-center gap-3 text-xs flex-wrap" style={{ color: "var(--text-4)" }}>
                             <span>{profiles.length} üye</span>
                             <span style={{ color: "var(--border-1)" }}>·</span>

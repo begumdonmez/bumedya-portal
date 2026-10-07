@@ -5,6 +5,7 @@ import NavbarBackdrop from "@/components/NavbarBackdrop";
 import HomeNavLinks from "@/components/HomeNavLinks";
 import NotificationBell from "@/components/NotificationBell";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
+import SoundToggle from "@/components/SoundToggle";
 import Wordmark from "@/components/Wordmark";
 
 interface Props {
@@ -38,6 +39,7 @@ export default function SiteHeader({ userId, username, actions, back, minimal }:
             <div className="relative z-10 ml-auto flex items-center gap-2 shrink-0">
                 {actions}
                 <ThemeSwitcher className="hidden sm:inline-flex" />
+                <SoundToggle className="hidden sm:flex" />
                 {userId && username ? (
                     <>
                         <NotificationBell userId={userId} />
