@@ -40,6 +40,13 @@ const BADGES = [
     { label: "Sosyal Kelebek", color: "color-mix(in srgb, var(--accent-2) 90%, transparent)",  bg: "color-mix(in srgb, var(--accent-2) 6%, transparent)",  border: "color-mix(in srgb, var(--accent-2) 20%, transparent)",  desc: "Aktif sohbete katkı sağlayan, topluluğu canlı tutan üyelere admin tarafından verilir." },
 ];
 
+const BADGE_GROUPS = [
+    { title: "Sistem",               note: "Yöneticiler verir, başvuruyla alınmaz.",         items: BADGES.slice(0, 3) },
+    { title: "Başvuruyla kazanılan", note: "Başvuru sayfasından form doldurarak alınır.",     items: BADGES.slice(3, 6) },
+    { title: "İlgi alanı",           note: "Hangi alana ilgi duyduğunu gösterir.",           items: BADGES.slice(6, 9) },
+    { title: "Profilden kendin al",  note: "Profil ayarlarından dilediğin zaman eklersin.",   items: BADGES.slice(9) },
+];
+
 const PAGES = [
     {
         path: "/galeri",
@@ -303,17 +310,28 @@ export default async function LandingPage() {
                     <p className="text-sm mb-6" style={{ color: "var(--text-3)" }}>
                         Bazıları başvuruyla, bazıları admin tarafından, bazıları ilgi alanına göre verilir.
                     </p>
-                    <dl className="flex flex-col">
-                        {BADGES.map(b => (
-                            <div key={b.label} className="grid grid-cols-[8.5rem_1fr] gap-4 py-3 items-baseline"
-                                 style={{ borderTop: "1px solid var(--border-2)" }}>
-                                <dt>
-                                    <span className="chip" style={{ background: b.bg, border: `1px solid ${b.border}`, color: b.color }}>{b.label}</span>
-                                </dt>
-                                <dd className="text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>{b.desc}</dd>
-                            </div>
+                    <div className="flex flex-col gap-8">
+                        {BADGE_GROUPS.map((g, gi) => (
+                            <section key={g.title}>
+                                <div className="flex items-baseline gap-3 pb-2" style={{ borderBottom: "2px solid var(--text-1)" }}>
+                                    <span className="font-mono text-xs" style={{ color: "var(--accent)" }}>{String(gi + 1).padStart(2, "0")}</span>
+                                    <h3 className="font-display text-xl font-medium" style={{ color: "var(--text-1)" }}>{g.title}</h3>
+                                </div>
+                                <p className="text-xs mt-2 mb-1" style={{ color: "var(--text-4)" }}>{g.note}</p>
+                                <dl className="flex flex-col">
+                                    {g.items.map(b => (
+                                        <div key={b.label} className="grid grid-cols-[8.5rem_1fr] gap-4 py-3 items-baseline"
+                                             style={{ borderTop: "1px solid var(--border-2)" }}>
+                                            <dt>
+                                                <span className="chip" style={{ background: b.bg, border: `1px solid ${b.border}`, color: b.color }}>{b.label}</span>
+                                            </dt>
+                                            <dd className="text-sm leading-relaxed" style={{ color: "var(--text-3)" }}>{b.desc}</dd>
+                                        </div>
+                                    ))}
+                                </dl>
+                            </section>
                         ))}
-                    </dl>
+                    </div>
                 </div>
 
                 <div>
